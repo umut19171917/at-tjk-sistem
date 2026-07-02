@@ -231,6 +231,25 @@ def hesapla(pist, ymd):
     # gecmis + bugun -> ozellikler (egitimle AYNI nokta-aninda mantik)
     hist = pd.read_csv(KOK / "veri" / "katilim.csv", low_memory=False)
     hist["bugun"] = 0
+    # --- NOKTA-ANINDA KORUMASI (K36): arsivden, tahmin gununden ITIBAREN tum satirlari dusur.
+    # Iki sizintiyi birden keser: (a) ayni kosu arsivde de varsa (gecmis --tarih / gun-ici veri
+    # tazeleme) shift(1) mekanigi kosunun SONUCUNU bugunku ozelliklere tasirdi; (b) gecmis tarihli
+    # calistirmada o gunden SONRAKI kosular ozelliklere girerdi. Normal kullanimda (arsiv < bugun)
+    # hicbir satir dusmez -> davranis birebir ayni.
+    hd = pd.to_datetime(hist["tarih"], format="%d/%m/%Y", errors="coerce")
+    gun = pd.Timestamp(datetime.strptime(ymd, "%Y%m%d").date())
+    cakisan = hd >= gun
+    if cakisan.any():
+        print(f"UYARI (sizinti korumasi): arsivde {gun:%Y-%m-%d} ve sonrasina ait "
+              f"{int(cakisan.sum())} satir var -> ozellik hesabindan dusuldu (nokta-aninda).")
+        hist = hist[~cakisan]
+        hd = hd[~cakisan]
+    # --- BAYATLIK UYARISI (K36): atlarin son kosulari arsivde yoksa form/kariyer sessizce eskir.
+    arsiv_son = hd.max()
+    print(f"arsiv son gunu: {arsiv_son:%Y-%m-%d}" if pd.notna(arsiv_son) else "arsiv BOS!")
+    if pd.notna(arsiv_son) and (gun - arsiv_son).days > 3:
+        print(f"UYARI: arsiv {(gun - arsiv_son).days} gun eski -> form/kariyer ozellikleri bayat. "
+              f"Guncelle: python kod/guncelle.py (veya baslat_takip.bat zaten calistirir).")
     allrows = pd.concat([hist, raw], ignore_index=True)
     d = load_katilim(df=allrows)
     d = build_features(d)

@@ -91,9 +91,9 @@ def gecerli_json(b):
         return False
 
 
-def indir_full(tur, ymd, key, bekle, sayac):
+def indir_full(tur, ymd, key, bekle, sayac, force=False):
     hedef = HAM / tur / f"{ymd}_{key}.json"
-    if hedef.exists() and hedef.stat().st_size > 50:
+    if not force and hedef.exists() and hedef.stat().st_size > 50:
         sayac["atla"] += 1
         return
     st, data = getir(f"{BASE}/{tur}/{ymd}/full/{key}.json")
@@ -115,12 +115,23 @@ def main():
     ap.add_argument("--bitis", default=date.today().isoformat())
     ap.add_argument("--bekle", type=float, default=0.5, help="istekler arasi saniye")
     ap.add_argument("--test", action="store_true", help="sadece son 10 gun")
+    ap.add_argument("--guncelle", action="store_true",
+                    help="arsivdeki son gunden bugune guncelle (K36; sinir gunu YENIDEN indirilir "
+                         "cunku gun-ici kismi inmis olabilir)")
     args = ap.parse_args()
 
     bas = datetime.strptime(args.baslangic, "%Y-%m-%d").date()
     bit = datetime.strptime(args.bitis, "%Y-%m-%d").date()
     if args.test:
         bas, bit = date.today() - timedelta(days=10), date.today()
+    force_ymd = None
+    if args.guncelle:
+        mevcut = sorted(p.stem.split("_")[0] for p in (HAM / "sonuclar").glob("*.json"))
+        if mevcut:
+            force_ymd = mevcut[-1]
+            bas = datetime.strptime(force_ymd, "%Y%m%d").date()
+        bit = date.today()
+        print(f"guncelleme kipi: {bas} .. {bit} (ilk gun yeniden indirilir)")
 
     HAM.mkdir(parents=True, exist_ok=True)
     sayac = {"indir": 0, "atla": 0, "yok": 0, "hata": 0}
@@ -147,8 +158,9 @@ def main():
                 for v in yerliler:
                     key = str(v["KEY"]).strip().upper()
                     yerli_keys.setdefault(key, v.get("AD", ""))
-                    indir_full("sonuclar", ymd, key, args.bekle, sayac)
-                    indir_full("program", ymd, key, args.bekle, sayac)
+                    frc = (ymd == force_ymd)
+                    indir_full("sonuclar", ymd, key, args.bekle, sayac, force=frc)
+                    indir_full("program", ymd, key, args.bekle, sayac, force=frc)
 
         islenen += 1
         if islenen % 60 == 0:

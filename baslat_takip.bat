@@ -7,6 +7,10 @@ cd /d "%~dp0"
 echo ====================================================
 echo  TJK TAKIP baslatiliyor...  (durdurmak icin pencereyi kapat)
 echo ====================================================
+echo [1/2] Arsiv guncelleniyor (yeni gun yoksa hizli gecer)...
+.venv\Scripts\python.exe kod\guncelle.py
+echo.
+echo [2/2] Gun boyu takip basliyor...
 .venv\Scripts\python.exe kod\takip.py %*
 echo.
 echo ---- takip bitti / durdu ----

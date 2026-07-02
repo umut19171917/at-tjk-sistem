@@ -73,10 +73,15 @@ def isle_kosu(pist, ymd, tarih, no, saat, dosya):
     print(blok)
     with open(dosya, "a", encoding="utf-8") as f:
         f.write(blok + "\n")
-    nk, n = defter.yaz_tg(tg, tarih, pist, only_kosu=no)
-    if n:
-        defter.html_yaz()   # tarayici tablosunu tazele
-    print(f"  -> deftere islendi ({n} at)" if n else "  -> (model kapsam disi, deftere islenmedi)")
+    try:
+        nk, n = defter.yaz_tg(tg, tarih, pist, only_kosu=no)
+        if n:
+            defter.html_yaz()   # tarayici tablosunu tazele
+        print(f"  -> deftere islendi ({n} at)" if n else "  -> (deftere yazilmadi: kapsam disi/gecmis)")
+    except Exception as e:
+        # defter.csv kilitli (or. Excel'de acik) vb. -> GUNUN TAKIBI COKMESIN (K39);
+        # rapor dosyasi/ekran zaten yazildi, sadece defter kaydi bu kosuda dusmus olur.
+        print(f"  -> DEFTER YAZILAMADI ({type(e).__name__}: {e}) -> dosyayi kapat; takip devam ediyor")
     return True
 
 
@@ -120,16 +125,37 @@ def main():
 
     while True:
         now = datetime.now()
+        # posta saati GECMIS kosu islenmez (K36): yaris-sonrasi oranla "tahmin" kaydi deneyi bozar.
+        # (takip'i oglen baslatinca sabahki kosular buraya duser; ekrana da analiz basilmaz.)
+        for r in sched:
+            if r["durum"] == "bekliyor" and now > r["post"] + pd.Timedelta(minutes=3):
+                r["durum"] = "gecmis"
+                print(f"  {r['pist']} kosu {r['no']} (yaris {r['saat']}): posta saati gecti "
+                      f"-> islenmedi (defter korumasi)")
         bekleyen = [r for r in sched if r["durum"] == "bekliyor"]
         vakti = [r for r in bekleyen if args.once or now >= r["post"] - pd.Timedelta(minutes=args.dk)]
         for r in vakti:
             ok = isle_kosu(r["pist"], ymd, args.tarih, r["no"], r["saat"], dosya)
-            r["durum"] = "bitti" if ok else "atlandi"
+            # gecici hata (ag vb.) kosuyu YAKMASIN (K39): posta saatine kadar dongude yeniden dene;
+            # post gecerse yukaridaki suzgec "gecmis" yapar. --once'ta tek deneme.
+            if ok:
+                r["durum"] = "bitti"
+            elif args.once or datetime.now() > r["post"]:
+                r["durum"] = "atlandi"
 
         kalan = [r for r in sched if r["durum"] == "bekliyor"]
         if not kalan or args.once:
             print(f"\n{datetime.now():%H:%M}  isleme bitti "
-                  f"({sum(r['durum']=='bitti' for r in sched)}/{len(sched)} kosu). sonucla...")
+                  f"({sum(r['durum']=='bitti' for r in sched)}/{len(sched)} kosu).")
+            if not args.once:
+                # sonuclar feed'i yarislardan ~dakikalar sonra dolar; son kosudan hemen once
+                # sonucla cagirmak bos donerdi (K39) -> son post + 40 dk beklenir.
+                hedef = max(r["post"] for r in sched) + pd.Timedelta(minutes=40)
+                if datetime.now() < hedef:
+                    print(f"sonuclarin dolmasi icin ~{hedef:%H:%M} bekleniyor (pencere acik kalsin)...")
+                    while datetime.now() < hedef:
+                        time.sleep(min(60.0, max(1.0, (hedef - datetime.now()).total_seconds())))
+            print("sonucla...")
             defter.sonucla()
             break
         nxt = min(r["post"] for r in kalan) - pd.Timedelta(minutes=args.dk)

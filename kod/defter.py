@@ -51,6 +51,21 @@ def yaz_tg(tg, tarih, pist, only_kosu=None, kosu=None, secim=None):
         tg = tg[pd.to_numeric(tg["kosu_no"], errors="coerce") == only_kosu]
         if len(tg) == 0:
             return 0, 0
+    # --- ILERIYE-DONUKLUK KORUMASI (K36): posta saati gecmis kosu deftere yazilamaz.
+    # Deferin deney degeri kayitlarin YARIS ONCESI olmasi; takip'i oglen baslatmak veya gecmis
+    # --tarih ile kaydet, yaris-sonrasi (final'e yakin) oranla sahte "tahmin" uretirdi.
+    # 3 dk tolerans: takip zaten post-5dk'da yazar. Saat parse edilemezse satir tutulur.
+    post = pd.to_datetime(str(tarih) + " " + tg["saat"].astype(str),
+                          format="%Y-%m-%d %H:%M", errors="coerce")
+    gecmis = post.notna() & (post + pd.Timedelta(minutes=3) < datetime.now())
+    if gecmis.any():
+        atilan = sorted(set(pd.to_numeric(tg.loc[gecmis, "kosu_no"], errors="coerce")
+                            .dropna().astype(int)))
+        print(f"UYARI (defter korumasi): posta saati gecmis kosu(lar) YAZILMADI: {atilan} "
+              f"(yaris-sonrasi kayit deneyi bozar)")
+        tg = tg[~gecmis]
+        if len(tg) == 0:
+            return 0, 0
     tg["model_rank"] = tg.groupby("race_kod")["bot2"].rank(ascending=False, method="first")
     favimp = tg.groupby("race_kod")["kamu"].transform("max")
     canli = ((tg["kamu"] > 0) & (tg["bot1"] >= 1.5 * tg["kamu"]) & (tg["bot1"] >= 0.10)
