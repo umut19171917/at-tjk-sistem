@@ -1,0 +1,107 @@
+
+[13:25 tetik]  ANKARA  KOSU 1 (yaris 13:30)  model a=+0.24 g=+0.94
+
+KOSU  1  13:30  1900m  3 ve Yukarı İngilizler  (8 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    2 MASTER OF RACE           44.5      30.6   22.9   28.1   3.25  >>CANLI
+    7 GOLDEN BEE                6.5      27.9   33.8   33.7   2.20  F
+    5 AFTER BURNER             19.9      12.2   10.6   11.8   7.05  >>CANLI
+    4 TUVA                     12.6      10.0    9.6    8.6   7.75  
+    6 PALURİ MAN                5.6       6.0    6.8    5.2  10.95  
+    3 WE ARE THE BEST           3.9       5.5    6.9    4.0  10.85  
+    1 ATOMIC CAT                3.8       5.1    6.3    6.7  11.75  
+    8 GREEN EYED MEMO           3.3       2.5    3.1    1.9  23.90  
+
+[14:25 tetik]  ANKARA  KOSU 3 (yaris 14:30)  model a=+0.24 g=+0.94
+
+KOSU  3  14:30  1600m  3 ve Yukarı İngilizler  (5 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    3 SELANİK ASLANI           27.7      50.8   49.9   59.5   1.50  F
+    4 ORANGE ARMY              42.5      19.9   16.4   17.4   4.55  >>CANLI
+    5 KOCAHANIM                 9.8      11.4   13.1   12.1   5.70  
+    2 NIGHTFLYERS              13.5       9.4    9.9    7.3   7.55  
+    1 HAWORTH                   6.4       8.4   10.6    3.6   7.05  
+
+[15:25 tetik]  ANKARA  KOSU 5 (yaris 15:30)  model a=+0.24 g=+0.94
+
+KOSU  5  15:30  1300m  3 Yaşlı İngilizler  (10 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    2 FELICIA STAR             22.4      31.8   29.3   17.7   2.55  F
+    7 FATMA ZERYAM             38.4      29.7   23.8   20.6   3.15  >>CANLI
+    5 MISFIT                   16.6       9.6    8.9   18.2   8.45  >>CANLI
+    9 HIGH HILLS                2.9       7.6   10.7    7.6   7.00  
+    3 KARDAHA                   5.4       6.5    7.7   12.3   9.70  
+    1 FORTHCOMING QUEEN         6.4       5.5    6.2   10.9  12.15  
+    8 FEMALE WARRIOR            2.4       3.1    4.3    4.5  17.60  
+    4 LADY ATAŞ                 1.3       2.6    4.1    3.2  18.15  
+   11 MIZMIZ MYRTLE             1.7       2.2    3.2    2.2  23.45  
+   10 LEADER TULIP              2.4       1.5    1.9    2.3  39.20  
+
+[16:55 tetik]  ANKARA  KOSU 8 (yaris 17:00)  model a=+0.24 g=+0.94
+
+KOSU  8  17:00  1400m  3 Yaşlı İngilizler  (10 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    4 ROMANTIC PARADISE        35.6      35.6   28.2    -     2.65  F
+    8 FOR FREEDOM               8.4      18.0   19.6    -     3.80  
+    5 BIGBOYCAPRICE             3.4      11.4   15.2    -     4.90  
+    2 TRAİDORA                 13.2       9.3    8.7    -     8.60  >>CANLI
+   10 KALİ STRATA               9.7       6.5    6.4    -    11.70  
+    7 GRENTLY WINS              3.7       4.5    5.5    -    13.45  
+    1 KUBAT KASIRGASI          15.7       4.3    3.6    -    20.80  >>CANLI
+    9 CRAZY DILDAR              2.3       4.2    5.8    -    12.85  
+    3 MISTER MIN JOU            5.5       4.2    4.6    -    16.25  
+    6 ÇAPGUR                    2.5       1.9    2.4    -    30.95  
+
+[17:41 tetik]  KOCAELI  KOSU 1 (yaris 17:45)  model a=+0.24 g=+0.94
+
+KOSU  1  17:45  1200m  3 Yaşlı İngilizler  (8 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    6 MY REBELLIOUS GIRL       18.1      31.5   31.1   23.9   2.40  F
+    4 SAVE YOUR TEARS          15.6      18.6   18.4   16.1   4.05  
+    1 HEARTS PATH              18.1      14.6   13.7   18.4   5.45  
+    2 PRINCESS DENİZ           25.2      14.6   12.6   17.9   5.95  >>CANLI
+    5 GOLDEN SCORE              7.2       8.1    9.2   11.2   8.10  
+    3 VICTORY STAR              7.6       6.0    6.6    6.9  11.40  
+    7 KINOWA GIRL               5.9       4.0    4.5    3.1  16.55  
+    8 CENTURIES VICTORY         2.2       2.7    3.9    2.6  19.35  
+
+[18:25 tetik]  KOCAELI  KOSU 2 (yaris 18:30)  model a=+0.24 g=+0.94
+
+KOSU  2  18:30  1900m  3 Yaşlı İngilizler  (7 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    3 BOLD RUNNER              19.1      41.4   42.6   50.4   1.75  F
+    5 RUZYM                    53.3      32.4   25.3   26.7   2.95  >>CANLI
+    2 AGUA REGIA                8.4       7.5    8.4    5.0   8.85  
+    1 YILMAKENAN                8.6       6.7    7.5    6.7   9.95  
+    6 İMPARATOR BİYEDİÇ         7.0       6.6    7.7    7.9   9.70  
+    4 KING OF MODENA            1.7       3.0    4.7    1.5  15.80  
+    7 RUS FARUK                 2.0       2.5    3.9    1.8  19.35  
+
+[18:55 tetik]  KOCAELI  KOSU 3 (yaris 19:00)  model a=+0.24 g=+0.94
+
+KOSU  3  19:00  2000m  3 ve Yukarı İngilizler  (11 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    9 JIMDEMA                   9.7      43.7   46.8   24.9   1.60  F
+    2 FELIX PERLA              39.2      16.6   11.7   25.0   6.40  >>CANLI
+    5 FINALLY ITS TIME          6.4      10.4   11.2   13.1   6.65  
+    3 SECRET LAV                7.9       7.0    6.9   11.7  10.80  
+    4 STASERA                   9.2       6.9    6.6   12.0  11.35  
+   10 MADAME SCARLET           10.1       6.0    5.6    4.7  13.45  >>CANLI
+    6 ASİL AZRA                 4.1       2.7    2.9    2.0  25.45  
+    1 BLACK RUBY                1.3       2.0    2.9    2.0  25.55  
+    8 İCRA                      1.8       2.0    2.7    2.4  28.10  
+    7 QUIET RIVER               8.8       1.8    1.6    1.5  47.75  
+   11 ELEGİE                    1.5       0.9    1.1    0.9  66.20  
+
+[20:55 tetik]  KOCAELI  KOSU 7 (yaris 21:00)  model a=+0.24 g=+0.94
+
+KOSU  7  21:00  1200m  2 Yaşlı İngilizler  (7 at)
+   [DUSUK GUVEN: ilk-kosu pay 0%, ort.gecmis 2.0 kosu -> Bot1 zayif, kamuya yaslan]
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    5 STAKES WINNER            17.2      33.0   33.1    -     2.25  F
+    1 BAYHAKAN                 19.9      21.7   20.4    -     3.65  
+    6 SUPER LION               25.6      14.5   12.4    -     6.00  >>CANLI
+    7 TORUN                    13.1      10.3   10.3    -     7.25  
+    2 DRAGON FURIOUS           11.0       8.1    8.2    -     9.05  
+    4 SLUICIFER                 2.5       6.7    9.9    -     7.55  
+    3 ONUR BEYİM               10.7       5.6    5.7    -    13.15  >>CANLI

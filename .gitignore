@@ -1,0 +1,13 @@
+# Sanal ortam + cache
+.venv/
+__pycache__/
+*.pyc
+
+# Buyuk / yeniden-uretilebilir veri (git disi; HARICI YEDEK SART - bkz KARARLAR K35):
+#   veri/ham/        1.1 GB ham JSON arsivi (kaynak: ebayi.tjk.org; kazi.py ile ~2 saatte yeniden inebilir
+#                    AMA arsivin acik kalacagi garanti degil -> harici disk/bulut kopyasi tut)
+#   katilim.csv      ham'dan duzlestir.py ile yeniden uretilir (88 MB)
+#   ozellikli.csv    katilim'dan ozellik.py ile yeniden uretilir (82 MB)
+veri/ham/
+veri/katilim.csv
+veri/ozellikli.csv

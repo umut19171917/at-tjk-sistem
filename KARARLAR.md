@@ -1,0 +1,316 @@
+# Karar Günlüğü
+
+Her karar: tarih, karar, gerekçe. Değişirse yeni satır eklenir (eski silinmez).
+
+---
+
+## 2026-06-29 — Başlangıç ve veri incelemesi
+
+**K1 — Problem çerçevesi.** Pari-mutuel + kesinti → negatif toplamlı. Hedef: havuz
+mispricing'ini bulmak, "kazanan tahmini" değil.
+*Gerekçe:* Favori genelde doğru fiyatlanır; sadece kazananı bilmek kesinti kadar kaybettirir.
+
+**K2 — Hedef: sürdürülebilir EV>0**, Benter-ilhamlı (kopya değil), jackpot avı yok.
+*Gerekçe:* Kullanıcı açıkça gerçekçi/sürdürülebilir kazanç istedi.
+
+**K3 — Faz 1 kapsamı: TR İngiliz atı düz koşuları, Ganyan + Plase.**
+*Gerekçe:* Edge'i en hızlı ölçebileceğimiz, en derin/likit, bizim bahsimizin oranı en az
+kaydırdığı havuzlar.
+
+**K4 — 4 pist (Elazığ, Diyarbakır, Urfa/Şanlıurfa, Adana) hariç — hem tahmin hem EĞİTİM.**
+*Gerekçe:* Şike söylentileri yaygın (kullanıcı); şikeli sonuç gerçek gücü yansıtmaz → modeli
+kirletir. Ayrıca bu pistler ağırlıkla Arap atı, zaten kapsam dışı.
+
+**K5 — Altılı/çok-koşulu + egzotik + yabancı koşular ertelendi.**
+*Gerekçe:* Çok-koşulu = devasa varyans/örnek azlığı/vergi eşiği. Egzotik = sığ havuz + price
+impact + kombinatorik. Yabancı = seyrek form + küçük havuz. Önce dar kapsamda edge kanıtla.
+
+**K6 — Çalışma alanı `Desktop/projeler/at`; kripto klasörü/hafızası kapsam dışı; bu projede
+otomatik hafıza KULLANILMAZ** (kayıt dosya tabanlı).
+*Gerekçe:* Kullanıcı net talep etti; otomatik hafıza cwd üzerinden kripto'ya bağlı.
+
+**K7 — Modelleme referansı: Benter çerçevesi** (fundamental conditional-logit + kamuoyu oranını
+özellik olarak harman + yalnızca model>piyasa kesintiyi aşınca oyna + kesirli Kelly).
+*Durum:* ⚠ Orijinal rapor (W. Benter, 1994) birincil kaynaktan henüz doğrulanmadı.
+
+**K8 — Veri kaynağı: `ebayi.tjk.org` statik JSON.** Üç katman mevcut, arşiv ≥2021.
+Detay: `raporlar/faz0-veri-fizibilite.md`.
+
+**K9 — Eldeki veri = SADECE 3 ay (2024-10-04 … 2024-12-31).** Kullanıcıda başka veri yok.
+1.602 koşu; izinli pistlerde 1.041 koşu / 9.340 katılım. İngiliz+izinli ≈ ~600-700 koşu.
+*Sonuç:* Prototip için yeter, edge kanıtı (Kapı #3) için YETERSİZ → ileride scraper ile
+genişletme şart. Detay: `raporlar/kapi2-veri-inceleme.md`.
+
+**K10 — Ganyan havuzu kesintisi ~%25,7** (verideki medyan overround 1,345).
+*Gerekçe/anlam:* Benter'in başarılı olduğu Hong Kong'dan (~%17-19) yüksek → eşik sert, edge
+marjı dar. İmkânsız değil ama zorlu.
+
+**K11 — İletişim kuralı: Asistan, seçenek sunduğu her iletinin sonunda kendi tavsiyesini
+gerekçesiyle verir.** Kullanıcı her seferinde "senin fikrin ne" diye sormak zorunda kalmaz.
+*Gerekçe:* Kullanıcı açıkça istedi (2026-06-29).
+
+**K12 — Sıradaki adım: Faz 1a — Veri hazırlama + Piyasa baz çizgisi** (eldeki 3 ay, MODEL YOK).
+ONAYLANDI (2026-06-29). İçerik: (1) temizle+join (İngiliz+izinli pist, parse kilo/yaş/start),
+(2) ganyan muhtemel mi kapanış mı teyit, (3) piyasa baz çizgisi: favori kazanma oranı,
+kalibrasyon eğrisi, favori-uzunşanslı sapması, kesinti dağılımı, (4) git/no-git kararı.
+Araç: Python + pandas. Yer: `at/kod/`.
+*Gerekçe:* Baz çizgi MARKETİ karakterize eder (~1000 koşu bunu kaldırır; model-fit kaldırmaz),
+overfit etmez, scraper'ı de-riske eder, ve erken git/no-git sinyali verir.
+
+**K13 — Baz çizgi sonucu: piyasa VERİMLİ, kesinti ~%25,5.** Favori %34,6 kazanıyor (implied
+%34,2 — neredeyse tam kalibre); hiçbir oran bandı pozitif ROI vermiyor (en iyisi −%23, kapanış/
+iyimser). Tek desen: uç uzunşanslılar (30+) ağır şişirilmiş.
+*Anlam:* Kolay/naif edge YOK. Kâr ancak fundamental modelin kova-içi mispricing bulmasıyla
+mümkün — bu da bu veride (form yok) test edilemez. Önsel beklenti karamsar ama "kesin hayır"
+için form'lu veri + α testi şart. Detay: `raporlar/faz1a-piyasa-baz-cizgisi.md`.
+
+**K14 — Mimari: iki aşamalı (Benter-uyumlu). ONAYLANDI.**
+- Bot 1 (oran KÖR): conditional logit → p_fund. Eğitilmiş şeffaf model, elle-formül DEĞİL.
+- Bot 2 (oran AÇIK): p = combine(p_fund, p_piyasa; α,γ) → değer (p×oran−1>marj) → kesirli Kelly.
+- **Yerleşik kill-criterion:** Bot 2'nin Bot 1'e verdiği α ağırlığı. α≈0 → dur; α anlamlı → devam.
+- Tuzaklar: Bot1→Bot2 cross-fitting (sızıntı), ve form'lu veri zorunluluğu.
+
+**K15 — Özellik kataloğu + şema doğrulaması.** T1: hız figürü+pist varyantı, form/fark, sınıf+HP,
+mesafe/zemin uygunluğu, kulvar sapması (pist×mesafe×zemin×saha). T2: rolling jokey/antrenör+kombin,
+DSLR/mola, ilk-kez ekipman, soyağacı. Çatı: nokta-anında (look-ahead yok) + saha-göreli + karmaşığı
+modelin dışında türet. **Doğrulama (gerçek JSON):** going ✓ VAR (sonuçta CIM/KUM_TR), hava ✓ (HAVA),
+ama **yarış-içi pozisyon ✗ YOK → koşu tarzı/tempo BLOKE** (handikabın güçlü silahı, elimizde değil);
+at vücut ağırlığı ✗. Detay: `raporlar/faz0-veri-fizibilite.md`.
+
+**K16 — Kazıma kapsamı: 2021-01-01 → bugün, sadece Türkiye pistleri. ONAYLANDI.**
+Yerel (token=0): `kod/kazi.py` Windows'ta ham JSON indirir; ben özet okurum. 4 şüpheli pist
+İNDİRİLİR (atın form geçmişi onları da içerebilir) ama eğitim/tahminde dışlanır.
+Kaynaktan kazıma, eldeki CSV'nin join sorununu (Kapı #2 #4) native çözer + form/AGF/going ekler.
+
+**K17 — Veri hattı kuruldu ve doğrulandı (kısmi veride test).**
+- `kod/kazi.py`: yerli pist tespiti **GUN-dolu kuralıyla** (KEY tahmini YOK → DBAKIR vb. kısaltmalar
+  otomatik yakalanır). Resumable, throttle'lı, stdlib-only.
+- `kod/duzlestir.py`: ham full JSON → `veri/katilim.csv` (her satır = at-koşu). Sonuç tabanlı +
+  programdan muhtemel/AGF/handikap merge. **Stabil ID'ler (at/jokey/antrenör KOD) → join sorunu yok.**
+  Kapsama (kısmi test): ganyan_kapanış %98, muhtemel %97,5, going %99, handikap %86, irk native.
+- **Bulgu:** Diyarbakır'ın KEY'i zamanla değişmiş (DBAKIR↔DIYARBAKIR) → `SEHIR_MAP` ile kanonikleştirildi.
+  Full kazıma bitince `kazi_ozet.txt`'deki pist listesinden başka varyant var mı kontrol edilecek.
+
+**K18 — Tam veri hazır (Kapı #2 AŞILDI).** Kazıma 2021-01-01..2026-06-29 tamam (1991 yarış günü,
+8187 dosya, 0 hata). `duzlestir.py` → `veri/katilim.csv`: **341.244 at-koşu / 34.857 koşu.**
+**Faz 1 kapsamı (İngiliz + izinli pist): 13.597 koşu, 122.018 at-koşu, 10.028 at, 457 jokey,
+903 antrenör.** Yıllara dengeli (2021-2026) → walk-forward mümkün. ganyan %97,4 dolu.
+Pist varyantı: sadece DBAKIR↔DIYARBAKIR (SEHIR_MAP ile çözüldü), başka yok.
+
+**K19 — KARAR DENEYİ sonucu (Bot1+Bot2, walk-forward, test 2025-26).** `kod/model.py`.
+- **α = +0,18** (fundamental ağırlığı; kill-criterion α≈0 TETİKLENMEDİ → fundamental gerçek sinyal ekliyor).
+- Test log-loss: piyasa 1,7051 → **harman 1,6969** (harman piyasayı OOS yendi, kıl payı).
+- **Değer bahsi (EV>1, kapanış/iyimser): 2 yılda 5 bahis, 0 isabet** → pozitif-EV neredeyse yok.
+- **Verdict:** Yöntem geçerli (mimari çalışıyor) AMA edge %25,5 kesintiyi aşmaya yetmiyor (fersah fersah).
+  Çekirdek özelliklerle ganyan piyasası dövülemiyor. Engel yapısal (verimli piyasa + yüksek kesinti).
+- Açık: küçük edge bir nişte (saha boyu/sınıf/oran aralığı/maiden) yoğunlaşıyor olabilir → segment analizi.
+
+**K20 — Segment analizi: NİŞ YOK. NİHAİ VERDICT: ganyan piyasası dövülemiyor.** `kod/segment.py`.
+- EV-desil: en iyi desil −%20, en kötü −%70 (sinyal sıralı/gerçek) ama hiçbir bölge pozitif değil.
+- Her segment (saha/sınıf/pist/oran) −%21…−%36. Beatable niş yok.
+- Kontrarian (model≠favori): −%35,6 → fundamental fazla bilgi, piyasayı geçen overlay ÜRETMİYOR.
+- **KARAR: Kâr amaçlı ganyan tahmini durduruldu.** Engel yapısal (verimli piyasa + ~%25 kesinti),
+  yöntem/yürütme değil. Altyapı (5,5 yıl veri, kazi/duzlestir/ozellik/model hattı, leak-denetimli
+  conditional-logit) sağlam ve yeniden kullanılabilir; sonuç dürüst bir TRUE NEGATIVE.
+
+**K21 — PIVOT: egzotik (exacta) ilk testi. Yön doğru, kâr değil.** `kod/egzotik_ayikla.py` (temettü
+çıkarma: exacta %99,4 dolu) + `kod/egzotik_test.py` (Harville + backtest). Exacta overlay ROI
+**−%18,8** (ganyan −%28'den iyi → egzotik daha affedici, tez destekleniyor) ama hâlâ negatif.
+Exacta efektif kesinti ~%26. **Kritik sınır:** bu test yalnızca BİZİM olasılık-overlay'imizi ölçer;
+kalabalığın Harville'den YAPISAL SAPMASINI (profesyonel edge'in asıl kaynağı) ölçemez — TJK sadece
+kazanan temettüyü yayınlıyor (will-pays yok). Sıradaki: kalabalığın kombinasyon-yapısal sapması
+(model-free probe).
+
+**K22 — Yapısal sapma probe'u: kalabalık egzotikte de VERİMLİ.** `kod/yapisal.py`. Favori-sıra
+ızgarası (1.×2.): tüm hücreler −%18…−%56, hiçbiri +EV değil (ROI>−5% hücre: 0). Kanonik stratejiler
+(test 2025-26): favori/saha −%26, saha/favori −%24, top2 box −%23, top3 box −%26, uzunşanslı −%31.
+**Sonuç:** Exacta kalabalığı kombinasyonları kötü kurmuyor → sömürülebilir yapısal mispricing YOK.
+Üç bağımsız negatif (ganyan/exacta-overlay/exacta-yapısal). **Tek test edilmemiş: Altılı (arkadaşın
+asıl oyunu)** — 10^6 kombinasyonla yapısal verimsizliğin saklanabileceği TEK yer, ama doğrulaması
+zor (variance/power). Exacta verimliliği Altılı için kötü işaret ama kesin değil.
+
+**K23 — ALTILI testi: top-k spread derin negatif, model katkı YOK.** `kod/egzotik6_ayikla.py`
+(4112 olay) + `kod/egzotik6_test.py`. Test 2025-26: en iyi top-k (k=2 piyasa) −%34, gerisi
+−%47…−%90; eğitim −%79…−%96. **Model sırası piyasayı yenmiyor (k=2'de daha kötü)** → fundamental
+model Altılı'ya da katkısız. Variance devasa (düşük güç) ama merkez açıkça ağır kayıp.
+**NİHAİ VERDICT (5 bağımsız test): sistematik model-tabanlı yaklaşım hiçbir TJK havuzunu
+dövemiyor.** Model istatistiksel olarak geçerli (α>0) ama hiçbir yerde kâra dönmüyor (verimli
+piyasa + ~%25-40 kesinti). Arkadaşın edge'i fundamental-olasılık modeli DEĞİL → muhtemelen
+Altılı kupon-kurma zanaati (banker/spread) + tacit/yerel bilgi + disiplin. Bu ayrı, sanat-ağırlıklı,
+belirsiz bir proje; kurduğumuz şeyin devamı değil.
+
+**K24 — "Sahte favori" yok AMA chalk-koşu canlı-non-favori sinyali GERÇEK (yön).** `kod/favori_test.py`.
+Favoriler implied'ı tutturuyor/aşıyor (sahte-favori mekanizması yok). FAKAT favori çok güçlüyken
+(implied %55-70) 2. tercih ROI −%12 (n=168) vs açık koşularda −%25…−%38 → kullanıcının/arkadaşın
+"yüksek-AGF'de canlı alternatif" sezgisi veriyle DESTEKLENİYOR (yön doğru), ama hâlâ negatif (ganyan).
+Model "2. favoriyi oyna"yı geçemiyor. Açık soru: bu chalk-non-favori sinyali EGZOTİK monetizasyonla
+(favori kaybedince büyük temettü) +EV'ye dönüşür mü — hedefli Altılı testi (chalk ayakta non-favori
+yay, açık ayakta banker).
+
+**K25 — Chalk + favori-karşıtı egzotik: yine +EV YOK.** `kod/chalk_egzotik.py`. Güçlü-favori (implied
+%55+, 662 koşu) koşularda favori-karşıtı exacta yapıları: hepsi negatif (tüm-veri), en iyi "2-3 box"
+−%15,9; "favori yenildi" −%48,7 (favori çoğu kez kazandığı için ona karşı oynamak pahalı). Test-sütunu
++%111,9 = 27 koşuluk GÜRÜLTÜ (kullanılmadı). **SONUÇ: arkadaşın yöntemi (chalk + canlı non-favori +
+egzotik) precise haliyle test edildi → sistematik/veri-türevli hiçbir versiyonu +EV vermiyor.** Edge,
+veride OLMAYAN seçim/yargıda (tacit: hangi non-favori "canlı", durum seçimi). Model "2. favori"yi
+geçemiyordu → live-non-favori'yi piyasadan iyi ayırt edemiyoruz. Tek veri-dürüst devam: arkadaşın
+fiili karar kurallarını çıkarıp O kuralları test etmek (outcome'dan tersine türetilemez).
+
+**K26 — Günlük araç (`gunluk.py`) inşası — ONAYLANDI.** Amaç: KÂR DEĞİL (6 test +EV yok; biliyoruz).
+Amaç = çalışan sistem + öğrenme + firsthand kapanış + kalibre "matematik görüşü"nü analiz aracı olarak
+kullanıcı yargısıyla birleştirmek. Tasarım iki kipli:
+- `--sabah`: tam kart; her koşu **Bot1%** (oran-kör, kendi AGF'si) + **Bot2%** (harman) + kamu(AGF/oran)
+  + **canlı-non-favori işareti** (Bot1% ≫ kamu%). Altılı planı 1. ayaktan ÖNCE bunun üstüne kurulur.
+- `--kosu <no>`: o tek koşuyu güncel kadro/jokey/oranla **Bot1→Bot2 YENİDEN** koşar (çıkan at/jokey
+  Bot1%'i de değiştirir: saha re-normalize + jokey feature; sadece Bot2 yetmez).
+- **Canlı ≠ sızıntı:** tahmin anında gelecek yok; özellikler eğitimle AYNI nokta-anında mantıkla
+  (`ozellik.py` fonksiyonları yeniden kullanılır). Canlı aslında daha AZ bilgi (ileri-ayak scratch'leri) →
+  backtest'ten kötü olabilir, hile değil.
+- İnşada İLK doğrulama: 5dk-kala canlı oran kaynağı (program JSON güncelleniyor mu yoksa
+  `vhs.tjk.org/muhtemeller` feed mi) + scratch/jokey program'a yansıyor mu.
+
+## 2026-06-30 — Günlük araç inşası
+
+**K27 — `gunluk.py` KURULDU, canlı veriyle uçtan-uca doğrulandı.** `kod/gunluk.py`.
+- **Canlı kaynak (K26 ilk doğrulama → TAMAM):** ayrı feed GEREKMİYOR. Tek endpoint
+  `program/{Ymd}/full/{KEY}.json` her şeyi taşıyor: `GANYAN`=canlı muhtemel (koşulmamış koşuda
+  bile dolu/güncel), `KOSMAZ`=çıkan at, `JOKEYKODU/ADI`=güncel jokey, `AGF1`+top-level `agf`
+  bloğu `AGFMODTIME` ile (canlı). Bugün (2026-06-30) ANKARA'da test: 200, 8 koşu çekildi.
+- **Mimari:** bugünün canlı program satırları geçmiş `katilim.csv`'ye eklenir → EĞİTİMLE AYNI
+  `ozellik.build_features` (tek kaynak; `ozellik.py` `load_katilim`/`build_features`/`select_scope`
+  fonksiyonlarına ayrıldı, çıktı **bit-aynı** = FEAT-md5 `7cddc980…` değişmedi) → Bot1 (oran-kör,
+  eğitim ≤2024) + Bot2 (harman, holdout 2025). Bugüne uygulama: α=+0,24 γ=+0,94 (validated
+  +0,18'e yakın). Tüm parsing/fit kodu mevcut modüllerden import (ayrışma yok).
+- **KRİTİK HATA (bulundu+düzeltildi):** program JSON'da `KOD/JOKEYKODU/ANTRENORKODU` **string**;
+  geçmiş int64. Düzeltmeden önce `groupby at_kod/jokey` join'i kırılıyordu → bugünün TÜM atları
+  "geçmişsiz" → kariyer/form/hız/jokey özellikleri NÖTR (en güçlü sinyaller, fark +0,3…+0,5,
+  ölüydü). `as_int()` ile çözüldü. Etki çarpıcı: STEEL ROCK Bot1 %31→%62, uzun-şanslı %16→%2.
+- **SIZINTI/kontaminasyon testi GEÇTİ:** bugün eklenince geçmiş 118.171 satırın FEAT-md5'i
+  referansla birebir aynı → bugün geçmişi bozmuyor, bugünün özellikleri yalnızca geçmişten
+  (nokta-anında). "Canlı ≠ sızıntı" doğrulandı.
+- **KAPSAM:** model yalnızca TR İngiliz; Arap/2yaş-maiden/küçük-saha "model kapsam dışı" (sadece
+  kamu). 2yaş/az-geçmiş sahada "DÜŞÜK GÜVEN" satırı (Bot1 zayıf → kamuya yaslan).
+- **DÜRÜSTLÜK (talimatname):** `>>CANLI` işareti (Bot1 ≫ kamu win-olasılığı) **bahis sinyali
+  DEĞİL** — bunlar K20'de kontrarian= −%35 test edilen ayrışmalar; "kendi yargınla bak" işareti.
+  Bot2 ≈ kamu (γ=0,94) → harman piyasayı çok az kaydırıyor (verimli-piyasa bulgusunun aynısı).
+  Başlıkta "+EV değil, KÂR garantisi yok" uyarısı sabit.
+- **Kullanım:** `python gunluk.py --pist ANKARA` (tam kart), `--kosu N` (tek koşu, güncel
+  kadro/oranla yeniden çek), `--tarih YYYY-MM-DD`, argümansız → günün yerli pistleri.
+- **Açık (sıradaki muhtemel adımlar):** (1) Arap modeli (Altılı ayaklarının yarısı Arap; şu an
+  kapsam dışı) — ayrı eğitim/validasyon gerek; (2) `defter.py` kâğıt-ticaret defteri (tahminleri
+  kaydet, ertesi gün sonuçla eşle, hipotetik P&L); (3) hız için param/feature cache (çalışma süresi
+  ~15-20sn/koşu).
+
+**K28 — `defter.py` KURULDU, tam döngü gerçek veriyle doğrulandı.** `kod/defter.py`.
+- **Karar (kullanıcı "sen karar ver"):** ROI tally'leri **GANYAN** bazlı (model win-olasılığı
+  üretir; plase modeli/temettüsü yok → plase-ROI eklemek = yeni model+veri = sistemi bozma riski).
+  Plase sezgisi **bedava** karşılandı: varış pozisyonu zaten kayıtlı → özet model top-pick'in
+  win/ilk-2/ilk-3 **isabet oranını** gösterir (plase modeli gerekmeden). Plase-ROI = ileride net
+  kapsamlı adım (temettü çıkarımı + plase olasılık modeli).
+- **Arkadaş-ekseni ÇIKARILDI** (kullanıcı: düzenli veri alamam). Kalan manuel girdi = *opsiyonel
+  kendi seçimin* (`--secim`, düzensiz olabilir). Defter aksi halde tam otomatik.
+- **Tasarım/komutlar:** `kaydet` (gunluk.hesapla'yı yeniden kullanır = tek kaynak; İngiliz-puanlı
+  satırları upsert eder, çözülmüş satırları korur, eski secim'i korur), `sonucla` (sonuçlanmamışları
+  `sonuclar/full` feed'inden eşler: varış + kapanış ganyan + kazandı), `ozet` (kalibrasyon + log-loss
+  Bot2-vs-kamu + hipotetik ROI: model-top-pick / kamu-favorisi / >>CANLI / senin-seçimlerin +
+  top-pick isabet). Defter: `veri/defter.csv`.
+- **Gerçek-veri döngü testi (2026-06-30 ANKARA, koşular bitmişti):** kaydet 29 at → sonucla 29 →
+  ozet çalıştı. İllüstrasyon (n=4 koşu, GÜRÜLTÜ): >>CANLI ROI −%39 (K20 kontrarian −%35 ile tutarlı),
+  top-pick ilk-3 %100, log-loss Bot2 0,87 vs kamu 0,83. **Test defteri silindi (temiz başlangıç);
+  gerçek kâğıt-ticaret yarıştan ÖNCE `kaydet` ile başlar.**
+- **Hata (düzeltildi):** all-NaN `sonuclandi` sütunu float64 okunuyor → tarih str ataması pandas 3.0'da
+  patlıyordu; `astype(object)` ile çözüldü.
+
+**K29 — `takip.py` OTOMATİK TAKIP kuruldu (kullanıcı: "sabah başlat, gün boyu koşsun").** `kod/takip.py`.
+- **Otomasyon düzeyi (kullanıcı seçti):** sabah-başlat, gün-boyu-koş (Windows Görev Zamanlayıcı şart
+  değil). Sınır: PC yarış saatlerinde açık/uyanık olmalı (yerel script; uyurken tetiklenmez).
+- **Kullanıcı gereksinimleri:** sadece İngiliz koşuları (Arap yok → Altılı tahmini yok); her koşuyu
+  yarıştan ~5 dk kala CANLI oranla analiz; "kazanır dediği at" değil **tüm atları kendi AGF%'siyle
+  sırala**. → `gunluk.kosu_yaz` `kosu_rapor`'a çevrildi (satır listesi döndürür, tek kaynak), sıralama
+  **Bot2'ye** (=sistemin kendi AGF'si, "AGF%(sis)" sütunu) göre; tüm atlar + kamu oranı yan yana.
+- **Akış:** sabah günün yerli pistleri + (yalnız İngiliz) koşu saatlerini çıkarır → her koşu SAAT−5dk'da
+  canlı çekip raporlar (ekran + `raporlar/gunluk/{tarih}_{pist}.txt`) + `defter.yaz_tg(only_kosu=N)` ile
+  deftere işler → tüm koşular bitince `defter.sonucla`. `--once` = vakti gelmişleri bir kez işle/çık
+  (test + zamanlayıcı paterni). `--pist`/`--dk`/`--bekle` ayarlanır.
+- **Doğrulama:** `--once` ANKARA 2026-06-30 → 5 İngiliz koşusu zamanlama planıyla listelendi, hepsi
+  raporlandı (AGF%(sis) sıralı, kamu yan yana), deftere işlendi, sonucla çalıştı, rapor dosyası yazıldı.
+  Test artıkları (defter.csv + rapor) silindi → temiz başlangıç.
+- **Refaktor güvenli:** `kosu_rapor` değişikliği sonrası `gunluk.py` doğrulandı; `defter.kaydet`,
+  `yaz_tg`+`kaydet` olarak ayrıldı (takip tek koşu yazabiliyor). Tüm araçlar tek `hesapla` çekirdeğini
+  paylaşır (gunluk/defter/takip).
+- **Hangi pistler:** `--pist`siz → o günün TÜM izinli yerli pistleri (yalnız İngiliz koşuları; bir
+  günde 2-3 pist olabilir, hepsi saatlerine göre sıralı). **K4: 4 şüpheli pist (Elazığ/Diyarbakır/
+  Urfa/Adana) takip'te de baştan dışlanır** (sonradan eklendi; önce planlanıp boşuna çekiliyordu).
+- **Çalıştırma:** yarış günü sabahı `python kod/takip.py` (veya `--pist X`); terminal açık kalmalı.
+
+**K30 — `defter.py goster` eklendi (kullanıcı: okunur, koşu-bazlı görünüm istedi).** `ozet` toplu-istatistik,
+ham CSV 21-sütun → kullanıcı gün/koşu/at bazlı tahmin+sonuç istedi. `goster [--tarih] [--pist]`: her
+koşuyu ayrı blok yazar — no, at, Bot1%, AGF%(sis)=Bot2, kamu%, oran, VARIS (gerçek varış), iz
+(KAZANDI/F/CANLI) + "kazanan: X (model N., kamu M.)" satırı. Varış'a göre sıralı (kazanan üstte).
+Doğrulama (2026-07-01 ISTANBUL, gerçek): 3 koşu okunur biçimde döküldü; canlı illüstrasyon — K2'de
+favori (LIVE YOUR FREEDOM oran 1.30, F) 6. oldu, CANLI'lar hep geride, longshot DARK MONEY (15.75)
+kazandı → CANLI/favori "bahis sinyali değil" bir kez daha somutlandı (n küçük, gürültü).
+
+**K31 — HTML çıktı + çift-tık başlatıcılar (kullanıcı: PowerShell dışında erişim istedi).** `defter.html_yaz`
+→ `raporlar/defter.html`: gün/koşu/at bazlı okunur tablo (kazanan satır yeşil, F/CANLI renkli, tarih
+desc/koşu asc). `defter.py html` yazar+tarayıcıda açar; `sonucla` ve `takip` (her koşuda + gün sonu)
+otomatik tazeler. İki `.bat` (kök klasörde, çift-tık, PowerShell'siz): **`baslat_takip.bat`** (gün boyu
+takip) + **`sonuclari_goster.bat`** (sonucla + HTML aç). Kullanıcı sadece HTML'i çift-tıklar; oran/veri
+`.venv` python ile arka planda. Gerçek veriyle üretildi/doğrulandı (2026-07-01 ISTANBUL, 3 koşu).
+
+**K32 — Bot1 özellik genişletme, Batch 1: jokey/teçhizat değişim sinyalleri (kullanıcı: "gerekli
+gördüğün her şeyi ekle, sen planla").** Önce veri denetimi (175k İngiliz satırı, 2021-2026):
+- **Kritik ders (önce iddia edilen "veri hazır" YANLIŞ çıktı):** `at_eniyi` geçmişte **%0 dolu**
+  (`ENIYIDERECE` sonuç JSON'unda yok, sadece programda) → ÖLÜ, kullanılamaz. Veri-denetimi olmadan
+  eklenseydi sessizce boş/gürültü özellik olurdu.
+- **Tasarım düzeltmesi:** Bot1 koşu-içi z-skor (conditional logit) → **koşu-sabiti alanlar** (going,
+  sinif, mesafe, hava) doğrudan giremez (z=0). Ancak **atın kendi geçmişiyle etkileşim** olarak girer.
+- **Eklenen (nokta-anında, shift(1), ikili 0/1, z'siz — disi/ilk_kosu deseni):** `jokey_degisim` (jokey
+  önceki koşuya göre değişti mi), `taki_ilk` (ilk kez eklenen teçhizat kodu — kod semantiği
+  varsayılmadan küme farkı). **`taki_kalkan` test edildi → ATILDI:** koşullu katsayı (+0.030) ham yönüne
+  (−3.72pp) ters = bağımsız katkı ~0 (gürültü); 18. özellik Bot1'i +0.00004 kötüleştirdi.
+- **Walk-forward holdout (eğit ≤2023, harman 2024, test 2025-26) log-loss:**
+  Bot1 1.86119 → **1.85590** (−0.28%); jokey_degisim katsayı **−0.228** (6. en güçlü, jokey değişimi =
+  daha az galibiyet; ham: %10.2 vs %13.8), taki_ilk −0.073. ALPHA +0.181 → +0.191.
+- **DÜRÜST SONUÇ:** **Bot2 (harman = üretim çıktısı) delta = −0.00002 → SIFIR.** Piyasa bu sinyalleri
+  zaten fiyatlıyor; +EV değişmedi (bir kez daha piyasa-verimliliği). Fayda yalnız **Bot1'in bağımsız
+  (oran-kör) görüşünü** azıcık keskinleştirmek (→ CANLI karşılaştırması biraz daha anlamlı). Abartı yok.
+- **Tek kaynak:** `model.py` kopya FEAT'i kaldırıldı → `from ozellik import FEAT`. Canlı yol
+  (`gunluk.py`) yeni özelliklerle doğrulandı (ISTANBUL K6, çökme yok). FEAT 15 → **17**.
+- **Sıradaki batch (açık):** Grup A (going/mesafe **uygunluk** = atın kendi geçmişi × koşul), Grup C
+  (jokey×antrenör ikili oran). Aynı protokol: geçmezse atılır.
+
+**K33 — Batch 2 (going/mesafe uygunluk) TEST EDİLDİ → EKLENMEDİ; özellik mühendisliği KAPATILDI
+(ön-taahhütlü durma kuralı).** Kullanıcıyla anlaşma (K32 sonrası): Batch 2'yi **son** özellik testi
+olarak çalıştır; Bot2 kıpırdamazsa (beklenen) yolu kapat, birikim moduna geç.
+- **Eklenenler (nokta-anında, `zemin_galip_oran` deseni, z-skorlu):** `going_uygunluk` (atın going
+  kovasındaki — going_agirlik 0=normal/>0=yumuşak — önceki galip oranı), `mesafe_uygunluk` (mesafe
+  bandındaki önceki galip oranı). Doluluk %87.8 / %76.6.
+- **Holdout (17 → 19):** Bot1 1.85590 → 1.85580 (−0.00010, Batch 1'in 50'de biri); **Bot2 1.69691 →
+  1.69687 (−0.00004 → SIFIR)**; ALPHA/GAMMA değişmedi.
+- **`mesafe_uygunluk_z`: katsayı −0.001 (~0)** — ham sinyal var (+0.196) ama kariyer/form ile
+  eşdoğrusal → bağımsız katkı yok (taki_kalkan gibi).
+- **`going_uygunluk_z`: kilitli modelde katsayı +0.073** ve **`zemin_galip_oran_z` +0.137 → +0.064'e
+  düştü** (0.064+0.073=0.137). Yani going_uygunluk zemin'in ağırlığını böldü = **ayrı sinyal değil,
+  aynı koşul-tercihinin daha ince partisyonu (eşdoğrusal).** (İzole 19-özellik testinde geçici +0.380
+  görünmüştü — collinear kararsızlık; kilitli değer +0.073.)
+- **KARAR:** ikisi de FEAT'e **eklenmedi**, model **17'de** (Batch 1 kilidi) kaldı. `build_features`'ta
+  going/mesafe_uygunluk hesabı da kaldırıldı (yalnız `mes_kova` kalır, kulvar_skor için). `ozellikli.csv`
+  yeniden üretildi, `model.py` 17-özellik teyit (Bot1 1.8559 / Bot2 1.6969), canlı yol (ISTANBUL K6) aynı.
+- **SONUÇ (kapanış):** 6 önceki test + Batch 1 (bariz sinyaller) + Batch 2 (incelikli etkileşimler) —
+  **hiçbir kamuya-açık-veri özelliği Bot2'yi (üretim çıktısı) oynatmıyor.** Kenar veri-mühendisliğinde
+  değil. **Özellik mühendisliği kapatıldı.** Enerji → asıl darboğaz: **canlı kâğıt-ticaret geçmişi
+  biriktirmek** (CANLI/ayrışma işaretlerinin gerçek değeri ancak haftalarca gerçek sonuçla ölçülür).
+
+**K34 — HATA (bulundu+düzeltildi): `takip.py` sabah "izinli takip edilecek koşu yok" diyordu.**
+Kullanıcı 2026-07-02 Ankara yarışları varken takip'i çalıştırdı, boş döndü. Kök neden: `yerli_pistler()`
+günün pist listesini **sonuçlar** index'inden (`sonuclar/{ymd}/yarislar.json`) çekiyordu — ama o feed'de
+yarış GÜNÜ (GUN) **akşam sonuçlar dolunca** yazılıyor; sabah GUN boş → `GUN` filtresi tüm pistleri eledi
+→ `[]`. Yani tam "sabah başlat" senaryosunda (aracın asıl kullanımı) bozuktu.
+- **Düzeltme:** kaynak **program** index'ine çevrildi (`program/{ymd}/yarislar.json`) — sabah da dolu.
+  TR pistlerde `GUN` sayısal (ANKARA=32, KOCAELI=17), yabancı pistlerde (VAAL/LONGCHAMP/KEMPTON…) `GUN`=None
+  → mevcut GUN filtresi TR/yabancıyı zaten doğru ayırıyordu; yalnız endpoint yanlıştı. Tek satır + docstring.
+- **Doğrulama (salt-okunur, deftere yazmadan):** yerli_pistler → ANKARA + KOCAELI; takip programı **8
+  İngiliz koşusu** (ANKARA 1/3/5/8 + KOCAELI 1/2/3/7) saatleriyle listelendi. `gunluk.py` argümansız
+  liste de artık sabah çalışır (aynı fonksiyon). Regresyon yok: fonksiyon yalnız "bugünün pistleri"
+  keşfinde kullanılıyor; geçmiş sonuçlama `sonuclar/full`'u ayrı kullanır.
