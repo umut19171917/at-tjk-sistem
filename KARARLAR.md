@@ -314,3 +314,79 @@ yarış GÜNÜ (GUN) **akşam sonuçlar dolunca** yazılıyor; sabah GUN boş �
   İngiliz koşusu** (ANKARA 1/3/5/8 + KOCAELI 1/2/3/7) saatleriyle listelendi. `gunluk.py` argümansız
   liste de artık sabah çalışır (aynı fonksiyon). Regresyon yok: fonksiyon yalnız "bugünün pistleri"
   keşfinde kullanılıyor; geçmiş sonuçlama `sonuclar/full`'u ayrı kullanır.
+
+## 2026-07-02 (gece) — Dış inceleme + revizyon paketi (gerçek-para bağlamı)
+
+Bağlam: sistemin baştan sona kod incelemesi yapıldı; kullanıcı iki şeyi netledi: (1) defter/takip
+hem öğrenme aracı hem **CANLI-işareti ölçüm deneyi**; (2) **gerçek parayla bahis VAR.** Bu ikisi
+önceliği belirledi: deney bütünlüğü + gerçek P&L ölçümü. Tüm değişiklikler tek gecede, paket paket
+commit'lendi; değişiklik ÖNCESİ hal `BASELINE` commit'inde.
+
+**K35 — Sürüm kontrolü + yedek + bağımlılık pinleme.** `at/` git deposu oldu (önce değildi; tek disk,
+tek kopya — KARARLAR.md dahil). `.gitignore`: `.venv`, `veri/ham` (1.1 GB), katilim/ozellikli.csv
+(yeniden üretilebilir) dışarıda; kod+raporlar+defter+küçük CSV'ler içeride. `requirements.txt`
+(pip freeze; Python 3.14.6, pandas 3.0.4, numpy 2.5.0, scipy 1.18.0).
+*AÇIK GÖREV (kullanıcı):* `veri/ham`ın tek seferlik HARİCİ kopyası (USB/bulut) — kazıma tekrarı
+~2 saat AMA arşivin açık kalacağının garantisi yok; git bunu KAPSAMIYOR.
+
+**K36 — Deney bütünlüğü paketi.** İnceleme 3 sessiz bozulma yolu buldu; üçü de kapatıldı:
+- **Nokta-anında dt-guard (`gunluk.hesapla`):** arşivden, tahmin gününden İTİBAREN tüm satırlar
+  düşülür. Tek kural iki sızıntıyı keser: (a) aynı koşu arşivde de varsa (geçmiş `--tarih` /
+  gün-içi tazeleme) `shift(1)` mekaniği koşunun SONUCUNU bugünkü özelliklere taşırdı;
+  (b) geçmiş-tarihli çalıştırmada o günden sonraki koşular özelliklere girerdi. Normal kullanımda
+  (arşiv < bugün) hiçbir satır düşmez → davranış birebir aynı (K27 kontaminasyon özelliği korunur).
+- **Bayatlık uyarısı:** `hesapla` arşiv-son-gününü basar; >3 gün eskiyse açık uyarı. (İnceleme anında
+  arşiv 2026-06-29'da donmuştu = son 3 günün koşuları form/kariyer özelliklerine girmiyordu, hiçbir
+  araç uyarmıyordu.)
+- **Veri tazeleme protokolü:** `kazi.py --guncelle` (arşivdeki son günden bugüne; sınır günü yeniden
+  indirilir — gün-içi kısmi inmiş olabilir) + `kod/guncelle.py` (kazi + yeni dosya indiyse duzlestir;
+  yoksa hızlı geçer). `baslat_takip.bat` artık önce guncelle sonra takip çalıştırır. DİKKAT: guncelle
+  takip ÇALIŞIRKEN elle çalıştırılmaz (katilim.csv yazma/okuma çakışması).
+- **Defter ileriye-dönüklük koruması (`defter.yaz_tg`):** posta saati geçmiş koşu deftere yazılamaz
+  (3 dk tolerans). Önceden takip'i öğlen başlatmak sabahki koşuları yarış-SONRASI oranla "tahmin"
+  diye kaydederdi → deney verisi kirlenirdi. `takip.py` de geçmiş koşuyu hiç işlemez.
+
+**K37 — GERÇEK-BAHİS DEFTERİ (fiili kuponlar; kâğıt-defterden AYRI dosya `veri/bahisler.csv`).**
+Gerekçe: 6 test "model kesintiyi aşamıyor" dedi; test edilmemiş tek şey KULLANICININ YARGISI.
+Gerçek para oynandığına göre ölçülmesi gereken soru: "senin seçimlerin kesintiyi aşıyor mu?"
+Hipotetik flat-1-birim tablosu bunu ölçemez (miktar/tür/kupon farkı).
+- Komutlar: `defter.py bahis --pist X --kosu N --tur ganyan --secim 3 --miktar 50` (kupon başına bir
+  satır; altılı vb. için koşu=ilk ayak, seçim serbest metin) + `bahis-sonuc --id N --getiri X`
+  (0=kaybetti). Çift-tık: **`bahis_gir.bat`**.
+- Ganyan tek-at kuponları `sonucla`da OTOMATİK sonuçlanır (kazandı → miktar × kapanış-ganyan).
+  Diğer türler elle (TJK plase/egzotik temettü çıkarımı ayrı iş; şimdilik kapsam dışı).
+- `ozet` + `defter.html`: gerçek P&L bölümü (toplam + tür bazlı ROI; n<30'da "sonuç çıkarma" uyarısı).
+- **ÖN-TAAHHÜTLÜ DEĞERLENDİRME KURALI (TASLAK — sayılar kullanıcı onayı bekliyor):**
+  (1) Aylık gerçek-bahis bütçe tavanı: ___ TL (kaybı taşınabilir "eğlence bütçesi" olarak kullanıcı
+  belirler; sistem tavana uyumu ölçer, karar vermez). (2) Değerlendirme noktası: **n≥100 sonuçlanmış
+  kupon VE ≥3 ay** birikince gerçek ROI + güven aralığı hesaplanır; %95 GA üst sınırı < 0 ise
+  (kayıp istatistiksel olarak net) gerçek para DURUR, kâğıt devam eder. Kural sonuç biriktikten
+  sonra yazılamaz (hindsight); bu yüzden ŞİMDİ, veri birikmeden taahhüt ediliyor.
+
+**K38 — `par` tablosu look-ahead DÜZELTİLDİ + etkisi ölçüldü.** Docstring "par ≤2024 eğitim
+yıllarından" diyordu; kod TÜM yıllardan hesaplıyordu → 2025-26 test döneminin galip zamanları par'a,
+oradan hız özelliklerine sızıyordu. Ölçüm: 151 ortak hücrede medyan |fark| 0,185 sn, p90 0,81 sn,
+%18,5 hücre >0,5 sn. Düzeltme öncesi baseline BİREBİR yeniden üretildi (Bot1 1,8559 / Bot2 1,6969 /
+α=+0,191), sonra tek değişiklikle A/B:
+- Bot1 1,8559 → **1,8566** (sızıntı Bot1'i hafifçe suni parlatıyormuş — yön beklenen).
+- **Bot2 1,6969 → 1,6970 (değişim yok), α +0,191 → +0,190, γ +0,975.**
+- **Sonuç: K19-K33 verdiktleri GEÇERLİ** (sızıntı ölçülebilir ama sonuçları değiştirmeyecek
+  büyüklükte). Artık kod ile docstring tutarlı; test dönemi temiz. `ozellikli.csv` yeniden üretildi
+  (eski FEAT-md5 referansları bilinçli olarak geçersiz). NOT: `kulvar_skor` ≤2024 tablosu 2024
+  α-fit'inde hâlâ in-sample (bilinen, küçük, K38'de belgelendi; par ile aynı kurala getirildi).
+- **Ölçüm verisi notu:** A/B, tazeleme ÖNCESİ arşivle (2021-01-01..2026-06-29) yapıldı — tek
+  değişken par kuralı olsun diye. Aynı gece K36 tazelemesi arşivi 2026-07-02'ye getirdi;
+  bundan sonraki `model.py` koşuları bu ÜÇÜNCÜ sebeple de (veri arttı) hafif farklı çıkar.
+
+**K39 — Dayanıklılık (gün-boyu koşan süreç + parse tutarlılığı).**
+- `takip.py`: defter yazımı try içinde (defter.csv Excel'de açıkken PermissionError GÜNÜ ÇÖKERTMESİN);
+  geçici ağ hatasında koşu posta saatine kadar döngüde yeniden denenir (önceden ilk hata kalıcı
+  "atlandi" idi); gün-sonu `sonucla` son post+40 dk'ya ertelendi (önceden son koşudan ~5 dk ÖNCE
+  çalışıyordu → hep boş dönüyordu).
+- `defter.sonucla` GANYAN parse → `duzlestir.vir_float` (tek kaynak). Feed'in KENDİ İÇİNDE format
+  karışık (GANYAN='9,95' virgül, AGF1='9.27' nokta — 2026-06-29 BURSA'dan doğrulandı); eski elle
+  parse nokta-ondalık gelirse 3.55→355 yapardı.
+- `>>CANLI` bayrağı tek fonksiyona indi (`gunluk.canli_seri`; kosu_rapor + defter.yaz_tg kullanır) —
+  önceden iki yerde ayrı kodluydu, eşik değişse sessizce ayrışırlardı.
+- Doğrulama: 12 birim-test (scratch defter/bahis dosyalarıyla; gerçek deftere dokunulmadı) — hepsi
+  geçti; canli_seri eski mantıkla birebir aynı çıktı verdi.

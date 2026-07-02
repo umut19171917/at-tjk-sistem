@@ -42,11 +42,21 @@ Pari-mutuel + ganyan kesintisi **~%25,7** (veriden ölçüldü) → negatif topl
   kalsın, PC uyumasın). Gün boyu her İngiliz koşusunu yarıştan ~5 dk kala canlı oranla analiz eder
   (tüm atları kendi AGF%'siyle sıralar), `raporlar/gunluk/`'a yazar + deftere işler, gün sonu sonuçlar.
   `--once`/`--pist X`/`--dk`/`--bekle` ayarlanır.
-- **PowerShell'siz erişim (K31):** kök klasörde **`baslat_takip.bat`** (sabah çift-tık → gün boyu takip)
-  + **`sonuclari_goster.bat`** (çift-tık → sonuçları çek + tarayıcıda aç). Okunur tablo:
-  **`raporlar/defter.html`** (gün/koşu/at: tahmin+sonuç, kazanan yeşil); otomatik güncellenir.
-- **Sıradaki adım (açık):** (1) gerçek kartlarda bir süre kâğıt-izleme; (2) Arap modeli (Altılı,
-  *veri gösterirse*); (3) hız/param cache (çalışma süresi). Detay: `KARARLAR.md` K31.
+- **PowerShell'siz erişim (K31):** kök klasörde **`baslat_takip.bat`** (sabah çift-tık → arşivi
+  günceller + gün boyu takip) + **`sonuclari_goster.bat`** (çift-tık → sonuçları çek + tarayıcıda aç)
+  + **`bahis_gir.bat`** (gerçek kupon kaydı, K37). Okunur tablo: **`raporlar/defter.html`**
+  (gün/koşu/at: tahmin+sonuç, kazanan yeşil + gerçek-bahis P&L); otomatik güncellenir.
+- **Revizyon paketi (2026-07-02 gece, K35-K39):** dış kod incelemesi sonrası: **git deposu** (baseline
+  + paket paket commit), `requirements.txt`, **nokta-anında dt-guard** (mükerrer-koşu/geçmiş-tarih
+  sızıntısı kapandı), **arşiv bayatlık uyarısı + `kod/guncelle.py`** tazeleme protokolü, **defter
+  ileriye-dönüklük koruması** (posta saati geçmiş koşu kaydedilmez), **gerçek-bahis defteri**
+  (`veri/bahisler.csv`; "senin yargın kesintiyi aşıyor mu" ölçümü), `par` look-ahead düzeltmesi
+  (A/B: Bot2 değişmedi → K19-K33 verdiktleri geçerli), takip dayanıklılığı.
+- **AÇIK GÖREV (kullanıcı):** (1) `veri/ham`ın (1.1 GB) tek seferlik HARİCİ yedeği (USB/bulut) —
+  git kapsamıyor; (2) K37 ön-taahhütlü kuralın iki sayısını onayla (aylık bütçe tavanı + değerlendirme
+  eşiği n≥100/3 ay).
+- **Sıradaki adım (açık):** (1) gerçek kartlarda kâğıt-izleme + gerçek-bahis birikimi; (2) Arap modeli
+  (Altılı, *veri gösterirse*); (3) hız/param cache (çalışma süresi). Detay: `KARARLAR.md` K31-K39.
 
 ## Veri
 - Eldeki ham set: `veri/` (kullanıcının 3 aylık 5 tablosu — gelince buraya konacak).
