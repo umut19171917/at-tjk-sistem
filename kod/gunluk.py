@@ -176,6 +176,16 @@ def egit_ve_uygula(feat):
 
 
 # ----------------------------- cikti -----------------------------
+def canli_seri(df):
+    """'>>CANLI' (canli non-favori) isareti — TEK KAYNAK (K39; onceden kosu_rapor ve
+    defter.yaz_tg ayri ayri kodluyordu, esik degisirse sessizce ayrisirlardi).
+    Kural: kamu dolu + Bot1 >= 1.5 x kamu + Bot1 >= %10 + at kamu favorisi degil.
+    DIKKAT: bahis sinyali DEGIL (K20 kontrarian -%35); 'kendi yarginla bak' isareti."""
+    favmax = df.groupby("race_kod")["kamu"].transform("max")
+    return ((df["kamu"] > 0) & (df["bot1"] >= 1.5 * df["kamu"])
+            & (df["bot1"] >= 0.10) & (df["kamu"] < df["bot1"]) & (df["kamu"] < favmax))
+
+
 def yuzde(x):
     return "  -  " if x is None or (isinstance(x, float) and np.isnan(x)) else f"{x*100:4.1f}"
 
@@ -205,12 +215,11 @@ def kosu_rapor(raw_kosu, scored):
     if genc >= 0.34 or (not np.isnan(ortk) and ortk < 3):
         L.append(f"   [DUSUK GUVEN: ilk-kosu pay {genc*100:.0f}%, ort.gecmis {ortk:.1f} kosu "
                  f"-> Bot1 zayif, kamuya yaslan]")
+    canli_s = canli_seri(s)   # tek kaynak (K39)
     L.append(f"   {'no':>2} {'at':22s} {'Bot1%':>6} {'AGF%(sis)':>9} {'kamu%':>6} {'AGF%':>6} {'oran':>6}  iz")
-    for _, a in s.iterrows():
-        canli = (pd.notna(a["kamu"]) and a["kamu"] > 0 and a["bot1"] >= 1.5 * a["kamu"]
-                 and a["bot1"] >= 0.10 and a["kamu"] < a["bot1"])
+    for ix, a in s.iterrows():
         favmi = pd.notna(a["kamu"]) and a["kamu"] == s["kamu"].max()
-        iz = ">>CANLI" if (canli and not favmi) else ("F" if favmi else "")
+        iz = ">>CANLI" if canli_s[ix] else ("F" if favmi else "")
         oran = a["ganyan_muhtemel"]
         L.append(f"   {str(a['no']):>2} {str(a['at_ad'])[:22]:22s} "
                  f"{yuzde(a['bot1']):>6} {yuzde(a['bot2']):>9} {yuzde(a['kamu']):>6} "

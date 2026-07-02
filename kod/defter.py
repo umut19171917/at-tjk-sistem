@@ -22,12 +22,31 @@ import pandas as pd
 
 KOK = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(KOK / "kod"))
-from gunluk import hesapla, getjson, BASE  # noqa: E402
+from gunluk import hesapla, getjson, BASE, canli_seri  # noqa: E402
+from duzlestir import vir_float  # noqa: E402  (K39: GANYAN parse tek kaynak)
 
 DEFTER = KOK / "veri" / "defter.csv"
 KOL = ["kayit_ts", "tarih", "pist", "race_kod", "kosu_no", "saat", "irk",
        "at_kod", "no", "at_ad", "bot1", "bot2", "kamu", "oran", "agf1",
        "canli", "model_rank", "secim", "sonuc", "kazandi", "ganyan_kapanis", "sonuclandi"]
+
+# --- GERCEK BAHIS DEFTERI (K37): kagit-defterden AYRI dosya; fiilen oynanan kuponlar.
+# Amac: "senin yargın kesintiyi asiyor mu" sorusunu OLCMEK. getiri = kuponun toplam odemesi
+# (TL; 0 = kaybetti, NaN = sonuclanmadi). Ganyan tek-at kuponu sonucla'da otomatik sonuclanir;
+# diger turler (plase/ikili/altili...) elle: defter.py bahis-sonuc --id N --getiri X
+BAHIS = KOK / "veri" / "bahisler.csv"
+KOLB = ["id", "kayit_ts", "tarih", "pist", "kosu_no", "tur", "secim",
+        "miktar", "getiri", "aciklama"]
+
+
+def _bahis_oku():
+    if BAHIS.exists():
+        return pd.read_csv(BAHIS, low_memory=False)
+    return pd.DataFrame(columns=KOLB)
+
+
+def _bahis_yaz(df):
+    df.to_csv(BAHIS, index=False, encoding="utf-8", columns=KOLB)
 
 
 def _oku():
@@ -67,9 +86,7 @@ def yaz_tg(tg, tarih, pist, only_kosu=None, kosu=None, secim=None):
         if len(tg) == 0:
             return 0, 0
     tg["model_rank"] = tg.groupby("race_kod")["bot2"].rank(ascending=False, method="first")
-    favimp = tg.groupby("race_kod")["kamu"].transform("max")
-    canli = ((tg["kamu"] > 0) & (tg["bot1"] >= 1.5 * tg["kamu"]) & (tg["bot1"] >= 0.10)
-             & (tg["kamu"] < tg["bot1"]) & (tg["kamu"] < favimp)).astype(int)
+    canli = canli_seri(tg).astype(int)   # tek kaynak: gunluk.canli_seri (K39)
 
     yeni = pd.DataFrame({
         "kayit_ts": datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -124,6 +141,78 @@ def kaydet(pist, ymd, tarih, kosu=None, secim=None):
     print(f"kaydedildi: {pist} {tarih} -> {nk} kosu, {n} at  (defter: {len(out)} satir)")
 
 
+# ----------------------------- gercek bahisler (K37) -----------------------------
+def bahis_ekle(tarih, pist, kosu, tur, secim, miktar, aciklama=None):
+    """Fiilen oynanan kuponu kaydeder. Kupon basina BIR satir (ayni kosuda 2 ganyan
+    bileti = 2 satir). Altili gibi cok-kosulu kuponda kosu = ILK ayak, secim serbest metin."""
+    b = _bahis_oku()
+    yeni_id = int(pd.to_numeric(b["id"], errors="coerce").max() + 1) if len(b) else 1
+    satir = {"id": yeni_id, "kayit_ts": datetime.now().strftime("%Y-%m-%d %H:%M"),
+             "tarih": tarih, "pist": str(pist).upper(), "kosu_no": kosu,
+             "tur": str(tur).strip().lower(), "secim": str(secim).strip(),
+             "miktar": float(miktar), "getiri": np.nan,
+             "aciklama": aciklama or ""}
+    b = pd.concat([b, pd.DataFrame([satir])], ignore_index=True)
+    _bahis_yaz(b)
+    print(f"bahis kaydedildi: id={yeni_id}  {tarih} {satir['pist']} kosu {kosu}  "
+          f"{satir['tur']} '{satir['secim']}'  {miktar} TL")
+    if satir["tur"] != "ganyan":
+        print("  NOT: bu tur otomatik sonuclanmaz -> sonucu ogrenince: "
+              f"python kod/defter.py bahis-sonuc --id {yeni_id} --getiri <odeme; kaybettiyse 0>")
+    return yeni_id
+
+
+def bahis_sonuc(bid, getiri):
+    """Kuponun gercek odemesini isler (kaybetti -> 0)."""
+    b = _bahis_oku()
+    m = pd.to_numeric(b["id"], errors="coerce") == bid
+    if not m.any():
+        print(f"id={bid} bulunamadi.")
+        return
+    b.loc[m, "getiri"] = float(getiri)
+    _bahis_yaz(b)
+    r = b[m].iloc[0]
+    print(f"islendi: id={bid}  {r['tarih']} {r['pist']} kosu {r['kosu_no']}  {r['tur']}  "
+          f"miktar {r['miktar']} -> getiri {float(getiri)} (net {float(getiri)-float(r['miktar']):+.2f})")
+
+
+def _bahis_sonucla(defter_df):
+    """sonucla icinden cagrilir: GANYAN tek-at kuponlarini cozulmus defter satirlariyla
+    otomatik sonuclar (kazandi -> miktar x kapanis-ganyan, kaybetti -> 0). Diger turler elle."""
+    b = _bahis_oku()
+    if b.empty:
+        return
+    acik = b["getiri"].isna()
+    d = defter_df[defter_df["sonuclandi"].notna()].copy()
+    if not acik.any() or d.empty:
+        return
+    for c in ["kosu_no", "no", "kazandi", "ganyan_kapanis"]:
+        d[c] = pd.to_numeric(d[c], errors="coerce")
+    dolan = 0
+    for i in b.index[acik]:
+        if str(b.at[i, "tur"]).strip().lower() != "ganyan":
+            continue
+        try:
+            at_no = int(str(b.at[i, "secim"]).strip())      # tek at degilse (or. "3,5") elle
+        except ValueError:
+            continue
+        m = ((d["tarih"].astype(str) == str(b.at[i, "tarih"]))
+             & (d["pist"].astype(str).str.upper() == str(b.at[i, "pist"]).upper())
+             & (d["kosu_no"] == pd.to_numeric(b.at[i, "kosu_no"], errors="coerce"))
+             & (d["no"] == at_no))
+        if not m.any():
+            continue
+        r = d[m].iloc[0]
+        if pd.isna(r["kazandi"]) or pd.isna(r["ganyan_kapanis"]):
+            continue
+        b.at[i, "getiri"] = round(float(b.at[i, "miktar"]) * float(r["ganyan_kapanis"]), 2) \
+            if r["kazandi"] == 1 else 0.0
+        dolan += 1
+    if dolan:
+        _bahis_yaz(b)
+        print(f"gercek bahis: {dolan} ganyan kuponu otomatik sonuclandi.")
+
+
 # ----------------------------- sonucla -----------------------------
 def sonucla():
     df = _oku()
@@ -157,12 +246,10 @@ def sonucla():
                 except (ValueError, TypeError):
                     pass
                 s = pd.to_numeric(a.get("SONUC"), errors="coerce")
-                kap = str(a.get("GANYAN", "")).replace(".", "").replace(",", ".")
-                try:
-                    kap = float(kap)
-                except ValueError:
-                    kap = np.nan
-                res[(rk, ak)] = (s, kap)
+                # K39: vir_float (duzlestir ile ayni parser) — feed'de GANYAN virgul-ondalik
+                # ('9,95') ama AGF1 nokta-ondalik ('9.27'); eski elle-parse nokta gelirse bozardi.
+                kap = vir_float(a.get("GANYAN"))
+                res[(rk, ak)] = (s, np.nan if kap is None else kap)
         idx = df.index[(df["tarih"] == tarih) & (df["pist"] == pist) & df["sonuclandi"].isna()]
         for i in idx:
             key = (int(df.at[i, "race_kod"]), int(df.at[i, "at_kod"]))
@@ -174,6 +261,7 @@ def sonucla():
                 df.at[i, "sonuclandi"] = bugun
                 dolan += 1
     _yaz(df)
+    _bahis_sonucla(df)   # gercek ganyan kuponlarini otomatik sonucla (K37)
     html_yaz(df)   # HTML tabloyu tazele
     print(f"sonuclandi: {dolan} satir dolduruldu. (toplam {len(df)}, acik {int(df['sonuclandi'].isna().sum())})")
 
@@ -246,6 +334,26 @@ def ozet():
         print(f"\nMODEL TOP-PICK ISABET: win {(tp.sonuc==1).mean()*100:4.1f}%  "
               f"ilk-2 {(tp.sonuc<=2).mean()*100:4.1f}%  ilk-3 {(tp.sonuc<=3).mean()*100:4.1f}%  "
               f"(n={len(tp)})")
+
+    # --- GERCEK BAHISLER (K37): fiili kuponlarin P&L'i — asil olculen sey BU ---
+    b = _bahis_oku()
+    if len(b):
+        b["miktar"] = pd.to_numeric(b["miktar"], errors="coerce")
+        b["getiri"] = pd.to_numeric(b["getiri"], errors="coerce")
+        s = b[b["getiri"].notna()]
+        print("\n" + "=" * 66)
+        print(f"GERCEK BAHISLER — {len(b)} kupon ({len(s)} sonuclandi, {len(b)-len(s)} acik)")
+        if len(s):
+            yat, don = s["miktar"].sum(), s["getiri"].sum()
+            print(f"  TOPLAM: yatirilan {yat:.2f} TL  donen {don:.2f} TL  "
+                  f"net {don-yat:+.2f} TL  ROI {100*(don-yat)/yat:+.1f}%")
+            for tur, g in s.groupby(s["tur"].astype(str).str.lower()):
+                yt, dn = g["miktar"].sum(), g["getiri"].sum()
+                print(f"    {tur:10s} n={len(g):<4d} yatirilan {yt:8.2f}  net {dn-yt:+8.2f}  "
+                      f"ROI {100*(dn-yt)/yt:+6.1f}%")
+            if len(s) < 30:
+                print(f"  UYARI: n={len(s)} kucuk — ROI guven araligi cok genis; "
+                      f"K37 degerlendirme esigine (n>=100) kadar sonuc cikarma.")
 
 
 # ----------------------------- goster (gun/kosu/at bazli) -----------------------------
@@ -346,6 +454,30 @@ def html_yaz(df=None, path=None, ac=False):
          f"<div class=not>guncelleme {datetime.now():%Y-%m-%d %H:%M} &mdash; KAR DEGIL, kagit-ticaret; "
          "+EV yok (6 test). AGF%(sis)=sistemin kendi AGF'si (Bot2 harman). "
          "iz: F=kamu favorisi, CANLI=Bot1 kamuyu cok asiyor -> BAHIS sinyali DEGIL, 'kendi yarginla bak'.</div>"]
+    # --- gercek bahisler ozeti (K37) ---
+    b = _bahis_oku()
+    if len(b):
+        b["miktar"] = pd.to_numeric(b["miktar"], errors="coerce")
+        b["getiri"] = pd.to_numeric(b["getiri"], errors="coerce")
+        s = b[b["getiri"].notna()]
+        H.append("<h3>Gercek bahisler</h3>")
+        if len(s):
+            yat, don = s["miktar"].sum(), s["getiri"].sum()
+            H.append(f"<div class=not><b>{len(b)}</b> kupon ({len(s)} sonuclandi) &mdash; "
+                     f"yatirilan <b>{yat:.2f}</b> TL, net <b>{don-yat:+.2f}</b> TL, "
+                     f"ROI <b>{100*(don-yat)/yat:+.1f}%</b>"
+                     + (f" &mdash; UYARI: n kucuk, sonuc cikarma (K37 esik n&ge;100)" if len(s) < 30 else "")
+                     + "</div>")
+        H.append("<table><tr><th>id</th><th>tarih</th><th class=l>pist</th><th>kosu</th>"
+                 "<th class=l>tur</th><th class=l>secim</th><th>miktar</th><th>getiri</th><th>net</th></tr>")
+        for _, r in b.sort_values("id", ascending=False).head(30).iterrows():
+            net = (r["getiri"] - r["miktar"]) if pd.notna(r["getiri"]) else None
+            H.append(f"<tr><td>{int(r['id'])}</td><td>{r['tarih']}</td><td class=l>{r['pist']}</td>"
+                     f"<td>{r['kosu_no']}</td><td class=l>{r['tur']}</td><td class=l>{r['secim']}</td>"
+                     f"<td>{r['miktar']:.2f}</td>"
+                     f"<td>{('%.2f' % r['getiri']) if pd.notna(r['getiri']) else 'acik'}</td>"
+                     f"<td>{('%+.2f' % net) if net is not None else '-'}</td></tr>")
+        H.append("</table>")
     for (tr, pi, ko) in keys:
         g = df[(df["tarih"] == tr) & (df["pist"] == pi) & (df["kosu_no"] == ko)].copy()
         saat = str(g["saat"].iloc[0]) if "saat" in g.columns else ""
@@ -404,6 +536,17 @@ def main():
     g.add_argument("--tarih", default=None)
     g.add_argument("--pist", default=None)
     sub.add_parser("html", help="okunur HTML tablo yaz + tarayicida ac")
+    b = sub.add_parser("bahis", help="GERCEK kupon kaydet (K37; kupon basina bir satir)")
+    b.add_argument("--pist", required=True)
+    b.add_argument("--kosu", required=True, help="kosu no (altili vb. icin ILK ayak)")
+    b.add_argument("--tur", required=True, help="ganyan/plase/ikili/uclu/altili/...")
+    b.add_argument("--secim", required=True, help='at no; kombine ise serbest metin (or. "3-7" / "2,5/1/4...")')
+    b.add_argument("--miktar", required=True, type=float, help="kupon tutari TL")
+    b.add_argument("--tarih", default=date.today().isoformat())
+    b.add_argument("--aciklama", default=None)
+    bs = sub.add_parser("bahis-sonuc", help="kuponun gercek odemesini isle (kaybetti -> 0)")
+    bs.add_argument("--id", required=True, type=int)
+    bs.add_argument("--getiri", required=True, type=float, help="toplam odeme TL (0=kaybetti)")
     args = ap.parse_args()
 
     if args.komut == "kaydet":
@@ -418,6 +561,11 @@ def main():
     elif args.komut == "html":
         p = html_yaz(ac=True)
         print(f"HTML yazildi ve acildi: {p}")
+    elif args.komut == "bahis":
+        bahis_ekle(args.tarih, args.pist, args.kosu, args.tur, args.secim,
+                   args.miktar, args.aciklama)
+    elif args.komut == "bahis-sonuc":
+        bahis_sonuc(args.id, args.getiri)
 
 
 if __name__ == "__main__":
