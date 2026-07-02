@@ -62,7 +62,11 @@ def build_features(d):
     """Ham nokta-aninda ozellikleri ekler (hiz, kariyer, form, jokey/antrenor, kulvar).
     Girdi sirasi: load_katilim ciktisi (dt,race_kod sirali). Ciktida ham ozellik sutunlari."""
     # ---------- HIZ FIGURU (par + gunluk varyant) ----------
-    win = d[d["sonuc"] == 1]
+    # par = track-fizik sabiti -> SADECE egitim yillari (<=2024); kulvar_skor ile ayni kural.
+    # K38 DUZELTME: onceden TUM yillardan hesaplaniyordu (docstring ile celiski) -> 2025-26 test
+    # doneminin galip zamanlari par'a, oradan hiz ozelliklerine siziyordu (olcum: 151 ortak
+    # hucrede medyan |fark| 0.185 sn, p90 0.81 sn). gun_ofset per-gun kaliyor (o gun bitmis).
+    win = d[(d["sonuc"] == 1) & (d["dt"].dt.year <= 2024)]
     par = win.groupby(["sehir", "zemin", "mesafe"])["zaman_sn"].median().rename("par")
     d = d.merge(par, on=["sehir", "zemin", "mesafe"], how="left")
     # gunluk track ofseti = o gun-pistteki galiplerin par'dan sapma ort.
