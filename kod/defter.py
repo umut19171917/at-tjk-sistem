@@ -277,6 +277,14 @@ def sonucla():
     _yaz(df)
     _bahis_sonucla(df)   # gercek ganyan kuponlarini otomatik sonucla (K37)
     html_yaz(df)   # HTML tabloyu tazele
+    try:
+        # K42 paper kuponlari da ayni aksam akisinda kapansin (ayri dosya/sayfa; hata bozmasin)
+        import paper
+        n = paper.sonucla_paper()
+        if n:
+            print(f"paper: {n} kupon kapatildi (raporlar/paper.html).")
+    except Exception as e:
+        print(f"paper sonuclama atlandi ({type(e).__name__}).")
     print(f"sonuclandi: {dolan} satir dolduruldu. (toplam {len(df)}, acik {int(df['sonuclandi'].isna().sum())})")
 
 

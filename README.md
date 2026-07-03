@@ -57,6 +57,10 @@ Pari-mutuel + ganyan kesintisi **~%25,7** (veriden ölçüldü) → negatif topl
 - **K41 (2026-07-03):** kapsam = İngiliz GANYAN; tavan **kupon/koşu ≤100 TL, gün ≤300 TL** —
   `bahis` kayıt anında uyarır, `ozet` uyum sayar (ölçer, engellemez). Harici yedek arşivi üretildi:
   `Desktop/at-yedek-2026-07-03.zip` (196 MB; ham+kod+git+defter).
+- **K42 PAPER TEST (2026-07-04 → 2026-09-25):** 5 ön-kayıtlı strateji (S1-S5), kupon 15 TL,
+  hafta 3000 TL; takip otomatik üretir/kapatır. **Ayrı arayüz:** `raporlar/paper.html` +
+  çift-tık `paper_goster.bat` (defter arayüzüne dokunmaz). Plase ilk kez ölçüldü (backtest:
+  top-pick plase −%12,5); tüm beklentiler negatif — amaç kalibrasyon + plase'nin canlı ölçümü.
 - **AÇIK GÖREV (kullanıcı, tek adım):** `at-yedek-2026-07-03.zip`'i Google Drive'a yükle
   (drive.google.com → sürükle-bırak) veya USB'ye kopyala. Tazeleme: ~ayda bir yeni zip.
 - **Sıradaki adım (açık):** (1) gerçek kartlarda kâğıt-izleme + gerçek-bahis birikimi; (2) Arap modeli

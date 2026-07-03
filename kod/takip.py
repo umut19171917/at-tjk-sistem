@@ -82,6 +82,16 @@ def isle_kosu(pist, ymd, tarih, no, saat, dosya):
         # defter.csv kilitli (or. Excel'de acik) vb. -> GUNUN TAKIBI COKMESIN (K39);
         # rapor dosyasi/ekran zaten yazildi, sadece defter kaydi bu kosuda dusmus olur.
         print(f"  -> DEFTER YAZILAMADI ({type(e).__name__}: {e}) -> dosyayi kapat; takip devam ediyor")
+    try:
+        # K42 paper test: ayri dosya/sayfa; hata takibi ASLA bozmasin
+        import paper
+        if scored is not None and len(scored):
+            npk = paper.kupon_uret(scored, tarih, pist)
+            if npk:
+                paper.html_yaz()
+                print(f"  -> paper: {npk} kupon acildi (K42; raporlar/paper.html)")
+    except Exception as e:
+        print(f"  -> paper kupon uretilemedi ({type(e).__name__}) - takip devam ediyor")
     return True
 
 

@@ -417,3 +417,29 @@ oradan hız özelliklerine sızıyordu. Ölçüm: 151 ortak hücrede medyan |far
   kontrolüyle yakalandı) → Windows bsdtar ile gerçek zip. *Kullanıcı görevi: bu TEK dosyayı Google
   Drive'a (drive.google.com → sürükle-bırak; hesap: gmail) veya USB'ye kopyala. Öneri: Drive
   (ev dışı kopya > aynı masadaki USB). Tazeleme: büyük kazıma sonrası veya ~ayda bir yenisi.*
+
+**K42 — 12 HAFTALIK ÖN-KAYITLI PAPER TEST (kullanıcı önerdi, tasarım revizyonla ONAYLANDI).**
+Kullanıcının önerisi: haftalık 3000 TL kâğıt bütçe, İngiliz ganyan+plase, kayıt alınsın.
+İki düzeltmeyle kabul: (1) "asistanın tavsiyesi" diye serbest bir bacak YOK — önerilebilecek her
+kural model türevi ve 6 testte negatif; onun yerine stratejiler ÖN-KAYITLA sabitlendi (K33/K37
+kültürü). (2) Amaç kâr değil (beklentiler negatif, aşağıda): canlı hattın kalibrasyonunu doğrulamak
++ PLASE'nin ilk ölçümü + kullanıcının gerçek kuponlarına (K37) mekanik benchmark.
+- **Ön-analiz (`kod/plase_test.py`, `kod/temettu.py`):** PLASE temettüsü feed'de VAR
+  (`BAHISLER_TR`), 5,5 yılda %57,5 koşuda havuz mevcut ve **yalnız 7+ atlı sahalarda**. İlk plase
+  backtest'i (test 2025-26, model.py ile aynı walk-forward): **top-pick plase −%12,5, favori plase
+  −%14,0** (isabet ~%53) — negatif ama ganyan'ın (−%28) yarısı; sürpriz yok, +EV yok.
+- **ÖN-KAYIT (2026-07-04 → 2026-09-25, 12 hafta; kurallar test boyunca DEĞİŞMEZ):**
+  kupon **15 TL** flat (25 değil: CANLI koşuların ~%80'inde var → 25 TL'de hafta ~4.400 TL olur,
+  3000 bütçe kuralı hafta sonlarını sistematik keserdi = örneklem yanlılığı; 15 TL → ~2.600 TL/hafta).
+  Hafta (ISO) bütçesi 3000 TL; dolarsa yeni kupon açılmaz (öncelik S1→S5). Koşu başına en fazla
+  1'er kupon: **S1** top-pick ganyan / **S2** top-pick plase (yalnız saha≥7) / **S3** favori ganyan /
+  **S4** favori plase (saha≥7) / **S5** CANLI ganyan (canli_seri; birden çoksa Bot1 max).
+  Kayıt anı = takip tetiği (~5 dk kala, ileriye-dönük). Ödeme: ganyan=kapanış; plase=temettü;
+  at koşmadı / havuz yok → İPTAL (iade). **Beklentiler (geçmiş-veri):** S1 −%28,0 / S3 −%28,7 /
+  S5 −%33,6 / S2 −%12,5 / S4 −%14,0.
+- **Ayrı arayüz (kullanıcı şartı):** `veri/paper_kupon.csv` + `raporlar/paper.html` +
+  `paper_goster.bat` — defter.csv/bahisler.csv/defter.html'e DOKUNMAZ. takip/sonucla entegrasyonu
+  try-korumalı (paper hatası canlı takibi asla bozamaz). 19 birim-test geçti (üretim/dedup/bütçe/
+  saha<7/kazandı-plase-iptal sonuçlama/HTML).
+- **12. hafta sonunda:** strateji bazlı ROI + GA raporu; canlı-vs-backtest kalibrasyon
+  karşılaştırması; sonuç ne olursa olsun kural ortasında değişmez.
