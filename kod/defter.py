@@ -156,6 +156,20 @@ def bahis_ekle(tarih, pist, kosu, tur, secim, miktar, aciklama=None):
     _bahis_yaz(b)
     print(f"bahis kaydedildi: id={yeni_id}  {tarih} {satir['pist']} kosu {kosu}  "
           f"{satir['tur']} '{satir['secim']}'  {miktar} TL")
+    # --- K41 TAVAN UYUMU (kullanici tavani 2026-07-03: kupon/kosu <=100 TL, gun <=300 TL).
+    # Sistem OLCER/UYARIR, engellemez (talimatname m.7: karar kullanicinin).
+    gun_b = b[b["tarih"].astype(str) == str(tarih)]
+    mikt = pd.to_numeric(gun_b["miktar"], errors="coerce").fillna(0.0)
+    kosu_top = float(mikt[(gun_b["pist"].astype(str).str.upper() == str(pist).upper())
+                          & (pd.to_numeric(gun_b["kosu_no"], errors="coerce")
+                             == pd.to_numeric(kosu, errors="coerce"))].sum())
+    gun_top = float(mikt.sum())
+    if float(miktar) > 100:
+        print(f"  UYARI (K41): kupon {float(miktar):.0f} TL > 100 TL tavani.")
+    if kosu_top > 100:
+        print(f"  UYARI (K41): bu kosuya bugun toplam {kosu_top:.0f} TL > 100 TL tavani.")
+    if gun_top > 300:
+        print(f"  UYARI (K41): bugunku toplam {gun_top:.0f} TL > 300 TL gun tavani.")
     if satir["tur"] != "ganyan":
         print("  NOT: bu tur otomatik sonuclanmaz -> sonucu ogrenince: "
               f"python kod/defter.py bahis-sonuc --id {yeni_id} --getiri <odeme; kaybettiyse 0>")
@@ -354,27 +368,36 @@ def ozet():
             if len(s) < 30:
                 print(f"  UYARI: n={len(s)} kucuk — ROI guven araligi cok genis; "
                       f"K37 degerlendirme esigine (n>=100) kadar sonuc cikarma.")
-            # --- K37 ON-TAAHHUTLU KURAL (ONAYLANDI 2026-07-03, K40): esik = n>=100 kupon
-            # VE >=90 gun. Dolunca bootstrap %95 GA; ust sinir < 0 (kayip istatistiksel net)
-            # -> GERCEK PARA DURUR, kagit devam. Kural veri birikmeden taahhut edildi (hindsight yok).
+        # --- K41 tavan uyumu (TUM kuponlar; oynanan para oynandi, sonuclanmasi gerekmez):
+        # kupon<=100, kosu-toplami<=100, gun-toplami<=300 TL ---
+        kup_asim = int((b["miktar"] > 100).sum())
+        kosu_asim = int((b.groupby(["tarih", "pist", "kosu_no"])["miktar"].sum() > 100).sum())
+        gun_asim = int((b.groupby("tarih")["miktar"].sum() > 300).sum())
+        print(f"  K41 tavan uyumu: kupon>100TL: {kup_asim} | kosu-toplami>100TL: {kosu_asim} "
+              f"| gun>300TL: {gun_asim}")
+        # --- K37 ON-TAAHHUTLU KURAL (ONAYLANDI 2026-07-03, K40): esik = n>=100 SONUCLANMIS
+        # kupon VE >=90 gun. Dolunca bootstrap %95 GA; ust sinir < 0 (kayip istatistiksel net)
+        # -> GERCEK PARA DURUR, kagit devam. Kural veri birikmeden taahhut edildi (hindsight yok).
+        gun_gecti = 0
+        if len(s):
             gun_gecti = (pd.Timestamp.today()
                          - pd.to_datetime(s["tarih"], errors="coerce").min()).days
-            if len(s) >= 100 and gun_gecti >= 90:
-                rng = np.random.default_rng(42)
-                mv = s["miktar"].to_numpy(dtype=float)
-                gv = s["getiri"].to_numpy(dtype=float)
-                idx = rng.integers(0, len(s), size=(10000, len(s)))
-                rois = (gv[idx].sum(1) - mv[idx].sum(1)) / mv[idx].sum(1)
-                lo, hi = np.percentile(rois, [2.5, 97.5])
-                print(f"  K37 DEGERLENDIRME (esik doldu): ROI %95 GA "
-                      f"[{lo*100:+.1f}%, {hi*100:+.1f}%]  (bootstrap 10k, n={len(s)})")
-                if hi < 0:
-                    print("  >>> K37 TETIKLENDI: kayip istatistiksel olarak net -> "
-                          "GERCEK PARA DUR, kagit-ticaret devam.")
-                else:
-                    print("  K37: tetiklenmedi (GA ust siniri >= 0) -> izlemeye devam.")
+        if len(s) >= 100 and gun_gecti >= 90:
+            rng = np.random.default_rng(42)
+            mv = s["miktar"].to_numpy(dtype=float)
+            gv = s["getiri"].to_numpy(dtype=float)
+            idx = rng.integers(0, len(s), size=(10000, len(s)))
+            rois = (gv[idx].sum(1) - mv[idx].sum(1)) / mv[idx].sum(1)
+            lo, hi = np.percentile(rois, [2.5, 97.5])
+            print(f"  K37 DEGERLENDIRME (esik doldu): ROI %95 GA "
+                  f"[{lo*100:+.1f}%, {hi*100:+.1f}%]  (bootstrap 10k, n={len(s)})")
+            if hi < 0:
+                print("  >>> K37 TETIKLENDI: kayip istatistiksel olarak net -> "
+                      "GERCEK PARA DUR, kagit-ticaret devam.")
             else:
-                print(f"  K37 esigine ilerleme: kupon {len(s)}/100, gun {max(gun_gecti, 0)}/90.")
+                print("  K37: tetiklenmedi (GA ust siniri >= 0) -> izlemeye devam.")
+        else:
+            print(f"  K37 esigine ilerleme: kupon {len(s)}/100, gun {max(gun_gecti, 0)}/90.")
 
 
 # ----------------------------- goster (gun/kosu/at bazli) -----------------------------

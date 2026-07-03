@@ -401,4 +401,19 @@ oradan hız özelliklerine sızıyordu. Ölçüm: 151 ortak hücrede medyan |far
 - Doğrulama: sentetik eşik-dolu kayıp profili (n=120, ROI −%32,5) → GA [−%55,0, −%10,0] →
   tetiklendi; küçük n → ilerleme satırı. İkisi de scratch dosyalarla test edildi.
 - **AÇIK: aylık bütçe tavanı (TL) hâlâ kullanıcıda** — sayı gelince buraya yazılacak; sistem
-  tavana uyumu ölçer, karar vermez (talimatname m.7).
+  tavana uyumu ölçer, karar vermez (talimatname m.7). *(→ K41'de geldi, kapandı.)*
+
+**K41 — Bütçe tavanı belirlendi (kullanıcı, 2026-07-03) + koda bağlandı; harici yedek alındı.**
+- **Kapsam/tavan (kullanıcı):** ilk hedef İngiliz koşularında GANYAN. Tavan: **kupon/koşu başına
+  ≤100 TL, gün başına ≤300 TL.** (Aylık tavan yerine kupon+gün tavanı — kullanıcının tercihi.)
+- **Koda bağlandı (ölçer, ENGELLEMEZ):** `bahis` komutu kayıt anında üç kontrol yapar (kupon>100 /
+  koşu-toplamı>100 / gün-toplamı>300 → UYARI basar); `ozet` kalıcı uyum satırı gösterir
+  ("K41 tavan uyumu: kupon>100TL: X | kosu-toplami>100TL: Y | gun>300TL: Z"). K37 ilerleme/GA
+  satırı artık sonuçlanmış kupon olmasa da görünür (girinti düzeltmesi).
+- Doğrulama: 4 senaryoluk scratch testi — üç uyarı türü + uyum satırı + "kupon 0/100" ilerlemesi.
+- **Harici yedek:** tüm proje (ham 1.1 GB + kod + git geçmişi + defter; .venv ve türetilmiş
+  katilim/ozellikli.csv hariç) tek dosyaya arşivlendi: `Desktop/at-yedek-YYYY-AA-GG.zip`.
+  İlk deneme GNU tar'ın .zip uzantısını sessizce yok sayıp DÜZ TAR üretmesiyle bozuktu (magic-byte
+  kontrolüyle yakalandı) → Windows bsdtar ile gerçek zip. *Kullanıcı görevi: bu TEK dosyayı Google
+  Drive'a (drive.google.com → sürükle-bırak; hesap: gmail) veya USB'ye kopyala. Öneri: Drive
+  (ev dışı kopya > aynı masadaki USB). Tazeleme: büyük kazıma sonrası veya ~ayda bir yenisi.*

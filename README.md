@@ -54,8 +54,11 @@ Pari-mutuel + ganyan kesintisi **~%25,7** (veriden ölçüldü) → negatif topl
   (A/B: Bot2 değişmedi → K19-K33 verdiktleri geçerli), takip dayanıklılığı.
 - **K37 kuralı ONAYLANDI + koda bağlandı (K40, 2026-07-03):** n≥100 kupon VE ≥90 gün dolunca
   `ozet` gerçek-ROI %95 GA hesaplar; üst sınır < 0 → "GERÇEK PARA DUR" verdikti otomatik basılır.
-- **AÇIK GÖREV (kullanıcı):** (1) `veri/ham`ın (1.1 GB) tek seferlik HARİCİ yedeği (USB/bulut) —
-  git kapsamıyor; (2) aylık gerçek-bahis bütçe tavanı (TL) — sayı gelince K40'a işlenecek.
+- **K41 (2026-07-03):** kapsam = İngiliz GANYAN; tavan **kupon/koşu ≤100 TL, gün ≤300 TL** —
+  `bahis` kayıt anında uyarır, `ozet` uyum sayar (ölçer, engellemez). Harici yedek arşivi üretildi:
+  `Desktop/at-yedek-2026-07-03.zip` (196 MB; ham+kod+git+defter).
+- **AÇIK GÖREV (kullanıcı, tek adım):** `at-yedek-2026-07-03.zip`'i Google Drive'a yükle
+  (drive.google.com → sürükle-bırak) veya USB'ye kopyala. Tazeleme: ~ayda bir yeni zip.
 - **Sıradaki adım (açık):** (1) gerçek kartlarda kâğıt-izleme + gerçek-bahis birikimi; (2) Arap modeli
   (Altılı, *veri gösterirse*); (3) hız/param cache (çalışma süresi). Detay: `KARARLAR.md` K31-K39.
 
