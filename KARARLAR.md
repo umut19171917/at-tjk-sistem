@@ -390,3 +390,15 @@ oradan hız özelliklerine sızıyordu. Ölçüm: 151 ortak hücrede medyan |far
   önceden iki yerde ayrı kodluydu, eşik değişse sessizce ayrışırlardı.
 - Doğrulama: 12 birim-test (scratch defter/bahis dosyalarıyla; gerçek deftere dokunulmadı) — hepsi
   geçti; canli_seri eski mantıkla birebir aynı çıktı verdi.
+
+## 2026-07-03 — K37 kuralı onaylandı
+
+**K40 — K37 ön-taahhütlü değerlendirme kuralı ONAYLANDI (kullanıcı, 2026-07-03) ve KODA BAĞLANDI.**
+- Kesinleşen kural: **n≥100 sonuçlanmış kupon VE ≥90 gün** dolunca `defter.py ozet` gerçek-ROI
+  %95 güven aralığını hesaplar (bootstrap 10k, kupon bazlı — değişken miktarlara dayanıklı);
+  **GA üst sınırı < 0 ise "GERÇEK PARA DUR, kâğıt devam" verdikti basılır.** Eşik dolana kadar
+  her özet ilerlemeyi gösterir ("kupon X/100, gün Y/90"). Kural kendini uygular; unutulamaz.
+- Doğrulama: sentetik eşik-dolu kayıp profili (n=120, ROI −%32,5) → GA [−%55,0, −%10,0] →
+  tetiklendi; küçük n → ilerleme satırı. İkisi de scratch dosyalarla test edildi.
+- **AÇIK: aylık bütçe tavanı (TL) hâlâ kullanıcıda** — sayı gelince buraya yazılacak; sistem
+  tavana uyumu ölçer, karar vermez (talimatname m.7).

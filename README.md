@@ -52,9 +52,10 @@ Pari-mutuel + ganyan kesintisi **~%25,7** (veriden ölçüldü) → negatif topl
   ileriye-dönüklük koruması** (posta saati geçmiş koşu kaydedilmez), **gerçek-bahis defteri**
   (`veri/bahisler.csv`; "senin yargın kesintiyi aşıyor mu" ölçümü), `par` look-ahead düzeltmesi
   (A/B: Bot2 değişmedi → K19-K33 verdiktleri geçerli), takip dayanıklılığı.
+- **K37 kuralı ONAYLANDI + koda bağlandı (K40, 2026-07-03):** n≥100 kupon VE ≥90 gün dolunca
+  `ozet` gerçek-ROI %95 GA hesaplar; üst sınır < 0 → "GERÇEK PARA DUR" verdikti otomatik basılır.
 - **AÇIK GÖREV (kullanıcı):** (1) `veri/ham`ın (1.1 GB) tek seferlik HARİCİ yedeği (USB/bulut) —
-  git kapsamıyor; (2) K37 ön-taahhütlü kuralın iki sayısını onayla (aylık bütçe tavanı + değerlendirme
-  eşiği n≥100/3 ay).
+  git kapsamıyor; (2) aylık gerçek-bahis bütçe tavanı (TL) — sayı gelince K40'a işlenecek.
 - **Sıradaki adım (açık):** (1) gerçek kartlarda kâğıt-izleme + gerçek-bahis birikimi; (2) Arap modeli
   (Altılı, *veri gösterirse*); (3) hız/param cache (çalışma süresi). Detay: `KARARLAR.md` K31-K39.
 
