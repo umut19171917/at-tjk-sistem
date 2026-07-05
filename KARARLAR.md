@@ -465,3 +465,21 @@ paper test o günü boş geçti (3-4 Temmuz normal çalışmıştı; sistem arı
   şekilde reddeder — tasarım gereği); kullanıcının 18:38'de başlattığı kopya akşam İZMİR 7
   (21:00) ve İZMİR 8'i (21:30) normal izler. Paper testte 5 Temmuz eksik gün olarak kalır
   (veri kirliliği değil, eksik örneklem).
+
+**K44 — BENTER SON DOSYA: sıra-bilgili model (Plackett-Luce) → plase overlay testi = NEGATİF;
+Benter'den alınacak şey kalmadı.** `kod/plase_model.py` (offline; canlı sisteme dokunmadı).
+Soru: 6 negatif testin kapsamadığı tek cep — "plase-olasılık modeli plase havuzunda (en az kötü
+havuz, −%12,5 baz) overlay bulur mu?" Ön-taahhütlü kill-first tasarım: önce model-kalitesi,
+geçerse ekonomi.
+- **Benter'in tekniği kendi başına ÇALIŞIYOR:** sıra-patlatma (k=1→3, eğit ≤2023) 2024 holdout
+  plase log-loss'unu düzenli iyileştirdi (0,55462 → 0,55019; k=3 seçildi). Yani "ilk sıraları da
+  kullan" fikri modeli gerçekten keskinleştiriyor — yöntem doğrulandı.
+- **AMA KILL TESTİ (test 2025-26, 2.898 koşu, saha≥7): harman plase'de piyasayı GEÇMİYOR.**
+  Plase-top3 log-loss: piyasa(devig ganyan→Harville) 0,50647; oran-kör model 0,53321;
+  harman 0,50765 (piyasadan +0,00118 KÖTÜ). Kalabalığın ganyan oranları, plase sıralamasını
+  bizim sıra-bilgili modelimizin katabileceğinden daha iyi fiyatlıyor. Ön-taahhüt gereği
+  ekonomi hesabına hiç girilmedi.
+- **VERDICT: Benter dosyası veriyle KAPANDI.** Çekirdek (Bot1+Bot2) zaten Benter'dendi;
+  egzotik çarpanı K21-K23'te, plase cebi K44'te negatif; yarış-içi veri TJK'da yok (K15/K44
+  yeniden doğrulandı). Kalan tek şey birikimdi ve o zaten işliyor (K37 gerçek-bahis, K42 paper).
+  7. bağımsız negatif — engel yöntem değil, yapı (verimli piyasa + ~%25 kesinti).
