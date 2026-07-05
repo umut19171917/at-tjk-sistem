@@ -443,3 +443,25 @@ kültürü). (2) Amaç kâr değil (beklentiler negatif, aşağıda): canlı hat
   saha<7/kazandı-plase-iptal sonuçlama/HTML).
 - **12. hafta sonunda:** strateji bazlı ROI + GA raporu; canlı-vs-backtest kalibrasyon
   karşılaştırması; sonuç ne olursa olsun kural ortasında değişmez.
+
+## 2026-07-05 — Otomatik başlatma (K29 revizyonu)
+
+**K43 — Takip artık Görev Zamanlayıcı ile OTOMATİK başlar (günlük 10:30).** Vaka: 5 Temmuz'da
+PC açık olmasına rağmen takip 18:38'e kadar başlatılmadı → günün İngiliz koşuları izlenmedi,
+paper test o günü boş geçti (3-4 Temmuz normal çalışmıştı; sistem arızası değil, K29'un
+"sabah elle çift-tık" tasarımı insan hafızasına dayanıyordu ve bir unutma tam gün kaybettirdi).
+- **Çözüm:** Windows Görev Zamanlayıcı görevi **"TJK Takip"** — her gün 10:30'da
+  `baslat_takip.bat` (StartWhenAvailable: saat kaçırıldıysa fırsat bulunca; WakeToRun: PC
+  uykudaysa uyandır; 15 saat süre sınırı; oturum açıkken görünür pencere). Koşu olmayan gün
+  "izinli pist yok" yazıp kapanır — pencere günün durumunu gösterir.
+- **Tek-instans kilidi (`takip.tek_instans`, msvcrt):** zamanlanmış görev + elle başlatma
+  çakışırsa ikinci kopya "zaten çalışıyor" deyip çıkar (iki kopya aynı CSV'lere yazamaz).
+  Kilit dosyası süreç ölünce OS tarafından bırakılır — bayat kilit olmaz. `veri/takip.kilit`
+  git dışı.
+- Elle başlatma hâlâ mümkün (erken başlamak istersen çift-tık; kilit korur). Görevi kaldırmak:
+  PowerShell `Unregister-ScheduledTask -TaskName 'TJK Takip'`; saatini değiştirmek: Görev
+  Zamanlayıcı arayüzü veya bana söyle.
+- **5 Temmuz bilançosu:** sabah/öğlen koşuları geri getirilemez (geçmiş-koşu koruması doğru
+  şekilde reddeder — tasarım gereği); kullanıcının 18:38'de başlattığı kopya akşam İZMİR 7
+  (21:00) ve İZMİR 8'i (21:30) normal izler. Paper testte 5 Temmuz eksik gün olarak kalır
+  (veri kirliliği değil, eksik örneklem).

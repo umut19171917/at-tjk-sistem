@@ -42,10 +42,13 @@ Pari-mutuel + ganyan kesintisi **~%25,7** (veriden ölçüldü) → negatif topl
   kalsın, PC uyumasın). Gün boyu her İngiliz koşusunu yarıştan ~5 dk kala canlı oranla analiz eder
   (tüm atları kendi AGF%'siyle sıralar), `raporlar/gunluk/`'a yazar + deftere işler, gün sonu sonuçlar.
   `--once`/`--pist X`/`--dk`/`--bekle` ayarlanır.
-- **PowerShell'siz erişim (K31):** kök klasörde **`baslat_takip.bat`** (sabah çift-tık → arşivi
-  günceller + gün boyu takip) + **`sonuclari_goster.bat`** (çift-tık → sonuçları çek + tarayıcıda aç)
+- **PowerShell'siz erişim (K31):** kök klasörde **`baslat_takip.bat`** (arşivi günceller + gün boyu
+  takip) + **`sonuclari_goster.bat`** (çift-tık → sonuçları çek + tarayıcıda aç)
   + **`bahis_gir.bat`** (gerçek kupon kaydı, K37). Okunur tablo: **`raporlar/defter.html`**
   (gün/koşu/at: tahmin+sonuç, kazanan yeşil + gerçek-bahis P&L); otomatik güncellenir.
+- **OTOMATİK BAŞLATMA (K43, 2026-07-05):** Görev Zamanlayıcı **"TJK Takip"** her gün 10:30'da
+  takibi kendisi başlatır (PC açık/uyanık olmalı; uykudaysa uyandırır, saati kaçırdıysa fırsat
+  bulunca başlar). Elle çift-tık artık gerekmez ama zararsızdır (tek-instans kilidi var).
 - **Revizyon paketi (2026-07-02 gece, K35-K39):** dış kod incelemesi sonrası: **git deposu** (baseline
   + paket paket commit), `requirements.txt`, **nokta-anında dt-guard** (mükerrer-koşu/geçmiş-tarih
   sızıntısı kapandı), **arşiv bayatlık uyarısı + `kod/guncelle.py`** tazeleme protokolü, **defter

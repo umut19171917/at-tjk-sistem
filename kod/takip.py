@@ -28,6 +28,21 @@ from duzlestir import irk_of  # noqa: E402
 import defter  # noqa: E402
 
 RAPOR = KOK / "raporlar" / "gunluk"
+_KILIT = None
+
+
+def tek_instans():
+    """Ikinci takip ornegini engelle (K43: zamanlanmis gorev + elle baslatma cakisirsa iki kopya
+    ayni CSV'lere yazardi). Kilit dosyasi surec boyunca ACIK tutulur; surec olunce OS kilidi
+    kendiliginden birakir -> bayat kilit sorunu yok."""
+    global _KILIT
+    import msvcrt
+    _KILIT = open(KOK / "veri" / "takip.kilit", "w")
+    try:
+        msvcrt.locking(_KILIT.fileno(), msvcrt.LK_NBLCK, 1)
+        return True
+    except OSError:
+        return False
 
 
 def program_kosulari(pist, ymd, tarih):
@@ -104,6 +119,10 @@ def main():
     ap.add_argument("--once", action="store_true", help="vakti gelmisleri bir kez isle ve cik")
     args = ap.parse_args()
     ymd = datetime.strptime(args.tarih, "%Y-%m-%d").strftime("%Y%m%d")
+
+    if not tek_instans():
+        print("takip ZATEN calisiyor (baska pencere/zamanlanmis gorev) -> bu kopya kapaniyor (K43).")
+        return
 
     pistler = [args.pist.strip().upper()] if args.pist else [p for p, _ in yerli_pistler(ymd)]
     # K4: 4 supheli pist (sike soylentisi) hem tahmin hem takip DISI
