@@ -483,3 +483,22 @@ geçerse ekonomi.
   egzotik çarpanı K21-K23'te, plase cebi K44'te negatif; yarış-içi veri TJK'da yok (K15/K44
   yeniden doğrulandı). Kalan tek şey birikimdi ve o zaten işliyor (K37 gerçek-bahis, K42 paper).
   7. bağımsız negatif — engel yöntem değil, yapı (verimli piyasa + ~%25 kesinti).
+
+## 2026-07-06 — K43 hiç çalışmamış: pil kısıtı
+
+**K45 — HATA (bulundu+düzeltildi): "TJK Takip" görevi kurulduğundan beri HİÇ çalışmamış;
+6 Temmuz tamamen kayıp (kurtarılamaz — Bursa'nın tek İngiliz kartı 17:00'de bitti, kontrol
+18:36'da yapıldı).** Kök neden: makine laptop; Windows zamanlanmış görevleri varsayılan olarak
+**`DisallowStartIfOnBatteries=True`** ile oluşturulur. K43 kurulurken bu ayar fark edilmedi.
+Makine şarjda değilken (dün ve bugün — `Win32_Battery` ile doğrulandı, BatteryStatus=discharging)
+10:30 tetiği sessizce atlandı: `StartWhenAvailable`/`WakeToRun` yalnız "saat kaçtı" durumunu
+kurtarır, "güç kaynağı uygun değil" koşulunu görmezden gelmez. `Get-ScheduledTaskInfo` bunu
+`LastRunTime: 30.11.1999` (= hiç çalışmadı) ile açıkça gösteriyordu — K43'te bu doğrulanmamıştı.
+- **Düzeltme:** `DisallowStartIfOnBatteries=False`, `StopIfGoingOnBatteries=False` (PowerShell
+  `Set-ScheduledTask`). Artık pilde de şarjda da 10:30'da çalışır.
+- **Ders (K43'e ek doğrulama eksikliği):** görev kurulduktan sonra ertesi gün fiilen çalıştığı
+  TEYİT EDİLMEMİŞTİ — sadece `Register-ScheduledTask` başarılı döndü diye "kuruldu" varsayıldı.
+  Bundan sonra otomasyon kurulumlarında ilk gerçek tetikten sonra `LastRunTime`/`LastTaskResult`
+  kontrolü zorunlu adım.
+- **Kayıp:** 6 Temmuz — kâğıt defter, paper test, gerçek-bahis (varsa) o gün için boş. Veri
+  kirliliği değil, eksik örneklem (K36/K42 ile aynı sınıf). 7 Temmuz'dan itibaren beklenmeli.

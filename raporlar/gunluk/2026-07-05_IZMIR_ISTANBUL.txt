@@ -1,0 +1,30 @@
+
+[20:55 tetik]  IZMIR  KOSU 7 (yaris 21:00)  model a=+0.24 g=+0.94
+
+KOSU  7  21:00  1900m  3 Yaşlı İngilizler  (5 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    1 JANN POLL                30.7      34.7   32.3    -     2.30  
+    2 ROSİLDA                  14.0      29.4   33.0    -     2.25  F
+    4 SİSU                     44.1      24.6   20.3    -     3.65  >>CANLI
+    3 SINGLE GUN                4.3       6.1    8.3    -     8.95  
+    5 ÇİFTE YÜREKLİ             6.8       5.1    6.1    -    12.10  
+
+[21:25 tetik]  IZMIR  KOSU 8 (yaris 21:30)  model a=+0.24 g=+0.94
+
+KOSU  8  21:30  1200m  3 ve Yukarı İngilizler  (15 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+   11 LOVE WAY                 27.4      34.9   30.5    -     2.45  F
+    5 FEBRİS                   23.5      28.2   25.3    -     2.95  
+    2 THUNDER JEST              4.9       7.3    9.0    -     8.35  
+    7 FLASH BOY                10.5       6.7    6.7    -    11.15  >>CANLI
+   15 MY JET                    4.0       4.6    5.7    -    13.10  
+    9 TOULAYNA                  3.9       3.9    4.8    -    15.50  
+   10 ZAGANOS                   3.8       3.1    3.9    -    19.40  
+    8 MANCUNIAN BEDİİ           4.6       2.5    2.9    -    25.95  
+    4 DUYARLI                   4.5       2.1    2.4    -    31.35  
+   12 YURT BAŞI                 2.9       1.9    2.4    -    31.70  
+    3 DARK SOUL                 4.2       1.6    1.8    -    41.55  
+    6 NIGHT JAWEL               3.3       1.2    1.5    -    51.05  
+    1 MERCİA                    1.0       0.8    1.3    -    55.40  
+   14 RÜTBESİZ                  1.0       0.7    1.1    -    65.35  
+   13 MEDGIDIA                  0.6       0.4    0.7    -   102.75  
