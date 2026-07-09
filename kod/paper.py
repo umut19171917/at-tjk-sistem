@@ -67,6 +67,11 @@ def kupon_uret(kosu_tg, tarih, pist):
     Pencere disi / mukerrer / butce-asimi -> sessizce uretmez. Doner: yazilan kupon sayisi."""
     if kosu_tg is None or len(kosu_tg) == 0 or not (BAS <= str(tarih) <= BIT):
         return 0
+    # ON-KAYIT KORUMASI (K42/K46): test YALNIZ Ingiliz kosularinda on-kaydedildi. K46 ile
+    # canli sisteme Arap modeli eklendi ama 12 haftalik test ortasinda kapsam DEGISTIRILEMEZ —
+    # Arap kosusu paper kuponu uretemez (kural degisikligi = deney gecersiz).
+    if "irk" in kosu_tg.columns and str(kosu_tg["irk"].iloc[0]) != "Ingiliz":
+        return 0
     k = kosu_tg.copy()
     for c in ["bot1", "bot2", "kamu", "ganyan_muhtemel"]:
         k[c] = pd.to_numeric(k[c], errors="coerce")

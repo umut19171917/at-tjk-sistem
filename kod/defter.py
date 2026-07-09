@@ -3,8 +3,8 @@ defter.py — KAGIT-TICARET DEFTERI (gercek bahis YOK; bkz. KARARLAR K27/K28).
 Amac: gunluk.py tahminlerini kaydet -> ertesi gun sonucla otomatik esle -> KOSAN bakiye + kalibrasyon.
 "+EV yok"u soyut bilmek yerine biriken bir tabloda gor (kapanis maddesi).
 
-Kapsam: yalnizca model-puanli (TR Ingiliz) kosular kaydedilir; ROI=GANYAN bazli (model win-olasiligi
-uretir). Plase: para-getirisi DEGIL ama varis pozisyonu zaten kayitli -> ozet'te model top-pick'in
+Kapsam: model-puanli kosular kaydedilir — TR Ingiliz + TR Arap (K46; irk sutunu ayirir);
+ROI=GANYAN bazli (model win-olasiligi uretir). Plase: para-getirisi DEGIL ama varis pozisyonu zaten kayitli -> ozet'te model top-pick'in
 win/ilk-2/ilk-3 ISABET orani gosterilir (plase modeli/temettusu olmadan, bedava).
 
 Komutlar:
@@ -349,6 +349,13 @@ def ozet():
                     (">>CANLI atlari", canli), ("senin secimlerin", sec)]:
         roi, n = _roi(sub)
         print(f"  {ad:24s} ROI {roi:+6.1f}%  (n={n})" if n else f"  {ad:24s} (kayit yok)")
+    # irk kirilimi (K46: defter artik Ingiliz + Arap kaydeder; ekonomileri farkli — ayri izle)
+    if "irk" in top.columns and top["irk"].astype(str).nunique() > 1:
+        print("  irk kirilimi (top-pick):")
+        for irk, g in top.groupby(top["irk"].astype(str)):
+            roi, n = _roi(g)
+            if n:
+                print(f"    {irk:10s} ROI {roi:+6.1f}%  (n={n})")
 
     # --- isabet orani: model top-pick varis (plase sezgisi, bedava) ---
     tp = top.dropna(subset=["sonuc"])

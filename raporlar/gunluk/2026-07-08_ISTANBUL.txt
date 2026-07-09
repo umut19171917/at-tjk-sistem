@@ -1,0 +1,59 @@
+
+[13:55 tetik]  ISTANBUL  KOSU 1 (yaris 14:00)  model a=+0.24 g=+0.94
+
+KOSU  1  14:00  2000m  3 ve Yukarı İngilizler  (7 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    6 UNREAL ENGINE            44.2      40.2   33.2   35.0   2.25  F
+    3 START UP                 18.0      23.7   23.7   32.2   3.15  
+    7 WAITING A SUNNYDAY        4.4       9.8   13.2    7.8   5.65  
+    5 RACING RAPTURE            6.1       7.4    9.1   10.3   8.25  
+    4 MANDACAN                  7.2       7.2    8.4    5.6   8.90  
+    1 STASERA                  11.1       6.0    6.2    4.2  12.05  >>CANLI
+    2 JIMDEMA                   9.0       5.7    6.2    4.9  12.05  
+
+[14:25 tetik]  ISTANBUL  KOSU 2 (yaris 14:30)  model a=+0.24 g=+0.94
+
+KOSU  2  14:30  1400m  3 ve Yukarı İngilizler  (9 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    1 BOLD LION                26.3      32.2   29.1   31.2   2.55  F
+    4 İSEN BUGA                15.9      25.7   26.1   21.1   2.85  
+    2 PRINCE OF DARKNESS       19.0      14.5   13.5   21.5   5.50  
+    3 YARGIÇ                    7.2       6.9    7.8    9.3   9.50  
+    8 VICTORY MATRA             9.6       6.8    7.2    6.7  10.30  
+    6 HARDOLD                   9.4       4.2    4.3    3.1  17.30  
+    9 WINNER GETS IT ALL        5.7       4.1    4.8    3.3  15.60  
+    5 MAMBA FOREVER             4.2       3.2    4.0    2.3  18.80  
+    7 JESKO                     2.8       2.4    3.2    1.5  23.10  
+
+[17:26 tetik]  ISTANBUL  KOSU 8 (yaris 17:30)  model a=+0.24 g=+0.94
+
+KOSU  8  17:30  1400m  2 Yaşlı İngilizler  (9 at)
+   [DUSUK GUVEN: ilk-kosu pay 0%, ort.gecmis 1.7 kosu -> Bot1 zayif, kamuya yaslan]
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    4 SANDOKAN                 19.6      25.0   23.0    -     2.65  F
+    1 YONAGUNI                 10.6      17.5   18.4    -     3.30  
+    6 BANDIDITA                 6.9      15.9   18.4    -     3.30  
+    8 MAGIC MEMORY             17.0      15.5   14.3    -     4.25  
+    7 BELIEVER                 10.5       7.4    7.4    -     8.25  
+    3 KRAL ALİÇO               15.8       7.4    6.6    -     9.25  >>CANLI
+    2 GANADORES                10.7       7.2    7.1    -     8.55  >>CANLI
+    9 QOUNTM CAT                3.2       2.3    2.8    -    21.60  
+   11 SILVER RISING             5.5       1.9    2.0    -    30.60  
+
+[17:55 tetik]  ISTANBUL  KOSU 9 (yaris 18:00)  model a=+0.24 g=+0.94
+
+KOSU  9  18:00  1400m  3 Yaşlı İngilizler  (13 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    6 INCOME                   16.8      37.4   35.3    -     1.75  F
+    8 RECUERDAME               19.4      14.5   12.4    -     5.00  >>CANLI
+    5 DEJAME                    4.9      10.4   12.4    -     5.00  
+    9 SERAHİRA                 17.4       7.5    6.3    -     9.85  >>CANLI
+    3 NAZUŞUM                   9.6       5.9    5.7    -    10.80  
+   13 VICTORY GIRL             10.1       4.6    4.3    -    14.30  >>CANLI
+    1 ANGEL OF DEFNE            4.8       4.6    5.1    -    12.05  
+    2 HAMA DESTINATION          6.0       4.2    4.4    -    13.90  
+   12 HOLD FAST                 3.7       3.9    4.6    -    13.30  
+    4 LAGUNA SUNSET             2.1       3.2    4.3    -    14.30  
+   10 AGE OF SKY                2.1       1.4    1.8    -    34.50  
+   11 BOLD STEPS                1.5       1.3    1.8    -    34.05  
+    7 LADYBIRD                  1.7       1.1    1.5    -    41.25  

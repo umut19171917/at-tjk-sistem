@@ -138,19 +138,29 @@ def build_features(d):
 
     # ---------- KULVAR SAPMASI (egitim yillari <=2024'ten tablo) ----------
     # mes_kova yukarida (kosul uygunlugu blogunda) hesaplandi -> tek kaynak, burada tekrar yok
+    # K46: tablo IRK-farkindalikli — her irkin kendi egitim kosularindan. Ingiliz satirlari
+    # BIT-AYNI kalir (ayni egit kumesi, md5 ile dogrulandi); Arap kendi tablosunu alir
+    # (start/mesafe yanliligi irka gore farkli); diger irk NaN -> z-skorda notr.
     d["st_kova"] = pd.cut(d["start"].fillna(0), [0, 3, 6, 9, 12, 99],
                           labels=["1-3", "4-6", "7-9", "10-12", "13+"])
-    egit = d[(d["dt"].dt.year <= 2024) & (d["irk"] == "Ingiliz") & (~d["sehir"].isin(EXCL))]
-    kt = egit.groupby(["sehir", "mes_kova", "st_kova"], observed=True)["kazandi"].mean().rename("kulvar_skor")
-    d = d.merge(kt, on=["sehir", "mes_kova", "st_kova"], how="left")
+    tablolar = []
+    for irk in ("Ingiliz", "Arap"):
+        egit = d[(d["dt"].dt.year <= 2024) & (d["irk"] == irk) & (~d["sehir"].isin(EXCL))]
+        kt = egit.groupby(["sehir", "mes_kova", "st_kova"], observed=True)["kazandi"] \
+                 .mean().rename("kulvar_skor").reset_index()
+        kt["irk"] = irk
+        tablolar.append(kt)
+    d = d.merge(pd.concat(tablolar, ignore_index=True),
+                on=["irk", "sehir", "mes_kova", "st_kova"], how="left")
     return d
 
 
-def select_scope(d):
-    """Hedef kapsama (Ingiliz + izinli pist) indir + saha-goreli z-skor + ilk_kosu.
-    d'de 'bugun'==1 sutunu varsa, O kosular tek-galip sarti ARANMADAN tutulur (canli/sonucsuz)."""
-    # ---------- HEDEF KAPSAM: Ingiliz + izinli pist, tek galipli kosu ----------
-    m = (d["irk"] == "Ingiliz") & (~d["sehir"].isin(EXCL))
+def select_scope(d, irk="Ingiliz"):
+    """Hedef kapsama (irk + izinli pist) indir + saha-goreli z-skor + ilk_kosu.
+    d'de 'bugun'==1 sutunu varsa, O kosular tek-galip sarti ARANMADAN tutulur (canli/sonucsuz).
+    K46: irk parametreli — varsayilan Ingiliz (eski davranis birebir); canli yol Arap'i ayri cagirir."""
+    # ---------- HEDEF KAPSAM: irk + izinli pist, tek galipli kosu ----------
+    m = (d["irk"] == irk) & (~d["sehir"].isin(EXCL))
     f = d[m].copy()
     gw = f.groupby("race_kod")["kazandi"].transform("sum")
     keep = (gw == 1) & (f["alan"] >= 4)

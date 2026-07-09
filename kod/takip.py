@@ -1,8 +1,8 @@
 """
 takip.py — GUNLUK OTOMATIK TAKIP (sabah baslat, gun boyu kossun). KAR DEGIL; kagit-ticaret.
 Sabah bir kez calistir; gun boyu kendi dongusunde:
-  - gunun yerli pistlerini + (yalniz Ingiliz) kosu saatlerini cikarir,
-  - her Ingiliz kosusunu SAAT'ine ~5 dk kala CANLI oranla analiz eder (tum atlari kendi AGF'siyle
+  - gunun yerli pistlerini + (Ingiliz + Arap, K46) kosu saatlerini cikarir,
+  - her kosuyu SAAT'ine ~5 dk kala CANLI oranla analiz eder (tum atlari kendi AGF'siyle
     siralar) -> ekrana + rapor dosyasina yazar + deftere isler,
   - tum kosular bitince defter.sonucla calistirir.
 PC yaris saatlerinde ACIK/uyanik olmali (yerel script; uyurken tetiklenmez).
@@ -46,14 +46,15 @@ def tek_instans():
 
 
 def program_kosulari(pist, ymd, tarih):
-    """pist programindan SADECE Ingiliz kosularinin (no, saat, post_dt) listesi."""
+    """pist programindan Ingiliz + Arap kosularinin (no, saat, post_dt) listesi (K46:
+    Arap modeli eklendi; 'diger' irk haric)."""
     o = getjson(f"{BASE}/program/{ymd}/full/{pist}.json")
     if o.get("_hata"):
         print(f"  {pist}: program yok ({o['_hata']})")
         return []
     out = []
     for k in o.get("kosular", []):
-        if irk_of(k.get("GRUP_TR"), k.get("GRUPKISA")) != "Ingiliz":
+        if irk_of(k.get("GRUP_TR"), k.get("GRUPKISA")) not in ("Ingiliz", "Arap"):
             continue
         no = k.get("RACENO") or k.get("NO")
         saat = str(k.get("SAAT", "")).strip()
@@ -83,7 +84,7 @@ def isle_kosu(pist, ymd, tarih, no, saat, dosya):
         scored = s if len(s) else None
 
     bas = (f"\n[{datetime.now():%H:%M} tetik]  {pist}  KOSU {no} (yaris {saat})  "
-           f"model a={alpha:+.2f} g={gamma:+.2f}")
+           f"[{span}]")
     blok = bas + "\n" + "\n".join(kosu_rapor(rk, scored))
     print(blok)
     with open(dosya, "a", encoding="utf-8") as f:
@@ -139,14 +140,14 @@ def main():
         sched += program_kosulari(p, ymd, args.tarih)
     sched.sort(key=lambda r: r["post"])
     if not sched:
-        print(f"{args.tarih}: Ingiliz kosusu yok ({', '.join(pistler)}).")
+        print(f"{args.tarih}: Ingiliz/Arap kosusu yok ({', '.join(pistler)}).")
         return
 
     RAPOR.mkdir(parents=True, exist_ok=True)
     dosya = RAPOR / f"{args.tarih}_{'_'.join(pistler)}.txt"
     print("=" * 70)
     print(f"TAKIP basladi  {args.tarih}  pist: {', '.join(pistler)}  "
-          f"Ingiliz kosu: {len(sched)}  (yaris-{args.dk}dk kala)")
+          f"Ingiliz+Arap kosu: {len(sched)}  (yaris-{args.dk}dk kala)")
     print("KAR DEGIL — kagit-ticaret. AGF%(sis)=sistemin kendi AGF'si. Rapor: " + str(dosya.name))
     for r in sched:
         print(f"   {r['pist']:10s} kosu {r['no']:>2}  yaris {r['saat']}  tetik ~{(r['post'] - pd.Timedelta(minutes=args.dk)):%H:%M}")

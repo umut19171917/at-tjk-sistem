@@ -502,3 +502,32 @@ kurtarır, "güç kaynağı uygun değil" koşulunu görmezden gelmez. `Get-Sche
   kontrolü zorunlu adım.
 - **Kayıp:** 6 Temmuz — kâğıt defter, paper test, gerçek-bahis (varsa) o gün için boş. Veri
   kirliliği değil, eksik örneklem (K36/K42 ile aynı sınıf). 7 Temmuz'dan itibaren beklenmeli.
+
+**K46 — ARAP GENİŞLETMESİ: karar-deneyi + canlı entegrasyon (kullanıcı onayladı; "tüm bahis
+türleri" önerisi REDDEDİLDİ).** Kullanıcı iki genişletme önerdi: (1) Arap atları, (2) TJK'nın
+tüm bahis türleri. (2) veriye dayalı reddedildi: türlerin tümü ya doğrudan test edildi (ganyan/
+plase/exacta/Altılı/chalk — 8 negatif) ya da aynı win-olasılıklarının kombinatorik türevi; havuzlar
+daha sığ, kesintiler daha yüksek → "genişletme" değil, negatif sonucun 10 tür × makine maliyetiyle
+çoğaltılması olur. İstisna (koşullu, açık): Arap modeli kalibre çıkarsa Altılı ayak-bazlı
+olasılık GÖRÜNTÜLEMESİ (bahis önerisi değil) ileride düşünülebilir.
+- **Karar-deneyi (`kod/arap_test.py`, K19 protokolünün aynısı; kapsam Arap + izinli pist):**
+  11.073 koşu / 110.903 at-koşu (yıllara dengeli, ganyan %97,9). Kulvar tablosu Arap'a özgü kuruldu.
+  Sonuç: **α = +0,217** (kill TETİKLENMEDİ; İngiliz +0,19'a paralel), test log-loss piyasa 1,8565 →
+  harman **1,8504** (OOS geçiyor). İlk-koşu payı %6,0. Katsayı yapısı İngiliz'e benzer
+  (ilk_kosu −0,98, handikap +0,45, disi −0,44 — disi Arap'ta 2× güçlü).
+- **AMA ekonomi daha sert:** Arap ganyan overround medyan **1,441 → ~%30,6 kesinti** (İngiliz
+  ~%25,5); favori-oyna −%29,8. EV>1,00 taramasındaki "+%100 ROI" **14 bahislik GÜRÜLTÜ** (K25'teki
+  +%111,9 gibi — kullanılmaz). **Arap modeli ANALİZ katmanıdır; +EV iddiası yok (9. veri noktası:
+  Arap havuzu da verimli + daha yüksek kesinti).**
+- **Canlı entegrasyon (İngiliz yolu BİT-AYNI korunarak):**
+  - `ozellik.py`: kulvar tablosu ırk-farkındalıklı (her ırk kendi eğitim koşularından; merge
+    anahtarına irk eklendi). REGRESYON KANITI: eski kod + yeni kod ile üretilen `ozellikli.csv`
+    **md5 birebir aynı** (02e144f3…). `select_scope(d, irk=...)` parametreli (varsayılan İngiliz).
+  - `gunluk.hesapla`: iki ayrı model (İngiliz + Arap; ayrı Bot1/Bot2 eğitimi) — kartta o ırktan
+    koşu yoksa fit atlanır. Başlık span iki modelin α/γ'sını gösterir. Çalışma süresi karma
+    kartlarda ~2× (kabul edildi).
+  - `takip.py`: program filtresi İngiliz+Arap; `defter.py`: her iki ırkı kaydeder, özette ırk
+    kırılımı satırı.
+  - **K42 ÖN-KAYIT KORUMASI:** `paper.kupon_uret` Arap koşusunu KOD SEVİYESİNDE reddeder
+    (test edildi: Arap → 0 kupon, İngiliz → normal) — 12 haftalık test İngiliz-kilitli, kural
+    ortası kapsam değişikliği imkânsız.

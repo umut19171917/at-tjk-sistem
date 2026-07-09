@@ -13,10 +13,11 @@ kamuoyu oranını harman + disiplinli bahis boyutu.
 Pari-mutuel + ganyan kesintisi **~%25,7** (veriden ölçüldü) → negatif toplamlı oyun. Kâr için
 "kazananı bilmek" değil, **havuzun yanlış fiyatladığı atları kesintiyi aşacak biçimde** bulmak.
 
-## Kapsam (Faz 1)
-- **İçeride:** TR **İngiliz atı düz koşuları**, **Ganyan + Plase**.
-- **Dışarıda (şimdilik):** Altılı/çok-koşulu, egzotikler, yabancı, Arap atı, 4 şüpheli pist
-  (Elazığ, Diyarbakır, Urfa/Şanlıurfa, Adana).
+## Kapsam
+- **İçeride:** TR **İngiliz + Arap** düz koşuları (K46: iki ayrı model; Arap analiz katmanı,
+  kesintisi ~%30,6 → ekonomisi İngiliz'den de sert). Ganyan + Plase ölçümü.
+- **Dışarıda:** Altılı/çok-koşulu, egzotikler, yabancı, 4 şüpheli pist
+  (Elazığ, Diyarbakır, Urfa/Şanlıurfa, Adana — Arap'ta da hariç). Paper test (K42) İngiliz-kilitli.
 
 ## Durum (2026-06-30)
 - Faz 0 — Veri fizibilitesi: **TAMAM** (`raporlar/faz0-veri-fizibilite.md`).
@@ -64,6 +65,10 @@ Pari-mutuel + ganyan kesintisi **~%25,7** (veriden ölçüldü) → negatif topl
   hafta 3000 TL; takip otomatik üretir/kapatır. **Ayrı arayüz:** `raporlar/paper.html` +
   çift-tık `paper_goster.bat` (defter arayüzüne dokunmaz). Plase ilk kez ölçüldü (backtest:
   top-pick plase −%12,5); tüm beklentiler negatif — amaç kalibrasyon + plase'nin canlı ölçümü.
+- **K44 Benter dosyası kapandı:** Plackett-Luce plase modeli kill testinde elendi (harman piyasa-
+  Harville'i geçemedi). **K46 Arap modeli eklendi:** α=+0,22, log-loss piyasayı geçiyor ama
+  kesinti ~%30,6 → analiz katmanı; takip/defter artık iki ırkı da izler, paper test İngiliz-kilitli
+  (kod korumalı). "Tüm bahis türleri" genişletmesi veriyle reddedildi (KARARLAR K46).
 - **AÇIK GÖREV (kullanıcı, tek adım):** `at-yedek-2026-07-03.zip`'i Google Drive'a yükle
   (drive.google.com → sürükle-bırak) veya USB'ye kopyala. Tazeleme: ~ayda bir yeni zip.
 - **Sıradaki adım (açık):** (1) gerçek kartlarda kâğıt-izleme + gerçek-bahis birikimi; (2) Arap modeli

@@ -10,8 +10,10 @@ Ne yapar:
   - Cikti: her kosu icin sahin Bot1% (kendi AGF'si), Bot2% (harman), kamu% (de-vig oran),
     AGF%, canli oran ve "canli-non-favori" isareti (Bot1% kamu%'den COK yuksek).
 
-KAPSAM: model yalnizca TR Ingiliz duz kosulari icin egitildi/dogrulandi. Arap / 2yas-maiden /
-  kucuk-saha kosular "model kapsam disi" gosterilir (sadece kamu AGF/oran). 4 supheli pist haric.
+KAPSAM (K46): IKI ayri model — TR Ingiliz + TR Arap (ayri egitim/harman; Arap kulvar tablosu
+  kendi kosularindan). Diger irk / kucuk-saha "model kapsam disi" (sadece kamu). 4 supheli pist
+  haric (K4 — Arap'ta da). DIKKAT: Arap ganyan kesintisi ~%30.6 (Ingiliz ~%25.5) -> ekonomi
+  daha sert; Arap modeli ANALIZ katmanidir, K42 paper testi Ingiliz-kilitli kalir.
 
 CANLI != SIZINTI: tahmin aninda gelecek yok; ozellikler gecmisten. Canli aslinda daha AZ bilgi.
 
@@ -198,7 +200,7 @@ def kosu_rapor(raw_kosu, scored):
     L = [f"\nKOSU {int(r0['kosu_no']):>2}  {r0['saat']}  {r0['mesafe']}m  "
          f"{str(r0['grup'])[:26]}  ({saha} at)"]
     if scored is None or len(scored) == 0:
-        L.append("   [model KAPSAM DISI: " + ("Arap/diger irk" if r0["irk"] != "Ingiliz"
+        L.append("   [model KAPSAM DISI: " + ("diger irk" if r0["irk"] not in ("Ingiliz", "Arap")
                  else "kucuk saha / veri yok") + " -> yalnizca kamu]")
         kk = raw_kosu.copy()
         kk["g"] = pd.to_numeric(kk["ganyan_muhtemel"], errors="coerce")
@@ -262,9 +264,23 @@ def hesapla(pist, ymd):
     allrows = pd.concat([hist, raw], ignore_index=True)
     d = load_katilim(df=allrows)
     d = build_features(d)
-    feat = select_scope(d)
-    tg, span = egit_ve_uygula(feat)
-    return raw, tg, span
+    # K46: IKI AYRI MODEL — Ingiliz + Arap (ayri egitim/harman; kartta o irkin kosusu yoksa
+    # o model hic fit edilmez, zaman bosa gitmez). K42 paper testi Ingiliz-kilitli (paper.py korur).
+    tglar, spanlar = [], []
+    alpha_i, gamma_i = float("nan"), float("nan")
+    for irk in ("Ingiliz", "Arap"):
+        feat = select_scope(d, irk=irk)
+        if "bugun" not in feat.columns or not (feat["bugun"] == 1).any():
+            continue                                    # kartta bu irktan puanlanabilir kosu yok
+        tg_i, (sp, a, g) = egit_ve_uygula(feat)
+        if len(tg_i):
+            tglar.append(tg_i)
+        spanlar.append(f"{irk}: a={a:+.2f} g={g:+.2f}")
+        if irk == "Ingiliz":
+            alpha_i, gamma_i = a, g
+    tg = pd.concat(tglar, ignore_index=True) if tglar else pd.DataFrame(columns=raw.columns)
+    span = " | ".join(spanlar) if spanlar else "model yok (kapsam disi kart)"
+    return raw, tg, (span, alpha_i, gamma_i)
 
 
 def main():
@@ -293,8 +309,9 @@ def main():
 
     print("=" * 74)
     print(f"GUNLUK TAHMIN  {pist}  {args.tarih}   (cekim {datetime.now():%H:%M})")
-    print(f"model: {span} | ALPHA(fund)={alpha:+.2f} GAMMA(piyasa)={gamma:+.2f}")
-    print("UYARI: sistem +EV degil (6 test). Tahminler analiz/karsilastirma icin; KAR garantisi yok.")
+    print(f"model: {span}")
+    print("UYARI: sistem +EV degil (8 test; Arap kesintisi ~%31 daha da sert). "
+          "Tahminler analiz icin; KAR garantisi yok.")
     print("AGF%(sis)=sistemin kendi AGF'si (Bot2 harman win-olas.) | Bot1=oran-kor | tum atlar sirali")
     print("iz: F=kamu favorisi | >>CANLI=Bot1 kamuyu COK asiyor (non-favori). DIKKAT: bunlar")
     print("    backtest'te kontrarian= -%35 (K20) -> BAHIS sinyali DEGIL, 'kendi yarginla bak' isareti.")
