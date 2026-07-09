@@ -124,6 +124,9 @@ def main():
     if not tek_instans():
         print("takip ZATEN calisiyor (baska pencere/zamanlanmis gorev) -> bu kopya kapaniyor (K43).")
         return
+    # K47 kalp atisi: bekci.py 13:30'da bunu kontrol eder ("takip bugun basladi mi?")
+    (KOK / "veri" / "takip_son.txt").write_text(
+        datetime.now().strftime("%Y-%m-%d %H:%M"), encoding="utf-8")
 
     pistler = [args.pist.strip().upper()] if args.pist else [p for p, _ in yerli_pistler(ymd)]
     # K4: 4 supheli pist (sike soylentisi) hem tahmin hem takip DISI

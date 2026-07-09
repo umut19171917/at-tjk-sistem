@@ -531,3 +531,17 @@ olasılık GÖRÜNTÜLEMESİ (bahis önerisi değil) ileride düşünülebilir.
   - **K42 ÖN-KAYIT KORUMASI:** `paper.kupon_uret` Arap koşusunu KOD SEVİYESİNDE reddeder
     (test edildi: Arap → 0 kupon, İngiliz → normal) — 12 haftalık test İngiliz-kilitli, kural
     ortası kapsam değişikliği imkânsız.
+
+## 2026-07-09 — Otomasyon doğrulaması + bekçi
+
+**K47 — K43/K45 düzeltmesi DOĞRULANDI + kendi kendini denetleyen bekçi kuruldu.**
+- **Doğrulama (kullanıcı istedi):** "TJK Takip" görevi pil düzeltmesinden beri 3 gün üst üste
+  tam 10:30'da çalıştı (LastRunTime 09.07 10:30:01; 7/8/9 Tem rapor dosyaları + paper kuponları:
+  37/19/31). 6 Tem tek kayıp gün olarak kaldı.
+- **Bekçi:** insan-fark-etmesine dayanan son halka da kaldırıldı — `kod/bekci.py` + "TJK Bekci"
+  görevi (13:30, pil-kısıtsız): takip o gün başlamadıysa (kalp atışı `veri/takip_son.txt`,
+  takip.main yazar) EKRANDA uyarı penceresi açar. Yarış olmayan gün sessiz (takip yine açılıp
+  kalp atışı yazar). Kurulum-sonrası-doğrulama dersi (K45) gereği: bekçinin İLK gerçek tetiği
+  (10 Tem 13:30) ayrıca kontrol edilecek.
+- **Not:** 9 Tem koşuları tek-model (İngiliz) kodla izlendi — K46 aynı akşam 20:38'de
+  commit'lendi; ilk çift-modelli gün 10 Tem.
