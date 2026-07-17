@@ -5,9 +5,11 @@ ve onun hafızasıyla ilişkisi yoktur; oraya dokunulmaz. Bu projede **otomatik 
 kullanılmaz** — tüm kayıt bu klasördeki dosyalardadır.
 
 ## Amaç
-TJK müşterek bahislerinde **sürdürülebilir, pozitif beklenen değerli (EV>0)** bir bahis sistemi.
-Jackpot avı değil. Yaklaşım Benter-*ilhamlı* (kopya değil): fundamental olasılık modeli +
-kamuoyu oranını harman + disiplinli bahis boyutu.
+Kuruluş sorusu: TJK müşterek bahislerinde **sürdürülebilir EV>0** mümkün mü? Benter-*ilhamlı*
+yaklaşımla (fundamental model + kamu oranı harmanı) soruldu ve **9 bağımsız testte cevaplandı:
+HAYIR** (verimli piyasa + %25-31 kesinti; K13-K46). **Güncel amaç (K48, 2026-07-17):** paper
+testi 25 Eylül'e kadar tamamlamak + izleme/öğrenme. Kullanıcı gerçek bahis OYNAMIYOR;
+K37/K41 çerçevesi askıda (ilk gerçek kuponla kendiliğinden yeniden aktif). Mod kararı: 25 Eylül.
 
 ## Temel gerçek
 Pari-mutuel + ganyan kesintisi **~%25,7** (veriden ölçüldü) → negatif toplamlı oyun. Kâr için

@@ -532,6 +532,26 @@ olasılık GÖRÜNTÜLEMESİ (bahis önerisi değil) ileride düşünülebilir.
     (test edildi: Arap → 0 kupon, İngiliz → normal) — 12 haftalık test İngiliz-kilitli, kural
     ortası kapsam değişikliği imkânsız.
 
+## 2026-07-17 — Gerçek bahis yok: K37/K41 askıda, amaç daraltıldı
+
+**K48 — Kullanıcı beyanı (2026-07-17): GERÇEK BAHİS OYNAMIYOR.** 14 günde 0 kayıtlı kupon
+(`bahisler.csv` hiç oluşmadı) sorgulandı; cevap net: oynamıyor.
+- **Değerlendirme (dürüst):** Bu, projenin ölçülebilir en iyi finansal çıktısı. Sistem oyunun
+  beklenen maliyetini 9 testte kesinleştirdi (−%25,5 İng / −%30,6 Arap kesinti); oynamamak =
+  o maliyeti realize etmemek. "Kazandırdı" değil, "bilerek kaybettirmedi".
+- **K37/K41 ASKIDA (kaldırılmadı):** bahis/bahis-sonuc komutları, tavan uyarıları, ön-taahhütlü
+  değerlendirme kuralı ve `bahis_gir.bat` yerinde duruyor. İlk gerçek kupon kaydıyla çerçeve
+  kendiliğinden yeniden aktifleşir (n≥100/90-gün sayacı o günden başlar). Yeniden başlama
+  koşulu hakkında dürüst not: 9 test "+EV yok" diyor — veri değişmeden gerçek paraya dönüş
+  için sistemden gerekçe ÇIKMAYACAK.
+- **Sistemin resmi amacı daraltıldı:** (1) K42 paper testini 25 Eylül'e kadar tamamlamak
+  (kalibrasyon + plase + CANLI verdiktleri), (2) öğrenme/izleme — kullanıcının kişisel takibi.
+  +EV arayışı kapalı.
+- **KARAR NOKTASI TAKVİME BAĞLANDI: 25 Eylül 2026 (W12 sonu).** Paper final raporuyla birlikte
+  "sistem hangi modda devam etsin" kararı: (a) günlük izleme sürsün / (b) istek-üzerine analiz
+  moduna insin (günlük takip kapalı, araçlar duruyor) / (c) arşivlensin. Ön-taahhüt kültürü:
+  karar tarihi şimdi sabitlendi, tartışma veri geldiğinde.
+
 ## 2026-07-09 — Otomasyon doğrulaması + bekçi
 
 **K47 — K43/K45 düzeltmesi DOĞRULANDI + kendi kendini denetleyen bekçi kuruldu.**
