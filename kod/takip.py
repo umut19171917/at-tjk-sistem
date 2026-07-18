@@ -238,11 +238,13 @@ def main():
     ap.add_argument("--bekle", type=int, default=0, help="(uyumluluk; kullanilmiyor)")
     args = ap.parse_args()
 
-    if not tek_instans():
-        print("baska bir gecis su an calisiyor -> bu kopya cikiyor (K43 kilidi).")
-        return
-    # K47/K49 kalp atisi: HER geciste tazelenir; bekci "son 45 dk nabiz var mi" diye bakar
+    # K47/K49 kalp atisi: kilit kontrolunden ONCE yazilir — nabiz "gecis denemesi yapildi"
+    # demektir; kilidi baska kopya tutuyorsa da sistem canlidir (18 Tem: eski surec gunu
+    # bitirirken gecisler kilide takildi, nabiz yazilmadi, bekci yanlis alarm verdi).
     HB.write_text(datetime.now().strftime("%Y-%m-%d %H:%M"), encoding="utf-8")
+    if not tek_instans():
+        _log("gecis: kilit baskasinda (elle gecis/eski surec calisiyor) -> cikiyorum.")
+        return
     try:
         gecis(args)
     except Exception:
