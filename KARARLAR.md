@@ -556,6 +556,13 @@ yaşamak zorunda olan tek süreç" laptop ortamında yapısal kırılgandı — 
 - Eski sürekli-döngü kodu kaldırıldı (`--once/--bekle` uyumluluk no-op'u kaldı). 18 Tem akşamı
   eski-stil süreç günü bitirdi; yeni model 19 Tem 10:30'da devraldı.
 
+**K50 — Deney verisinin haftalık otomatik commit'i (kullanıcı onayladı).** defter.csv +
+paper_kupon.csv (+ günlük raporlar/HTML'ler; bahisler.csv oluşursa o da) tek kopya diskteydi
+(zip yedek manuel/seyrek). `kod/veri_commit.py` + **"TJK Veri Commit"** görevi (pazartesi 22:45):
+değişiklik varsa "veri: deney kaydı <tarih> (otomatik, K50)" commit'i; yoksa sessiz (idempotent —
+test edildi). İlk yetişme commit'i 18 Tem: 13 dosya, 2 haftalık birikim (02fcc8e). Bozulma artık
+en fazla 1 haftalık veriyi riske atar.
+
 ## 2026-07-17 — Gerçek bahis yok: K37/K41 askıda, amaç daraltıldı
 
 **K48 — Kullanıcı beyanı (2026-07-17): GERÇEK BAHİS OYNAMIYOR.** 14 günde 0 kayıtlı kupon
