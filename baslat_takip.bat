@@ -1,17 +1,12 @@
 @echo off
-REM TJK gunluk otomatik takip - cift tikla baslat (yaris gunu sabahi).
-REM PC uyumasin, bu pencere acik kalsin. Kapatinca takip durur.
+REM K49: takip artik OTOMATIK (gorev her 15 dk'da bir gecis yapar; elle baslatma GEREKMEZ).
+REM Bu dosya = ELLE TEK GECIS: simdi vadesi gelen kosulari isler, durumu gosterir, cikar.
+REM (Gorev calismiyorsa/bekci uyardiysa kurtarma icin cift tikla.)
 chcp 65001 >nul
 set PYTHONIOENCODING=utf-8
 cd /d "%~dp0"
-echo ====================================================
-echo  TJK TAKIP baslatiliyor...  (durdurmak icin pencereyi kapat)
-echo ====================================================
-echo [1/2] Arsiv guncelleniyor (yeni gun yoksa hizli gecer)...
-.venv\Scripts\python.exe kod\guncelle.py
-echo.
-echo [2/2] Gun boyu takip basliyor...
+echo ==== TJK ELLE GECIS (K49) ====
 .venv\Scripts\python.exe kod\takip.py %*
 echo.
-echo ---- takip bitti / durdu ----
+echo ---- gecis bitti (otomatik gorev 15 dk'da bir zaten calisiyor) ----
 pause

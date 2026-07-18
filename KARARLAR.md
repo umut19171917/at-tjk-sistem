@@ -532,6 +532,30 @@ olasılık GÖRÜNTÜLEMESİ (bahis önerisi değil) ileride düşünülebilir.
     (test edildi: Arap → 0 kupon, İngiliz → normal) — 12 haftalık test İngiliz-kilitli, kural
     ortası kapsam değişikliği imkânsız.
 
+## 2026-07-18 — Durumsuz takip (K49)
+
+**K49 — TAKİP DURUMSUZ GEÇİŞ MODELİNE GEÇTİ (kullanıcı onayladı).** Kök sorun: "bütün gün
+yaşamak zorunda olan tek süreç" laptop ortamında yapısal kırılgandı — 13 günde 4 olay
+(5-6 Tem pil, 16 Tem gündüz ölümü: 9 koşu, 17 Tem kısa ölüm). Bekçi "başladı mı"yı görüyordu,
+"yaşıyor mu"yu göremiyordu.
+- **Yeni model:** "TJK Takip" görevi **her 15 dk'da bir** (10:30 + 12 saat, pythonw, 30 dk
+  limit) `takip.py`'yi çalıştırır; her çağrı DURUMSUZ tek geçiş: vadesi gelen koşuları işler,
+  durumu **`veri/takip_gecis.txt`** marker dosyasına yazar (bitti/gecmis/atlandi/YOK/
+  GUNCELLE/SONUCLA), çıkar. Süreç ölümü kavramı kalktı: geçiş çökse/uyku girse sonraki geçiş
+  kaldığı yerden sürer. Günün ilk geçişi arşivi günceller (3 başarısız denemede vazgeç → gün
+  bayat arşivle sürer, hesapla uyarır). Gün sonu sonucla: tüm koşular mühürlü + son post+40dk.
+  K36/K39/K42 korumaları aynen (isle_kosu değişmedi). Log: `veri/takip_log.txt` (pythonw sessiz).
+- **Bekçi yeniden tanımlandı:** kalp atışı HER geçişte tazelenir; bekçi (10:40'tan itibaren
+  2 saatte bir) "son 45 dk nabız var mı" bakar — 16-Tem-tipi gündüz ölümü artık en geç 2 saatte
+  görünür uyarıya döner. Pencere dışında (22:30-10:40) sessiz.
+- **`baslat_takip.bat` = elle tek geçiş** (kurtarma aracı); rutinde gerek yok. Sistem artık
+  K48'in gerektirdiği gibi sıfır-insan-müdahale ile 25 Eylül'e kadar birikebilir.
+- **Doğrulama:** 10 marker-akış birim-testi (YOK kararlılığı, mühür/tekrar-işlememe, retry
+  hakkı, atlandi, SONUCLA-bir-kez) — tümü geçti; görev tetikleri PT15M/PT12H doğrulandı;
+  bekçi ok-yolu smoke. İlk gerçek gün (19 Tem) ayrıca kontrol edilecek (K45 dersi).
+- Eski sürekli-döngü kodu kaldırıldı (`--once/--bekle` uyumluluk no-op'u kaldı). 18 Tem akşamı
+  eski-stil süreç günü bitirdi; yeni model 19 Tem 10:30'da devraldı.
+
 ## 2026-07-17 — Gerçek bahis yok: K37/K41 askıda, amaç daraltıldı
 
 **K48 — Kullanıcı beyanı (2026-07-17): GERÇEK BAHİS OYNAMIYOR.** 14 günde 0 kayıtlı kupon

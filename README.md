@@ -49,9 +49,11 @@ Pari-mutuel + ganyan kesintisi **~%25,7** (veriden ölçüldü) → negatif topl
   takip) + **`sonuclari_goster.bat`** (çift-tık → sonuçları çek + tarayıcıda aç)
   + **`bahis_gir.bat`** (gerçek kupon kaydı, K37). Okunur tablo: **`raporlar/defter.html`**
   (gün/koşu/at: tahmin+sonuç, kazanan yeşil + gerçek-bahis P&L); otomatik güncellenir.
-- **OTOMATİK BAŞLATMA (K43, 2026-07-05):** Görev Zamanlayıcı **"TJK Takip"** her gün 10:30'da
-  takibi kendisi başlatır (PC açık/uyanık olmalı; uykudaysa uyandırır, saati kaçırdıysa fırsat
-  bulunca başlar). Elle çift-tık artık gerekmez ama zararsızdır (tek-instans kilidi var).
+- **TAM OTOMATİK — DURUMSUZ GEÇİŞ (K49, 2026-07-18; K43'ü değiştirdi):** "TJK Takip" görevi
+  **her 15 dk'da bir** durumsuz geçiş çalıştırır (vadesi gelen koşuları işle → `takip_gecis.txt`
+  mühürle → çık). Süreç ölümü/uyku/pencere sorunu kalmadı; çöken geçişin yerini 15 dk sonra
+  yenisi alır. Bekçi 2 saatte bir "son 45 dk nabız var mı" bakar, yoksa ekrana uyarı basar.
+  `baslat_takip.bat` = elle tek geçiş (sadece kurtarma için; rutinde hiçbir tıklama gerekmez).
 - **Revizyon paketi (2026-07-02 gece, K35-K39):** dış kod incelemesi sonrası: **git deposu** (baseline
   + paket paket commit), `requirements.txt`, **nokta-anında dt-guard** (mükerrer-koşu/geçmiş-tarih
   sızıntısı kapandı), **arşiv bayatlık uyarısı + `kod/guncelle.py`** tazeleme protokolü, **defter

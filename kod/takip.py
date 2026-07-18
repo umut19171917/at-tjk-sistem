@@ -1,21 +1,23 @@
 """
-takip.py — GUNLUK OTOMATIK TAKIP (sabah baslat, gun boyu kossun). KAR DEGIL; kagit-ticaret.
-Sabah bir kez calistir; gun boyu kendi dongusunde:
-  - gunun yerli pistlerini + (Ingiliz + Arap, K46) kosu saatlerini cikarir,
-  - her kosuyu SAAT'ine ~5 dk kala CANLI oranla analiz eder (tum atlari kendi AGF'siyle
-    siralar) -> ekrana + rapor dosyasina yazar + deftere isler,
-  - tum kosular bitince defter.sonucla calistirir.
-PC yaris saatlerinde ACIK/uyanik olmali (yerel script; uyurken tetiklenmez).
+takip.py — DURUMSUZ GECIS takibi (K49). KAR DEGIL; kagit-ticaret.
+K43-K47 dersi: "butun gun yasamak zorunda olan tek surec" laptop ortaminda kirilgan
+(uyku/kapak/pencere/cokme -> 16-17 Tem kosu kayiplari). Yeni model: zamanlanmis gorev
+HER 15 DAKIKADA BIR bunu calistirir; her cagri DURUMSUZ tek gecis yapar ve cikar:
+  - gunun ilk gecisinde arsivi gunceller (guncelle.py; marker ile gunde 1 kez),
+  - vadesi gelen (post-5dk) kosulari isler -> rapor + defter + paper (mevcut isle_kosu),
+  - islenen/gecen kosulari veri/takip_gecis.txt'e isler (kalici durum; bellek yok),
+  - tum kosular bitince + son post+40dk gecince defter.sonucla (gunde 1 kez, marker).
+Surec olumu kavrami kalmadi: cagri coker/uyku girerse SONRAKI cagri kaldigi yerden surer.
+Kalp atisi (veri/takip_son.txt) HER geciste tazelenir -> bekci "nabiz var mi" diye bakar.
 
 Kullanim:
-    python takip.py                      # bugun, tum yerli pistler, canli dongu
+    python takip.py                      # tek gecis (gorev de ayni komutu calistirir)
     python takip.py --pist ANKARA        # sadece bu pist
-    python takip.py --once               # su an vakti gelmis kosulari bir kez isle ve cik (test/zamanlayici)
-    python takip.py --dk 6 --bekle 60    # kac dk kala / dongu bekleme sn
+    python takip.py --dk 6               # kosuya kac dk kala islensin
 """
 import argparse
+import subprocess
 import sys
-import time
 from datetime import date, datetime
 from pathlib import Path
 
@@ -28,7 +30,37 @@ from duzlestir import irk_of  # noqa: E402
 import defter  # noqa: E402
 
 RAPOR = KOK / "raporlar" / "gunluk"
+GECIS = KOK / "veri" / "takip_gecis.txt"    # kalici gecis-durumu (append-only marker)
+HB = KOK / "veri" / "takip_son.txt"         # kalp atisi (her gecis tazeler; bekci okur)
+LOG = KOK / "veri" / "takip_log.txt"        # gecis ozetleri + hatalar (pythonw sessiz kosar)
 _KILIT = None
+
+
+def _log(msg):
+    satir = f"{datetime.now():%Y-%m-%d %H:%M:%S}  {msg}"
+    print(satir)
+    try:
+        with open(LOG, "a", encoding="utf-8") as f:
+            f.write(satir + "\n")
+    except OSError:
+        pass
+
+
+def _durum_oku(tarih):
+    """Bugunun marker seti: {'GUNCELLE', 'YOK', 'SONUCLA', 'ANKARA 3 bitti', ...}"""
+    if not GECIS.exists():
+        return set()
+    out = set()
+    for ln in GECIS.read_text(encoding="utf-8").splitlines():
+        p = ln.split("\t", 1)
+        if len(p) == 2 and p[0] == tarih:
+            out.add(p[1])
+    return out
+
+
+def _isaretle(tarih, anahtar):
+    with open(GECIS, "a", encoding="utf-8") as f:
+        f.write(f"{tarih}\t{anahtar}\n")
 
 
 def tek_instans():
@@ -111,90 +143,112 @@ def isle_kosu(pist, ymd, tarih, no, saat, dosya):
     return True
 
 
+def guncelle_bir_kez(tarih, done):
+    """Gunun ilk gecisinde arsivi guncelle (marker'li; basarisizsa sonraki geciste yeniden,
+    3 denemede vazgec -> gun bayat arsivle surer, hesapla zaten uyarir)."""
+    if "GUNCELLE" in done:
+        return
+    deneme = sum(1 for d in done if d == "GUNCELLE-DENEME")
+    if deneme >= 3:
+        return
+    _log("guncelle basliyor (gunun ilk gecisi)...")
+    try:
+        r = subprocess.run([sys.executable, str(KOK / "kod" / "guncelle.py")],
+                           creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+                           timeout=1200)
+        if r.returncode == 0:
+            _isaretle(tarih, "GUNCELLE")
+            _log("guncelle tamam.")
+            return
+    except (subprocess.TimeoutExpired, OSError) as e:
+        _log(f"guncelle hata: {type(e).__name__}")
+    _isaretle(tarih, "GUNCELLE-DENEME")
+    _log(f"guncelle basarisiz (deneme {deneme + 1}/3) -> sonraki geciste yeniden.")
+
+
+def gecis(args):
+    """TEK durumsuz gecis: vadesi gelenleri isle, durumu dosyaya yaz, cik."""
+    tarih = args.tarih
+    ymd = datetime.strptime(tarih, "%Y-%m-%d").strftime("%Y%m%d")
+    now = datetime.now()
+    done = _durum_oku(tarih)
+
+    guncelle_bir_kez(tarih, done)
+    done = _durum_oku(tarih)
+
+    if "YOK" in done:
+        return                                        # bugun izinli kosu yok (kararli)
+    pistler = [args.pist.strip().upper()] if args.pist else [p for p, _ in yerli_pistler(ymd)]
+    atilan = [p for p in pistler if p in EXCL]        # K4: supheli pistler takip DISI
+    pistler = [p for p in pistler if p not in EXCL]
+    if atilan:
+        print(f"K4: {', '.join(atilan)} (sike supheli) -> takip DISI.")
+    sched = []
+    for p in pistler:
+        sched += program_kosulari(p, ymd, tarih)
+    sched.sort(key=lambda r: r["post"])
+    if not sched:
+        _isaretle(tarih, "YOK")
+        _log(f"{tarih}: izinli Ingiliz/Arap kosusu yok -> gun kapandi.")
+        return
+
+    RAPOR.mkdir(parents=True, exist_ok=True)
+    dosya = RAPOR / f"{tarih}_{'_'.join(pistler)}.txt"
+    islenen = 0
+    for r in sched:
+        key = f"{r['pist']} {r['no']}"
+        if any(d.startswith(key + " ") for d in done):
+            continue                                  # onceki geciste sonuclanmis
+        if now > r["post"] + pd.Timedelta(minutes=3):
+            # K36: yaris-sonrasi "tahmin" kaydi yok — gecmis olarak muhurle
+            _isaretle(tarih, f"{key} gecmis")
+            _log(f"{key} (yaris {r['saat']}): posta gecti -> islenmedi (defter korumasi)")
+        elif now >= r["post"] - pd.Timedelta(minutes=args.dk):
+            ok = isle_kosu(r["pist"], ymd, tarih, r["no"], r["saat"], dosya)
+            if ok:
+                _isaretle(tarih, f"{key} bitti")
+                islenen += 1
+            elif datetime.now() > r["post"]:
+                _isaretle(tarih, f"{key} atlandi")
+            # aksi halde MARKER YOK -> sonraki gecis yeniden dener (K39: gecici hata kosuyu yakmasin)
+
+    done = _durum_oku(tarih)
+    bekleyen = [r for r in sched
+                if not any(d.startswith(f"{r['pist']} {r['no']} ") for d in done)]
+    son_post = max(r["post"] for r in sched)
+    if not bekleyen and "SONUCLA" not in done and datetime.now() > son_post + pd.Timedelta(minutes=40):
+        _log("gun bitti -> sonucla...")
+        try:
+            defter.sonucla()
+            _isaretle(tarih, "SONUCLA")
+        except Exception as e:
+            _log(f"sonucla hata: {type(e).__name__}: {e}")   # marker yok -> sonraki gecis dener
+    ozet = (f"gecis bitti: islenen {islenen}, bekleyen {len(bekleyen)}"
+            + (f", sonraki ~{min(r['post'] for r in bekleyen) - pd.Timedelta(minutes=args.dk):%H:%M}"
+               if bekleyen else ", gun tamam"))
+    _log(ozet)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pist", default=None, help="tek pist (bos -> gunun tum yerli pistleri)")
     ap.add_argument("--tarih", default=date.today().isoformat())
-    ap.add_argument("--dk", type=int, default=5, help="kosuya kac dk kala tetikle")
-    ap.add_argument("--bekle", type=int, default=60, help="dongu bekleme (sn)")
-    ap.add_argument("--once", action="store_true", help="vakti gelmisleri bir kez isle ve cik")
+    ap.add_argument("--dk", type=int, default=5, help="kosuya kac dk kala islensin")
+    ap.add_argument("--once", action="store_true", help="(uyumluluk; artik her cagri tek gecis)")
+    ap.add_argument("--bekle", type=int, default=0, help="(uyumluluk; kullanilmiyor)")
     args = ap.parse_args()
-    ymd = datetime.strptime(args.tarih, "%Y-%m-%d").strftime("%Y%m%d")
 
     if not tek_instans():
-        print("takip ZATEN calisiyor (baska pencere/zamanlanmis gorev) -> bu kopya kapaniyor (K43).")
+        print("baska bir gecis su an calisiyor -> bu kopya cikiyor (K43 kilidi).")
         return
-    # K47 kalp atisi: bekci.py 13:30'da bunu kontrol eder ("takip bugun basladi mi?")
-    (KOK / "veri" / "takip_son.txt").write_text(
-        datetime.now().strftime("%Y-%m-%d %H:%M"), encoding="utf-8")
-
-    pistler = [args.pist.strip().upper()] if args.pist else [p for p, _ in yerli_pistler(ymd)]
-    # K4: 4 supheli pist (sike soylentisi) hem tahmin hem takip DISI
-    atilan = [p for p in pistler if p in EXCL]
-    pistler = [p for p in pistler if p not in EXCL]
-    if atilan:
-        print(f"K4: {', '.join(atilan)} (sike supheli) -> takip DISI.")
-    if not pistler:
-        print(f"{args.tarih}: takip edilecek (izinli) yerli pist yok.")
-        return
-
-    sched = []
-    for p in pistler:
-        sched += program_kosulari(p, ymd, args.tarih)
-    sched.sort(key=lambda r: r["post"])
-    if not sched:
-        print(f"{args.tarih}: Ingiliz/Arap kosusu yok ({', '.join(pistler)}).")
-        return
-
-    RAPOR.mkdir(parents=True, exist_ok=True)
-    dosya = RAPOR / f"{args.tarih}_{'_'.join(pistler)}.txt"
-    print("=" * 70)
-    print(f"TAKIP basladi  {args.tarih}  pist: {', '.join(pistler)}  "
-          f"Ingiliz+Arap kosu: {len(sched)}  (yaris-{args.dk}dk kala)")
-    print("KAR DEGIL — kagit-ticaret. AGF%(sis)=sistemin kendi AGF'si. Rapor: " + str(dosya.name))
-    for r in sched:
-        print(f"   {r['pist']:10s} kosu {r['no']:>2}  yaris {r['saat']}  tetik ~{(r['post'] - pd.Timedelta(minutes=args.dk)):%H:%M}")
-    print("=" * 70)
-
-    while True:
-        now = datetime.now()
-        # posta saati GECMIS kosu islenmez (K36): yaris-sonrasi oranla "tahmin" kaydi deneyi bozar.
-        # (takip'i oglen baslatinca sabahki kosular buraya duser; ekrana da analiz basilmaz.)
-        for r in sched:
-            if r["durum"] == "bekliyor" and now > r["post"] + pd.Timedelta(minutes=3):
-                r["durum"] = "gecmis"
-                print(f"  {r['pist']} kosu {r['no']} (yaris {r['saat']}): posta saati gecti "
-                      f"-> islenmedi (defter korumasi)")
-        bekleyen = [r for r in sched if r["durum"] == "bekliyor"]
-        vakti = [r for r in bekleyen if args.once or now >= r["post"] - pd.Timedelta(minutes=args.dk)]
-        for r in vakti:
-            ok = isle_kosu(r["pist"], ymd, args.tarih, r["no"], r["saat"], dosya)
-            # gecici hata (ag vb.) kosuyu YAKMASIN (K39): posta saatine kadar dongude yeniden dene;
-            # post gecerse yukaridaki suzgec "gecmis" yapar. --once'ta tek deneme.
-            if ok:
-                r["durum"] = "bitti"
-            elif args.once or datetime.now() > r["post"]:
-                r["durum"] = "atlandi"
-
-        kalan = [r for r in sched if r["durum"] == "bekliyor"]
-        if not kalan or args.once:
-            print(f"\n{datetime.now():%H:%M}  isleme bitti "
-                  f"({sum(r['durum']=='bitti' for r in sched)}/{len(sched)} kosu).")
-            if not args.once:
-                # sonuclar feed'i yarislardan ~dakikalar sonra dolar; son kosudan hemen once
-                # sonucla cagirmak bos donerdi (K39) -> son post + 40 dk beklenir.
-                hedef = max(r["post"] for r in sched) + pd.Timedelta(minutes=40)
-                if datetime.now() < hedef:
-                    print(f"sonuclarin dolmasi icin ~{hedef:%H:%M} bekleniyor (pencere acik kalsin)...")
-                    while datetime.now() < hedef:
-                        time.sleep(min(60.0, max(1.0, (hedef - datetime.now()).total_seconds())))
-            print("sonucla...")
-            defter.sonucla()
-            break
-        nxt = min(r["post"] for r in kalan) - pd.Timedelta(minutes=args.dk)
-        print(f"{now:%H:%M}  bekleyen {len(kalan)} kosu; sonraki tetik ~{nxt:%H:%M}. "
-              f"({args.bekle}sn uyku)", flush=True)
-        time.sleep(args.bekle)
+    # K47/K49 kalp atisi: HER geciste tazelenir; bekci "son 45 dk nabiz var mi" diye bakar
+    HB.write_text(datetime.now().strftime("%Y-%m-%d %H:%M"), encoding="utf-8")
+    try:
+        gecis(args)
+    except Exception:
+        import traceback
+        _log("GECIS COKTU:\n" + traceback.format_exc())   # pythonw sessiz -> log'a yaz
+        raise
 
 
 if __name__ == "__main__":
