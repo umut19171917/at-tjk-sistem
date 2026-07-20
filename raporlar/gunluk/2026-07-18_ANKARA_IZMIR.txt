@@ -196,3 +196,38 @@ KOSU  7  19:30  1200m  3 ve Yukarı İngilizler  (10 at)
     2 BOARDING PASS             5.0       3.0    3.3    -    22.75  
     1 TANGÜL HANIM              4.5       2.8    3.1    -    24.25  
     5 NAZGAR                    2.6       2.2    2.8    -    26.30  
+
+[19:56 tetik]  IZMIR  KOSU 8 (yaris 20:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  8  20:00  1200m  2 Yaşlı İngilizler  (9 at)
+   [DUSUK GUVEN: ilk-kosu pay 100%, ort.gecmis 0.0 kosu -> Bot1 zayif, kamuya yaslan]
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    5 BRAVE ROSE               23.2      30.6   27.6    -     2.70  F
+    7 REINA DE REINAS          10.9      25.6   27.6    -     2.70  F
+    2 CORH İKİ                 10.6      12.5   13.0    -     5.75  
+    6 GOLDEN DOLPHIN           11.2       7.6    7.6    -     9.85  
+    9 TACIMAYVALIK             11.6       6.7    6.5    -    11.50  >>CANLI
+   10 TORA NOVA                10.3       6.2    6.2    -    12.10  >>CANLI
+    4 WHITE DYNASTY             8.4       5.2    5.4    -    13.90  
+    3 İZMİR KARTALI             4.1       3.5    4.3    -    17.45  
+    8 ROLYANA                   9.7       2.1    2.0    -    38.05  
+
+[20:25 tetik]  IZMIR  KOSU 9 (yaris 20:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  9  20:30  1900m  4 ve Yukarı Araplar  (15 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    2 DEMİR NİHAT              36.3      46.4   40.1    -     1.85  F
+   14 HOLİGAN                  19.9      18.3   17.1    -     4.35  
+   15 KAZANCI                   5.0       5.7    6.6    -    11.30  
+    3 FOTOROMAN                 6.6       4.6    5.0    -    14.95  
+    4 ILDIRLI                   4.1       4.2    4.9    -    15.10  
+    7 BABY ARYA                 8.3       3.4    3.4    -    21.55  
+    6 SAMSAT                    3.1       3.0    3.6    -    20.55  
+   12 GÜNEŞKRAL                 2.9       2.7    3.4    -    22.00  
+   10 YILDIZ SULTAN             1.2       2.5    3.7    -    20.25  
+    9 FIRAT EFE                 1.6       2.0    2.8    -    26.95  
+    8 BAHTI AÇIK                5.2       1.8    2.0    -    37.05  
+   11 KOÇBAŞI                   0.9       1.5    2.3    -    32.10  
+   13 AYBUGA                    1.1       1.5    2.1    -    35.70  
+    5 DATCA                     1.8       1.2    1.6    -    45.30  
+   16 DİLBERHATUN               2.1       1.2    1.5    -    50.00  
