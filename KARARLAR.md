@@ -563,6 +563,33 @@ değişiklik varsa "veri: deney kaydı <tarih> (otomatik, K50)" commit'i; yoksa 
 test edildi). İlk yetişme commit'i 18 Tem: 13 dosya, 2 haftalık birikim (02fcc8e). Bozulma artık
 en fazla 1 haftalık veriyi riske atar.
 
+## 2026-07-19 — Carryover (devir) kazıyıcısı — araştırma, sisteme bağlantısız
+
+**K51 — `kod/devir_ayikla.py`: TJK'nın tüm çok-ayaklı havuzlarında carryover (devir) olaylarını
+ham veriden çıkaran YEREL script (token=0; ham JSON zaten inik, ağ/LLM çağrısı yok).** Bağlam:
+Altılı kupon teorisi tartışılırken (sistemden bağımsız soru) carryover'ın beceriden bağımsız
+en güçlü +EV kaldıracı olduğu ortaya çıktı (Benter 2006) — TR'de ne sıklıkla oluştuğu hiç
+ölçülmemişti. Kaynak metin kalıbı: `"<TÜR>(<kombo>): Bilen çıkmamıştır, <TUTAR> TL devretmiştir."`
+- **Bulunan+düzeltilen hata:** ilk regex, bahis-türü adını rakam+harf+boşluk olarak gevşek
+  yakalıyordu; bir önceki tutarın virgül-sonrası kuyruğu ("60TL","90TL"...) sonraki adın başına
+  sızıyordu (virgül yasak olduğundan en erken eşleşme tam sızıntı noktasında başlıyordu).
+  Sonuç: 33 "Altılı" olayının **9'u aslında 7'Lİ GANYAN** idi (gevşek "6 içeriyor mu" filtresi
+  yakalamıştı). Düzeltme: sızıntı `^\d+TL\s*` kalıbıyla temizlendi + Altılı filtresi TAM
+  önek eşleşmesine (`6'LI GANYAN` ile başlamalı) sıkılaştırıldı. Doğru sayı: **24 Altılı devir
+  olayı** (2021-2026), kombo alanları elle doğrulandı (6 at, temiz).
+- **Sonuç (izinli-pist kapsamı, projenin asıl ilgi alanı):** 4.136 toplam Altılı çekilişinde
+  (4.112 kazanan çıktı + 24 devretti) devir sıklığı **%0,6** — nadir ama büyüklüğü çarpıcı
+  (medyan 6,16M TL, en büyüğü 24,86M TL — 01/11/2025 ANKARA). **7 olay izinli (proje-kapsamı)
+  pistte:** BURSA×4, İSTANBUL×1, İZMİR×1, ANKARA×1 (2021-2026). Geri kalan 17/24 (%71)
+  **K4'ün 4 şüpheli pistinde** (SANLIURFA×8, DIYARBAKIR×5+1, ELAZIG×2) — ⚠ HİPOTEZ (nedensellik
+  kurulmadı, pist-bazlı devir ORANI için payda/toplam-çekiliş-sayısı hesaplanmadı; sadece HAM
+  SAYI çarpıcı bir korelasyon, K4'ün şike-şüphesi gerekçesiyle örtüşüyor ama kanıt değil).
+- **Sisteme bağlantı YOK:** takip/gunluk/paper/defter hiçbiri bu script'i çağırmıyor, hiçbir
+  canlı davranışı etkilemiyor. Saf araştırma çıktısı: `veri/devir.csv`.
+- **Açık (yapılmadı, istenirse):** carryover gününün ERTESİ (havuzun çözüldüğü) çekilişle
+  eşleştirip "büyümüş havuzda gerçek ROI ne olurdu" hesabı — mevcut script sadece devir
+  olaylarının kendisini sayıyor, sonraki resolve'a bağlamıyor.
+
 ## 2026-07-17 — Gerçek bahis yok: K37/K41 askıda, amaç daraltıldı
 
 **K48 — Kullanıcı beyanı (2026-07-17): GERÇEK BAHİS OYNAMIYOR.** 14 günde 0 kayıtlı kupon
