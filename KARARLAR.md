@@ -590,6 +590,45 @@ en güçlü +EV kaldıracı olduğu ortaya çıktı (Benter 2006) — TR'de ne s
   eşleştirip "büyümüş havuzda gerçek ROI ne olurdu" hesabı — mevcut script sadece devir
   olaylarının kendisini sayıyor, sonraki resolve'a bağlamıyor.
 
+## 2026-07-19 — Altılı kupon backtest'i (kullanıcı isteği) — NEGATİF, teselli-tuzağı atlatıldı
+
+**K52 — ALTILI "en efektif kupon" backtest'i: banker/spread + sondan-ağırlık + bütçe-optimize
+ile bile +EV YOK. Kritik: pozitif GÖRÜNEN sonuç YANLIŞ ödeme varsayımından geliyordu, doğrulanıp
+elendi.** Kullanıcı "her gün Altılı da test edelim, en efektifi kursun, geniş/pahalı yapmasın"
+dedi. K23'ten farkı (yeni test, tekrar değil): (a) K46 Arap modeli → ayakların %46'sı artık
+puanlanıyor (K23'te dışlanıyordu), (b) banker/spread + kademeli ödeme + günde-2-pencere (K23 sadece
+top-k spread + tam-isabet). Backtest zinciri (hepsi offline, canlıya/paper'a/K42'ye DOKUNMAZ):
+- `kod/altili_tam.py`: 4 ödeme kademesini (6/5/4/3, normal+devir) çıkarır. Pencere↔kademe eşlemesi
+  metin önekine değil KOMBO ALT-KÜME eşleşmesine dayanır (önek tutarsız). Günde 2 örtüşen pencere
+  (1-6 ve 4-9. koşu) doğrulandı. 6.747 olay.
+- `kod/altili_olasilik.py`: TÜM ayakların (İngiliz+Arap) walk-forward Bot2'si (α İng +0,191 /
+  Arap +0,217 — üretimle birebir). 24.822 koşu puanlandı; ayak kapsamı %54 İng + %46 Arap + %0 dışı.
+- `kod/altili_backtest.py`: banker (güven≥eşik→tek at) + spread (kümülatif kapsam) + bütçe tavanı
+  (kombo>max→en belirsiz ayaktan buda) + kademeli ödeme + bütçe/eşik taraması.
+- **PARSER GÜVENLİĞİ:** ilk `devir_ayikla` (K51) regex'i tutar-kuyruğu sızıntısıyla 33 Altılı'nın
+  9'unu 7'Lİ sanmıştı → yakalandı/düzeltildi (24 doğru). Pencere-dedup: aynı 6 koşu bazen 2 kombo
+  metniyle → race_kod bazlı dedup.
+- **TESELLİ TUZAĞI (talimatname m.2/m.4 — olağanüstü iddiaya olağanüstü kanıt):** ilk tablo OOS
+  (2025-26) +%21…+%68 (hepsi pozitif!) verdi — 9 negatif testlik sistemde ALARM. İki senaryo A/B:
+  - A (kademeli AÇIK = 6 tutmazsa 5/4/3 teselli sayılır): OOS +%45,4, bootstrap %95 GA
+    [+21,7%, +72,1%] POZİTİF.
+  - B (kademeli KAPALI = sadece 6 öder): OOS −%31,7, GA [−51,7%, −8,3%] NEGATİF.
+  - **Tüm sonuç "TJK Altılı'da teselli var mı"ya bağlıydı.** Ham veriden KESİN çözüldü: 2.497
+    vakanın 27'sinde 5'li kombosu 6'lının son-5'inden BAĞIMSIZ (farklı at/pencere) — teselli olsa
+    5'li HER ZAMAN 6'lının son-5'i olurdu. + web: "5'li ganyan AYRI kupon". **SONUÇ: 5'li/4'lü/3'lü
+    BAĞIMSIZ bahisler, 6'lının kademeli tesellisi DEĞİL → doğru senaryo B → NEGATİF.**
+- **"6'sız ROI" tanığı:** her konfigürasyonda 6-tutturma jackpotları çıkarılınca ROI negatif
+  (A'da bile −%7…−%37) → teselli/küçük ekonomisi sürekli kayıp; A'nın pozitifliği tümüyle
+  yanlış-sayılan teselliden.
+- **NİHAİ VERDICT: Altılı da dövülemiyor (10. bağımsız negatif).** Doğru ödeme yapısıyla OOS −%32,
+  tüm dönem −%60…−%76. Banker/spread/bütçe-optimizasyonu kaybı yavaşlatır ama +EV üretmez. K23
+  doğrulandı ve GÜÇLENDİRİLDİ (Arap kapsamı + doğru ödeme + kupon-kurma zanaatıyla). Engel yine
+  yapısal: verimli piyasa + yüksek kesinti. Canlıya hiçbir şey bağlanmadı.
+- **⚠ AÇIK TEYİT (kullanıcıdan):** teselli-yok sonucu ham-veri kanıtına dayanıyor (27/2497 bağımsız
+  pencere) ama TJK kuralı birincil kaynaktan (site erişilemedi) teyit edilmedi. Kullanıcı TJK'yı
+  biliyor → teselli GERÇEKTEN yoksa verdict kesin; VARSA senaryo A yeniden açılır (o zaman jackpot-
+  varyansı + price-impact ayrıca test edilmeli). **Karar bu teyide kadar: Altılı +EV değil.**
+
 ## 2026-07-17 — Gerçek bahis yok: K37/K41 askıda, amaç daraltıldı
 
 **K48 — Kullanıcı beyanı (2026-07-17): GERÇEK BAHİS OYNAMIYOR.** 14 günde 0 kayıtlı kupon
