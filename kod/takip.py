@@ -212,6 +212,16 @@ def gecis(args):
                 _isaretle(tarih, f"{key} atlandi")
             # aksi halde MARKER YOK -> sonraki gecis yeniden dener (K39: gecici hata kosuyu yakmasin)
 
+    # K53: ALTILI canli kupon — her Altili ilk kosusuna ~30dk kala kur (ayri dosya/sayfa;
+    # try-korumali: Altili hatasi takibi ASLA bozmaz, paper hook'u gibi).
+    try:
+        import altili_canli
+        nk = altili_canli.kupon_zamani_kur(pistler, ymd, tarih)
+        if nk:
+            _log(f"altili: {nk} kupon kuruldu (raporlar/altili.html)")
+    except Exception as e:
+        _log(f"altili kupon hatasi: {type(e).__name__}: {e}")
+
     done = _durum_oku(tarih)
     bekleyen = [r for r in sched
                 if not any(d.startswith(f"{r['pist']} {r['no']} ") for d in done)]
@@ -220,6 +230,11 @@ def gecis(args):
         _log("gun bitti -> sonucla...")
         try:
             defter.sonucla()
+            try:
+                import altili_canli          # K53: Altili ayak sonuclari + isabet (ayri; hata izole)
+                altili_canli.sonucla_altili()
+            except Exception as e:
+                _log(f"altili sonucla hata: {type(e).__name__}: {e}")
             _isaretle(tarih, "SONUCLA")
         except Exception as e:
             _log(f"sonucla hata: {type(e).__name__}: {e}")   # marker yok -> sonraki gecis dener

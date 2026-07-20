@@ -590,6 +590,36 @@ en güçlü +EV kaldıracı olduğu ortaya çıktı (Benter 2006) — TR'de ne s
   eşleştirip "büyümüş havuzda gerçek ROI ne olurdu" hesabı — mevcut script sadece devir
   olaylarının kendisini sayıyor, sonraki resolve'a bağlamıyor.
 
+## 2026-07-20 — Altılı CANLI kupon takibi (izleme/öğrenme; gerçek bahis değil)
+
+**K53 — `kod/altili_canli.py`: canlı Altılı kupon üretimi + ayak-ayak sonuç + isabet takibi.**
+Kullanıcı: "Altılı'yı gerçek bahis için KULLANMAYACAĞIM, o yüzden mutlaka denemek istiyorum —
+ilk koşulardan makul süre önce kupon hazırlansın/listelensin, sonra her koşu + nihai Altılı sonucu
+eklensin, başarı oranını en açık dille/görselle görelim." K48 ile tam uyumlu (para yok); K52 ile
+dürüst (backtest OOS −%32, +EV yok — sayfada sabit uyarı).
+- **Kullanıcı kararları:** (1) kupon genişliği: DAR (≤24 kombo) VE ORTA (≤96 kombo) İKİSİ de,
+  ayrı takip. (2) Kapsam: önce sadece Altılı; 4/5/7'li sonra (aynı altyapı, program zaten
+  "N'Lİ GANYAN bu koşudan başlar" ile hepsini işaretliyor → eklemek kolay).
+- **Pencere tespiti (kesin, tahmin yok):** program BAHISLER_TR'de "N. 6'LI GANYAN bu koşudan
+  başlar" → o koşudan 6 ardışık koşu. Günde 1-2 örtüşen Altılı (K46 keşfi) doğru yakalanıyor
+  (İstanbul 19 Tem: koşu 1-6 ve 5-10).
+- **Fizibilite doğrulandı:** muhtemel oran ilk koşudan saatler önce dolu → kupon baştan kurulabilir.
+- **Kupon mantığı:** K52 backtest'iyle AYNI çekirdek (`altili_backtest.kupon_kur`) — banker
+  (Bot2≥0,70→tek at) + spread (kümülatif 0,75) + bütçe tavanı (kombo>max→en belirsiz ayaktan buda).
+  Ayaklar hem İngiliz hem Arap (K46 sayesinde puanlanıyor); bir ayak kapsam dışıysa o pencere atlanır.
+- **Ödeme dürüstlüğü (K52):** 5/4/3'lü AYRI bahisler (teselli değil) → yalnız 6/6 "tam isabet"
+  kazanç; 5/4/3 sondan-ayak isabeti sadece BİLGİ olarak gösterilir (öğrenme, para değeri yok).
+- **Otomasyon:** `takip.py`'ye iki try-korumalı hook (paper pattern'i — Altılı hatası takibi ASLA
+  bozmaz): her geçişte `kupon_zamani_kur` (her Altılı ilk koşusuna ≤30dk kala, bir kez kurar) +
+  gün sonu `sonucla_altili`. **Ayrı arayüz:** `veri/altili_kupon.csv` + `raporlar/altili.html`
+  + çift-tık `altili_goster.bat`. defter/paper/K42'ye DOKUNMAZ.
+- **Görsel (kullanıcı "en açık/net"):** üstte DAR/ORTA ayrı ÖZET (tamamlanan Altılı, tam-isabet %,
+  sondan-ayak isabet dağılımı çubuğu); altında her Altılı kartı (6 ayak, seçilen atlar banker-vurgulu,
+  koşu bitince yeşil TUTTU / kırmızı kaçtı / gri bekliyor, isabet rozeti).
+- **Doğrulama:** çekirdek scratch'te uçtan uca test (kupon kur→sonucla→HTML, 24 ayak); hook güvenlik
+  testi (geçmiş Altılı'ya kupon KURMAZ, 0 döner); takip regresyonsuz; K50 veri_commit Altılı'yı da
+  yedekliyor. İlk gerçek kayıt 20 Tem BURSA (2 Altılı × 2 config; ikisi de isabetsiz — K52 beklentisi).
+
 ## 2026-07-19 — Altılı kupon backtest'i (kullanıcı isteği) — NEGATİF, teselli-tuzağı atlatıldı
 
 **K52 — ALTILI "en efektif kupon" backtest'i: banker/spread + sondan-ağırlık + bütçe-optimize

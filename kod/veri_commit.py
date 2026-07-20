@@ -21,8 +21,9 @@ def calistir(*args):
 
 
 def main():
-    yollar = ["veri/defter.csv", "veri/paper_kupon.csv",
-              "raporlar/gunluk", "raporlar/defter.html", "raporlar/paper.html"]
+    yollar = ["veri/defter.csv", "veri/paper_kupon.csv", "veri/altili_kupon.csv",
+              "raporlar/gunluk", "raporlar/defter.html", "raporlar/paper.html",
+              "raporlar/altili.html"]
     if (KOK / "veri" / "bahisler.csv").exists():      # K37 yeniden aktiflesirse o da
         yollar.append("veri/bahisler.csv")
     r = calistir("add", "--", *yollar)
