@@ -55,12 +55,16 @@ def getjson(url):
         return {"_hata": f"{type(e).__name__}"}
 
 
-def yerli_pistler(ymd):
+def yerli_pistler(ymd, hata_bildir=False):
     """O gunun yerli (TR) pist KEY listesi.
     KAYNAK = PROGRAM index (sonuclar degil): sonuclar/yarislar.json yaris GUNU BOSTUR (results
     aksam dolar) -> sabah takip baslatinca [] donerdi (K34 hatasi). Program index sabah da dolu;
-    TR pistlerde GUN sayisal, yabanci pistlerde GUN=None -> asagidaki GUN filtresi TR/yabanci ayirir."""
+    TR pistlerde GUN sayisal, yabanci pistlerde GUN=None -> asagidaki GUN filtresi TR/yabanci ayirir.
+
+    hata_bildir=True -> (liste, feed_hatasi_mi). K54: bos liste "yaris yok" ILE "feed patladi"
+    ayrimi yapilamadigi icin gecici ag hatasi gunu kalici muhurluyordu (21 Tem: 15 kosu kayip)."""
     j = getjson(f"{BASE}/program/{ymd}/yarislar.json")
+    hata = isinstance(j, dict) and bool(j.get("_hata"))
     venues = []
     if isinstance(j, list):
         venues = [v for v in j if isinstance(v, dict)]
@@ -77,7 +81,7 @@ def yerli_pistler(ymd):
                 and str(gun).strip() not in ("", "0", "null", "None")
                 and str(v.get("SIRA", "")).strip() != "99"):
             out.append((SEHIR_MAP.get(key, key), v.get("AD", "")))
-    return out
+    return (out, hata) if hata_bildir else out
 
 
 def as_int(x):

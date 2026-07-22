@@ -79,11 +79,13 @@ def tek_instans():
 
 def program_kosulari(pist, ymd, tarih):
     """pist programindan Ingiliz + Arap kosularinin (no, saat, post_dt) listesi (K46:
-    Arap modeli eklendi; 'diger' irk haric)."""
+    Arap modeli eklendi; 'diger' irk haric).
+    Doner: (liste, feed_hatasi_mi) — K54: hata ile "kosu yok" ayrilmali, yoksa gecici ag
+    hatasi gunu kalici muhurluyor (21 Tem: 15 kosu kayip)."""
     o = getjson(f"{BASE}/program/{ymd}/full/{pist}.json")
     if o.get("_hata"):
-        print(f"  {pist}: program yok ({o['_hata']})")
-        return []
+        print(f"  {pist}: program cekilemedi ({o['_hata']})")
+        return [], True
     out = []
     for k in o.get("kosular", []):
         if irk_of(k.get("GRUP_TR"), k.get("GRUPKISA")) not in ("Ingiliz", "Arap"):
@@ -96,7 +98,7 @@ def program_kosulari(pist, ymd, tarih):
         except (ValueError, TypeError):
             continue
         out.append({"pist": pist, "no": no, "saat": saat, "post": post, "durum": "bekliyor"})
-    return out
+    return out, False
 
 
 def isle_kosu(pist, ymd, tarih, no, saat, dosya):
@@ -178,16 +180,32 @@ def gecis(args):
 
     if "YOK" in done:
         return                                        # bugun izinli kosu yok (kararli)
-    pistler = [args.pist.strip().upper()] if args.pist else [p for p, _ in yerli_pistler(ymd)]
+    if args.pist:
+        pistler, index_hata = [args.pist.strip().upper()], False
+    else:
+        pistler, index_hata = yerli_pistler(ymd, hata_bildir=True)
+        pistler = [p for p, _ in pistler]
     atilan = [p for p in pistler if p in EXCL]        # K4: supheli pistler takip DISI
     pistler = [p for p in pistler if p not in EXCL]
     if atilan:
         print(f"K4: {', '.join(atilan)} (sike supheli) -> takip DISI.")
-    sched = []
+    sched, feed_hata = [], index_hata
     for p in pistler:
-        sched += program_kosulari(p, ymd, tarih)
+        ks, hata = program_kosulari(p, ymd, tarih)
+        sched += ks
+        feed_hata = feed_hata or hata
     sched.sort(key=lambda r: r["post"])
     if not sched:
+        # K54: "YOK" KALICI muhur -> yalnizca GUVENILIR bosluklukta yazilir. Iki koruma:
+        #  (a) feed hatasi varsa (ag/HTTP) mühürleme — gecici hata gunu kapatmasin;
+        #  (b) bugun daha once kosu gorulmusse (marker var) asla mühürleme — 21 Tem vakasi:
+        #      14:30'da "bekleyen 15" iken 14:45'te feed patladi, gun kapandi, 15 kosu gitti.
+        if feed_hata:
+            _log(f"{tarih}: program/index cekilemedi -> gun MUHURLENMEDI, sonraki gecis dener.")
+            return
+        if any(d != "YOK" for d in done):
+            _log(f"{tarih}: kosu listesi bos ama bugun kayit var -> muhurlenmedi (K54).")
+            return
         _isaretle(tarih, "YOK")
         _log(f"{tarih}: izinli Ingiliz/Arap kosusu yok -> gun kapandi.")
         return

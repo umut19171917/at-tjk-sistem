@@ -590,6 +590,23 @@ en güçlü +EV kaldıracı olduğu ortaya çıktı (Benter 2006) — TR'de ne s
   eşleştirip "büyümüş havuzda gerçek ROI ne olurdu" hesabı — mevcut script sadece devir
   olaylarının kendisini sayıyor, sonraki resolve'a bağlamıyor.
 
+## 2026-07-22 — HATA: geçici feed hatası günü kalıcı mühürlüyordu (15 koşu kayıp)
+
+**K54 — `takip.gecis()` "YOK" mührü koşullandırıldı.** Vaka (21 Tem): 14:30 geçişi "bekleyen 15"
+derken 14:45 geçişi `"izinli Ingiliz/Arap kosusu yok -> gun kapandi"` yazıp günü kalıcı mühürledi;
+kalan 15 koşu (ANKARA 3-9 + KOCAELI 1-8) hiç işlenmedi, sonraki geçişler mührü görüp sessizce çıktı.
+- **Kök neden:** `yerli_pistler()` ve `program_kosulari()` ağ/HTTP hatasında BOŞ LİSTE dönüyordu;
+  kod bunu "bugün yarış yok" sanıp `YOK` marker'ı yazıyordu. Yani **geçici hata → kalıcı gün kaybı.**
+  (PC kapalı değildi — geçişler 14:45'e kadar düzenli akıyor; tasarım kusuru.)
+- **Düzeltme (iki katmanlı):** (a) her iki fonksiyon artık hata bildiriyor
+  (`yerli_pistler(ymd, hata_bildir=True) -> (liste, hata)`, `program_kosulari -> (liste, hata)`);
+  feed hatası varsa mühür YAZILMAZ, sonraki geçiş yeniden dener. (b) Gün içinde daha önce herhangi
+  bir marker varsa (koşu görülmüş/işlenmiş) boş liste gelse bile ASLA mühürlenmez.
+- **Doğrulama:** 3 senaryo testi (scratch dosyalarla) — feed hatası→mühür yok; gerçek boş gün+feed
+  OK→mühür var (optimizasyon korundu); **21 Tem'in tam senaryosu (marker var + boş liste)→mühür yok.**
+  Ardından gerçek geçiş koşuldu, regresyon yok. `yerli_pistler` geriye uyumlu (gunluk.py:300 etkilenmedi).
+- **Kayıp telafi edilemez** (21 Tem koşuları geçti); düzeltme ileriye dönük.
+
 ## 2026-07-20 — Altılı CANLI kupon takibi (izleme/öğrenme; gerçek bahis değil)
 
 **K53 — `kod/altili_canli.py`: canlı Altılı kupon üretimi + ayak-ayak sonuç + isabet takibi.**
