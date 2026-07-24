@@ -752,3 +752,26 @@ top-k spread + tam-isabet). Backtest zinciri (hepsi offline, canlıya/paper'a/K4
   net +16.344 TL / +%1028 ROI **ama tamamı tek 6/6'dan** (23.07 Ankara 2.); o hit olmasa
   −1.590 TL / −%100 → n=1, istatistiksel güç yok. **Doğru sınama = K52-tarzı eşleşmeli
   backtest** (arşiv), robust üstünlük çıkarsa konuşulur. BEKLEYENLER.md #1'e kaydedildi.
+
+## 2026-07-24 — K57: Orta genisletilmedi (backtest) + genis gozlem akisi eklendi
+
+**K57 — "orta'yi genisletmeli miyiz?" backtest'le olculdu; orta AYNEN kaldi, v2 budama REDDEDILDI,
+kullanici istegiyle AYRI 'genis' (288) gozlem akisi eklendi.**
+- **Arac:** `kod/altili_kap_test.py` (yeni, OFFLINE/salt-okunur; canliya/takip/paper/K52'ye dokunmaz).
+  1455 OOS Altili olayinda (2025-26) kap boyutu (96/144/192/240/288/384) + budama (v1/v2) taramasi,
+  olay-bazli bootstrap %95 GA ile.
+- **Bulgu 1 — genisletme kazanc VERMIYOR:** durust zeminde (sadece 6/6 oder) ROI orta(96) -%19,4;
+  288 -%31,7; 384 -%44,0 -> kap buyudukce zarar buyuyor. Iyimser zeminde (teselli ACIK, DOGRULANMAMIS
+  varsayim) 144 daha yuksek puan verir ama genis(384) eksi orta(96) fark GA'si [-49,7 , +11,0] =
+  SIFIRI ICERIR -> istatistiksel fark yok. **Karar: orta 96 AYNEN kalir.**
+- **Bulgu 2 — K56 v2 budama (sikisik ayagi koru) DAHA KOTU:** orta'da ROI +%44,7 -> +%10,9'a duser,
+  6/6 sayisi 66 -> 47. YURIBOYKA vakasina bakip degistirmemek dogruymus (hindsight tuzagi). **v2 REDDEDILDI.**
+  -> K56'daki acik "v2 budama backtest'e ertelendi" maddesi KAPANDI (negatif).
+- **Kullanici karari:** genisletme kar getirmese de AYRI 'genis' kupon gozlem akisi istendi (sistem
+  bahis degil, deney — mesru). `altili_canli.KONFIG` -> {dar:24, orta:96, genis:288}. Makine konfig-
+  bagimsiz oldugu icin tek satir + iki metin degisti; **dar/orta bit-bit ayni, mevcut deney bozulmadi.**
+  genis kendi config satirlarini yazar, HTML'de ucuncu blok. **Ileri-yonlu:** genis, bir sonraki
+  kupon-penceresinden itibaren birikir (bugun kurulmus dar/orta kuponlarina geriye donuk eklenmez).
+- **Etiket dururken:** genis bir IYILESTIRME DEGIL; -EV oldugu backtest'te olculu. Kod/HTML metinleri
+  bunu acikca yaziyor ki ileride "genis kar ediyor" yanilgisina dusulmesin (bkz. +%1028 ROI tuzagi, K56).
+- **Dogrulama:** KONFIG=3 config; html_yaz bos genis blogunu cokmeden basti (60727 char).

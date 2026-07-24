@@ -7,7 +7,9 @@ AYRI dosya/sayfa: veri/altili_kupon.csv + raporlar/altili.html. defter/paper'a D
 
 Kupon mantigi (K52 backtest'iyle AYNI cekirdek: altili_backtest.kupon_kur):
   banker (Bot2 guveni >= esik -> tek at) + spread (kumulatif kapsam) + butce tavani.
-  IKI config (kullanici K53): 'dar' (<=24 kombo) ve 'orta' (<=96 kombo), ayri takip.
+  UC config: 'dar' (<=24 kombo), 'orta' (<=96, K53) ve 'genis' (<=288, K57 gozlem akisi).
+  K57: orta genisletilmedi (backtest: kazanc yok, dar zemin -%19'dan kotu); genis AYRI stream
+  olarak eklendi (kullanici istegi, iyilestirme iddiasi degil; -EV oldugu backtest'te olculu).
 Pencere: program BAHISLER_TR'de "N. 6'LI GANYAN bu kosudan baslar" -> o kosudan 6 ardisik kosu.
   Gunde 1-2 Altili olabilir (K46 kesfi); hepsi ayri islenir.
 Odeme yapisi (K52): 5/4/3'lu AYRI bahisler, teselli DEGIL -> yalniz 6/6 "tam isabet" kazanc sayilir;
@@ -36,7 +38,7 @@ import rapor_ortak as ro  # noqa: E402
 
 KUPON = KOK / "veri" / "altili_kupon.csv"
 HTMLA = KOK / "raporlar" / "altili.html"
-KONFIG = {"dar": 24, "orta": 96}      # K53: kullanici ikisini de istedi
+KONFIG = {"dar": 24, "orta": 96, "genis": 288}  # K53: dar+orta; K57: genis=gozlem akisi (-EV)
 KAPSAM_ESIK, BANKER_ESIK = 0.75, 0.70  # K52 backtest'te en iyi OOS profili
 KOL = ["kayit_ts", "tarih", "pist", "seq", "ilk_saat", "config", "ayak",
        "kosu_no", "race_kod", "saat", "secim", "banker", "nat",
@@ -302,7 +304,8 @@ def html_yaz(df=None, ac=False):
          f"<div class=not>guncelleme {datetime.now():%d.%m.%Y %H:%M} &mdash; "
          "<b>GERCEK BAHIS DEGIL</b>, kagit uzerinde izleme/ogrenme (K48/K53). "
          "Backtest OOS &minus;%32, +EV yok (K52).<br>"
-         "Kupon iki boyda kurulur: <b>DAR</b> (~16 kombinasyon) ve <b>ORTA</b> (~72-96). "
+         "Kupon uc boyda kurulur: <b>DAR</b> (~16 kombo), <b>ORTA</b> (~72-96) ve "
+         "<b>GENIS</b> (~288, K57 gozlem akisi; genis olculen bir iyilestirme DEGIL). "
          "Birim fiyat 2026 tarifesi: Ist/Ank/Izm/Ada/Bur/Koc/Ant 1,25 TL, "
          "Elazig/Urfa/Diyarbakir 1,00 TL.<br>"
          "<b>Odul yalniz 6/6 tam isabette</b> odenir; 5/4/3 ayak TJK'da AYRI bahistir "
