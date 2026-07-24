@@ -790,3 +790,22 @@ siralamasi eklendi. Salt gorunum; veri akisina/altili_kupon.csv'ye DOKUNMAZ.**
 - **Genis (K57):** ayni sayfada otomatik ucuncu blok; ileri-yonlu (gecmise backfill YOK, hindsight).
 - **Dogrulama:** html_yaz cokmeden uretti (124268 char); 278 secim hucresi sistem/kamu formatinda,
   146 ayakta tum-siralama satiri, kazanan yesil kutulari basildi.
+
+## 2026-07-24 — K59: Oran gecmisi kaydi (ileri-yonlu; kayma olcumu icin)
+
+**K59 — `kod/oran_log.py` (yeni): gun-ici canli oran gecmisini biriktirir. SISTEME DOKUNMAZ —
+kupon kurmaz, model calistirmaz, mevcut hicbir dosyayi degistirmez; kupon zamanlamasi 30 dk AYNI.**
+- **Neden:** Asil kuponlar 30 dk kala kuruluyor (degismedi). Oranlar posta anina kadar kayiyor
+  (23.07 Ankara-2: 6 kazanandan 3'u kaymis, ama kayma o vakada LEHIMIZE calisti). "30 yerine
+  15/5 dk kala kursaydik degisir miydi" backtest'le OLCULEMEZ (arsivde gun-ici oran serisi yok).
+  Bu modul o seriyi ILERIYE donuk biriktirir -> karar birkac ay sonra GERCEK veriyle verilir.
+- **Ne yapar:** takip her geciste (try-korumali) cagirir; postaya <=45 dk kalan + baslamamis her
+  Altili ayagi icin her atin canli GANYAN + AGF1'ini zaman damgasi + dk_kala ile
+  `veri/altili_oran_log.csv`'ye EKLER. KOSMAZ atlar haric. (race_kod,no,kayit_ts) tekrari silinir.
+- **Neden guvenli:** yeni modul + kendi log dosyasi + takip'e try-korumali TEK cagri. Hata firlatmaz;
+  altili/paper hook'lariyla ayni izolasyon. Mevcut kupon/model/defter akisi bit-bit ayni.
+- **Dogrulama:** sentetik program testi (sahte getjson, scratch log) -> 45dk penceresi dogru
+  (ayak1@20dk,ayak2@40dk loglandi; ayak3@70dk haric), KOSMAZ atlandi, GANYAN/AGF1 dogru parse.
+  py_compile + ast.parse takip.py/oran_log.py OK. veri_commit.py'ye log eklendi (K50 yedegi).
+- **ACIK IS (BEKLEYENLER):** birkac ay veri birikince offline "kupon zamani" analizi — 30 vs 15/5 dk
+  secim/isabet farki. TETIK: yeterli oran_log verisi (>= birkac hafta Altili gunu).

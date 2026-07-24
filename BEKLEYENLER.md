@@ -46,6 +46,14 @@ altili.html / paper.html K55 zengin formatına geçti (tahminler + sistem sıras
 kamu sırası + oran + bedel + ödül + toplam). defter.html hâlâ eski düzende. İstenirse aynı
 `rapor_ortak.py` yapıtaşlarıyla çevrilebilir; sistemin veri akışına dokunmaz.
 
+### 4. Kupon zamanı analizi — 30 dk vs 15/5 dk (oran_log verisiyle)
+**Eklendi:** 2026-07-24 · **İlgili:** K59 · **TETİK:** birkaç hafta oran_log verisi biriktiğinde
+`oran_log.py` (K59) bugünden itibaren her Altılı ayağının oranlarını farklı anlarda (30/15/~5 dk
+kala) biriktiriyor. Yeterli veri olunca **offline** analiz: "kuponu 30 yerine 15/5 dk kala
+kursaydık seçim/isabet değişir miydi?" Karar sezgiyle değil bu veriyle verilecek. **Uyarı:** tek
+örnek (23.07 Ankara-2) kaymanın LEHİMİZE çalıştığını gösterdi — yani "geç kur = daha iyi" garanti
+değil; etkin-pazar tezi (K1) gereği piyasayı daha çok takip etmek kesintiye yaslanmak da olabilir.
+
 ---
 
 ## ZAMANLI — takvime bağlı

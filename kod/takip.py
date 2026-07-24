@@ -240,6 +240,15 @@ def gecis(args):
     except Exception as e:
         _log(f"altili kupon hatasi: {type(e).__name__}: {e}")
 
+    # K59: ORAN gecmisi kaydi (ileri-yonlu; kupon KURMAZ, sisteme dokunmaz; try-korumali).
+    try:
+        import oran_log
+        no = oran_log.oran_kaydet(pistler, ymd, tarih)
+        if no:
+            _log(f"oran_log: {no} oran satiri kaydedildi (veri/altili_oran_log.csv)")
+    except Exception as e:
+        _log(f"oran_log hatasi: {type(e).__name__}: {e}")
+
     done = _durum_oku(tarih)
     bekleyen = [r for r in sched
                 if not any(d.startswith(f"{r['pist']} {r['no']} ") for d in done)]
