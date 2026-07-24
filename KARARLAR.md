@@ -590,6 +590,35 @@ en güçlü +EV kaldıracı olduğu ortaya çıktı (Benter 2006) — TR'de ne s
   eşleştirip "büyümüş havuzda gerçek ROI ne olurdu" hesabı — mevcut script sadece devir
   olaylarının kendisini sayıyor, sonraki resolve'a bağlamıyor.
 
+## 2026-07-24 — Raporlarda tam şeffaflık: seçim + sıra + kazanan + bedel/ödül + toplam
+
+**K55 — `kod/rapor_ortak.py` + Altılı/paper sayfaları zengin formata geçirildi (kullanıcı isteği).**
+İstek: "kupona yazdığımız atların sistem tahmin sırası, kazanan atlar, kazananın kamu sırası ve
+ganyan oranı, kupon bedeli ve ödülü, şehir/tarih — düzgün ve anlaşılır; altta toplam bedel ve
+kazanç. Aynı düzen tüm analizlerde." Kullanıcı kararları: **3 ayrı sayfa aynı formatta** +
+**geçmişin tamamı listelensin** + **sistemin mevcut hali hiç bozulmasın**.
+- **Tasarım (bozmama kısıtına uygun):** `altili_kupon.csv`, `paper_kupon.csv`, `defter.csv` ve
+  veri toplama akışı DEĞİŞMEDİ. Zenginleştirme HTML üretim anında `defter.csv`'den JOIN ile
+  yapılıyor (defter zaten her koşunun TÜM atlarını bot1/bot2/kamu/oran/`model_rank` ile tutuyor).
+  Tek yeni dosya: `veri/altili_temettu.csv` (ödül cache'i; feed'den çekilip saklanır).
+- **Yeni sütunlar:** bizim seçimlerimiz + her birinin **sistem sırası**; **kazanan at** (ad+no);
+  kazananın **sistem sırası**; kazananın **kamu sırası**; **ganyan oranı**; kupon bedeli; ödül; net.
+  Üstte ve altta **TOPLAM blokları** (dar/orta veya strateji bazında + genel toplam).
+- **Kupon bedeli gerçek tarifeyle:** 2026 birim fiyatı — İst/Ank/İzm/Ada/Bur/Koc/Ant **1,25 TL**,
+  Elazığ/Urfa/Diyarbakır 1,00 TL (kaynak: TJK/Yarış Dergisi). Dar kupon 16 kombo × 1,25 = 20 TL
+  (TJK asgari kupon sınırı). Önceki "72 TL" hesabı 1 TL varsayımıydı, düzeltildi.
+- **Ödül dürüstlüğü korundu:** yalnız 6/6 ödeme yazılır; 5/4/3 ayak rozeti "(bilgi)" etiketiyle
+  gösterilir (K52: ayrı bahis, teselli değil).
+- **Eksik veri uydurulmuyor:** 21 Tem kaybı (K54 öncesi) + 20 Tem elle kurulan kuponlar defter'de
+  yok → o ayaklarda sistem sırası "-" görünür (7/61 ayak).
+- **İlk çıktılar:** Altılı — 13 pencere × 2 config; genel toplam bedel 1.200 TL, ödül 17.934,50 TL,
+  **net +16.734,50 TL** (tek 6/6 isabetten; ⚠ varyans, K52 backtest −%32). Paper — 454 sonuçlanan
+  kupon, bedel 6.810 TL, ödül 4.988,25 TL, **net −1.821,75 TL (ROI −%26,8)**.
+- **Teşhis gücü kanıtlandı:** 23 Tem 6/6 kuponunda kazananların sistem sıraları 4./1./5./3./1./8. —
+  orta kupon 6. ayakta **8. sıradaki** atı (oran 11,70) kapsadığı için tuttu, dar kupon kaçırdı.
+- **Doğrulama:** her iki sayfa üretildi; `sonucla_paper`/`sonucla_altili` akışı çalıştı (47 + 44
+  kayıt); **gerçek takip geçişi koşuldu, regresyon yok.** K50 yedeğine temettü cache'i eklendi.
+
 ## 2026-07-22 — HATA: geçici feed hatası günü kalıcı mühürlüyordu (15 koşu kayıp)
 
 **K54 — `takip.gecis()` "YOK" mührü koşullandırıldı.** Vaka (21 Tem): 14:30 geçişi "bekleyen 15"

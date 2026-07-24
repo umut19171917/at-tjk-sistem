@@ -32,6 +32,7 @@ sys.path.insert(0, str(KOK / "kod"))
 from gunluk import hesapla, getjson, BASE, EXCL  # noqa: E402
 from altili_backtest import kupon_kur  # noqa: E402
 from duzlestir import vir_float  # noqa: E402
+import rapor_ortak as ro  # noqa: E402
 
 KUPON = KOK / "veri" / "altili_kupon.csv"
 HTMLA = KOK / "raporlar" / "altili.html"
@@ -242,106 +243,142 @@ def _isabet_kademe(tuttu_listesi):
     return 0
 
 
-# ----------------------------- HTML (acik/net) -----------------------------
+# ----------------------------- HTML (K55: zengin format) -----------------------------
+def _kupon_ozet(g, tarih, pist, seq, cfg):
+    """Bir (pencere x config) kuponunun ozeti: kombo, bedel, isabet, odul, net."""
+    g = g.sort_values("ayak")
+    tut = [int(t) if pd.notna(t) else None for t in g["tuttu"]]
+    kombo = int(np.prod([int(x) for x in g["nat"]]))
+    bedel = kombo * ro.birim_fiyat(pist)
+    kademe = _isabet_kademe(tut)
+    odul = 0.0
+    if kademe == 6:                      # SADECE 6/6 kazanir (K52: 5/4/3 ayri bahis, teselli degil)
+        t = ro.temettu_getir(tarih, pist, int(seq), cek=False)
+        odul = float(t) if t else 0.0
+    return {"g": g, "tut": tut, "kombo": kombo, "bedel": bedel,
+            "kademe": kademe, "odul": odul, "net": odul - bedel,
+            "bitti": all(t is not None for t in tut)}
+
+
 def html_yaz(df=None, ac=False):
+    """K55: secimlerimiz + SISTEM SIRASI, kazanan at + sistem/kamu sirasi + ganyan orani,
+    kupon bedeli + odul, altta TOPLAM. Zenginlestirme defter.csv'den (salt-okunur);
+    altili_kupon.csv DEGISMEZ (sistemin mevcut hali bozulmaz)."""
     if df is None:
         df = _oku()
-    for c in ["seq", "ayak", "kosu_no", "banker", "nat", "kazanan", "tuttu"]:
+    for c in ["seq", "ayak", "kosu_no", "race_kod", "banker", "nat", "kazanan", "tuttu"]:
         if c in df.columns:
             df[c] = pd.to_numeric(df[c], errors="coerce")
 
-    css = """<meta charset='utf-8'><title>Altili Canli Takip</title><style>
-body{font-family:Segoe UI,Arial,sans-serif;margin:18px;color:#1a1a1a;background:#fafafa;}
-h2{margin:0 0 4px;} h3{margin:14px 0 4px;font-size:15px;}
-.not{color:#666;font-size:12px;margin:2px 0 10px;}
-.kart{background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px 14px;margin:10px 0;
-  box-shadow:0 1px 3px rgba(0,0,0,.05);}
-.baslik{font-weight:bold;font-size:14px;margin-bottom:6px;}
-table{border-collapse:collapse;width:100%;} td,th{border:1px solid #e2e2e2;padding:4px 8px;
-  font-size:13px;text-align:center;} th{background:#f0f0f0;}
-td.l{text-align:left;} .ban{background:#fff3cd;font-weight:bold;}
-.tut{background:#d7f7d7;} .kac{background:#fde0e0;} .bek{color:#999;}
-.rozet{display:inline-block;padding:2px 9px;border-radius:12px;font-weight:bold;font-size:12px;}
-.r6{background:#0a7d0a;color:#fff;} .r5{background:#3a9;color:#fff;} .r4{background:#7a3;color:#fff;}
-.r3{background:#ba3;color:#fff;} .r0{background:#c33;color:#fff;} .rb{background:#ddd;color:#555;}
-.ozet{background:#fff;border:2px solid #333;border-radius:8px;padding:12px 16px;margin:10px 0;}
-.bar{display:inline-block;height:16px;border-radius:3px;vertical-align:middle;}
-.k{font-size:12px;color:#444;}
-</style>"""
-
-    H = [css, "<h2>Altili Canli Takip (K53)</h2>",
-         f"<div class=not>guncelleme {datetime.now():%Y-%m-%d %H:%M} &mdash; "
-         "GERCEK BAHIS DEGIL, izleme/ogrenme. Backtest OOS -%32, +EV yok (K52). "
-         "5/4/3 ayak isabeti yalniz BILGI (TJK'da ayri bahis, teselli degil).</div>"]
+    H = ["<meta charset='utf-8'><title>Altili Takip</title>", ro.ORTAK_CSS,
+         "<h2>ALTILI GANYAN &mdash; kupon takibi</h2>",
+         f"<div class=not>guncelleme {datetime.now():%d.%m.%Y %H:%M} &mdash; "
+         "<b>GERCEK BAHIS DEGIL</b>, kagit uzerinde izleme/ogrenme (K48/K53). "
+         "Backtest OOS &minus;%32, +EV yok (K52).<br>"
+         "Kupon iki boyda kurulur: <b>DAR</b> (~16 kombinasyon) ve <b>ORTA</b> (~72-96). "
+         "Birim fiyat 2026 tarifesi: Ist/Ank/Izm/Ada/Bur/Koc/Ant 1,25 TL, "
+         "Elazig/Urfa/Diyarbakir 1,00 TL.<br>"
+         "<b>Odul yalniz 6/6 tam isabette</b> odenir; 5/4/3 ayak TJK'da AYRI bahistir "
+         "(teselli degil) &mdash; tabloda yalnizca bilgi amacli gosterilir.</div>"]
 
     if df.empty:
-        H.append("<p>Henuz kupon yok. Altili gununde ilk kosudan once otomatik kurulur.</p>")
+        H.append("<p>Henuz kupon yok.</p>")
         HTMLA.parent.mkdir(parents=True, exist_ok=True)
         HTMLA.write_text("\n".join(H), encoding="utf-8")
         return HTMLA
 
-    # ---- pencere-config bazli isabet + GENEL OZET ----
-    kayitlar = []
+    kupolar = []
     for (tarih, pist, seq, cfg), g in df.groupby(["tarih", "pist", "seq", "config"]):
-        g = g.sort_values("ayak")
-        tut = [None if pd.isna(t) else int(t) for t in g["tuttu"]]
-        kademe = _isabet_kademe(tut)
-        nkombo = int(np.prod([int(x) for x in g["nat"]]))
-        kayitlar.append({"tarih": tarih, "pist": pist, "seq": seq, "config": cfg,
-                         "kademe": kademe, "nkombo": nkombo, "g": g,
-                         "ilk_saat": g["ilk_saat"].iloc[0]})
+        kupolar.append({"tarih": tarih, "pist": pist, "seq": int(seq), "cfg": cfg,
+                        **_kupon_ozet(g, tarih, pist, seq, cfg)})
 
-    for cfg in KONFIG:
-        alt = [k for k in kayitlar if k["config"] == cfg and k["kademe"] is not None]
-        n = len(alt)
-        dag = {kad: sum(1 for k in alt if k["kademe"] == kad) for kad in (6, 5, 4, 3, 0)}
-        ort_kombo = np.mean([k["nkombo"] for k in kayitlar if k["config"] == cfg]) if kayitlar else 0
-        H.append(f"<div class=ozet><b>OZET — {cfg.upper()} kupon</b> "
-                 f"(<span class=k>ort. {ort_kombo:.0f} kombinasyon/kupon</span>)<br>")
-        if n == 0:
-            H.append("Henuz sonuclanmis Altili yok.</div>")
-            continue
-        H.append(f"Tamamlanan Altili: <b>{n}</b> &nbsp;|&nbsp; "
-                 f"TAM ISABET (6/6): <b>{dag[6]}</b> "
-                 f"(%{100*dag[6]/n:.1f})<br><span class=k>ayak isabet dagilimi (sondan): </span>")
-        renk = {6: "#0a7d0a", 5: "#33aa99", 4: "#77aa33", 3: "#bbaa33", 0: "#cc3333"}
-        etiket = {6: "6/6", 5: "5", 4: "4", 3: "3", 0: "<3"}
-        for kad in (6, 5, 4, 3, 0):
-            w = int(120 * dag[kad] / n)
-            H.append(f"<div style='margin:2px 0'><span style='display:inline-block;width:34px' class=k>"
-                     f"{etiket[kad]}</span>"
-                     f"<span class=bar style='width:{max(w,2)}px;background:{renk[kad]}'></span> "
-                     f"<span class=k>{dag[kad]}</span></div>")
-        H.append("</div>")
+    def toplam_blok(baslik):
+        H2 = ["<div class=toplam>", f"<b>{baslik}</b><br>"]
+        gen_bedel = gen_odul = 0.0
+        for cfg in KONFIG:
+            kk = [k for k in kupolar if k["cfg"] == cfg and k["bitti"]]
+            bedel = sum(k["bedel"] for k in kk)
+            odul = sum(k["odul"] for k in kk)
+            gen_bedel += bedel
+            gen_odul += odul
+            net = odul - bedel
+            tam = sum(1 for k in kk if k["kademe"] == 6)
+            cls = "poz" if net >= 0 else "neg"
+            H2.append(f"<div style='margin:6px 0'><b>{cfg.upper()}</b> "
+                      f"<span class=k>({len(kk)} tamamlanan kupon, {tam} tam isabet)</span> &nbsp; "
+                      f"bedel <b>{ro.para(bedel)}</b> &nbsp; odul <b>{ro.para(odul)}</b> &nbsp; "
+                      f"net <span class='{cls}'><b>{ro.para(net, isaret=True)}</b></span></div>")
+        gnet = gen_odul - gen_bedel
+        cls = "poz" if gnet >= 0 else "neg"
+        H2.append("<hr style='border:none;border-top:1px solid #ddd;margin:8px 0'>"
+                  f"<b>GENEL TOPLAM</b> &nbsp; bedel {ro.para(gen_bedel)} &nbsp; "
+                  f"odul {ro.para(gen_odul)} &nbsp; net "
+                  f"<span class='{cls} buyuk'>{ro.para(gnet, isaret=True)}</span>")
+        H2.append("</div>")
+        return H2
 
-    # ---- her Altili karti (yeni gun ustte, config yan yana) ----
-    kayitlar.sort(key=lambda k: (str(k["tarih"]), k["pist"], int(k["seq"]), k["config"]), reverse=True)
-    for k in kayitlar:
-        g = k["g"]
+    H += toplam_blok("TOPLAM DURUM")
+
+    kupolar.sort(key=lambda k: (str(k["tarih"]), k["pist"], k["seq"], k["cfg"]), reverse=True)
+    H.append("<h3>Kuponlar (yeni tarih ustte)</h3>")
+    for k in kupolar:
+        g, tut = k["g"], k["tut"]
         kad = k["kademe"]
-        rozet = (f"<span class='rozet r{kad}'>{'TAM ISABET 6/6' if kad==6 else (str(kad)+' ayak (sondan)' if kad else 'isabetsiz')}</span>"
-                 if kad is not None else "<span class='rozet rb'>bekleniyor</span>")
+        if not k["bitti"]:
+            rozet = "<span class='rozet rb'>kosular devam ediyor</span>"
+        elif kad == 6:
+            rozet = "<span class='rozet r6'>TAM ISABET 6/6</span>"
+        elif kad:
+            rozet = f"<span class='rozet r{kad}'>son {kad} ayak (bilgi)</span>"
+        else:
+            rozet = "<span class='rozet r0'>isabetsiz</span>"
+        tarih_tr = pd.Timestamp(str(k["tarih"])).strftime("%d.%m.%Y")
+        net_cls = "poz" if k["net"] >= 0 else "neg"
         H.append("<div class=kart>")
-        H.append(f"<div class=baslik>{k['tarih']} &nbsp; {k['pist']} &nbsp; "
-                 f"{k['seq']}. ALTILI &nbsp;(ilk kosu {g['kosu_no'].iloc[0]:.0f}, {k['ilk_saat']}) "
-                 f"&nbsp; [{k['config'].upper()}, {k['nkombo']} kombinasyon] &nbsp; {rozet}</div>")
-        H.append("<table><tr><th>ayak</th><th>kosu</th><th>saat</th><th class=l>secimimiz</th>"
-                 "<th>kazanan</th><th>durum</th></tr>")
+        H.append(f"<div class=baslik>{tarih_tr} &nbsp;|&nbsp; <b>{k['pist']}</b> &nbsp;|&nbsp; "
+                 f"{k['seq']}. ALTILI &nbsp;|&nbsp; <b>{k['cfg'].upper()}</b> kupon "
+                 f"({k['kombo']} kombinasyon) &nbsp; {rozet}<br>"
+                 f"<span class=k>kupon bedeli <b>{ro.para(k['bedel'])}</b> &nbsp;&rarr;&nbsp; "
+                 f"odul <b>{ro.para(k['odul'])}</b> &nbsp;&rarr;&nbsp; net "
+                 f"<span class='{net_cls}'><b>{ro.para(k['net'], isaret=True)}</b></span></span></div>")
+        H.append("<table><tr><th>ayak</th><th>kosu</th><th class=l>BIZIM SECIMIMIZ "
+                 "<span class=mini>(at no / sistem sirasi)</span></th>"
+                 "<th class=l>KAZANAN AT</th><th>kazananin<br>sistem sirasi</th>"
+                 "<th>kazananin<br>kamu sirasi</th><th>ganyan<br>orani</th><th>sonuc</th></tr>")
         for _, r in g.iterrows():
-            tuttu = r["tuttu"]
-            if pd.isna(tuttu):
-                dcls, dtxt = "bek", "bekleniyor"
-            elif int(tuttu) == 1:
-                dcls, dtxt = "tut", "TUTTU"
+            rk = int(r["race_kod"]) if pd.notna(r["race_kod"]) else None
+            secimler = [int(x) for x in str(r["secim"]).split(",") if x != ""]
+            parcalar = []
+            for no in secimler:
+                bi = ro.at_bilgi(rk, no) if rk else {"sis": None}
+                parcalar.append(f"<b>{no}</b> <span class=mini>({ro.sira_str(bi['sis'])})</span>")
+            sec_html = " &nbsp;&middot;&nbsp; ".join(parcalar)
+            if int(r["banker"]) == 1:
+                sec_html += " <span class=mini>[banker]</span>"
+            kz = ro.kazanan_bilgi(rk) if rk else None
+            if kz:
+                kz_html = f"<b>{kz['no']}</b> {str(kz['ad'])[:22]}"
+                kz_sis, kz_kamu, kz_oran = (ro.sira_str(kz["sis"]), ro.sira_str(kz["kamu"]),
+                                            ro.oran_str(kz["oran"]))
+            elif pd.notna(r["kazanan"]):
+                kz_html = f"<b>{int(r['kazanan'])}</b> <span class=mini>(defter kaydi yok)</span>"
+                kz_sis = kz_kamu = kz_oran = "-"
             else:
-                dcls, dtxt = "kac", "kactı"
-            secim = str(r["secim"])
-            scls = " class=ban" if int(r["banker"]) == 1 else " class=l"
-            setxt = secim + (" (banker)" if int(r["banker"]) == 1 else "")
-            kztxt = "-" if pd.isna(r["kazanan"]) else f"{int(r['kazanan'])}"
-            H.append(f"<tr><td>{int(r['ayak'])}</td><td>{int(r['kosu_no'])}</td><td>{r['saat']}</td>"
-                     f"<td{scls}>{setxt}</td><td>{kztxt}</td><td class={dcls}>{dtxt}</td></tr>")
+                kz_html, kz_sis, kz_kamu, kz_oran = "<span class=bek>bekleniyor</span>", "-", "-", "-"
+            t = tut[int(r["ayak"]) - 1]
+            if t is None:
+                scls, stxt = "bek", "bekleniyor"
+            elif t == 1:
+                scls, stxt = "tut", "TUTTU"
+            else:
+                scls, stxt = "kac", "kacti"
+            H.append(f"<tr><td>{int(r['ayak'])}</td><td>{int(r['kosu_no'])}</td>"
+                     f"<td class=l>{sec_html}</td><td class=l>{kz_html}</td>"
+                     f"<td>{kz_sis}</td><td>{kz_kamu}</td><td>{kz_oran}</td>"
+                     f"<td class={scls}>{stxt}</td></tr>")
         H.append("</table></div>")
+
+    H += toplam_blok("TOPLAM DURUM (liste sonu)")
 
     HTMLA.parent.mkdir(parents=True, exist_ok=True)
     HTMLA.write_text("\n".join(H), encoding="utf-8")

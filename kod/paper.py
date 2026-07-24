@@ -34,6 +34,7 @@ sys.path.insert(0, str(KOK / "kod"))
 from gunluk import getjson, BASE, canli_seri  # noqa: E402
 from duzlestir import vir_float  # noqa: E402
 from temettu import gan_plase  # noqa: E402
+import rapor_ortak as ro  # noqa: E402
 
 PAPER = KOK / "veri" / "paper_kupon.csv"
 HTMLP = KOK / "raporlar" / "paper.html"
@@ -225,55 +226,127 @@ def ozet():
 
 
 def html_yaz(b=None, ac=False):
-    """AYRI sayfa: raporlar/paper.html (defter.html'e dokunmaz)."""
+    """K55: Altili sayfasiyla AYNI duzen — bizim atimiz + SISTEM SIRASI, kazanan at +
+    sistem/kamu sirasi + ganyan orani, kupon bedeli + odul, altta TOPLAM.
+    Zenginlestirme defter.csv'den (salt-okunur); paper_kupon.csv DEGISMEZ."""
     if b is None:
         b = _oku()
-    css = ("<meta charset='utf-8'><title>Paper Test K42</title><style>"
-           "body{font-family:Segoe UI,Arial,sans-serif;margin:20px;color:#222;}"
-           "h2{margin:0 0 2px;} h3{margin:16px 0 3px;font-size:15px;}"
-           "table{border-collapse:collapse;} td,th{border:1px solid #ccc;padding:3px 9px;"
-           "text-align:right;font-size:13px;} th{background:#eee;} td.l,th.l{text-align:left;}"
-           "tr.k{background:#d7f7d7;} tr.i{background:#f2f2f2;color:#777;}"
-           ".not{color:#666;font-size:12px;margin:2px 0 12px;}.neg{color:#b30000;}.poz{color:#0a0;}"
-           "</style>")
-    H = [css, "<h2>Paper Test (K42) — 12 hafta, on-kayitli</h2>",
-         f"<div class=not>{BAS} .. {BIT} &mdash; kupon {KUPON_TL:.0f} TL, hafta butcesi "
-         f"{HAFTA_BUTCE:.0f} TL &mdash; guncelleme {datetime.now():%Y-%m-%d %H:%M}<br>"
-         "KAR AMACI YOK: gecmis-veri beklentileri negatif (K42); olculen sey canli hattin "
-         "kalibrasyonu + PLASE'nin ilk canli olcumu. Kurallar test boyunca DEGISMEZ.</div>"]
+    for c in ["kosu_no", "race_kod", "at_no", "miktar", "getiri", "oran_kayit"]:
+        if c in b.columns:
+            b[c] = pd.to_numeric(b[c], errors="coerce")
+
+    H = ["<meta charset='utf-8'><title>Paper Test</title>", ro.ORTAK_CSS,
+         "<h2>PAPER TEST (K42) &mdash; ganyan &amp; plase kuponlari</h2>",
+         f"<div class=not>guncelleme {datetime.now():%d.%m.%Y %H:%M} &mdash; "
+         "<b>GERCEK BAHIS DEGIL</b>, kagit uzerinde on-kayitli deney (K42/K48). "
+         f"Pencere {BAS} .. {BIT}, kupon {KUPON_TL:.0f} TL, hafta butcesi {HAFTA_BUTCE:.0f} TL.<br>"
+         "Stratejiler: <b>S1</b> model top-pick GANYAN &middot; <b>S2</b> top-pick PLASE &middot; "
+         "<b>S3</b> kamu favorisi GANYAN &middot; <b>S4</b> favori PLASE &middot; "
+         "<b>S5</b> CANLI isaretli at GANYAN.<br>"
+         "Gecmis-veri beklentileri NEGATIF (S1 &minus;%28 / S3 &minus;%29 / S5 &minus;%34 / "
+         "S2 &minus;%12,5 / S4 &minus;%14); olculen sey canli hat + plase.</div>"]
+
     if b.empty:
-        H.append("<p>henuz kupon yok (ilk yaris gununde takip otomatik uretir).</p>")
-    else:
-        st_rows, hf_rows, s = _tablolar(b)
-        H.append("<h3>Strateji durumu</h3><table><tr><th>st</th><th class=l>tanim</th>"
-                 "<th>n</th><th>isabet%</th><th>net TL</th><th>ROI%</th></tr>")
-        for st, ad, n, hit, net, roi in st_rows:
-            if n:
-                c = "poz" if net >= 0 else "neg"
-                H.append(f"<tr><td>{st}</td><td class=l>{ad}</td><td>{n}</td>"
-                         f"<td>{hit:.1f}</td><td class={c}>{net:+.2f}</td>"
-                         f"<td class={c}>{roi:+.1f}</td></tr>")
-            else:
-                H.append(f"<tr><td>{st}</td><td class=l>{ad}</td><td>0</td>"
-                         f"<td>-</td><td>-</td><td>-</td></tr>")
-        H.append("</table><h3>Haftalik</h3><table><tr><th class=l>hafta</th><th>kupon</th>"
-                 "<th>yatan</th><th>net</th><th>kumulatif</th><th>acik</th></tr>")
-        for hf, n, yat, net, kum, ac in hf_rows:
-            c = "poz" if kum >= 0 else "neg"
-            H.append(f"<tr><td class=l>{hf}</td><td>{n}</td><td>{yat:.0f}</td>"
-                     f"<td>{net:+.2f}</td><td class={c}>{kum:+.2f}</td><td>{ac}</td></tr>")
-        H.append("</table><h3>Son kuponlar</h3><table><tr><th>id</th><th class=l>tarih</th>"
-                 "<th class=l>pist</th><th>kosu</th><th>st</th><th class=l>tur</th><th>no</th>"
-                 "<th class=l>at</th><th>miktar</th><th>getiri</th><th class=l>durum</th></tr>")
-        for _, r in b.sort_values("id", ascending=False).head(40).iterrows():
-            cls = " class=k" if r["durum"] == "kazandi" else (" class=i" if r["durum"] == "iptal" else "")
-            get = f"{r['getiri']:.2f}" if pd.notna(pd.to_numeric(r["getiri"], errors="coerce")) else "-"
-            H.append(f"<tr{cls}><td>{int(r['id'])}</td><td class=l>{r['tarih']}</td>"
-                     f"<td class=l>{r['pist']}</td><td>{r['kosu_no']}</td><td>{r['strateji']}</td>"
-                     f"<td class=l>{r['tur']}</td><td>{int(r['at_no'])}</td>"
-                     f"<td class=l>{str(r['at_ad'])[:22]}</td><td>{float(r['miktar']):.0f}</td>"
-                     f"<td>{get}</td><td class=l>{r['durum']}</td></tr>")
-        H.append("</table>")
+        H.append("<p>Henuz kupon yok.</p>")
+        HTMLP.parent.mkdir(parents=True, exist_ok=True)
+        HTMLP.write_text("\n".join(H), encoding="utf-8")
+        return HTMLP
+
+    s = b[b["durum"].isin(["kazandi", "kaybetti"])]      # iptal = iade, ROI'ye girmez
+
+    def toplam_blok(baslik):
+        H2 = ["<div class=toplam>", f"<b>{baslik}</b><br>"]
+        H2.append("<table style='margin-top:6px'><tr><th>strateji</th><th class=l>tanim</th>"
+                  "<th>kupon</th><th>isabet</th><th>bedel</th><th>odul</th><th>net</th>"
+                  "<th>ROI</th></tr>")
+        gen_b = gen_o = 0.0
+        for st in ["S1", "S2", "S3", "S4", "S5"]:
+            g = s[s["strateji"] == st]
+            if len(g) == 0:
+                H2.append(f"<tr><td>{st}</td><td class=l>{BEKLENTI[st]}</td>"
+                          "<td>0</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>")
+                continue
+            bed, od = g["miktar"].sum(), g["getiri"].sum()
+            gen_b += bed
+            gen_o += od
+            net = od - bed
+            isb = (g["durum"] == "kazandi").mean() * 100
+            cls = "poz" if net >= 0 else "neg"
+            H2.append(f"<tr><td><b>{st}</b></td><td class=l>{BEKLENTI[st]}</td>"
+                      f"<td>{len(g)}</td><td>%{isb:.1f}</td><td>{ro.para(bed)}</td>"
+                      f"<td>{ro.para(od)}</td><td class={cls}>{ro.para(net, isaret=True)}</td>"
+                      f"<td class={cls}>%{100*net/bed:+.1f}</td></tr>")
+        H2.append("</table>")
+        gnet = gen_o - gen_b
+        cls = "poz" if gnet >= 0 else "neg"
+        H2.append(f"<hr style='border:none;border-top:1px solid #ddd;margin:8px 0'>"
+                  f"<b>GENEL TOPLAM</b> &nbsp; {len(s)} sonuclanan kupon &nbsp; "
+                  f"bedel {ro.para(gen_b)} &nbsp; odul {ro.para(gen_o)} &nbsp; net "
+                  f"<span class='{cls} buyuk'>{ro.para(gnet, isaret=True)}</span>"
+                  + (f" &nbsp;<span class=k>(ROI %{100*gnet/gen_b:+.1f})</span>" if gen_b else ""))
+        H2.append("</div>")
+        return H2
+
+    H += toplam_blok("TOPLAM DURUM")
+
+    # ---- haftalik ozet ----
+    H.append("<h3>Haftalik</h3><div class=kart><table>"
+             "<tr><th class=l>hafta</th><th>kupon</th><th>bedel</th><th>odul</th>"
+             "<th>net</th><th>kumulatif</th></tr>")
+    kum = 0.0
+    for hf, g in b.groupby("hafta"):
+        gs = g[g["durum"].isin(["kazandi", "kaybetti"])]
+        bed = float(gs["miktar"].sum())
+        od = float(gs["getiri"].sum())
+        net = od - bed
+        kum += net
+        cls = "poz" if kum >= 0 else "neg"
+        H.append(f"<tr><td class=l>{hf}</td><td>{len(g)}</td><td>{ro.para(bed)}</td>"
+                 f"<td>{ro.para(od)}</td><td>{ro.para(net, isaret=True)}</td>"
+                 f"<td class={cls}><b>{ro.para(kum, isaret=True)}</b></td></tr>")
+    H.append("</table></div>")
+
+    # ---- TUM kuponlar (yeni ustte) ----
+    H.append(f"<h3>Tum kuponlar ({len(b)} kayit, yeni ustte)</h3>")
+    H.append("<div class=kart><table><tr><th class=l>tarih</th><th class=l>sehir</th>"
+             "<th>kosu</th><th>str</th><th class=l>tur</th>"
+             "<th class=l>BIZIM ATIMIZ <span class=mini>(no / sistem sirasi)</span></th>"
+             "<th class=l>KAZANAN AT</th><th>kaz.<br>sistem</th><th>kaz.<br>kamu</th>"
+             "<th>ganyan<br>orani</th><th>bedel</th><th>odul</th><th class=l>sonuc</th></tr>")
+    for _, r in b.sort_values("id", ascending=False).iterrows():
+        rk = int(r["race_kod"]) if pd.notna(r["race_kod"]) else None
+        no = int(r["at_no"]) if pd.notna(r["at_no"]) else None
+        bi = ro.at_bilgi(rk, no) if (rk and no) else {"sis": None, "ad": None}
+        bizim = f"<b>{no}</b> {str(r['at_ad'])[:18]} <span class=mini>({ro.sira_str(bi['sis'])})</span>"
+        kz = ro.kazanan_bilgi(rk) if rk else None
+        if kz:
+            kz_html = f"<b>{kz['no']}</b> {str(kz['ad'])[:18]}"
+            kz_sis, kz_kamu, kz_oran = (ro.sira_str(kz["sis"]), ro.sira_str(kz["kamu"]),
+                                        ro.oran_str(kz["oran"]))
+        else:
+            kz_html, kz_sis, kz_kamu, kz_oran = "<span class=bek>-</span>", "-", "-", "-"
+        d = str(r["durum"])
+        if d == "kazandi":
+            scls, stxt = "tut", "KAZANDI"
+        elif d == "kaybetti":
+            scls, stxt = "kac", "kaybetti"
+        elif d == "iptal":
+            scls, stxt = "bek", "iptal (iade)"
+        else:
+            scls, stxt = "bek", "bekliyor"
+        tarih_tr = pd.Timestamp(str(r["tarih"])).strftime("%d.%m.%Y")
+        H.append(f"<tr><td class=l>{tarih_tr}</td><td class=l>{r['pist']}</td>"
+                 f"<td>{int(r['kosu_no']) if pd.notna(r['kosu_no']) else '-'}</td>"
+                 f"<td><b>{r['strateji']}</b></td><td class=l>{r['tur']}</td>"
+                 f"<td class=l>{bizim}</td><td class=l>{kz_html}</td>"
+                 f"<td>{kz_sis}</td><td>{kz_kamu}</td><td>{kz_oran}</td>"
+                 f"<td>{ro.para(r['miktar'])}</td>"
+                 f"<td>{ro.para(r['getiri']) if pd.notna(r['getiri']) else '-'}</td>"
+                 f"<td class={scls}>{stxt}</td></tr>")
+    H.append("</table></div>")
+
+    H += toplam_blok("TOPLAM DURUM (liste sonu)")
+
     HTMLP.parent.mkdir(parents=True, exist_ok=True)
     HTMLP.write_text("\n".join(H), encoding="utf-8")
     if ac:
