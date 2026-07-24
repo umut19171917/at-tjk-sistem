@@ -738,3 +738,17 @@ top-k spread + tam-isabet). Backtest zinciri (hepsi offline, canlıya/paper'a/K4
   (10 Tem 13:30) ayrıca kontrol edilecek.
 - **Not:** 9 Tem koşuları tek-model (İngiliz) kodla izlendi — K46 aynı akşam 20:38'de
   commit'lendi; ilk çift-modelli gün 10 Tem.
+
+## 2026-07-24 — K56: Bekleyen işler defteri + v2 Altılı kararı
+
+**K56 — Ertelenen işler için ayrı sayfa (`BEKLEYENLER.md`) + v2 Altılı budaması BACKTEST'e ertelendi.**
+- **Sayfa:** "sonra yapalım/deneyelim" denen işler KARARLAR'ın tarihli satırlarına dağılıp
+  unutuluyordu → `BEKLEYENLER.md` tek bakış noktası (kural: iş ertelenince yazılır,
+  yapılınca/düşünce damgalanır, silinmez). K6 gereği proje kaydı dosya tabanlı; bu da öyle.
+- **v2 Altılı budama kararı:** Mevcut budama bütçe aşımında EN SIKIŞIK ayaktan atıyor; doğrusu
+  tersi (sıkışık ayağı koru, baskın ayaktan buda). Somut: 23.07 Ankara 1. Altılı'da YURİBOYKA
+  budandı → 5/6, ~19.167 TL kaçtı. **Karar: canlı paralel v2 sistemi KURULMAYACAK** —
+  Altılı 6/6 varyansı canlı kıyası ölçülemez kılıyor. Kanıt: 13 olayda (24 sonuçlanan kupon)
+  net +16.344 TL / +%1028 ROI **ama tamamı tek 6/6'dan** (23.07 Ankara 2.); o hit olmasa
+  −1.590 TL / −%100 → n=1, istatistiksel güç yok. **Doğru sınama = K52-tarzı eşleşmeli
+  backtest** (arşiv), robust üstünlük çıkarsa konuşulur. BEKLEYENLER.md #1'e kaydedildi.
