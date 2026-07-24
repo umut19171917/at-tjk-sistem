@@ -110,44 +110,66 @@ def _vfloat(s):
         return None
 
 
+PAT_ALTILI_DEVIR = re.compile(
+    r"(?:(\d+)\.\s*)?6'LI GANYAN\(([\d/,]+)\):\s*Bilen\s*\S*\s*,\s*([\d.,]+)\s*TL\s*dev")
+KOLT = ["tarih", "pist", "seq", "temettu", "devir", "kazanan_kombo"]
+
+
 def _temettu_oku():
     if TEMETTU_CACHE.exists():
-        return pd.read_csv(TEMETTU_CACHE)
-    return pd.DataFrame(columns=["tarih", "pist", "seq", "temettu", "kazanan_kombo"])
+        c = pd.read_csv(TEMETTU_CACHE)
+        for k in KOLT:                       # eski cache'te 'devir' yoksa ekle (geriye uyum)
+            if k not in c.columns:
+                c[k] = np.nan
+        return c
+    return pd.DataFrame(columns=KOLT)
 
 
-def temettu_getir(tarih, pist, seq, cek=True):
-    """(tarih,pist,seq) Altili temettusu. Once cache, yoksa sonuc feed'inden ceker ve cache'ler.
-    Doner: float veya None (devretmis/bulunamamis)."""
+def altili_odeme(tarih, pist, seq, cek=True):
+    """(tarih,pist,seq) Altili RESMI odemesi — kupon tutsun tutmasin.
+    Doner: {"temettu": float|None, "devir": float|None, "kombo": str|None}
+      temettu dolu  -> o Altili X TL odedi (1 birim bahis basina)
+      devir dolu    -> kimse bilemedi, X TL sonraki cekilise devretti
+      ikisi de None -> henuz sonuclanmamis / bulunamadi"""
     c = _temettu_oku()
     m = ((c["tarih"].astype(str) == str(tarih)) & (c["pist"].astype(str) == str(pist))
          & (pd.to_numeric(c["seq"], errors="coerce") == seq))
     if m.any():
-        v = pd.to_numeric(c.loc[m, "temettu"], errors="coerce").iloc[0]
-        return None if pd.isna(v) else float(v)
+        r = c[m].iloc[0]
+        t = pd.to_numeric(pd.Series([r.get("temettu")]), errors="coerce").iloc[0]
+        d = pd.to_numeric(pd.Series([r.get("devir")]), errors="coerce").iloc[0]
+        if pd.notna(t) or pd.notna(d):
+            return {"temettu": None if pd.isna(t) else float(t),
+                    "devir": None if pd.isna(d) else float(d),
+                    "kombo": r.get("kazanan_kombo")}
     if not cek:
-        return None
+        return {"temettu": None, "devir": None, "kombo": None}
     ymd = pd.Timestamp(str(tarih)).strftime("%Y%m%d")
     try:
         req = urllib.request.Request(f"{BASE}/sonuclar/{ymd}/full/{pist}.json", headers=HEAD)
         with urllib.request.urlopen(req, timeout=25) as r:
             o = json.loads(r.read().decode("utf-8", "replace"))
     except Exception:
-        return None
+        return {"temettu": None, "devir": None, "kombo": None}
     tam = " ".join(k.get("BAHISLER_TR") or "" for k in o.get("kosular", []))
     bulunan = {}
     for s, kombo, tut in PAT_ALTILI.findall(tam):
-        bulunan[int(s) if s else 1] = (_vfloat(tut), kombo)
-    yeni = []
-    for s, (tut, kombo) in bulunan.items():
-        yeni.append({"tarih": tarih, "pist": pist, "seq": s, "temettu": tut,
-                     "kazanan_kombo": kombo})
-    if yeni:
+        bulunan[int(s) if s else 1] = {"temettu": _vfloat(tut), "devir": None, "kombo": kombo}
+    for s, kombo, dv in PAT_ALTILI_DEVIR.findall(tam):
+        bulunan[int(s) if s else 1] = {"temettu": None, "devir": _vfloat(dv), "kombo": kombo}
+    if bulunan:
+        yeni = [{"tarih": tarih, "pist": pist, "seq": s, "temettu": v["temettu"],
+                 "devir": v["devir"], "kazanan_kombo": v["kombo"]} for s, v in bulunan.items()]
         c = pd.concat([c, pd.DataFrame(yeni)], ignore_index=True).drop_duplicates(
             ["tarih", "pist", "seq"], keep="last")
         TEMETTU_CACHE.parent.mkdir(parents=True, exist_ok=True)
-        c.to_csv(TEMETTU_CACHE, index=False, encoding="utf-8")
-    return bulunan.get(seq, (None, None))[0]
+        c.to_csv(TEMETTU_CACHE, index=False, encoding="utf-8", columns=KOLT)
+    return bulunan.get(seq, {"temettu": None, "devir": None, "kombo": None})
+
+
+def temettu_getir(tarih, pist, seq, cek=True):
+    """Geriye uyumluluk: yalniz temettu (float|None)."""
+    return altili_odeme(tarih, pist, seq, cek=cek)["temettu"]
 
 
 # ----------------------------- ortak HTML parcalari -----------------------------

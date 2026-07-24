@@ -225,6 +225,14 @@ def sonucla_altili():
                 df.at[i, "sonuclandi"] = bugun
                 dolan += 1
     _yaz(df)
+    # RESMI odemeleri (temettu / devir) cache'le: tutmayan kuponlarda da gosterilecek.
+    # Yalniz TAMAMLANMIS pencereler icin cek (ag istegi bosa gitmesin).
+    try:
+        for (tarih, pist, seq), g in df.groupby(["tarih", "pist", "seq"]):
+            if g["sonuclandi"].notna().all():
+                ro.altili_odeme(tarih, pist, int(seq), cek=True)
+    except Exception as e:
+        print(f"  (temettu cache atlandi: {type(e).__name__})")
     html_yaz(df)
     print(f"altili: {dolan} ayak sonuclandi (acik {int(df['sonuclandi'].isna().sum())}).")
     return dolan
@@ -251,13 +259,32 @@ def _kupon_ozet(g, tarih, pist, seq, cfg):
     kombo = int(np.prod([int(x) for x in g["nat"]]))
     bedel = kombo * ro.birim_fiyat(pist)
     kademe = _isabet_kademe(tut)
+    # RESMI odeme — kupon tutsun tutmasin (kullanici: "tutmayan kuponlarin da resmi odul
+    # bilgisi olmali"): o Altili gercekte ne odedi / devretti mi.
+    res = ro.altili_odeme(tarih, pist, int(seq), cek=False)
     odul = 0.0
     if kademe == 6:                      # SADECE 6/6 kazanir (K52: 5/4/3 ayri bahis, teselli degil)
-        t = ro.temettu_getir(tarih, pist, int(seq), cek=False)
-        odul = float(t) if t else 0.0
+        odul = float(res["temettu"]) if res["temettu"] else 0.0
     return {"g": g, "tut": tut, "kombo": kombo, "bedel": bedel,
             "kademe": kademe, "odul": odul, "net": odul - bedel,
-            "bitti": all(t is not None for t in tut)}
+            "resmi": res, "bitti": all(t is not None for t in tut)}
+
+
+def _resmi_satir(k):
+    """O Altili'nin RESMI odemesi — kupon tutmasa da gosterilir (kacirilan odul)."""
+    r = k.get("resmi") or {}
+    if r.get("temettu"):
+        t = ro.para(r["temettu"])
+        if k["kademe"] == 6:
+            return f"<b>resmi temettu (1 birim): {t}</b> &mdash; bu kuponla tutturuldu"
+        return (f"resmi temettu (1 birim): <b>{t}</b> "
+                f"<span class=mini>&mdash; bu Altili'yi bilenlerin aldigi; biz tutturamadik</span>")
+    if r.get("devir"):
+        return (f"<b>KIMSE BILEMEDI</b> &mdash; {ro.para(r['devir'])} "
+                f"<span class=mini>sonraki cekilise devretti (bu Altili'da odeme yapilmadi)</span>")
+    if not k["bitti"]:
+        return "<span class=mini>resmi temettu: kosular bitince belli olacak</span>"
+    return "<span class=mini>resmi temettu: bilinmiyor (feed'den alinamadi)</span>"
 
 
 def html_yaz(df=None, ac=False):
@@ -339,8 +366,9 @@ def html_yaz(df=None, ac=False):
                  f"{k['seq']}. ALTILI &nbsp;|&nbsp; <b>{k['cfg'].upper()}</b> kupon "
                  f"({k['kombo']} kombinasyon) &nbsp; {rozet}<br>"
                  f"<span class=k>kupon bedeli <b>{ro.para(k['bedel'])}</b> &nbsp;&rarr;&nbsp; "
-                 f"odul <b>{ro.para(k['odul'])}</b> &nbsp;&rarr;&nbsp; net "
-                 f"<span class='{net_cls}'><b>{ro.para(k['net'], isaret=True)}</b></span></span></div>")
+                 f"bizim odulumuz <b>{ro.para(k['odul'])}</b> &nbsp;&rarr;&nbsp; net "
+                 f"<span class='{net_cls}'><b>{ro.para(k['net'], isaret=True)}</b></span>"
+                 f"<br>{_resmi_satir(k)}</span></div>")
         H.append("<table><tr><th>ayak</th><th>kosu</th><th class=l>BIZIM SECIMIMIZ "
                  "<span class=mini>(at no / sistem sirasi)</span></th>"
                  "<th class=l>KAZANAN AT</th><th>kazananin<br>sistem sirasi</th>"
