@@ -775,3 +775,18 @@ kullanici istegiyle AYRI 'genis' (288) gozlem akisi eklendi.**
 - **Etiket dururken:** genis bir IYILESTIRME DEGIL; -EV oldugu backtest'te olculu. Kod/HTML metinleri
   bunu acikca yaziyor ki ileride "genis kar ediyor" yanilgisina dusulmesin (bkz. +%1028 ROI tuzagi, K56).
 - **Dogrulama:** KONFIG=3 config; html_yaz bos genis blogunu cokmeden basti (60727 char).
+
+## 2026-07-24 — K58: Altili sayfasi gorunum zenginlestirmesi
+
+**K58 — altili.html'e (a) secimde KAMU sirasi, (b) her ayagin altinda koşunun TUM sistem
+siralamasi eklendi. Salt gorunum; veri akisina/altili_kupon.csv'ye DOKUNMAZ.**
+- **(a) Secim hucresi:** "at no (sistem sirasi)" -> "at no (sistem sirasi / kamu sirasi)".
+  Ornek: 1 (2. / 3.) = sistem 2., kamu 3. at_bilgi zaten kamu_sira donuyordu; tek satir.
+- **(b) Tum siralama satiri:** her ayagin ana satirinin ALTINDA ayri satir; o kosudaki BUTUN
+  atlar sistem sirasina gore. Bizim sectigimiz KALIN, kazanan YESIL kutu + tik. `_tum_siralama_html`
+  defter.csv'den (kosu_atlari) uretir; defter kaydi yoksa (21 Tem kayip / 20 Tem elle) acikca soyler.
+- **Kullanici gerekcesi:** "en kolay anlayabilecegim, yormayacak sekilde" -> iki gorsel ipucu ile
+  sinirli (kalin + yesil), lejant satir icinde; ekstra sutun yerine alt-satir (genis sahada okunakli).
+- **Genis (K57):** ayni sayfada otomatik ucuncu blok; ileri-yonlu (gecmise backfill YOK, hindsight).
+- **Dogrulama:** html_yaz cokmeden uretti (124268 char); 278 secim hucresi sistem/kamu formatinda,
+  146 ayakta tum-siralama satiri, kazanan yesil kutulari basildi.

@@ -289,6 +289,33 @@ def _resmi_satir(k):
     return "<span class=mini>resmi temettu: bilinmiyor (feed'den alinamadi)</span>"
 
 
+def _tum_siralama_html(rk, secimler):
+    """K58: o kosudaki TUM atlar SISTEM sirasina gore (ayri satirda). Bizim sectigimiz KALIN,
+    kazanan YESIL kutu + tik. defter'den (salt-okunur). Kayit yoksa acikca soyler."""
+    if not rk:
+        return "<span class=mini>sistemin siralamasi: bu kosunun defter kaydi yok</span>"
+    g = ro.kosu_atlari(rk)
+    if g is None or len(g) == 0:
+        return "<span class=mini>sistemin siralamasi: bu kosunun defter kaydi yok</span>"
+    g = g.copy()
+    g["mr"] = pd.to_numeric(g["model_rank"], errors="coerce")
+    g = g.sort_values("mr", na_position="last")
+    secset = {int(x) for x in secimler}
+    parcalar = []
+    for _, r in g.iterrows():
+        if pd.isna(r.get("no")):
+            continue
+        no = int(r["no"])
+        etiket = f"{ro.sira_str(r['mr'])}<b>#{no}</b>" if no in secset else f"{ro.sira_str(r['mr'])}#{no}"
+        if pd.notna(r.get("sonuc")) and int(r["sonuc"]) == 1:
+            etiket = (f"<span style='background:#d9f7d9;padding:0 4px;border-radius:3px'>"
+                      f"{etiket}&nbsp;&#10003;</span>")
+        parcalar.append(etiket)
+    return ("<span class=mini>Sistemin tum siralamasi "
+            "(<b>kalin</b>=bizim sectigimiz, yesil &#10003;=kazanan): </span>"
+            + " &nbsp; ".join(parcalar))
+
+
 def html_yaz(df=None, ac=False):
     """K55: secimlerimiz + SISTEM SIRASI, kazanan at + sistem/kamu sirasi + ganyan orani,
     kupon bedeli + odul, altta TOPLAM. Zenginlestirme defter.csv'den (salt-okunur);
@@ -373,7 +400,7 @@ def html_yaz(df=None, ac=False):
                  f"<span class='{net_cls}'><b>{ro.para(k['net'], isaret=True)}</b></span>"
                  f"<br>{_resmi_satir(k)}</span></div>")
         H.append("<table><tr><th>ayak</th><th>kosu</th><th class=l>BIZIM SECIMIMIZ "
-                 "<span class=mini>(at no / sistem sirasi)</span></th>"
+                 "<span class=mini>(at no &mdash; sistem sirasi / kamu sirasi)</span></th>"
                  "<th class=l>KAZANAN AT</th><th>kazananin<br>sistem sirasi</th>"
                  "<th>kazananin<br>kamu sirasi</th><th>ganyan<br>orani</th><th>sonuc</th></tr>")
         for _, r in g.iterrows():
@@ -381,8 +408,9 @@ def html_yaz(df=None, ac=False):
             secimler = [int(x) for x in str(r["secim"]).split(",") if x != ""]
             parcalar = []
             for no in secimler:
-                bi = ro.at_bilgi(rk, no) if rk else {"sis": None}
-                parcalar.append(f"<b>{no}</b> <span class=mini>({ro.sira_str(bi['sis'])})</span>")
+                bi = ro.at_bilgi(rk, no) if rk else {"sis": None, "kamu": None}
+                parcalar.append(f"<b>{no}</b> <span class=mini>({ro.sira_str(bi['sis'])}"
+                                f" / {ro.sira_str(bi.get('kamu'))})</span>")
             sec_html = " &nbsp;&middot;&nbsp; ".join(parcalar)
             if int(r["banker"]) == 1:
                 sec_html += " <span class=mini>[banker]</span>"
@@ -407,6 +435,10 @@ def html_yaz(df=None, ac=False):
                      f"<td class=l>{sec_html}</td><td class=l>{kz_html}</td>"
                      f"<td>{kz_sis}</td><td>{kz_kamu}</td><td>{kz_oran}</td>"
                      f"<td class={scls}>{stxt}</td></tr>")
+            # K58: o kosunun TUM sistem siralamasi -- ayaginin hemen altinda ayri satir
+            H.append("<tr><td></td><td colspan=7 class=l "
+                     "style='background:#f7f9fc;border-top:none'>"
+                     f"{_tum_siralama_html(rk, secimler)}</td></tr>")
         H.append("</table></div>")
 
     H += toplam_blok("TOPLAM DURUM (liste sonu)")
