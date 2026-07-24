@@ -3,7 +3,8 @@ oran_log.py — K59: gun-ici ORAN gecmisi kaydi (ILERI-YONLU; fiyat-kaymasi olcu
 
 SISTEME DOKUNMAZ: kupon KURMAZ, model CALISTIRMAZ, mevcut HICBIR dosyaya yazmaz. Yalnizca
 veri/altili_oran_log.csv'ye, her takip gecisinde, postaya <=45 dk kalan (ve baslamamis) her
-Altili ayaginin canli oranlarini (GANYAN + AGF1) zaman damgasiyla EKLER.
+Altili ayaginin canli oranlarini (GANYAN + AGF1) zaman damgasiyla EKLER. Cikan (KOSMAZ) atlar da
+`kosmaz` bayragiyla loglanir (cikma bir piyasa olayi; oran None olabilir).
 
 NEDEN: asil kuponlar 30 dk kala kuruluyor (degismiyor); ama oranlar posta anina kadar kayiyor
 (23.07 Ankara-2'de 6 kazanandan 3'u kaymisti). "30 yerine 15/5 dk kala kursaydik secim/isabet
@@ -27,7 +28,7 @@ from duzlestir import vir_float  # noqa: E402
 
 LOG = KOK / "veri" / "altili_oran_log.csv"
 KOL = ["kayit_ts", "tarih", "pist", "seq", "ayak", "kosu_no", "race_kod",
-       "saat", "dk_kala", "no", "at_ad", "ganyan", "agf1"]
+       "saat", "dk_kala", "no", "at_ad", "ganyan", "agf1", "kosmaz"]
 PENCERE_DK = 45   # sadece postaya <=45 dk kalan ayaklari logla (dosya sismesin; drift penceresi)
 
 
@@ -55,8 +56,9 @@ def oran_kaydet(pistler, ymd, tarih):
                     rk = _as_int(k.get("KOD"))
                     kno = _as_int(k.get("RACENO") or k.get("NO"))
                     for a in k.get("atlar", []):
-                        if a.get("KOSMAZ"):                # kosmayacak at -> oran anlamsiz
-                            continue
+                        # K59+: cikan (KOSMAZ) at da bir PIYASA OLAYI (havuz dagilir, oranlar ziplar)
+                        # -> atmiyoruz; bayrakla logluyoruz. Cikan atin orani None olabilir (normal).
+                        kosmaz = 1 if str(a.get("KOSMAZ", "")).strip().lower() in ("true", "1") else 0
                         yeni.append({
                             "kayit_ts": ts, "tarih": tarih, "pist": pist, "seq": seq,
                             "ayak": ai + 1, "kosu_no": kno, "race_kod": rk, "saat": saat,
@@ -64,6 +66,7 @@ def oran_kaydet(pistler, ymd, tarih):
                             "at_ad": a.get("AD"),
                             "ganyan": vir_float(a.get("GANYAN")),
                             "agf1": vir_float(a.get("AGF1")),
+                            "kosmaz": kosmaz,
                         })
         except Exception as e:
             print(f"  oran_log ({pist}): {type(e).__name__} - devam")

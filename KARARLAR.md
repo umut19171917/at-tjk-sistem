@@ -801,7 +801,10 @@ kupon kurmaz, model calistirmaz, mevcut hicbir dosyayi degistirmez; kupon zamanl
   Bu modul o seriyi ILERIYE donuk biriktirir -> karar birkac ay sonra GERCEK veriyle verilir.
 - **Ne yapar:** takip her geciste (try-korumali) cagirir; postaya <=45 dk kalan + baslamamis her
   Altili ayagi icin her atin canli GANYAN + AGF1'ini zaman damgasi + dk_kala ile
-  `veri/altili_oran_log.csv`'ye EKLER. KOSMAZ atlar haric. (race_kod,no,kayit_ts) tekrari silinir.
+  `veri/altili_oran_log.csv`'ye EKLER. (race_kod,no,kayit_ts) tekrari silinir.
+  **Ayni-gun duzeltme (a):** cikan (KOSMAZ) atlar ATILMAZ -> `kosmaz` bayragiyla loglanir; cikma da
+  bir piyasa olayi (havuz dagilir, oranlar ziplar) -> kayma calismasi icin yakalanmasi gerek. Bu
+  ileri-yonlu veride "sonra geri alinamaz" oldugu icin simdi eklendi.
 - **Neden guvenli:** yeni modul + kendi log dosyasi + takip'e try-korumali TEK cagri. Hata firlatmaz;
   altili/paper hook'lariyla ayni izolasyon. Mevcut kupon/model/defter akisi bit-bit ayni.
 - **Dogrulama:** sentetik program testi (sahte getjson, scratch log) -> 45dk penceresi dogru
