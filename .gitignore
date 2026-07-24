@@ -11,6 +11,7 @@ __pycache__/
 veri/ham/
 veri/katilim.csv
 veri/ozellikli.csv
+kod/telegram_config.json
 veri/takip.kilit
 veri/takip_son.txt
 veri/takip_gecis.txt

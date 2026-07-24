@@ -160,6 +160,48 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
     return n
 
 
+# ----------------------------- Telegram bildirimi (K60) -----------------------------
+def _at_ad_map(o):
+    """program JSON -> {race_kod: {at_no: at_ad}} (kupon atlarini isimle yazmak icin)."""
+    m = {}
+    for k in o.get("kosular", []):
+        m[_as_int(k.get("KOD"))] = {_as_int(a.get("NO")): a.get("AD") for a in k.get("atlar", [])}
+    return m
+
+
+def bildir_kupon(pist, tarih, seq, o):
+    """Kurulan (pist,seq) Altili kuponunu Telegram'dan NUMARA + ISIMLE bildir (uc config).
+    telegram_at config'i yoksa sessizce gecer (bot kurulmadan da guvenli). try-korumali cagirilir."""
+    import telegram_at
+    df = _oku()
+    g = df[(df["tarih"] == tarih) & (df["pist"] == pist)
+           & (pd.to_numeric(df["seq"], errors="coerce") == seq)]
+    if g.empty:
+        return
+    admap = _at_ad_map(o)
+    tarih_tr = pd.Timestamp(str(tarih)).strftime("%d.%m.%Y")
+    ilk_saat = str(g["ilk_saat"].iloc[0])
+    sat = ["🎫 <b>ALTILI KUPONU KURULDU</b>",
+           f"📍 {pist} — {tarih_tr}, {int(seq)}. Altılı",
+           f"🕐 İlk koşu {ilk_saat} (30 dk kala)", ""]
+    for cfg in KONFIG:                                 # dar, orta, genis
+        gc = g[g["config"] == cfg].sort_values("ayak")
+        if gc.empty:
+            continue
+        kombo = int(np.prod([int(x) for x in gc["nat"]]))
+        bedel = kombo * ro.birim_fiyat(pist)
+        sat.append(f"<b>{cfg.upper()}</b> — {kombo} kombo / {ro.para(bedel)}")
+        for _, r in gc.iterrows():
+            adm = admap.get(_as_int(r["race_kod"]), {})
+            secim = [int(x) for x in str(r["secim"]).split(",") if x != ""]
+            atlar = ", ".join(f"{no} {adm.get(no, '?')}" for no in secim)
+            bank = " (banker)" if int(r["banker"]) == 1 else ""
+            sat.append(f"  {int(r['ayak'])}. ayak (koşu {int(r['kosu_no'])}): {atlar}{bank}")
+        sat.append("")
+    sat.append("Detay/takip: raporlar/altili.html")
+    telegram_at.gonder("\n".join(sat))
+
+
 # ----------------------------- takip tetigi (zaman-bazli) -----------------------------
 def kupon_zamani_kur(pistler, ymd, tarih, dk_kala=30):
     """takip.py her turda cagirir. Her Altili penceresi icin: ilk kosusuna <=dk_kala kaldiysa
@@ -182,8 +224,14 @@ def kupon_zamani_kur(pistler, ymd, tarih, dk_kala=30):
                 except ValueError:
                     continue
                 if ilk_post - timedelta(minutes=dk_kala) <= now < ilk_post:
-                    kurulan += kupon_hazirla(pist, ymd, tarih, sadece_seq=seq)
+                    n = kupon_hazirla(pist, ymd, tarih, sadece_seq=seq)
+                    kurulan += n
                     df = _oku()
+                    if n:                              # K60: yeni kupon -> Telegram bildirimi
+                        try:
+                            bildir_kupon(pist, tarih, seq, o)
+                        except Exception as e:
+                            print(f"  altili telegram bildirim hatasi: {type(e).__name__}")
         except Exception as e:
             print(f"  altili kupon hatasi ({pist}): {type(e).__name__} - takip devam ediyor")
     if kurulan:

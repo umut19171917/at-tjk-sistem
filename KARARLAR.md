@@ -812,3 +812,19 @@ kupon kurmaz, model calistirmaz, mevcut hicbir dosyayi degistirmez; kupon zamanl
   py_compile + ast.parse takip.py/oran_log.py OK. veri_commit.py'ye log eklendi (K50 yedegi).
 - **ACIK IS (BEKLEYENLER):** birkac ay veri birikince offline "kupon zamani" analizi — 30 vs 15/5 dk
   secim/isabet farki. TETIK: yeterli oran_log verisi (>= birkac hafta Altili gunu).
+
+## 2026-07-25 — K60: Altili kupon Telegram bildirimi (AT'ye ozel bot)
+
+**K60 — Altili kuponu kurulunca (30 dk kala) Telegram'dan NUMARA + ISIMLE bildirim. AT'ye OZEL bot
+(kripto'dan AYRI, kullanici istegi).**
+- **Yeni:** `kod/telegram_at.py` — urllib ile sendMessage (yeni bagimlilik yok). Token+chat_id
+  `kod/telegram_config.json`'da (GIT DISI; .gitignore). Config yoksa gonder() SESSIZCE no-op ->
+  bot kurulmadan da kod guvenli, hicbir sey bozulmaz.
+- **altili_canli:** `bildir_kupon(pist,tarih,seq,o)` uc config'i (dar/orta/genis) numara+isimle,
+  ayak-ayak, banker isaretli, bedelle mesajlar; `kupon_zamani_kur` yeni kupon kurunca TRY-KORUMALI
+  cagirir (bildirim hatasi kupon kurmayi/takibi ASLA bozmaz). Isimler program JSON'dan (atlar/AD).
+- **Dogrulama:** gercek kupon (23.07 ANKARA 2.) ile mesaj kuru uretildi (gondermeden) -> dar+orta
+  ayak-ayak numara+isim dogru, banker isaretli. py_compile OK. Token gelince --kur ile chat_id
+  bulunup config yazilacak + test mesaji.
+- **Kurulum (kullanici):** @BotFather -> /newbot -> token; bota mesaj yaz; `telegram_at.py --kur <token>`
+  chat_id'yi bulur, config yazar, test atar.
