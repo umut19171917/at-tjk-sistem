@@ -46,13 +46,21 @@ altili.html / paper.html K55 zengin formatına geçti (tahminler + sistem sıras
 kamu sırası + oran + bedel + ödül + toplam). defter.html hâlâ eski düzende. İstenirse aynı
 `rapor_ortak.py` yapıtaşlarıyla çevrilebilir; sistemin veri akışına dokunmaz.
 
-### 4. Kupon zamanı analizi — 30 dk vs 15/5 dk (oran_log verisiyle)
-**Eklendi:** 2026-07-24 · **İlgili:** K59 · **TETİK:** birkaç hafta oran_log verisi biriktiğinde
-`oran_log.py` (K59) bugünden itibaren her Altılı ayağının oranlarını farklı anlarda (30/15/~5 dk
-kala) biriktiriyor. Yeterli veri olunca **offline** analiz: "kuponu 30 yerine 15/5 dk kala
-kursaydık seçim/isabet değişir miydi?" Karar sezgiyle değil bu veriyle verilecek. **Uyarı:** tek
-örnek (23.07 Ankara-2) kaymanın LEHİMİZE çalıştığını gösterdi — yani "geç kur = daha iyi" garanti
-değil; etkin-pazar tezi (K1) gereği piyasayı daha çok takip etmek kesintiye yaslanmak da olabilir.
+### 4. Kupon zamanı analizi — 30 vs 15 vs 10 dk (oran_log verisiyle, OFFLINE)
+**Eklendi:** 2026-07-24 · **Güncellendi:** 2026-07-25 · **İlgili:** K59 · **TETİK:** ~2-3 hafta
+oran_log verisi (yeterli Altılı günü) biriktiğinde. **Kullanıcı kararı (2026-07-25): canlı zamanlama
+30 dk KALSIN; bu soru canlıyı değiştirmeden, simülasyonla cevaplanacak.**
+`oran_log.py` (K59) her ayağın oranını farklı anlarda (30 / 15 / ~5 dk kala) biriktiriyor.
+**Yöntem:** her Altılı için, 15-dk ve 10-dk snapshot oranlarından bot2'yi YENİDEN hesapla
+(bot1 sabit, sadece piyasa bileşeni değişir) → `kupon_kur`'u tekrar koştur → 30 vs 15 vs 10 dk
+kuponların isabetini **maliyet-sonrası** kıyasla. Canlı build hiç değişmez (güvenli + kayıt tutarlı).
+**Operasyonel taban:** görev 15 dk'da bir çalışıyor → 30 dk penceresi ~2 geçiş, 15 dk ~1 geçiş,
+**10 dk'ya hiç geçiş düşmeyebilir** (o gün kupon kurulamaz) → 10 dk pratik taban değil, sadece simüle et.
+**Uyarılar:** (a) tek örnek 23.07 Ankara-2'de kayma LEHİMİZE çalıştı (6/6 tuttuk); 25.07 İzmir 1.
+ayakta ise ALEYHİMİZE (K59'un ilk canlı drift örneği: #4'ü 4. sıradayken aldık, posta anında 5.'ye
+düştü). İki yön birden var → karar veriyle. (b) 15/10 dk bile final oran değil (en sert para son ~5 dk).
+(c) Etkin-pazar tezi (K1): geç kur = kalabalığı daha çok taklit = kesintiye yaslanmak → "az kayma"
+otomatik "daha çok kâr" değil.
 
 ### 5. Altılı sonuçlamada favori-devri kuralı — BİLİNEN MODELLEME BOŞLUĞU
 **Eklendi:** 2026-07-24 · **İlgili:** K59 · **TETİK:** doğruluk kritikleşirse / kullanıcı isterse
