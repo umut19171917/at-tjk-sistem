@@ -93,6 +93,6 @@ if __name__ == "__main__":
     pistler = a.pist
     if not pistler:
         from gunluk import yerli_pistler
-        pistler, _ = yerli_pistler(ymd, hata_bildir=True)
+        pistler = [p for p, _ in yerli_pistler(ymd, hata_bildir=True)[0]]  # (key,ad) -> key
     n = oran_kaydet(pistler, ymd, a.tarih)
     print(f"oran_log: {n} satir eklendi -> {LOG}")
