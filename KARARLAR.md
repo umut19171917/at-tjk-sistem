@@ -844,3 +844,23 @@ kupon kurmaz, model calistirmaz, mevcut hicbir dosyayi degistirmez; kupon zamanl
 - **Dogrulama:** gercek veri (23.07 ANKARA 2., orta 6/6) ile mesaj kuru uretildi (gondermeden) ->
   kazananlar+isim, DAR "son 5 ayak", ORTA "6/6 TUTTU" net +17.844,50, resmi temettu 17.934,50 dogru.
   py_compile OK.
+
+## 2026-07-25 — K62: 'genis900' config (kullanici istegi, gozlem akisi)
+
+**K62 — Dorduncu Altili config 'genis900' (kapsam 0.95, <=900 kombo ~ 900-1125 TL). Kullanici
+karari: -EV oldugunu bilerek, "aklimiza geleni test edelim, paper zarari yok" ilkesiyle.**
+- **Onaylanmadan once OLCULDU (backtest):** 1455 OOS'ta 900-kombo dürüst zemin (sadece 6/6) ROI
+  **-%41..-%44**, bootstrap GA [-57,-24] -> sifiri NET disliyor, kesin zarar. Iyimser (teselli)
+  ölcüde bile genis kötü (288'de +%45 -> 900'de +%8). Test edilen EN KOTU olcek. Kullaniciya
+  sunuldu; kullanici yine de gozlem akisi olarak istedi -> eklendi (talimatname: tekrar onaylandi).
+- **Tasarim:** KONFIG artik config -> (kapsam_esik, max_kombo). genis900 YUKSEK kapsam (0.95) ki
+  derin (5./6. sira) kazananlara ulasabilsin (0.75 onlara varmadan doluyor). dar/orta/genis 0.75'te
+  BIT-BIT AYNI kaldi. Telegram (K60/K61) + sonuc listesi + HTML KONFIG'i gezdigi icin genis900'u
+  OTOMATIK alir (ek kod yok).
+- **ONEMLI BULGU:** genis900 BILE Bursa 24.07/2. Altili'yi (6/1/5/3/3/8, ~57k) tutturmuyor -> 729
+  kombo/911 TL, 3/6. Cunku 0.95 kapsam her ayakta 5-7 at ister, carpim 900'u asar, butce budamasi
+  onu 900'e kiskarken TAM DA derin kazananlari atar. "900 kombo yeterdi" rakami ayaklari kazananin
+  yerine gore dagitan HINDSIGHT-optimal kupondu; kural-tabanli hicbir kupon 900 tavanda 6 derin
+  kazanani ayni anda kapsayamaz (1x6x5x2x5x3=900 zaten tam sinir). "Daha cok kombo cozmez" tekrar dogrulandi.
+- **Dogrulama:** KONFIG 4 config; kupon_kur genis900 ->729 kombo; HTML 4 config cokmeden basti
+  (124767 char); bildir_kupon/bildir_sonuc KONFIG geziyor (genis900 otomatik). Ileri-yonlu.

@@ -7,7 +7,8 @@ AYRI dosya/sayfa: veri/altili_kupon.csv + raporlar/altili.html. defter/paper'a D
 
 Kupon mantigi (K52 backtest'iyle AYNI cekirdek: altili_backtest.kupon_kur):
   banker (Bot2 guveni >= esik -> tek at) + spread (kumulatif kapsam) + butce tavani.
-  UC config: 'dar' (<=24 kombo), 'orta' (<=96, K53) ve 'genis' (<=288, K57 gozlem akisi).
+  DORT config: 'dar' (<=24), 'orta' (<=96, K53), 'genis' (<=288, K57) ve 'genis900'
+  (kapsam 0.95, <=900 kombo; K62 gozlem akisi -- derin kazananlari da kapsar, ~900-1125 TL).
   K57: orta genisletilmedi (backtest: kazanc yok, dar zemin -%19'dan kotu); genis AYRI stream
   olarak eklendi (kullanici istegi, iyilestirme iddiasi degil; -EV oldugu backtest'te olculu).
 Pencere: program BAHISLER_TR'de "N. 6'LI GANYAN bu kosudan baslar" -> o kosudan 6 ardisik kosu.
@@ -38,8 +39,10 @@ import rapor_ortak as ro  # noqa: E402
 
 KUPON = KOK / "veri" / "altili_kupon.csv"
 HTMLA = KOK / "raporlar" / "altili.html"
-KONFIG = {"dar": 24, "orta": 96, "genis": 288}  # K53: dar+orta; K57: genis=gozlem akisi (-EV)
-KAPSAM_ESIK, BANKER_ESIK = 0.75, 0.70  # K52 backtest'te en iyi OOS profili
+# K62: config -> (kapsam_esik, max_kombo). genis900 YUKSEK kapsam (0.95) ki derin (5./6. sira)
+# kazananlara ulassin (0.75 onlara varmadan doluyor). Hepsi -EV gozlem akisi; backtest K52/K57/K62.
+KONFIG = {"dar": (0.75, 24), "orta": (0.75, 96), "genis": (0.75, 288), "genis900": (0.95, 900)}
+BANKER_ESIK = 0.70                     # tek-at banker esigi (tum config ortak)
 KOL = ["kayit_ts", "tarih", "pist", "seq", "ilk_saat", "config", "ayak",
        "kosu_no", "race_kod", "saat", "secim", "banker", "nat",
        "kazanan", "tuttu", "sonuclandi"]
@@ -124,8 +127,8 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
             print(f"  {seq}. Altili (kosu {pencere[0].get('RACENO')}): bir ayak kapsam disi -> atlandi")
             continue
 
-        for cfg, maxk in KONFIG.items():
-            sec = kupon_kur(ayak_atlari, KAPSAM_ESIK, maxk, BANKER_ESIK)
+        for cfg, (kaps, maxk) in KONFIG.items():
+            sec = kupon_kur(ayak_atlari, kaps, maxk, BANKER_ESIK)
             for ai in range(6):
                 atlar_sirali = sorted(ayak_atlari[ai], key=lambda x: -x[1])
                 secili = sec[ai]
@@ -433,8 +436,9 @@ def html_yaz(df=None, ac=False):
          f"<div class=not>guncelleme {datetime.now():%d.%m.%Y %H:%M} &mdash; "
          "<b>GERCEK BAHIS DEGIL</b>, kagit uzerinde izleme/ogrenme (K48/K53). "
          "Backtest OOS &minus;%32, +EV yok (K52).<br>"
-         "Kupon uc boyda kurulur: <b>DAR</b> (~16 kombo), <b>ORTA</b> (~72-96) ve "
-         "<b>GENIS</b> (~288, K57 gozlem akisi; genis olculen bir iyilestirme DEGIL). "
+         "Kupon dort boyda kurulur: <b>DAR</b> (~16 kombo), <b>ORTA</b> (~72-96), "
+         "<b>GENIS</b> (~288) ve <b>GENIS900</b> (kapsam 0.95, ~900 kombo/~1125 TL; K62 gozlem "
+         "akisi -- backtest'te en cok kaybeden, sadece merak icin izleniyor). "
          "Birim fiyat 2026 tarifesi: Ist/Ank/Izm/Ada/Bur/Koc/Ant 1,25 TL, "
          "Elazig/Urfa/Diyarbakir 1,00 TL.<br>"
          "<b>Odul yalniz 6/6 tam isabette</b> odenir; 5/4/3 ayak TJK'da AYRI bahistir "
