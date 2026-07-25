@@ -202,6 +202,46 @@ def bildir_kupon(pist, tarih, seq, o):
     telegram_at.gonder("\n".join(sat))
 
 
+def bildir_sonuc(tarih, pist, seq):
+    """Tamamlanan (pist,seq) Altili SONUCUNU Telegram'dan bildir (K61): kazananlar (numara+isim) +
+    her config'in isabeti/bedeli/odulu/neti + RESMI temettu. Config yoksa sessizce gecer."""
+    import telegram_at
+    df = _oku()
+    g_all = df[(df["tarih"] == tarih) & (df["pist"] == pist)
+               & (pd.to_numeric(df["seq"], errors="coerce") == seq)]
+    if g_all.empty or g_all["sonuclandi"].isna().any():
+        return
+    tarih_tr = pd.Timestamp(str(tarih)).strftime("%d.%m.%Y")
+    sat = ["🏁 <b>ALTILI SONUÇLANDI</b>",
+           f"📍 {pist} — {tarih_tr}, {int(seq)}. Altılı", ""]
+    ref = g_all[g_all["config"] == next(iter(KONFIG))].sort_values("ayak")
+    kaz_par = []
+    for _, r in ref.iterrows():
+        kz = ro.kazanan_bilgi(_as_int(r["race_kod"]))
+        if kz and kz.get("no") is not None:
+            kaz_par.append(f"{int(r['ayak'])}.#{kz['no']} {str(kz.get('ad') or '')[:20]}".rstrip())
+        elif pd.notna(r["kazanan"]):
+            kaz_par.append(f"{int(r['ayak'])}.#{int(r['kazanan'])}")
+    if kaz_par:
+        sat += ["🏇 Kazananlar: " + ", ".join(kaz_par), ""]
+    for cfg in KONFIG:
+        gc = g_all[g_all["config"] == cfg].sort_values("ayak")
+        if gc.empty:
+            continue
+        oz = _kupon_ozet(gc, tarih, pist, seq, cfg)
+        kad = oz["kademe"]
+        durum = "✅ 6/6 TUTTU" if kad == 6 else (f"son {kad} ayak (bilgi)" if kad else "tutmadı")
+        sat.append(f"<b>{cfg.upper()}</b>: {durum} — bedel {ro.para(oz['bedel'])}, "
+                   f"ödül {ro.para(oz['odul'])}, net {ro.para(oz['net'], isaret=True)}")
+    res = ro.altili_odeme(tarih, pist, int(seq), cek=False)
+    if res.get("temettu"):
+        sat.append(f"\n💰 Resmi temettü (1 birim): {ro.para(res['temettu'])}")
+    elif res.get("devir"):
+        sat.append(f"\n↪️ Kimse bilemedi — {ro.para(res['devir'])} devretti")
+    sat.append("\nDetay: raporlar/altili.html")
+    telegram_at.gonder("\n".join(sat))
+
+
 # ----------------------------- takip tetigi (zaman-bazli) -----------------------------
 def kupon_zamani_kur(pistler, ymd, tarih, dk_kala=30):
     """takip.py her turda cagirir. Her Altili penceresi icin: ilk kosusuna <=dk_kala kaldiysa
@@ -249,6 +289,11 @@ def sonucla_altili():
     if acik.empty:
         print("sonuclanmamis ayak yok.")
         return 0
+    aday_gruplar = set()                          # K61: bu geciste acik ayagi olan Altili'lar
+    for _, r in acik[["tarih", "pist", "seq"]].drop_duplicates().iterrows():
+        s = pd.to_numeric(r["seq"], errors="coerce")
+        if pd.notna(s):
+            aday_gruplar.add((r["tarih"], r["pist"], int(s)))
     df["sonuclandi"] = df["sonuclandi"].astype("object")
     bugun = date.today().isoformat()
     dolan = 0
@@ -283,6 +328,15 @@ def sonucla_altili():
                 ro.altili_odeme(tarih, pist, int(seq), cek=True)
     except Exception as e:
         print(f"  (temettu cache atlandi: {type(e).__name__})")
+    # K61: bu geciste 6 ayagi da TAM tamamlanan Altili'lari Telegram'dan bildir (bir kez; try-korumali)
+    for (t_, p_, s_) in aday_gruplar:
+        g = df[(df["tarih"] == t_) & (df["pist"] == p_)
+               & (pd.to_numeric(df["seq"], errors="coerce") == s_)]
+        if len(g) and g["sonuclandi"].notna().all():
+            try:
+                bildir_sonuc(t_, p_, s_)
+            except Exception as e:
+                print(f"  altili sonuc telegram hatasi: {type(e).__name__}")
     html_yaz(df)
     print(f"altili: {dolan} ayak sonuclandi (acik {int(df['sonuclandi'].isna().sum())}).")
     return dolan

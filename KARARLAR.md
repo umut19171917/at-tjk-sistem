@@ -828,3 +828,19 @@ kupon kurmaz, model calistirmaz, mevcut hicbir dosyayi degistirmez; kupon zamanl
   bulunup config yazilacak + test mesaji.
 - **Kurulum (kullanici):** @BotFather -> /newbot -> token; bota mesaj yaz; `telegram_at.py --kur <token>`
   chat_id'yi bulur, config yazar, test atar.
+
+## 2026-07-25 — K61: Altili SONUC Telegram bildirimi
+
+**K61 — Bir Altili'nin 6 ayagi da tamamlaninca Telegram'dan SONUC bildirimi (bir kez).**
+- **altili_canli.bildir_sonuc(tarih,pist,seq):** kazananlar (numara+isim) + her config'in isabeti
+  (6/6 / son-N / tutmadi) + bedel/odul/net + RESMI temettu (veya devir). `telegram_at` config yoksa
+  sessizce gecer.
+- **Tetik:** `sonucla_altili` bir geciste acik ayagi olan gruplari (aday_gruplar) not eder; gecis
+  sonunda 6 ayagi da tamamlanan gruplar icin bir kez `bildir_sonuc` cagirir. IDEMPOTENT (sonraki
+  geciste o grubun acik ayagi yok -> tekrar bildirmez). TRY-KORUMALI -> bildirim hatasi sonuclama/
+  takibi ASLA bozmaz.
+- **Zarar yok:** kupon-kurulum bildirimiyle (K60) ayni izole desen; sonuclama/defter/temettu akisi
+  bit-bit ayni. Config yoksa hicbir mesaj gitmez.
+- **Dogrulama:** gercek veri (23.07 ANKARA 2., orta 6/6) ile mesaj kuru uretildi (gondermeden) ->
+  kazananlar+isim, DAR "son 5 ayak", ORTA "6/6 TUTTU" net +17.844,50, resmi temettu 17.934,50 dogru.
+  py_compile OK.
