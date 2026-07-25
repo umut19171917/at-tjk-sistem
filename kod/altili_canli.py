@@ -61,19 +61,26 @@ def _yaz(df):
 # ----------------------------- pencere tespiti -----------------------------
 def altili_pencereleri(o):
     """Program JSON'dan Altili pencereleri: [(seq, [6 kosu-dict], ilk_saat)].
-    Kaynak: her kosunun BAHISLER_TR'sinde '<seq>. 6'LI GANYAN bu kosudan baslar' isareti."""
+    Altili baslangici = BAHISLER_TR'de "6'LI GANYAN" GECEN kosu (bu ifade YALNIZ baslangic
+    kosusunda gecer -- 24 Tem cok-Altili ve 25 Tem tek-Altili gunlerinde dogrulandi).
+    Iki format: (a) "N. 6'LI GANYAN bu kosudan baslar" -> seq=N (cok-Altili gunu);
+    (b) sadece "6'LI GANYAN" listelenir, "baslar" baska bahse bagli (tek-Altili gunu) -> seq sirayla.
+    K63: eskiden yalniz (a) yakalaniyordu -> (b) formatindaki gunlerde HIC kupon kurulmuyordu (sessiz kayip)."""
     kos = sorted(o.get("kosular", []),
                  key=lambda k: int(k.get("RACENO") or k.get("NO") or 0))
-    pat = re.compile(r"(\d+)\.\s*6'LI GANYAN\s+bu\s+ko", re.IGNORECASE)
-    out = []
+    pat_ord = re.compile(r"(\d+)\.\s*6'LI GANYAN", re.IGNORECASE)   # acik sira no'su (varsa)
+    out, sira = [], 0
     for i, k in enumerate(kos):
-        m = pat.search(k.get("BAHISLER_TR") or "")
-        if not m:
+        b = k.get("BAHISLER_TR") or ""
+        if "6'LI GANYAN" not in b.upper():
             continue
         pencere = kos[i:i + 6]
         if len(pencere) < 6:                 # eksik pencere (program kesik) -> atla
             continue
-        out.append((int(m.group(1)), pencere, str(k.get("SAAT", "")).strip()))
+        sira += 1
+        m = pat_ord.search(b)
+        seq = int(m.group(1)) if m else sira
+        out.append((seq, pencere, str(k.get("SAAT", "")).strip()))
     return out
 
 

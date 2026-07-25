@@ -864,3 +864,18 @@ karari: -EV oldugunu bilerek, "aklimiza geleni test edelim, paper zarari yok" il
   kazanani ayni anda kapsayamaz (1x6x5x2x5x3=900 zaten tam sinir). "Daha cok kombo cozmez" tekrar dogrulandi.
 - **Dogrulama:** KONFIG 4 config; kupon_kur genis900 ->729 kombo; HTML 4 config cokmeden basti
   (124767 char); bildir_kupon/bildir_sonuc KONFIG geziyor (genis900 otomatik). Ileri-yonlu.
+
+## 2026-07-25 — K63: Altili pencere tespiti — tek-Altili formati (sessiz kayip fix)
+
+**K63 — altili_pencereleri iki BAHISLER formatini da taniyor. ONCEDEN tek-Altili gunlerinde HIC
+kupon kurulmuyordu (sessiz kayip).**
+- **Kok neden:** tespit yalniz "N. 6'LI GANYAN bu kosudan baslar" desenini ariyordu (cok-Altili gunu).
+  Tek-Altili gunlerinde TJK "6'LI GANYAN, 2. CIFTE bu kosudan baslar" yaziyor -> "baslar" CIFTE'ye bagli,
+  Altili'ya degil -> desen eslesmiyor -> o gun dar/orta/genis/genis900 HICBIRI kurulmuyor. 25 Tem'de
+  ANKARA(15:00) ve IZMIR(18:00) Altililari boyle kaciriliyordu.
+- **Fix:** Altili baslangici = BAHISLER'de "6'LI GANYAN" GECEN kosu (bu ifade yalniz baslangic kosusunda
+  gecer; 24 Tem cok + 25 Tem tek gunlerinde dogrulandi). seq: acik "N." varsa o, yoksa sirayla.
+- **Regresyon KANITI:** 6 gecmis gun (20-24 Tem, kupon kurulmustu) eski==yeni BIREBIR ayni pencereler;
+  25 Tem eski=[] iken yeni ANKARA(1,15:00)+IZMIR(1,18:00) yakaliyor. py_compile OK.
+- **Etki:** ileri-yonlu. Bu duzeltme olmasa genis900 (ve tum config) bugun de kurulamazdi -> soru
+  "900 bugun calisir mi" bu fix'e bagliydi.
