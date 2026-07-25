@@ -879,3 +879,19 @@ kupon kurulmuyordu (sessiz kayip).**
   25 Tem eski=[] iken yeni ANKARA(1,15:00)+IZMIR(1,18:00) yakaliyor. py_compile OK.
 - **Etki:** ileri-yonlu. Bu duzeltme olmasa genis900 (ve tum config) bugun de kurulamazdi -> soru
   "900 bugun calisir mi" bu fix'e bagliydi.
+
+## 2026-07-25 — K64: Basabas (dead heat) sonuclama fix
+
+**K64 — sonucla_altili basabasi (ayni kosuda >1 at SONUC=1) DOGRU isliyor. Onceden tek kazanan
+tutuyordu -> basabas ayaklar yanlis "kacti" sayiliyordu.**
+- **Kok neden:** `kaz[rk] = NO` her SONUC=1 atinda ustune yaziyor -> yalniz SONUNCU kazanan kaliyordu;
+  tuttu = (o tek at secimde mi). Basabasta (25 Tem IZMIR ayak5: #1 & #4 birlikte 1.) bizim tuttugumuz
+  #1 saklanmadi, #4 saklandi, tuttu=0 yazildi -> IZMIR 5/6 iken 4/6 gorundu (Telegram/sayfa yanlis).
+- **Fix:** `kazananlar_kumesi(o)` race_kod -> {kazanan NO'lari}; tuttu = (secim ∩ kazananlar bos degil)
+  -> HERHANGI bir basabas kazanani yeter. kazanan sutunu tek int kalir (uyum): tuttuysak tuttugumuz,
+  yoksa ilk kazanan. `yeniden_sonucla()` (+ CLI --duzelt): tum sonuclanmis ayaklari feed'den yeniden
+  hesaplar (geriye duzeltme).
+- **Etki:** --duzelt -> SADECE 4 satir degisti (25 Tem IZMIR ayak5, dort boy; tuttu 0->1). Gecmiste
+  baska basabas yok (23.07 Ankara 6/6 dahil eski kayitlar ETKILENMEDI). IZMIR artik dogru: 5/6, kademe 5.
+- **Dogrulama:** py_compile OK; duzeltme ciktisi 4 satir; Ankara 2/6 degismedi, IZMIR 5/6'ya duzeldi.
+- **NOT:** IZMIR sonuc Telegram'i (K61) settle aninda YANLIS 4/6 gonderdi (kayit duzeldi ama o mesaj gecti).

@@ -290,6 +290,56 @@ def kupon_zamani_kur(pistler, ymd, tarih, dk_kala=30):
 
 
 # ----------------------------- sonucla -----------------------------
+def kazananlar_kumesi(o):
+    """K64: Sonuc JSON'dan race_kod -> {kazanan NO'lari}. BASABAS (dead heat) -> birden cok NO
+    (ayni kosuda >1 at SONUC=1). Bir ayak, bu kumeden HERHANGI biri secimimizde varsa tutar."""
+    kaz = {}
+    for k in o.get("kosular", []):
+        rk = _as_int(k.get("KOD"))
+        for a in k.get("atlar", []):
+            s = pd.to_numeric(a.get("SONUC"), errors="coerce")
+            if pd.notna(s) and int(s) == 1:
+                no = _as_int(a.get("NO"))
+                if no is not None:
+                    kaz.setdefault(rk, set()).add(no)
+    return kaz
+
+
+def yeniden_sonucla():
+    """K64: TUM sonuclanmis ayaklarin tuttu'sunu feed'den YENIDEN hesapla (basabas geriye duzeltme).
+    Feed'i (tarih,pist) basina bir kez ceker. Doner: degisen satir sayisi."""
+    df = _oku()
+    if df.empty:
+        print("altili defteri bos."); return 0
+    son = df[df["sonuclandi"].notna()]
+    degisen = 0
+    for (tarih, pist), grp in son.groupby(["tarih", "pist"]):
+        ymd = datetime.strptime(str(tarih), "%Y-%m-%d").strftime("%Y%m%d")
+        o = getjson(f"{BASE}/sonuclar/{ymd}/full/{pist}.json")
+        if o.get("_hata"):
+            print(f"  {tarih} {pist}: feed yok, atlandi"); continue
+        kaz = kazananlar_kumesi(o)
+        for i in grp.index:
+            rk = _as_int(df.at[i, "race_kod"])
+            if not kaz.get(rk):
+                continue
+            secilenler = {int(x) for x in str(df.at[i, "secim"]).split(",") if x != ""}
+            tut = secilenler & kaz[rk]
+            yeni = int(bool(tut))
+            eski = int(pd.to_numeric(df.at[i, "tuttu"], errors="coerce") or 0)
+            if eski != yeni:
+                print(f"  DUZELTME {tarih} {pist} {df.at[i,'config']} ayak{int(df.at[i,'ayak'])}: "
+                      f"tuttu {eski} -> {yeni} (kazananlar {sorted(kaz[rk])})")
+                degisen += 1
+            df.at[i, "tuttu"] = yeni
+            df.at[i, "kazanan"] = min(tut) if tut else min(kaz[rk])
+    if degisen:
+        _yaz(df)
+        html_yaz(df)
+    print(f"yeniden sonucla: {degisen} satir duzeltildi (basabas).")
+    return degisen
+
+
 def sonucla_altili():
     df = _oku()
     if df.empty:
@@ -312,21 +362,16 @@ def sonucla_altili():
         o = getjson(f"{BASE}/sonuclar/{ymd}/full/{pist}.json")
         if o.get("_hata"):
             continue
-        kaz = {}                              # race_kod -> kazanan no
-        for k in o.get("kosular", []):
-            rk = _as_int(k.get("KOD"))
-            for a in k.get("atlar", []):
-                s = pd.to_numeric(a.get("SONUC"), errors="coerce")
-                if pd.notna(s) and int(s) == 1:
-                    kaz[rk] = _as_int(a.get("NO"))
+        kaz = kazananlar_kumesi(o)            # K64: race_kod -> {kazanan no'lari} (basabas -> >1)
         idx = df.index[(df["tarih"] == tarih) & (df["pist"] == pist) & df["sonuclandi"].isna()]
         for i in idx:
             rk = _as_int(df.at[i, "race_kod"])
-            if rk in kaz and kaz[rk] is not None:
-                kz = kaz[rk]
+            if kaz.get(rk):
                 secilenler = {int(x) for x in str(df.at[i, "secim"]).split(",") if x != ""}
-                df.at[i, "kazanan"] = kz
-                df.at[i, "tuttu"] = int(kz in secilenler)
+                tut = secilenler & kaz[rk]                # BASABAS: herhangi bir kazanan yeter
+                # kazanan sutunu tek int (uyum): tuttuysak tuttugumuz kazanan, yoksa ilk kazanan
+                df.at[i, "kazanan"] = min(tut) if tut else min(kaz[rk])
+                df.at[i, "tuttu"] = int(bool(tut))
                 df.at[i, "sonuclandi"] = bugun
                 dolan += 1
     _yaz(df)
@@ -572,10 +617,13 @@ def main():
     ap.add_argument("--pist")
     ap.add_argument("--tarih", default=date.today().isoformat())
     ap.add_argument("--sonucla", action="store_true")
+    ap.add_argument("--duzelt", action="store_true", help="K64: basabas geriye duzeltme (yeniden sonucla)")
     ap.add_argument("--html", action="store_true")
     args = ap.parse_args()
 
-    if args.sonucla:
+    if args.duzelt:
+        yeniden_sonucla()
+    elif args.sonucla:
         sonucla_altili()
     elif args.html:
         p = html_yaz(ac=True)
