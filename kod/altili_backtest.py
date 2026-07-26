@@ -14,6 +14,7 @@ KRITERLER (kullanicinin sorusu + web-dogrulanmis Pick-6 teorisi + ham-veri gerce
 Puanlar: veri/altili_olasilik.csv (Ingiliz+Arap walk-forward Bot2). Olaylar: veri/altili_tam.csv.
 ANALIZ ODAGI: 2025-26 (gercek OOS). Cikti: konsol raporu + bütçe/esik taramasi.
 """
+import math
 import sys
 import numpy as np
 import pandas as pd
@@ -57,6 +58,48 @@ def kupon_kur(ayak_atlari, kapsam_esik, max_kombo, banker_esik):
                 sec[i].discard(no)
                 break
     return sec
+
+
+def kupon_kur_acgozlu(ayak_atlari, max_kombo):
+    """K65: ACGOZLU (isabet-maksimize) dagitici. Kapsam esigi ve budama YOKTUR.
+    Her ayakta 1 atla basla; butce dolana dek "kazanc/bedel orani" en yuksek ati ekle.
+    Matematik: max PI(P_i) s.t. PI(n_i) <= C  ->  loglarda acgozlu sirt cantasi;
+      kazanc = log(1 + p_yeni / P_i)   (o ayakta kapsanan olasiligin oransal artisi)
+      bedel  = log((k+1)/k)            (kombo sayisinin oransal artisi)
+    Kural yazmadan kaos ayagina cok at, net ayaga TEK at koyar (banker kendiliginden olusur).
+
+    UYARI (K65 backtest, 1455 OOS olay): bu dagitici 6/6 SAYISINI artirir (185->225 @900)
+    ama PARAYI kotulestirir (ROI(6) -41,2% -> -55,0%), cunku guvenilen ayaga tek at koymak =
+    kamu favorisine tek at = kalabalik havuz -> ort. temettu yariya duser (1.656->798 TL @96)
+    ve buyuk odemeler sistematik kacar. CANLIDA yalnizca GOZLEM akisi olarak kullanilir
+    (config "acgozlu", bkz. altili_canli.KONFIG); asil kupon mantigi kupon_kur'dur.
+
+    ayak_atlari: 6 elemanli liste; her eleman [(no, bot2), ...]. Doner: 6 elemanli set listesi."""
+    sr = [sorted([(no, p) for no, p in a if pd.notna(p) and p > 0], key=lambda x: -x[1])
+          for a in ayak_atlari]
+    if len(sr) != 6 or any(len(s) == 0 for s in sr):
+        return [set() for _ in range(6)]
+    k = [1] * 6                                   # her ayakta secili at sayisi
+    P = [s[0][1] for s in sr]                     # o ayakta kapsanan olasilik
+    while True:
+        kombo = int(np.prod(k))
+        en_iyi, en_oran = None, 0.0
+        for j in range(6):
+            if k[j] >= len(sr[j]):
+                continue
+            if kombo // k[j] * (k[j] + 1) > max_kombo:      # bu at butceyi tasirir
+                continue
+            p = sr[j][k[j]][1]
+            bedel = math.log((k[j] + 1) / k[j])
+            oran = (math.log1p(p / P[j]) / bedel) if (P[j] > 0 and bedel > 0) else 0.0
+            if oran > en_oran:
+                en_oran, en_iyi = oran, j
+        if en_iyi is None:
+            break
+        j = en_iyi
+        P[j] += sr[j][k[j]][1]
+        k[j] += 1
+    return [set(no for no, _ in sr[j][:k[j]]) for j in range(6)]
 
 
 def degerlendir(olay, puan_map, puan_map_full, kapsam_esik, max_kombo, banker_esik,

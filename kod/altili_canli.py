@@ -33,15 +33,29 @@ import pandas as pd
 KOK = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(KOK / "kod"))
 from gunluk import hesapla, getjson, BASE, EXCL  # noqa: E402
-from altili_backtest import kupon_kur  # noqa: E402
+from altili_backtest import kupon_kur, kupon_kur_acgozlu  # noqa: E402
 from duzlestir import vir_float  # noqa: E402
 import rapor_ortak as ro  # noqa: E402
 
 KUPON = KOK / "veri" / "altili_kupon.csv"
 HTMLA = KOK / "raporlar" / "altili.html"
-# K62: config -> (kapsam_esik, max_kombo). genis900 YUKSEK kapsam (0.95) ki derin (5./6. sira)
-# kazananlara ulassin (0.75 onlara varmadan doluyor). Hepsi -EV gozlem akisi; backtest K52/K57/K62.
-KONFIG = {"dar": (0.75, 24), "orta": (0.75, 96), "genis": (0.75, 288), "genis900": (0.95, 900)}
+# config -> (kapsam_esik, max_kombo, dagitim). dagitim="kapsam": K52 mantigi (kumulatif kapsam
+# esigi + butce asilinca en kalabalik ayaktan buda) -- ASIL kupon ailemiz.
+# K62: genis900 YUKSEK kapsam (0.95) ki derin (5./6. sira) kazananlara ulassin (0.75 onlara varmadan
+#      doluyor).
+# K65: "acgozlu900" = isabet-maksimize dagitici (kapsam esigi/budama YOK -> kapsam_esik alani
+#      KULLANILMAZ, sadece bicimsel). Butcesi bilerek 900 = genis900 ile AYNI -> ayni gun/kosu/
+#      para, TEK fark dagitim mantigi (kontrollu A/B). Neden 900: backtest'te iki dagitim EN AZ
+#      900'de ayristi (durust zemin farki -13,4 puan ama %95 GA [-32,2,+2,4] SIFIRI ICERIYOR =
+#      kesin kapanmadi) ve isabet farki orada en buyuk (185 -> 225). Yani gozlemin bilgi degeri
+#      en yuksek oldugu butce burasi. Backtest'te yine de -EV (ROI(6) -41,2% -> -55,0%); canliya
+#      IYILESTIRME olarak degil GOZLEM akisi olarak eklendi (kullanici karari 2026-07-26).
+# Hepsi kagit/-EV gozlem akisi; backtest gecmisi K52/K57/K62/K65.
+KONFIG = {"dar":        (0.75, 24,  "kapsam"),
+          "orta":       (0.75, 96,  "kapsam"),
+          "genis":      (0.75, 288, "kapsam"),
+          "genis900":   (0.95, 900, "kapsam"),
+          "acgozlu900": (0.95, 900, "acgozlu")}
 BANKER_ESIK = 0.70                     # tek-at banker esigi (tum config ortak)
 KOL = ["kayit_ts", "tarih", "pist", "seq", "ilk_saat", "config", "ayak",
        "kosu_no", "race_kod", "saat", "secim", "banker", "nat",
@@ -134,8 +148,11 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
             print(f"  {seq}. Altili (kosu {pencere[0].get('RACENO')}): bir ayak kapsam disi -> atlandi")
             continue
 
-        for cfg, (kaps, maxk) in KONFIG.items():
-            sec = kupon_kur(ayak_atlari, kaps, maxk, BANKER_ESIK)
+        for cfg, (kaps, maxk, dagitim) in KONFIG.items():
+            if dagitim == "acgozlu":               # K65: kapsam esigi/budama yok
+                sec = kupon_kur_acgozlu(ayak_atlari, maxk)
+            else:
+                sec = kupon_kur(ayak_atlari, kaps, maxk, BANKER_ESIK)
             for ai in range(6):
                 atlar_sirali = sorted(ayak_atlari[ai], key=lambda x: -x[1])
                 secili = sec[ai]

@@ -87,35 +87,9 @@ def kur_v1v2(ayak_atlari, max_kombo, budama="v1"):
     return sec
 
 
-def kur_acgozlu(ayak_atlari, max_kombo):
-    """YENI dagitici. Her ayakta 1 atla basla, butce dolana dek en iyi kazanc/bedel oranli
-    ati ekle. Kapsam esigi ve budama YOK -> ayak genislikleri kendiliginden farklilasir."""
-    sr = [sorted([(no, p) for no, p in a if pd.notna(p) and p > 0], key=lambda x: -x[1])
-          for a in ayak_atlari]
-    if any(len(s) == 0 for s in sr):
-        return [set() for _ in range(6)]
-    k = [1] * 6                                  # her ayakta secili at sayisi
-    P = [s[0][1] for s in sr]                    # o ayakta kapsanan olasilik
-    while True:
-        en_iyi, en_oran = None, 0.0
-        kombo = int(np.prod(k))
-        for j in range(6):
-            if k[j] >= len(sr[j]):
-                continue
-            if kombo // k[j] * (k[j] + 1) > max_kombo:   # bu at butceyi tasirir
-                continue
-            p = sr[j][k[j]][1]
-            kazanc = math.log1p(p / P[j]) if P[j] > 0 else 0.0
-            bedel = math.log((k[j] + 1) / k[j])
-            oran = kazanc / bedel if bedel > 0 else 0.0
-            if oran > en_oran:
-                en_oran, en_iyi = oran, j
-        if en_iyi is None:
-            break
-        j = en_iyi
-        P[j] += sr[j][k[j]][1]
-        k[j] += 1
-    return [set(no for no, _ in sr[j][:k[j]]) for j in range(6)]
+# acgozlu dagitici TEK KAYNAK: altili_backtest.kupon_kur_acgozlu (K65'te canliya da baglandi;
+# burada kopyasi TUTULMAZ ki test ile canli birbirinden KAYMASIN).
+from altili_backtest import kupon_kur_acgozlu as kur_acgozlu  # noqa: E402
 
 
 DAGITICI = {

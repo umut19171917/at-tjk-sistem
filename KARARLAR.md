@@ -933,3 +933,35 @@ kotulestiriyor. Canli dagitim (v1) AYNEN KALDI. `kod/altili_dagitim_test.py` (OF
   — kenar kalabalikla anlasmaktan degil ayrilmaktan gelir). K1 (etkin pazar) + 9 basarisiz kenar testi
   yuzunden beklenti DUSUK; BEKLEYENLER #7'ye yazildi.
 - **Dogrulama:** py_compile OK; canli hicbir dosya degismedi (yalniz yeni test dosyasi + belge).
+
+## 2026-07-26 — K66: acgozlu900 canliya GOZLEM akisi olarak eklendi (5. config)
+
+**K66 — K65'te reddedilen acgozlu dagitici, kullanici karariyla 900 butcesinde CANLI gozlem akisi
+olarak eklendi. Mevcut dort config AYNEN duruyor; hicbirinin mantigi degismedi.**
+- **Kullanici gerekcesi (2026-07-26):** "benim icin en onemlisi en genis kupon; mevcut en genis de
+  dursun, bunu da adinda belirterek kur." Bilinen -EV; K62'deki (genis900) ayni cerceve: iyilestirme
+  degil, GOZLEM. Kagit sistemi, gercek para yok.
+- **Neden 96 degil 900 (ilk oneri 96'ydi, kullanici 900 dedi — ve hakli):** K65 backtest'inde iki
+  dagitim EN AZ 900'de ayristi. Durust zemin farki -13,4 puan ama %95 GA **[-32,2, +2,4] SIFIRI
+  ICERIYOR** = 900'de soru istatistiksel olarak KAPANMADI (96'da [-76,8,-9,9] ile kapanmisti).
+  Isabet farki da orada en buyuk (185 -> 225). Yani canli gozlemin bilgi degeri en yuksek oldugu
+  butce 900. Ayrica genis900 ile AYNI butce -> kontrollu A/B (ayni gun/kosu/para, tek fark dagitim).
+- **Yapilan (uc dosya):**
+  1. `altili_backtest.py`: `kupon_kur_acgozlu(ayak_atlari, max_kombo)` eklendi (SALT EKLEME; mevcut
+     `kupon_kur` ve K52 davranisi degismedi). Dagiticinin TEK KAYNAGI burasi.
+  2. `altili_canli.py`: KONFIG degeri 2'li -> **3'lu** ((kapsam, max_kombo, **dagitim**)); yeni
+     `"acgozlu900": (0.95, 900, "acgozlu")` (kapsam alani acgozlu'de KULLANILMAZ). `kupon_hazirla`
+     dagitim'a gore secim yapiyor. **Diger tum tuketiciler (HTML toplam_blok, bildir_kupon,
+     bildir_sonuc, sonucla_altili) yalnizca KONFIG ANAHTARLARINI geziyor -> hicbiri degismedi.**
+  3. `altili_dagitim_test.py`: yerel kopya SILINDI, altili_backtest'ten import ediyor (test ile canli
+     birbirinden KAYMASIN).
+- **Dogrulama:** py_compile 3 dosya OK. Gercek arsiv verisiyle 900 butcesinde yan yana:
+  genis900 = **[3,3,3,3,3,3] her seferinde** (kullanicinin sikayet ettigi tekduzelik birebir);
+  acgozlu900 = [7,3,5,1,1,8] / [7,1,3,2,4,5] / [10,8,3,3,1,1] (banker + genis kaos ayagi).
+  `--html` yeniden uretildi: 217.977 char, ACGOZLU900 blogu sayfada goruluyor (henuz 0 kupon).
+- **ILERI-YONLU:** bugunku (26 Tem) kuponlar YENIDEN KURULMADI (kosular kostu -> hindsight olurdu).
+  Ilk acgozlu900 kuponu bir sonraki kurulumda cikacak. Gecmis kayitlar ETKILENMEDI.
+- **Beklenti (dururst kayit):** backtest'e gore bu akis genis900'den DAHA COK 6/6 tutturacak ama
+  DAHA AZ para kazandiracak (ort. temettu 3.489 -> 2.469 TL; en buyuk yakalanan 47.383 -> 22.374).
+  Canli n cok kucuk (~yilda 100 olay) -> canli akis backtest'i CURUTEMEZ, sadece gorunur kilar.
+- **Yan etki:** kagit gideri Altili basina +1.125 TL/gun; altili.html GENEL TOPLAM eksisi hizlanir.
