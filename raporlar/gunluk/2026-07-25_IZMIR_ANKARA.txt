@@ -1,0 +1,78 @@
+
+[18:30 tetik]  IZMIR  KOSU 3 (yaris 18:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  3  18:30  1400m  3 Yaşlı Araplar  (9 at)
+   [DUSUK GUVEN: ilk-kosu pay 100%, ort.gecmis 0.0 kosu -> Bot1 zayif, kamuya yaslan]
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    7 IŞIKLARLIM               12.4      38.8   40.1   35.1   1.85  F
+    8 MY GİRL                  17.6      15.5   14.5   17.8   5.10  
+    6 HASGÖKÇE                 16.0      15.3   14.5   16.6   5.10  
+    3 AŞAN SİMAY               13.3      10.5   10.2   12.9   7.30  
+    1 ADA RÜZGARI               7.4       6.5    6.9    4.5  10.80  
+    9 YURTHİSAR                 8.0       5.5    5.7    6.3  13.05  
+    2 AMBER KIZI                9.0       3.7    3.7    3.9  19.95  
+    4 DİLDA HATUN               8.3       2.2    2.2    1.3  33.85  
+    5 EVGENİYA                  8.0       2.1    2.2    1.7  34.40  
+
+[19:00 tetik]  IZMIR  KOSU 4 (yaris 19:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  4  19:00  1400m  3 Yaşlı Araplar  (12 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    5 ERDAĞI                    9.0      20.3   21.0   17.9   3.55  F
+    1 ZAZA ENES                15.0      16.0   14.9   18.6   5.00  
+    6 KRALÇINAR                 9.1      14.5   14.8   13.8   5.05  
+    2 ŞAHİN MELTEM             20.8      12.8   11.2   14.0   6.65  >>CANLI
+    3 ALTIN ESMER              16.9      10.1    9.1   11.9   8.20  >>CANLI
+    4 TINASEFE                  6.9       8.4    8.8    8.1   8.50  
+   12 ZAFER YILDIZI             6.6       7.0    7.3    8.8  10.20  
+   10 LOKUM HÜMA                5.9       4.0    4.3    3.8  17.50  
+   11 SELMİNKIZ                 2.2       2.0    2.4    0.9  31.00  
+    9 GAYEMSİN                  1.4       1.9    2.5    0.4  29.75  
+    7 EFSANEVİTAY               3.5       1.8    2.1    0.9  36.05  
+    8 ERENDİZ                   2.7       1.3    1.5    0.6  50.05  
+
+[19:30 tetik]  IZMIR  KOSU 5 (yaris 19:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  5  19:30  1900m  3 ve Yukarı İngilizler  (8 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    2 KLEIN                    42.1      71.1   67.3   86.4   1.10  F
+    3 CAN EFE                  22.9      12.1   11.8    6.1   6.25  >>CANLI
+    1 EL CACİQUE               10.6       5.4    6.0    3.6  12.25  >>CANLI
+    5 ERBAALI SADİ              7.1       3.7    4.5    0.4  16.60  
+    7 LITTLE JOE                4.5       2.8    3.8    1.5  19.65  
+    4 DISTANCE RUNNER           3.4       2.2    3.1    0.3  24.05  
+    6 HUMAN TORCH               8.3       2.0    2.3    1.4  32.70  
+    8 ZAGANOS                   1.2       0.8    1.3    0.2  56.35  
+
+[20:00 tetik]  IZMIR  KOSU 6 (yaris 20:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  6  20:00  2000m  3 Yaşlı İngilizler  (5 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    5 ÖNDERBEYİM               40.1      32.3   27.1   31.5   2.75  
+    2 MOĞOL                     9.3      28.2   33.9   32.0   2.20  F
+    1 FROST CAT                23.5      19.6   18.2   23.1   4.10  
+    4 DANCE OF WIND            22.8      13.8   12.6    9.6   5.90  >>CANLI
+    3 ÇEPNİ                     4.3       6.1    8.1    3.9   9.20  
+
+[20:30 tetik]  IZMIR  KOSU 7 (yaris 20:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  7  20:30  2000m  3 Yaşlı İngilizler  (18 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    2 FLYING DRAGON             7.7      18.0   18.7   23.4   4.00  F
+    3 PARMIGIANO               17.5      17.7   15.0   18.1   5.00  
+    6 IRON TEMPEST              6.4      12.6   13.4   12.7   5.60  
+    5 FEEL THE BATTLE          11.1      10.3    9.4   15.6   7.95  
+   11 YOU ARE BIG               7.2       7.8    7.8    6.7   9.55  
+    1 SUPER SHOW               10.1       6.7    6.1    4.1  12.20  >>CANLI
+    8 MANEKİ NEKO               5.3       6.2    6.7    4.6  11.25  
+    4 AYCOO THUNDER             7.7       4.3    4.1    3.4  18.35  
+   12 CALL TO WARRIOR           4.8       3.6    3.8    3.8  19.65  
+   10 ORION BELT                3.0       3.4    4.0    2.9  18.75  
+    7 LITTLE GIANT              2.2       1.8    2.2    1.1  33.70  
+   14 ETERNAL STORM             4.9       1.8    1.8    1.1  41.85  
+    9 NIGHT RUNNER              3.3       1.5    1.6    0.6  46.25  
+   13 DARK RİSHA                1.1       1.2    1.6    0.7  45.80  
+   17 BOYALIK                   3.2       1.1    1.2    0.4  64.85  
+   16 LOVE IN MELİSA            1.8       1.0    1.2    0.4  63.00  
+   15 OJO TURCO                 1.1       0.6    0.8    0.2  92.00  
+   18 MAMBERAMO                 1.6       0.5    0.6    0.2 129.30  

@@ -895,3 +895,41 @@ tutuyordu -> basabas ayaklar yanlis "kacti" sayiliyordu.**
   baska basabas yok (23.07 Ankara 6/6 dahil eski kayitlar ETKILENMEDI). IZMIR artik dogru: 5/6, kademe 5.
 - **Dogrulama:** py_compile OK; duzeltme ciktisi 4 satir; Ankara 2/6 degismedi, IZMIR 5/6'ya duzeldi.
 - **NOT:** IZMIR sonuc Telegram'i (K61) settle aninda YANLIS 4/6 gonderdi (kayit duzeldi ama o mesaj gecti).
+
+## 2026-07-26 — K65: Butce DAGITIMI backtesti — "her ayakta esit at" gozlemi dogru, ama duzeltmek PAHALI
+
+**K65 — Acgozlu (isabet-maksimize) dagitici kuponun SEKLINI istenen hale getiriyor ama PARAYI
+kotulestiriyor. Canli dagitim (v1) AYNEN KALDI. `kod/altili_dagitim_test.py` (OFFLINE, salt-okunur).**
+- **Kullanici gozlemi (dogrulandi):** "Altili normalde en guvendigin ayakta TEK at, guvenmedigin
+  ayakta GENIS kurulur; bizde her ayakta ayni sayida at var." Canli olcum: `orta`da 108 ayagin 80'i
+  tam 2 at (%74); `genis900`de HIC 2 atli ayak yok (20x3, 8x4). Tek-atli ayagi olan kupon: %5,9.
+- **Koslar tekduze DEGIL, duzlestirmeyi BIZ yapiyoruz:** 78 gercek ayakta %75 kapsam talebi 1-9 at
+  arasi (ort 4,21), bot2 favori gucu 0,156-0,768. Bu [1..9] talep kuponda [1,75..2,54]'e cokuyor.
+  **Uc sebep:** (1) banker esigi 0.70 pratikte ulasilamaz (78 ayagin 3'u gecti), (2) kapsam esigi her
+  ayakta AYNI -> esit kapsam esitleyicidir, (3) **budayici hep en kalabalik ayaktan keser = aktif
+  duzlestirici (asil suclu).**
+- **Test edilen (yeni):** `acgozlu` dagitici — kapsam esigi YOK, budama YOK; her ayakta 1 atla basla,
+  butce dolana dek en iyi kazanc/bedel oranli ati ekle (max PI(P_i) s.t. PI(n_i)<=C; loglarda acgozlu
+  sirt cantasi: kazanc=log(1+p/P_i), bedel=log((k+1)/k)). Kural yazmadan kaos ayagina cok, net ayaga
+  tek at koyar. 1455 OOS olay (2025-26), butceler 24/96/288/900, bootstrap %95 GA, esli fark.
+- **SEKIL: tam istenen hale geldi.** orta'da yayilim (en genis-en dar ayak) 1,06 -> 4,10; tek-atli
+  ayagi olan kupon %5,9 -> %98,7. 288'de %91,2; 900'de %74,0. Yani mekanik CALISIYOR.
+- **ISABET de arti:** 6/6 sayisi 24'te 19->34, 288'de 100->118, 900'de 185->225 (%+22). Acgozlu
+  gercekten isabet olasiligini maksimize ediyor — matematik dogru calisiyor.
+- **AMA PARA EKSI (asil bulgu):** ROI(6) (durust zemin) HER butcede kotulesti — 24: -24,4->-46,7;
+  **96: -19,4->-60,4**; 288: -31,7->-54,9; 900: -41,2->-55,0. Esli fark GA'si 96 ve 288'de **sifir
+  DISINDA** (gercek fark, sans degil).
+- **KOK NEDEN — isabet ve kazanc TERS ceker (pari-mutuel):** acgozlu guvendigi ayaga tek at koyar =
+  genelde KAMU FAVORISI = en kalabalik havuz. Tutturdugunda temettu kucuk. Ort. 6/6 temettusu 96
+  butcesinde v1=1.656 TL vs acgozlu=798 TL (**yarisi**, ayni sayida isabetle: 66 vs 67). En buyuk
+  yakalanan: v1=15.056 vs acgozlu=4.515; 900'de v1=47.383 vs acgozlu=22.374. **Acgozlu buyuk odemeleri
+  sistematik olarak KACIRIYOR** cunku odeyen kombinasyonlar tam da onun "verimsiz" diye attigi surpriz
+  atlari icerir.
+- **KARAR:** canli dagitim (v1) DEGISMEDI. Kullanicinin teshisi DOGRUYDU (sekil gercekten tekduze,
+  sebebi de bulundu), ama onerilen yon parayi kotulestiriyor. **v1'in "duzlugu" kazara koruyucu:**
+  tek at atmayi reddederek her ayakta surpriz kapsamasini koruyor. (Kazara — tasarim degil; not.)
+- **NOT (acik kapi):** Bu test isabet-maksimizasyonunu curuttu, "duz en iyisidir"i KANITLAMADI. Test
+  EDILMEYEN aile: **EV-maksimize** dagitim (bizim bot2 ile kamu AGF'sinin AYRISTIGI ayaga genislik ver
+  — kenar kalabalikla anlasmaktan degil ayrilmaktan gelir). K1 (etkin pazar) + 9 basarisiz kenar testi
+  yuzunden beklenti DUSUK; BEKLEYENLER #7'ye yazildi.
+- **Dogrulama:** py_compile OK; canli hicbir dosya degismedi (yalniz yeni test dosyasi + belge).
