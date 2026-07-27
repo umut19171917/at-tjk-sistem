@@ -104,11 +104,22 @@ zaten negatif çıktı; bu da büyük ihtimalle negatif çıkar. Ucuz olduğu i�
 K42 kâğıt testi 25 Eylül 2026'ya kadar koşuyor. O tarihte sistem modu kararı: günlük devam /
 talep-üzerine / arşivle. Karar için sicil o güne kadar birikecek.
 
-### 5. Dış yedek yükleme (KULLANICI görevi)
+### 5. ✅ YAPILDI (kullanıcı beyanı 2026-07-27: "attım birkaç gün önce") — dış yedek yüklendi
 **İlgili:** yedekleme
-`at-yedek-2026-07-03.zip` (196 MB) Google Drive'a veya USB'ye yüklenecek. Diskte tek kopya
-= tek arıza noktası. Haftalık git commit (K50) kod+veriyi korur ama tam arşiv değil.
-**Durum:** doğrulanmadı.
+Yedek zip buluta/USB'ye yüklendi. **Bu iş artık TEKRARLANAN bir görev** — aşağıdaki #6'ya bak.
+
+### 6. Dış yedek TAZELEME — çünkü git UZAK DEPOYA bağlı DEĞİL (2026-07-27 bulgusu)
+**Eklendi:** 2026-07-27 · **İlgili:** K50, #5 · **TETİK:** ayda bir (veya sistem modu değişince)
+**DÜZELTME — eski notta yanlış varsayım vardı:** "haftalık git commit (K50) kod+veriyi korur"
+deniyordu. `git remote -v` **BOŞ** → depo yalnızca yerel. Git yanlış silme/bozma'ya karşı korur ama
+**disk arızasına karşı KORUMAZ** (geçmiş de aynı diskte). Yani **buluttaki zip TEK makine-dışı kopya.**
+**Sonuç:** son yüklemeden bu yana biriken her şey (defter, altili_kupon, oran_log, temettü) yalnızca
+bu diskte duruyor. Zip'i periyodik tazelemek gerçekten gerekli.
+**İki seçenek (kullanıcı kararı bekliyor):**
+(a) Periyodik zip yükle — basit, ama elle ve her seferinde ~150 MB.
+(b) **Önerilen:** git'i bir ÖZEL (private) uzak depoya bağla → haftalık commit otomatik makine-dışına
+gider; zip yalnızca ara sıra gerekir (ham JSON önbelleği zaten yeniden üretilebilir, yedeğe girmiyor).
+Not: depo kişisel bahis defteri içerir → **mutlaka private**. `kod/telegram_config.json` zaten gitignore'da.
 
 ---
 
