@@ -1063,3 +1063,40 @@ mantigi BIT-BIT AYNI kaldi.**
   864/900, 900/900, 864/900). `veri/altili_kupon.csv` bayt-bayt DEGISMEDI (yedekle karsilastirildi).
   Telegram kuru gonderim: 1 parca, 2.104 karakter, aile basliklari dogru. HTML 235.151 karakter.
 - **ILERI-YONLU:** gecmis kuponlar yeniden kurulmadi; iki yeni akis bir sonraki kurulumda baslar.
+
+## 2026-07-31 — K70: Altili ayaklari BAGIMSIZ — "alternatif/kosullu kupon" ek bilgi tasimiyor
+
+**K70 — Ayni Altilinin 6 ayagi arasinda surpriz KUMELENMESI YOK. Carpim (bagimsizlik) varsayimimiz
+DOGRU. Kosullu kupon yapisi ek BILGI tasimaz; yalnizca oynaklik duzenler. Hicbir sey degistirilmedi.
+`kod/altili_ayak_korelasyon_test.py` (OFFLINE, salt-okunur).**
+- **Soruyu doguran fikir (kullanici):** "Iyi Altili oyunculari birbirine ALTERNATIF kuponlar yapar."
+- **Once mevcut durumu olctuk:** kuponlarimiz alternatif DEGIL, TAM IC ICE -- dar ⊂ orta ⊂ genis
+  ⊂ genis900 **12/12 Altilida (%100)**. Satin alinan 23.084 kombinasyonun %24,7'si TEKRAR.
+  **AMA bu israf DEGIL:** pari-mutuel'de ayni kazanan kombinasyonu iki kuponda tutmak IKI KEZ oder
+  (30 Tem ANKARA: genis900 ve acgozlu900 ayri ayri 6.721 TL aldi). Yani ic icelik fiilen KADEMELI
+  BAHIS: dar'daki kombinasyon 4 birim, genis900'un kiyisindaki 1 birim. Kazara kurulmus ama tutarli.
+- **Asil mesele:** tek kupon matematiksel olarak bir CARPIM'dir; carpimla YAZILAMAYAN sey KOSULLU
+  yapidir ("1. ayagi favori alirsa 3. ayakta dar, surpriz alirsa genis"). Bu ancak AYAKLAR
+  ILISKILIYSE bilgi tasir. Model su an ayaklari bagimsiz variyor -> varsayimi SINADIK.
+- **Test:** iki surpriz tanimi -- (a) ikili: kazanan kamu favorisi degil, (b) surekli: -ln(kazananin
+  kamu olasiligi). Null = ayaklari Altililar arasinda rastgele yeniden dagitma (marjinaller korunur,
+  yalnizca "ayni Altiliya ait olma" bagi kirilir), 20.000 permutasyon.
+- **SONUC — her iki veri kumesinde de kumelenme YOK:**
+  | olcu | gozlenen | bagimsizlik null | p |
+  |---|---|---|---|
+  | surpriz sayisi varyansi (tum arsiv) | 1,3621 | 1,3597 [1,3104-1,4101] | 0,46 |
+  | ayak ici ort. korelasyon (tum arsiv) | +0,0004 | -0,0000 [-0,0073,+0,0073] | 0,45 |
+  | surpriz sayisi varyansi (OOS 1433) | 1,3551 | 1,3659 [1,2770-1,4570] | 0,59 |
+  | ayak ici ort. korelasyon (OOS) | +0,0006 | -0,0001 [-0,0135,+0,0136] | 0,46 |
+  Kosullu kontrol: 1. ayakta surpriz varsa sonraki 5 ayagin surpriz orani %65,0; yoksa %63,9
+  -> fark **+1,2 puan** (gurultu). Yan bulgu: ayak basina surpriz orani **%64,9** (kamu favorisi
+  yalnizca ~%35 kazaniyor -- K67'deki %35,5 ile tutarli, capraz dogrulama).
+- **ANLAMI:** "Pist bozuldu, o gun surprizler kumelenir" sezgisi TJK verisinde YOK. Dolayisiyla
+  alternatif/kosullu kupon **EV degistirmez**; sadece ayni -EV'yi farkli oynaklikla dagitir.
+  Ic ice yapimiz bir HATA degil, bir tercih: az sayida kombinasyona agir yatirim (tuttugunda cok
+  oder) yerine cok sayida kombinasyona hafif yatirim (daha sik tutar, az oder) secilebilirdi --
+  sifir kenar oldugu icin BEKLENEN GETIRI IKISINDE DE AYNI.
+- **KARAR:** hicbir degisiklik yapilmadi. Kullanici dusuk-oynaklik profili isterse "ic-ice-olmayan"
+  kupon seti kurulabilir; ama bu bir kazanc degil risk tercihidir -- oyle sunulmali.
+- **Not:** Bu, K19-K33/K44/K46/K52/K57/K65/K67/K68 dizisindeki 11. kenar testi. Digerlerinden farki:
+  bu sefer MODELIN BIR VARSAYIMI sinandi ve varsayim DOGRULANDI (nadir bir olumlu sonuc).
