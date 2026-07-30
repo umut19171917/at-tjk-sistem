@@ -1100,3 +1100,36 @@ DOGRU. Kosullu kupon yapisi ek BILGI tasimaz; yalnizca oynaklik duzenler. Hicbir
   kupon seti kurulabilir; ama bu bir kazanc degil risk tercihidir -- oyle sunulmali.
 - **Not:** Bu, K19-K33/K44/K46/K52/K57/K65/K67/K68 dizisindeki 11. kenar testi. Digerlerinden farki:
   bu sefer MODELIN BIR VARSAYIMI sinandi ve varsayim DOGRULANDI (nadir bir olumlu sonuc).
+
+## 2026-07-31 — K71: Kupon KATMANLARININ ayri ayri getirisi — "hangisini oynamazdin?"
+
+**K71 — Ic icelik (K70) sayesinde her kupon "bir oncekinin uzerine eklenen KABUK" olarak
+cozumlendi. Sonuc: 96 kombodan SONRAKI her katman ISTATISTIKSEL OLARAK KANITLI ZARARLI.
+Canliya dokunulmadi (kagit deneyi aynen suruyor); bu bir TAVSIYE kaydidir.**
+- **Yontem:** 1433 OOS olayda dar(24) ⊂ orta(96) ⊂ genis(288) ⊂ genis900(900) — **%99,8'inde
+  ic ice dogrulandi**. Her katmanin KENDI maliyeti ve KENDI getirisi (ust eksi alt) hesaplandi,
+  olay-bazli bootstrap %95 GA (4000 tur). Durust zemin: yalnizca 6/6 oder.
+- **KATMAN GETIRILERI:**
+  | katman | kombo/olay | ROI | %95 GA | hukum |
+  |---|---|---|---|---|
+  | cekirdek (dar 24) | 16 | −%24,4 | [−68,1, +33,1] | sifiri iceriyor |
+  | dar → orta | 79 | **−%18,3** | [−51,1, +23,0] | sifiri iceriyor |
+  | orta → genis | 124 | −%41,2 | [−67,1, **−6,3**] | **sifir DISINDA = kanitli zararli** |
+  | genis → genis900 | 513 | **−%49,2** | [−66,7, **−29,9**] | **sifir DISINDA = kanitli zararli** |
+- **OKUMA:** Marjinal kombinasyonlar ilerledikce KOTULESIYOR. Ilk 96 kombo icin "zarar ettigi
+  ISPATLANAMIYOR" (GA sifiri iceriyor); 96'dan sonraki her sey icin **ispatlaniyor**. Ozellikle
+  genis→genis900 kabugu tek basina olay basina 513 kombo (genis900 harcamasinin ~%70'i) ve
+  −%49,2 -> yatirilan her 1.000 TL'den ~508 TL geri geliyor.
+- **TAVSIYE (kullanici "canlida oynasaydim hangilerini yatirma derdin" diye sordu):**
+  1. **Hicbiri** — hepsi negatif; kesinti %25-31 ve 11 kenar testi negatif. Dogru cevap bu.
+  2. Zorunlu secim olsa: **yalnizca orta (96)**. Iki ic katmani da GA'si sifiri iceren tek katmanlar.
+  3. **Kesinlikle yatirma:** genis, genis900, acgozlu900, bot1_900, ayrisma900. 900 ailesi
+     backtest'te −%41…−%55 ve harcamanin ezici cogunlugu.
+  4. **dar'i AYRI oynama:** orta zaten iceriyor; ayri oynamak cekirdegi CIFT paylandirir ve cekirdek
+     (−%24,4) orta-kabugundan (−%18,3) daha kotu.
+  5. Mevcut kagit gideri ~4.500 TL/Altili; bunun yalnizca 120 TL'si (orta) elemeyi geciyor -> **%97'si
+     kanitli zararli katmanlara gidiyor.** (Kagit oldugu icin sorun degil; gercek para olsa olurdu.)
+- **UYARI:** "zarar ettigi ispatlanamiyor" ≠ "karli". orta'nin GA'si genis; taban oran (kesinti +
+  onceki 11 test) orta'nin da negatif oldugunu soyluyor, sadece n=1433 bunu ispata yetmiyor.
+- **Canli sistemde DEGISIKLIK YOK:** 7 config gozlem amaciyla kosmaya devam ediyor (K62/K65/K67/K68);
+  bu kayit "gercek para olsaydi" sorusunun cevabidir.
