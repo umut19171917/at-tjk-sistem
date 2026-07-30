@@ -1205,3 +1205,50 @@ cikariyor; kesinti onu yutuyor. Canliya dokunulmadi.**
   ama kesinti o verimsizligi somurmeye yetmeyecek kadar buyuk. Bu, 11 negatif kenar testinin
   neden hepsinde "yaklastik ama yetmedi" cikti sorusunun cevabi olabilir.
 - **PRATIK SONUC DEGISMEDI:** oynanacak bir sey yok; −%17 ile −%19 arasi kayip hala kayip.
+
+## 2026-07-31 — K74: Altili havuzu YANLILIK HARITASI — yanlilik gercek, yeri de belli
+
+**K74 — Altili havuzu ganyan havuzundan DAHA KOTU kalibre. En buyuk sapma: (a) AGF payi <%2 olan
+atlar, (b) ganyanin AGF'den COK daha sansli gordugu atlar. Ikisi de kesinti sonrasi POZITIF
+gorunuyor. Henuz kupon stratejisine cevrilmedi. `kod/altili_agf_yanlilik.py` (OFFLINE).**
+- **Veri:** ham feed'in `agf` blogu = her Altili ayaginda her ata ALTILI HAVUZUNUN yuzde kaci
+  geldigi. 448.897 at-satiri / 40.707 ayak. Yaninda gercek kazanan -> DOGRUDAN kalibrasyon.
+  Karsilastirma: ayni atlarin ganyan (de-vig) olasiligi. Esik: K73'e gore geri donus %51,4 ->
+  bir kovanin karli olmasi icin oran (gercek/AGF) > **1,95**.
+- **(1) AGF kalibrasyonu — asil sapma en DIPTE:**
+  | AGF payi | at | AGF | GERCEK | oran | net |
+  |---|---|---|---|---|---|
+  | **≤ %2** | 86.013 | %1,07 | **%2,93** | **2,73** | **1,41x KARLI** |
+  | %2-5 | 87.786 | %3,36 | %4,10 | 1,22 | 0,63x |
+  | %5-15 | 145.431 | ~%10 | ~%9,5 | ~0,96 | ~0,50x |
+  | %15-30 | 67.520 | ~%20 | ~%21 | ~1,06 | ~0,55x |
+  | > %45 | 7.162 | %55,9 | %52,1 | 0,93 | 0,48x |
+  **Klasik favori-longshot yanliliginin TERSI:** Altili havuzunda kalabalik dip atlari
+  neredeyse 3 KAT az fiyatliyor. Sebebi yapisal: kupon kuran oyuncu ayak basina 2-3 at
+  yazabildigi icin sahanin altini TAMAMEN gormezden geliyor.
+- **(2) Ganyan havuzu ayni atlarda cok daha duzgun:** dip kovada oran 0,72 (Altili 2,73),
+  ust kovalarda 1,00-1,04. Yani ganyan pazari etkin, Altili pazari DEGIL.
+- **(3) Kalibrasyon skorlari (dusuk=iyi):** Altili(AGF) Brier 0,08824 / log-kayip 0,31042;
+  Ganyan(kamu) 0,08706 / 0,29657; **Bot2 0,08684 / 0,29570 (EN IYI)**. Bot2'nin ganyani da
+  hafif gecmesi ilk kez olculdu.
+- **(4) EN GUCLU SINYAL — iki havuzun AYRISMASI:** ganyan bir ati AGF'den ne kadar cok
+  sansli goruyorsa, gercek kazanma o kadar yuksek:
+  | kamu − AGF | at | AGF | kamu | GERCEK | AGF orani | net |
+  |---|---|---|---|---|---|---|
+  | > +0,10 | 11.414 | %5,96 | %24,45 | **%20,26** | **3,40** | **1,75x** |
+  | +0,05..0,10 | 15.594 | %12,67 | %19,69 | %18,14 | 1,43 | 0,74x |
+  | ~0 | 168.735 | %7,36 | %7,42 | %7,36 | 1,00 | 0,51x |
+  | < −0,10 | 3.392 | %49,45 | %34,33 | %44,49 | 0,90 | 0,46x |
+  Gercek oran ganyana degil ARAYA dusuyor -> her iki havuz da bilgi tasiyor ama Altili havuzu
+  daha cok yaniliyor. **K72/K73 bulmacasinin cozumu bu:** bot2 (≈ganyan) ile oynamak Altili
+  havuzunu 30 puan yeniyor cunku ganyan daha iyi kalibre.
+- **KRITIK UYARI — bu henuz kar DEGIL:** yukaridaki oranlar TEK AYAK ifadeleridir. Altili 6
+  ayagin CARPIMIDIR ve (a) 6 ayagi birden bu kovalardan secmek isabeti yerin dibine indirir,
+  (b) temettu HAVUZLA SINIRLIDIR -- kimsenin yazmadigi kombinasyon teorik formulun dedigi kadar
+  odeyemez, (c) q'yu ayak paylarinin carpimi saymak populer olmayan kombinasyonlarda en cok
+  yanildigimiz yer. Yani "oran 2,73" gercek ama dogrudan kupona cevrilemez.
+- **SIRADAKI SOMUT ADIM (henuz yapilmadi):** AGF canlida ZATEN VAR (defter.agf1, oran_log.agf1).
+  Test edilecek strateji: kupon secimini bot2 yerine **(kamu − AGF) ayrismasi** ile agirliklandir
+  -> gercek temettulerle 1455 OOS olayda backtest. Bu, K68'deki (bot1−kamu) ayrismasindan FARKLI
+  ve daha guclu bir sinyal: orada carpan +%45 kupon degistiriyordu ama bulgu yoktu; burada
+  olculen sapma 3,40 kat.
