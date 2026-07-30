@@ -1320,3 +1320,31 @@ Canli zamanlama 30 dk KALDI. `kod/altili_zaman_test.py` (OFFLINE) kalici arac ol
   tutarli — ama K70'te de gorduğumuz gibi ayak kazanmak kupon kazanmak demek degil.
 - **KARAR:** canli zamanlama **30 dk KALIYOR**. Yeterli veri (hedef: ~40-50 tam Altili, ~2-3 ay)
   birikince `altili_zaman_test.py` tekrar kosulacak. BEKLEYENLER #4 acik kaliyor, tetigi degisti.
+
+## 2026-07-31 — K77: Sayfadaki sıralama NE ZAMAN alınıyor (tekrar eden soruya kalıcı cevap)
+
+**K77 — `altili.html`'deki "sistem sırası", kuponun kurulduğu andaki sıralama DEĞİLDİR.
+Ölçüldü ve kayda geçti; kullanıcı bunu iki kez sordu, üçüncüde yeniden hesaplanmasın.**
+- **Defter ne zaman yazılıyor:** 324 koşuda ölçüm — defter kaydı, o koşuya **medyan 4 dk kala**
+  yazılıyor (çeyrekler 0 / 4 / 5 dk; **hepsi 0-5 dk aralığında**). Yani sayfadaki sıralama
+  pratikte "posta anı" fotoğrafıdır.
+- **Kupon ne zaman kuruluyor:** TEK ANDA, yalnızca **1. ayağa 30 dk kala** (`kupon_zamani_kur`,
+  `dk_kala=30`). Altı ayağın seçimi de o tek anın oranlarıyla yapılır.
+- **ARADAKİ FARK (ölçüldü, ayak bazında):**
+  | ayak | kupon → sayfa farkı | sayfada "boşluklu" görünme oranı |
+  |---|---|---|
+  | 1 | 30 dk | %42,9 |
+  | 2 | 60 dk | %53,9 |
+  | 3 | 90 dk | %62,1 |
+  | 4 | 120 dk | %41,5 |
+  | 5 | 150 dk | %75,3 |
+  | 6 | **180 dk** | **%82,4** |
+  **Genel medyan fark: 90 dk.** İki sütun neredeyse birebir aynı yönde artıyor (4. ayak sapması
+  açıklanamadı, muhtemelen gürültü) → "boşluk" olgusunun sebebi KESİN olarak zaman farkıdır.
+- **SONUÇ:** Sistem sıralamada ASLA atlama yapmaz — beş dağıtıcının beşi de listeyi tepeden
+  KESİNTİSİZ okur (`_sec_baz` kümülatif ekler, budayıcı en alttakini atar, `kupon_kur_acgozlu`
+  ve `kupon_kur_ayrisma` `sr[j][:k]` alır). Kullanıcının gördüğü "1.-2. yazmış 3.'yü atlamış"
+  görüntüsü, aldığımız atların SONRADAN sıra kaybetmesidir.
+- **İstenirse çözüm (yapılmadı):** kupon kurulurken her atın o anki sırası `altili_kupon.csv`'ye
+  yazılabilir (yeni sütun) → sayfa "kupon anındaki sıra / posta anındaki sıra" ikisini birden
+  gösterir. İleri-yönlü, mevcut veriyi bozmaz. Kullanıcı "gerek yok" demişti (2026-07-25).
