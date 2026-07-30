@@ -1171,3 +1171,37 @@ Model rastgeleyi ezici farkla yeniyor ama kamu favorilerini YENEMIYOR. Canliya d
 - **ACIK SORU:** Altili havuzunun gercek kesinti orani nedir? Saf favori −%17,4 getiriyorsa
   kesinti ~%17-20 civarindaysa favoriler ortalamayi yeniyor demektir; daha yuksekse daha da cok.
   TJK Altili kesintisi kaynaklanmadi -> BEKLEYENLER'e.
+
+## 2026-07-31 — K73: Altili kesintisi AGF'den tahmin edildi (~%45-50) — favori oynamak havuzu YENIYOR
+
+**K73 — Altili kesinti orani ~%48,6 (tahmin). Bu, K72'yi yeniden yorumluyor: saf favori oynamanin
+−%17,4'u, havuz ortalamasindan (~−%49) yaklasik **30 PUAN IYI**. Yani secim gercekten deger
+cikariyor; kesinti onu yutuyor. Canliya dokunulmadi.**
+- **Basarisiz ilk deneme (kayit icin):** "tum kombinasyonlari oynasak ne donerdi" yontemi
+  DENENDI ve GECERSIZ cikti. Medyan kombinasyon 582.120 -> tam kapsama maliyeti havuzdan buyuk;
+  olculen sey kesinti degil "havuz/kapsama-maliyeti orani" oldu. Yillara gore %1,3 -> %27,5
+  tirmanmasi da enflasyon (temettu nominal TL, kombo sayisi degil). **Yontem terk edildi.**
+- **Calisan yontem — AGF:** ham sonuc feed'inde `agf` blogu her Altili ayaginda her ata havuzun
+  YUZDE KACININ geldigini veriyor (AGFORAN). Pari-mutuel kimligi:
+  `temettu = birim x (1 - kesinti) / q`  ->  `1 - kesinti = temettu x q / birim`
+  q = kazanan kombinasyona gelen pay = 6 ayagin AGF paylarinin CARPIMI (bagimsizlik varsayimi).
+- **SONUC (1283 olay, 2026):** ima edilen geri donus **medyan %51,4** (ceyrekler %26,4 / %51,4 /
+  %73,5) -> **ima edilen kesinti medyan %48,6**. Kazanan kombinasyona gelen pay medyan %0,0027.
+- **VARSAYIM UYARISI:** oyuncular ayaklari BAGIMSIZ oynamaz (herkes ayni favoriyi banker yapar),
+  gercek q populer kombinasyonlarda carpimdan BUYUK. Bu yuzden tahmin gurultulu (ceyrek araligi
+  genis) ve nokta degeri +/- birkac puan oynayabilir. Buyukluk mertebesi (~%45-50) saglam;
+  kesin deger icin TJK'nin resmi orani kaynaklanmali -> BEKLEYENLER #8.
+- **ASIL ONEMLI SONUC — K72 yeniden yorumlaniyor:** ayni zeminde uc getiri:
+  | strateji | geri donus |
+  |---|---|
+  | havuz ortalamasi (= 1-kesinti) | ~%51 |
+  | rastgele kombinasyon (K72) | %40,4 |
+  | **bizim orta / saf favori (K72)** | **%80,6 / %82,6** |
+  Yani favori-agirlikli oynamak havuz ortalamasini **~30 puan**, rastgeleyi **~42 puan** yeniyor.
+  **Favori-longshot yanliligi Altili havuzunda COK guclu:** kalabalik surprizlere fazla, favorilere
+  az para yatiriyor. Model/secim GERCEKTEN deger cikariyor — ama %49'luk kesinti onu yutuyor.
+- **CERCEVE DEGISIMI:** "sistem ise yaramiyor" degil; **"sistem havuzu yeniyor ama vergiyi
+  yenemiyor."** K1 (etkin pazar) tezi nuanslanmali: pazar ETKIN DEGIL (favori yanliligi var),
+  ama kesinti o verimsizligi somurmeye yetmeyecek kadar buyuk. Bu, 11 negatif kenar testinin
+  neden hepsinde "yaklastik ama yetmedi" cikti sorusunun cevabi olabilir.
+- **PRATIK SONUC DEGISMEDI:** oynanacak bir sey yok; −%17 ile −%19 arasi kayip hala kayip.

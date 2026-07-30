@@ -103,6 +103,16 @@ Aynı koşum (`kod/altili_dagitim_test.py`) üstünde yeni bir dağıtıcı olar
 ROI(6) + eşli bootstrap GA. **Uyarı:** K1 etkin-pazar duvarı + K19-K33/K44/K46/K52'de 9 kenar testi
 zaten negatif çıktı; bu da büyük ihtimalle negatif çıkar. Ucuz olduğu için açık bırakıldı, umut değil.
 
+### 8. Altılı havuzunun GERÇEK kesinti oranı — kaynaklanmalı (kısmen cevaplandı)
+**Eklendi:** 2026-07-31 · **İlgili:** K72, K73 · **TETİK:** resmî kaynağa erişilince
+K72'de saf favori oynamak −%17,4 getirdi; "bu kesintiden iyi mi?" sorusu için Altılı havuzunun
+kesinti oranı lazımdı ve hiç kaynaklanmamıştı. **K73'te AGF verisinden tahmin edildi: ~%45-50**
+(1283 olay, medyan %48,6). Ama bu bir TAHMİN — bağımsızlık varsayımına dayanıyor ve çeyrekler
+%26-%74 arasında geniş. **Yapılacak:** TJK'nın yayımladığı resmî 6'lı Ganyan yasal kesinti oranını
+kaynakla (mevzuat/TJK sitesi) ve K73 tahminiyle karşılaştır. Doğrulanırsa K73'ün sonucu
+("favori oynamak havuz ortalamasını ~30 puan yeniyor") sağlamlaşır. Ganyan tarafı zaten
+kaynaklıydı (%25,5 İngiliz / %30,6 Arap, K46).
+
 ---
 
 ## ZAMANLI — takvime bağlı
