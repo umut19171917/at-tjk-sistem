@@ -997,3 +997,32 @@ aciyor" tezi YAPISAL olarak DOGRULANDI. Canliya hicbir sey eklenmedi. `kod/altil
   ~1e-16) -> walk-forward kurulumu dogru kopyalandi. py_compile OK.
 - **Not:** Bu, K19-K33/K44/K46/K52/K57/K65 dizisindeki 10. kenar testi. Digerlerinden farki:
   ilk kez bir mekanizma DOGRULANDI (kuyruk erisimi), ama karliliga cevirilemedi.
+
+## 2026-07-31 — K68: Ayrisma dagitici testi (BEKLEYENLER #7) — BULGU YOK
+
+**K68 — "Genisligi bot1 ile kamunun ayristigi ayaga ver" fikri OLCULDU, ONCEDEN YAZILAN uc
+olcutun UCU de dustu. `ayrisma900` canliya EKLENMEDI. `kod/altili_ayrisma_test.py` (OFFLINE).**
+- **Fikir (K65+K67 sentezi):** bot2 ile SEC (isabeti koru), ama genisligi ayrisan ayaga ver ->
+  kalabaliktan ayriligi en ucuz oldugu yerden satin al. Dagitici = acgozlu'nun agirlikli hali:
+  kazanc = log(1+p/P_i) * (1 + w*D_i);  D_i = 0.5*sum|bot1_p - kamu_p| (toplam degisim uzakligi).
+  w taramasi: 0 / 0.5 / 1 / 2 / 4 (w=0 = saf acgozlu = kiyas tabani). Butce 96 / 288 / 900.
+  D dagilimi: ort 0,42 civari -- ayrisma gercekten var, olcu anlamli.
+- **ONCEDEN yazilan karar olcutleri ve sonuclari:**
+  (a) *w buyudukce ROI monoton iyilesmeli* -> 96 ve 288'de EVET (-60,4->-48,2 ve -54,9->-40,2),
+      ama **900'de DUZ** (-55,0 / -57,7 / -54,9 / -56,1 / -55,9 -- egilim YOK). **DUSTU.**
+  (b) *esli fark GA'si sifiri dislamali* -> **12 kiyasin 12'sinde de GA sifiri ICERIYOR.**
+      En iyisi w=4@288: +13,7 puan ama GA [-4,7, +36,7]. **DUSTU.**
+  (c) *ayni w farkli butcelerde de en iyi olmali* -> 96'da w=4, 288'de w=4, **900'de w=1
+      (ve etki ~sifir)**. **DUSTU.**
+- **DAHA ONEMLISI — mevcut canli mantik HEPSINI YENIYOR:** kapsam(v1) ROI(6): 96'da -%19,4,
+  288'de -%31,7, 900'de -%41,2. En iyi ayrisma sirasiyla -%48,2 / -%40,2 / -%54,9. Yani
+  ayrisma sadece "acgozlu'dan iyi degil" degil, tum acgozlu ailesi mevcut kapsam mantigindan
+  KOTU (K65 bulgusuyla tutarli).
+- **TEK OLUMLU IZ (mekanizma gorunuyor ama yetmiyor):** w buyudukce ort. temettu artiyor --
+  96'da 798->1.078, 288'de 1.547->2.088 (isabet ~sabit kalarak). Yani ayrisma agirligi
+  GERCEKTEN daha buyuk odemeli kombinasyonlara itiyor (K67'nin mekanizmasi burada da gorunur).
+  Ama 900'de bu da kayboluyor: temettu 2.469->2.711 artarken isabet 225->201 dusup netlesiyor.
+- **KARAR:** `ayrisma900` canliya alinmadi. Gerekce: kendi onceden yazdigimiz uc olcut de
+  dustu; w taramasi coklu kiyas oldugu icin "en iyi w"yi secmek overfit olurdu (K33/K52 yasagi).
+- **BEKLEYENLER #7 -> KAPANDI** (olculdu, negatif).
+- **Dogrulama:** py_compile OK; canliya/veriye dokunulmadi (yalniz yeni test dosyasi + belge).
