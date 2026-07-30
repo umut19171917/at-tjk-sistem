@@ -1026,3 +1026,40 @@ olcutun UCU de dustu. `ayrisma900` canliya EKLENMEDI. `kod/altili_ayrisma_test.p
   dustu; w taramasi coklu kiyas oldugu icin "en iyi w"yi secmek overfit olurdu (K33/K52 yasagi).
 - **BEKLEYENLER #7 -> KAPANDI** (olculdu, negatif).
 - **Dogrulama:** py_compile OK; canliya/veriye dokunulmadi (yalniz yeni test dosyasi + belge).
+
+## 2026-07-31 — K69: bot1_900 + ayrisma900 canliya; sayfa yan-yana matrise, kumulatif eklendi
+
+**K69 — Iki yeni GOZLEM akisi (7 config), Altili sayfasi kupon-turleri-yan-yana matrise cevrildi,
+gun-gun ISLEYEN BAKIYE ve "Altili + ganyan birlesik" sicili eklendi. Mevcut bes config'in
+mantigi BIT-BIT AYNI kaldi.**
+- **Yeni config'ler (kullanici karari 2026-07-31, "aklimizda soru kalmasin"):**
+  - `bot1_900` = Bot1 (oran-kor) + acgozlu + 900. K67'de 8 hucreden TEK sinyal veren ve
+    izlenebilir siklikta tutan hucre (isabet %8,58; kapsam ailesi %0,42-%5,93 ile ekranda
+    aylarca bos kalirdi). Kullanici "bot1 sadece acgozlude mi" diye sordu -> EVET, gerekcesi bu.
+  - `ayrisma900` = Bot2 secer + genislik ayrisan ayaga (K68). **Backtest'te bulgu YOK** (uc olcut
+    de dustu); kullanici bilerek gozlem olarak istedi. **w=1.0 SABIT/TARANMADI** -- en iyi puanlayan
+    w'yi secmek overfit olurdu (K33/K52). Olcum: w=1'de kuponlarin **%45,4'u** acgozlu'den farkli
+    cikiyor (ayaklarin %20'si) -> kopya degil, ama %55 ayni cikacak (30 Tem ANKARA'da oyle oldu).
+- **KONFIG yapisi degisti:** tuple -> dict (`kapsam/kombo/dagitim/puan/aile`). `puan` alani YENI:
+  secim Bot2 yerine Bot1 ile yapilabiliyor. `dagitim` artik uc degerli (kapsam/acgozlu/ayrisma).
+  Diger tum tuketiciler KONFIG ANAHTARLARINI geziyordu -> dokunulmadi.
+- **Dayaniklilik:** bir config'in puani eksikse (or. bot1 yok) SADECE O CONFIG atlanir, digerleri
+  kurulur; dagitici bos secim dondururse satir YAZILMAZ (bozuk kayit olusmaz).
+- **Telegram:** aile basliklariyla gruplandi (KAMU BOTU / TEMEL BOT / AYRISMA), toplam kagit bedel
+  satiri eklendi, sonuc bildirimine "bu Altili toplami" eklendi. `_telegram_bol()`: 3900 karakteri
+  asarsa SATIR sinirindan bolup parca parca gonderir (7 config'te olcum: 2.104 karakter, tek parca).
+- **altili.html (kullanici tasarimi onayladi):** her Altili artik TEK tablo, kupon turleri YAN YANA
+  sutun. Eski karttaki her bilgi korundu: secilen atin sistem/kamu sirasi, kazananin sistem/kamu
+  sirasi + ganyan orani, banker etiketi, durum rozeti, resmi temettu satiri, ve o kosunun TAM sistem
+  siralamasi (artik TUM turler icin ortak tek satir). Kazanan hucre yesil zemin, kazanan at yesil kalin.
+- **KUMULATIF (kullanici: "tum kar zarar tablosunu gormem onemli"):** iki yeni blok --
+  (1) `_kumulatif_blok`: gun gun bedel/odul/net + **ISLEYEN BAKIYE** (yalniz sonuclanmis kuponlar),
+  (2) `_birlesik_blok`: **ALTILI + GANYAN tek tabloda** + GENEL TOPLAM. Bugun: Altili 106 kupon
+  +7.008,04 TL (%+18,8), ganyan 655 kupon -2.839,50 TL (%-28,9), **birlesik +4.168,54 TL (%+8,8)**.
+  NOT: Altili artisi hala tek 6/6'lara dayaniyor (23 Tem +17.934, 29 Tem +12.983, 30 Tem +6.721).
+  *Duzeltme: ganyan sayfasinda kumulatif zaten VARDI (haftalik); eksik olan Altili sayfasindaydi.*
+- **Dogrulama:** py_compile OK. KURU CALISMA (`_yaz` devre disi) bugunku ANKARA+KOCAELI kartinda
+  2 Altili x 7 config = 14 kupon kurdu, hepsi butce icinde (16/24, 96/96, 216/288, 729/900,
+  864/900, 900/900, 864/900). `veri/altili_kupon.csv` bayt-bayt DEGISMEDI (yedekle karsilastirildi).
+  Telegram kuru gonderim: 1 parca, 2.104 karakter, aile basliklari dogru. HTML 235.151 karakter.
+- **ILERI-YONLU:** gecmis kuponlar yeniden kurulmadi; iki yeni akis bir sonraki kurulumda baslar.

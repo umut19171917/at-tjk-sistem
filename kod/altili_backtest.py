@@ -102,6 +102,63 @@ def kupon_kur_acgozlu(ayak_atlari, max_kombo):
     return [set(no for no, _ in sr[j][:k[j]]) for j in range(6)]
 
 
+def ayrisma_skoru(bot1_p, kamu_p):
+    """K68: bir ayakta Bot1 (oran-kor) ile KAMU ne kadar ayri dusuyor?
+    Toplam degisim uzakligi: 0.5*sum|p1-pk|, [0,1]. 0 = ayni fikirdeler, 1 = tamamen ayri.
+    Bos/gecersiz girdi -> 0.0 (yani "ayrisma yok" -> tarafsiz)."""
+    a = np.asarray(list(bot1_p), dtype=float)
+    b = np.asarray(list(kamu_p), dtype=float)
+    if len(a) == 0 or len(a) != len(b):
+        return 0.0
+    a = np.nan_to_num(a); b = np.nan_to_num(b)
+    sa, sb = a.sum(), b.sum()
+    if sa <= 0 or sb <= 0:
+        return 0.0
+    return float(0.5 * np.abs(a / sa - b / sb).sum())
+
+
+def kupon_kur_ayrisma(ayak_atlari, agirlik, max_kombo, w=1.0):
+    """K68: acgozlu'nun AYRISMA-AGIRLIKLI hali. Secim sirasi HEP verilen puan (canlida Bot2)
+    -> isabet korunur; degisen sadece hangi ayaga GENISLIK verildigi.
+      kazanc = log(1 + p_yeni/P_i) * (1 + w*D_i)   (D_i = o ayagin ayrisma skoru)
+      bedel  = log((k+1)/k)
+    w=0 ise saf acgozlu'ya doner.
+
+    UYARI (K68 backtest, 1455 OOS): onceden yazilan uc olcut de DUSTU -- (a) w-monotonlugu
+    900'de yok, (b) 12 esli farkin 12'sinde GA sifiri iceriyor, (c) en iyi w butceler arasi
+    tutarsiz. Ustelik mevcut kapsam mantigi tum ayrisma varyantlarindan iyi. Gorunen tek iz:
+    w buyudukce ort. temettu artiyor (798->1.078 @96). CANLIDA yalnizca GOZLEM akisi.
+
+    ayak_atlari: 6 x [(no, p)]; agirlik: 6 elemanli D listesi. Doner: 6 set."""
+    sr = [sorted([(no, p) for no, p in a if pd.notna(p) and p > 0], key=lambda x: -x[1])
+          for a in ayak_atlari]
+    if len(sr) != 6 or any(len(s) == 0 for s in sr):
+        return [set() for _ in range(6)]
+    ag = list(agirlik) + [0.0] * 6
+    k = [1] * 6
+    P = [s[0][1] for s in sr]
+    while True:
+        kombo = int(np.prod(k))
+        en_iyi, en_oran = None, 0.0
+        for j in range(6):
+            if k[j] >= len(sr[j]):
+                continue
+            if kombo // k[j] * (k[j] + 1) > max_kombo:
+                continue
+            p = sr[j][k[j]][1]
+            bedel = math.log((k[j] + 1) / k[j])
+            kazanc = math.log1p(p / P[j]) * (1.0 + w * float(ag[j]))
+            oran = kazanc / bedel if (P[j] > 0 and bedel > 0) else 0.0
+            if oran > en_oran:
+                en_oran, en_iyi = oran, j
+        if en_iyi is None:
+            break
+        j = en_iyi
+        P[j] += sr[j][k[j]][1]
+        k[j] += 1
+    return [set(no for no, _ in sr[j][:k[j]]) for j in range(6)]
+
+
 def degerlendir(olay, puan_map, puan_map_full, kapsam_esik, max_kombo, banker_esik,
                 birim=1.0, kademeli=True):
     """Tek Altili olayi icin kupon kur, odemeyi hesapla. Doner (maliyet, getiri, alti_tuttu)

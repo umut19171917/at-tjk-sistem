@@ -33,29 +33,48 @@ import pandas as pd
 KOK = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(KOK / "kod"))
 from gunluk import hesapla, getjson, BASE, EXCL  # noqa: E402
-from altili_backtest import kupon_kur, kupon_kur_acgozlu  # noqa: E402
+from altili_backtest import (kupon_kur, kupon_kur_acgozlu,  # noqa: E402
+                             kupon_kur_ayrisma, ayrisma_skoru)
 from duzlestir import vir_float  # noqa: E402
 import rapor_ortak as ro  # noqa: E402
 
 KUPON = KOK / "veri" / "altili_kupon.csv"
 HTMLA = KOK / "raporlar" / "altili.html"
-# config -> (kapsam_esik, max_kombo, dagitim). dagitim="kapsam": K52 mantigi (kumulatif kapsam
-# esigi + butce asilinca en kalabalik ayaktan buda) -- ASIL kupon ailemiz.
-# K62: genis900 YUKSEK kapsam (0.95) ki derin (5./6. sira) kazananlara ulassin (0.75 onlara varmadan
-#      doluyor).
-# K65: "acgozlu900" = isabet-maksimize dagitici (kapsam esigi/budama YOK -> kapsam_esik alani
-#      KULLANILMAZ, sadece bicimsel). Butcesi bilerek 900 = genis900 ile AYNI -> ayni gun/kosu/
-#      para, TEK fark dagitim mantigi (kontrollu A/B). Neden 900: backtest'te iki dagitim EN AZ
-#      900'de ayristi (durust zemin farki -13,4 puan ama %95 GA [-32,2,+2,4] SIFIRI ICERIYOR =
-#      kesin kapanmadi) ve isabet farki orada en buyuk (185 -> 225). Yani gozlemin bilgi degeri
-#      en yuksek oldugu butce burasi. Backtest'te yine de -EV (ROI(6) -41,2% -> -55,0%); canliya
-#      IYILESTIRME olarak degil GOZLEM akisi olarak eklendi (kullanici karari 2026-07-26).
-# Hepsi kagit/-EV gozlem akisi; backtest gecmisi K52/K57/K62/K65.
-KONFIG = {"dar":        (0.75, 24,  "kapsam"),
-          "orta":       (0.75, 96,  "kapsam"),
-          "genis":      (0.75, 288, "kapsam"),
-          "genis900":   (0.95, 900, "kapsam"),
-          "acgozlu900": (0.95, 900, "acgozlu")}
+# config -> ayarlar. Alanlar:
+#   kapsam  : kumulatif kapsam esigi (SADECE dagitim="kapsam" kullanir)
+#   kombo   : butce tavani (kombinasyon)
+#   dagitim : "kapsam"  = K52 mantigi (kapsam esigi + butce asilinca en kalabalik ayaktan buda)
+#             "acgozlu" = K65 isabet-maksimize (log-uzayinda sirt cantasi; kapsam alani KULLANILMAZ)
+#             "ayrisma" = K68 acgozlu'nun ayrisma-agirlikli hali
+#   puan    : secim hangi olasilikla yapilir -- "bot2" (harman) veya "bot1" (oran-kor)
+#   aile    : rapor/Telegram gruplamasi
+#
+# GECMIS (hepsi kagit; hicbiri "iyilestirme" degil, GOZLEM akisi):
+#   K52/K57 : dar/orta/genis  -- asil kupon ailemiz, kapsam mantigi
+#   K62     : genis900 yuksek kapsam (0.95) ki derin (5./6. sira) kazananlara ulassin
+#   K65     : acgozlu900 -- genis900 ile AYNI butce = kontrollu A/B, tek fark dagitim
+#   K67     : bot1_900 -- Bot2 pratikte kamunun kendisi (favori ortakligi %89,9). Bot1 oran-kor,
+#             kalabaliktan ayri; buyuk temettu bolgesine eriyor (bot2 225 isabette 50bin ustu
+#             SIFIR, bot1 123 isabette 100bin ustu UC kez) ama isabeti dusuk (%29,1 vs %35,7).
+#             8 hucreden TEK sinyal veren ve izlenebilir siklikta tutan hucre: acgozlu@900.
+#   K68     : ayrisma900 -- "genisligi bot1 ile kamunun ayristigi ayaga ver". Backtest'te
+#             onceden yazilan UC OLCUT DE DUSTU (bulgu yok); kullanici karariyla yine de
+#             GOZLEM olarak eklendi ("aklimizda soru kalmasin", 2026-07-31).
+#             w=1.0 SABIT ve TARANMADI: backtest'te en iyi cikan w'yi secmek overfit olurdu
+#             (K33/K52 hindsight yasagi) -> tarafsiz deger.
+AYRISMA_W = 1.0
+KONFIG = {
+    "dar":        {"kapsam": 0.75, "kombo": 24,  "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu"},
+    "orta":       {"kapsam": 0.75, "kombo": 96,  "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu"},
+    "genis":      {"kapsam": 0.75, "kombo": 288, "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu"},
+    "genis900":   {"kapsam": 0.95, "kombo": 900, "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu"},
+    "acgozlu900": {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot2", "aile": "kamu"},
+    "bot1_900":   {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot1", "aile": "temel"},
+    "ayrisma900": {"kapsam": 0.95, "kombo": 900, "dagitim": "ayrisma", "puan": "bot2", "aile": "ayrisma"},
+}
+AILE_AD = {"kamu":    "KAMU BOTU (bot2 — piyasayı dinler)",
+           "temel":   "TEMEL BOT (bot1 — orana hiç bakmaz)",
+           "ayrisma": "AYRIŞMA (bot2 seçer, genişlik ayrışmaya gider)"}
 BANKER_ESIK = 0.70                     # tek-at banker esigi (tum config ortak)
 KOL = ["kayit_ts", "tarih", "pist", "seq", "ilk_saat", "config", "ayak",
        "kosu_no", "race_kod", "saat", "secim", "banker", "nat",
@@ -131,8 +150,9 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
     yeni_satirlar = []
     ts = datetime.now().strftime("%Y-%m-%d %H:%M")
     for seq, pencere, ilk_saat in pencereler:
-        # her ayagin (no, bot2) listesi -- puani olmayan ayak varsa pencere ATLANIR
-        ayak_atlari, ayak_meta, eksik = [], [], False
+        # her ayagin (no, bot2) VE (no, bot1) listesi + ayrisma skoru
+        # -- Bot2'si olmayan ayak varsa pencere ATLANIR (eskisi gibi)
+        ayak_atlari, ayak_bot1, ayak_ayr, ayak_meta, eksik = [], [], [], [], False
         for k in pencere:
             kno = _as_int(k.get("RACENO") or k.get("NO"))
             g = tg[tg["kosu_no_i"] == kno]
@@ -142,19 +162,36 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
                 break
             atlar = [(int(r["no"]), float(r["bot2"])) for _, r in g.iterrows()]
             ayak_atlari.append(atlar)
+            # K67/K68: bot1 ve kamu ayni satirlarda; biri eksikse o config sessizce atlanir
+            b1 = pd.to_numeric(g["bot1"], errors="coerce")
+            km = pd.to_numeric(g["kamu"], errors="coerce")
+            ayak_bot1.append([(int(r["no"]), float(v)) for (_, r), v in zip(g.iterrows(), b1)
+                              if pd.notna(v) and v > 0])
+            ayak_ayr.append(ayrisma_skoru(b1.fillna(0.0).values, km.fillna(0.0).values)
+                            if km.notna().any() and b1.notna().any() else 0.0)
             ayak_meta.append({"kosu_no": kno, "race_kod": _as_int(k.get("KOD")),
                               "saat": str(k.get("SAAT", "")).strip()})
         if eksik:
             print(f"  {seq}. Altili (kosu {pencere[0].get('RACENO')}): bir ayak kapsam disi -> atlandi")
             continue
 
-        for cfg, (kaps, maxk, dagitim) in KONFIG.items():
+        for cfg, ay in KONFIG.items():
+            maxk, dagitim = ay["kombo"], ay["dagitim"]
+            puanlar = ayak_bot1 if ay["puan"] == "bot1" else ayak_atlari
+            if any(len(p) < 1 for p in puanlar):   # bot1 yoksa O CONFIG atlanir (digerleri kurulur)
+                print(f"  {seq}. Altili / {cfg}: {ay['puan']} puani eksik -> bu config atlandi")
+                continue
             if dagitim == "acgozlu":               # K65: kapsam esigi/budama yok
-                sec = kupon_kur_acgozlu(ayak_atlari, maxk)
+                sec = kupon_kur_acgozlu(puanlar, maxk)
+            elif dagitim == "ayrisma":             # K68: acgozlu + ayrisma agirligi
+                sec = kupon_kur_ayrisma(puanlar, ayak_ayr, maxk, AYRISMA_W)
             else:
-                sec = kupon_kur(ayak_atlari, kaps, maxk, BANKER_ESIK)
+                sec = kupon_kur(puanlar, ay["kapsam"], maxk, BANKER_ESIK)
+            if any(len(s) == 0 for s in sec):      # dagitici bos donduyse yazma (bozuk satir olmasin)
+                print(f"  {seq}. Altili / {cfg}: secim uretilemedi -> atlandi")
+                continue
             for ai in range(6):
-                atlar_sirali = sorted(ayak_atlari[ai], key=lambda x: -x[1])
+                atlar_sirali = sorted(puanlar[ai], key=lambda x: -x[1])
                 secili = sec[ai]
                 banker = 1 if len(secili) == 1 and atlar_sirali[0][1] >= BANKER_ESIK else 0
                 yeni_satirlar.append({
@@ -211,22 +248,51 @@ def bildir_kupon(pist, tarih, seq, o):
     sat = ["🎫 <b>ALTILI KUPONU KURULDU</b>",
            f"📍 {pist} — {tarih_tr}, {int(seq)}. Altılı",
            f"🕐 İlk koşu {ilk_saat} (30 dk kala)", ""]
-    for cfg in KONFIG:                                 # dar, orta, genis
+    toplam_bedel = 0.0
+    son_aile = None
+    for cfg, ay in KONFIG.items():                     # KONFIG sirasi = aile sirasi
         gc = g[g["config"] == cfg].sort_values("ayak")
         if gc.empty:
             continue
+        if ay["aile"] != son_aile:                     # K69: aile basligi
+            sat.append(f"━━━ <b>{AILE_AD[ay['aile']]}</b> ━━━")
+            son_aile = ay["aile"]
         kombo = int(np.prod([int(x) for x in gc["nat"]]))
         bedel = kombo * ro.birim_fiyat(pist)
-        sat.append(f"<b>{cfg.upper()}</b> — {kombo} kombo / {ro.para(bedel)}")
+        toplam_bedel += bedel
+        sat.append(f"▸ <b>{cfg.upper()}</b> — {kombo} kombo / {ro.para(bedel)}")
         for _, r in gc.iterrows():
             adm = admap.get(_as_int(r["race_kod"]), {})
             secim = [int(x) for x in str(r["secim"]).split(",") if x != ""]
             atlar = ", ".join(f"{no} {adm.get(no, '?')}" for no in secim)
             bank = " (banker)" if int(r["banker"]) == 1 else ""
-            sat.append(f"  {int(r['ayak'])}. ayak (koşu {int(r['kosu_no'])}): {atlar}{bank}")
+            sat.append(f"   {int(r['ayak'])}. ayak (koşu {int(r['kosu_no'])}): {atlar}{bank}")
         sat.append("")
+    sat.append(f"💰 Toplam kâğıt bedel: {ro.para(toplam_bedel)}")
     sat.append("Detay/takip: raporlar/altili.html")
-    telegram_at.gonder("\n".join(sat))
+    for parca in _telegram_bol("\n".join(sat)):
+        telegram_at.gonder(parca)
+
+
+TG_SINIR = 3900                                        # Telegram 4096; guvenlik payi
+
+
+def _telegram_bol(mesaj):
+    """K69: 7 config ile mesaj Telegram sinirini asabilir. Asarsa SATIR sinirindan boler
+    (HTML etiketleri satir icinde kapaniyor -> bolme guvenli). Asmiyorsa tek parca."""
+    if len(mesaj) <= TG_SINIR:
+        return [mesaj]
+    parcalar, cur = [], []
+    n = 0
+    for satir in mesaj.split("\n"):
+        if n + len(satir) + 1 > TG_SINIR and cur:
+            parcalar.append("\n".join(cur))
+            cur, n = [], 0
+        cur.append(satir)
+        n += len(satir) + 1
+    if cur:
+        parcalar.append("\n".join(cur))
+    return [f"{p}\n<i>({i+1}/{len(parcalar)})</i>" for i, p in enumerate(parcalar)]
 
 
 def bildir_sonuc(tarih, pist, seq):
@@ -251,22 +317,31 @@ def bildir_sonuc(tarih, pist, seq):
             kaz_par.append(f"{int(r['ayak'])}.#{int(r['kazanan'])}")
     if kaz_par:
         sat += ["🏇 Kazananlar: " + ", ".join(kaz_par), ""]
-    for cfg in KONFIG:
+    son_aile = None
+    t_bedel = t_odul = 0.0
+    for cfg, ay in KONFIG.items():
         gc = g_all[g_all["config"] == cfg].sort_values("ayak")
         if gc.empty:
             continue
+        if ay["aile"] != son_aile:
+            sat.append(f"━━━ <b>{AILE_AD[ay['aile']]}</b> ━━━")
+            son_aile = ay["aile"]
         oz = _kupon_ozet(gc, tarih, pist, seq, cfg)
+        t_bedel += oz["bedel"]; t_odul += oz["odul"]
         kad = oz["kademe"]
         durum = "✅ 6/6 TUTTU" if kad == 6 else (f"son {kad} ayak (bilgi)" if kad else "tutmadı")
-        sat.append(f"<b>{cfg.upper()}</b>: {durum} — bedel {ro.para(oz['bedel'])}, "
+        sat.append(f"▸ <b>{cfg.upper()}</b>: {durum} — bedel {ro.para(oz['bedel'])}, "
                    f"ödül {ro.para(oz['odul'])}, net {ro.para(oz['net'], isaret=True)}")
+    sat.append(f"\n<b>Bu Altılı toplamı</b> — bedel {ro.para(t_bedel)}, ödül {ro.para(t_odul)}, "
+               f"net {ro.para(t_odul - t_bedel, isaret=True)}")
     res = ro.altili_odeme(tarih, pist, int(seq), cek=False)
     if res.get("temettu"):
         sat.append(f"\n💰 Resmi temettü (1 birim): {ro.para(res['temettu'])}")
     elif res.get("devir"):
         sat.append(f"\n↪️ Kimse bilemedi — {ro.para(res['devir'])} devretti")
     sat.append("\nDetay: raporlar/altili.html")
-    telegram_at.gonder("\n".join(sat))
+    for parca in _telegram_bol("\n".join(sat)):
+        telegram_at.gonder(parca)
 
 
 # ----------------------------- takip tetigi (zaman-bazli) -----------------------------
@@ -490,6 +565,94 @@ def _tum_siralama_html(rk, secimler):
             + " &nbsp; ".join(parcalar))
 
 
+def _kumulatif_blok(kupolar):
+    """K69: GUNE gore kar/zarar + ISLEYEN BAKIYE (kullanici: 'tum kar zarar tablosunu gormem
+    onemli'). Sadece SONUCLANMIS kuponlar sayilir; acik kuponlar bakiyeyi kirletmez."""
+    bitmis = [k for k in kupolar if k["bitti"]]
+    if not bitmis:
+        return []
+    gun = {}
+    for k in bitmis:
+        g = gun.setdefault(str(k["tarih"]), {"bedel": 0.0, "odul": 0.0, "kupon": 0, "tam": 0})
+        g["bedel"] += k["bedel"]; g["odul"] += k["odul"]
+        g["kupon"] += 1; g["tam"] += (k["kademe"] == 6)
+    H = ["<h3>Gun gun kar/zarar ve isleyen bakiye</h3><div class=kart>",
+         "<div style='overflow-x:auto'><table><tr><th class=l>tarih</th><th>kupon</th>"
+         "<th>6/6</th><th>bedel</th><th>odul</th><th>gun neti</th>"
+         "<th>ISLEYEN BAKIYE</th></tr>"]
+    kum = 0.0
+    for t in sorted(gun):
+        g = gun[t]
+        net = g["odul"] - g["bedel"]
+        kum += net
+        tr = pd.Timestamp(t).strftime("%d.%m.%Y")
+        H.append(f"<tr><td class=l>{tr}</td><td>{g['kupon']}</td>"
+                 f"<td>{g['tam'] or '&mdash;'}</td><td>{ro.para(g['bedel'])}</td>"
+                 f"<td>{ro.para(g['odul'])}</td>"
+                 f"<td class='{'poz' if net >= 0 else 'neg'}'>{ro.para(net, isaret=True)}</td>"
+                 f"<td class='{'poz' if kum >= 0 else 'neg'}'><b>{ro.para(kum, isaret=True)}</b>"
+                 f"</td></tr>")
+    H.append("</table></div></div>")
+    return H
+
+
+def _ganyan_ozet():
+    """paper_kupon.csv (ganyan kagit testi) toplami -- SALT-OKUNUR. Yoksa None."""
+    p = KOK / "veri" / "paper_kupon.csv"
+    if not p.exists():
+        return None
+    try:
+        b = pd.read_csv(p, low_memory=False)
+        s = b[b["durum"].isin(["kazandi", "kaybetti"])]     # iptal = iade
+        if s.empty:
+            return None
+        bedel = float(pd.to_numeric(s["miktar"], errors="coerce").sum())
+        odul = float(pd.to_numeric(s["getiri"], errors="coerce").sum())
+        return {"kupon": len(s), "bedel": bedel, "odul": odul, "net": odul - bedel}
+    except Exception:
+        return None
+
+
+def _birlesik_blok(kupolar):
+    """K69: ALTILI + GANYAN tek tabloda -- 'tum kar zarar tablosu' tek bakista."""
+    bitmis = [k for k in kupolar if k["bitti"]]
+    a_bedel = sum(k["bedel"] for k in bitmis)
+    a_odul = sum(k["odul"] for k in bitmis)
+    gy = _ganyan_ozet()
+    H = ["<div class=toplam><b>TUM KAGIT SICILI (Altili + ganyan birlikte)</b><br>",
+         "<table style='margin-top:6px'><tr><th class=l>bahis</th><th>kupon</th>"
+         "<th>bedel</th><th>odul</th><th>net</th><th>ROI</th></tr>"]
+
+    def satir(ad, n, bedel, odul):
+        net = odul - bedel
+        cls = "poz" if net >= 0 else "neg"
+        roi = f"%{100*net/bedel:+.1f}" if bedel else "-"
+        return (f"<tr><td class=l><b>{ad}</b></td><td>{n}</td><td>{ro.para(bedel)}</td>"
+                f"<td>{ro.para(odul)}</td><td class={cls}><b>{ro.para(net, isaret=True)}</b></td>"
+                f"<td class={cls}>{roi}</td></tr>")
+
+    H.append(satir("ALTILI", len(bitmis), a_bedel, a_odul))
+    t_bedel, t_odul = a_bedel, a_odul
+    if gy:
+        H.append(satir("GANYAN (paper)", gy["kupon"], gy["bedel"], gy["odul"]))
+        t_bedel += gy["bedel"]; t_odul += gy["odul"]
+    else:
+        H.append("<tr><td class=l>GANYAN (paper)</td><td colspan=5 class=l>"
+                 "<span class=mini>paper_kupon.csv okunamadi</span></td></tr>")
+    H.append("</table>")
+    tnet = t_odul - t_bedel
+    cls = "poz" if tnet >= 0 else "neg"
+    H.append("<hr style='border:none;border-top:1px solid #ddd;margin:8px 0'>"
+             f"<b>GENEL TOPLAM (her sey)</b> &nbsp; bedel {ro.para(t_bedel)} &nbsp; "
+             f"odul {ro.para(t_odul)} &nbsp; net "
+             f"<span class='{cls} buyuk'>{ro.para(tnet, isaret=True)}</span>"
+             + (f" &nbsp;<span class=k>(ROI %{100*tnet/t_bedel:+.1f})</span>" if t_bedel else ""))
+    H.append("<div class=mini style='margin-top:6px'>Kagit (paper) sicilidir &mdash; "
+             "gercek para yatirilmiyor. Altili tarafi -EV gozlem akislari icerir (K62/K65/K67/K68).</div>")
+    H.append("</div>")
+    return H
+
+
 def html_yaz(df=None, ac=False):
     """K55: secimlerimiz + SISTEM SIRASI, kazanan at + sistem/kamu sirasi + ganyan orani,
     kupon bedeli + odul, altta TOPLAM. Zenginlestirme defter.csv'den (salt-okunur);
@@ -551,70 +714,92 @@ def html_yaz(df=None, ac=False):
 
     H += toplam_blok("TOPLAM DURUM")
 
-    kupolar.sort(key=lambda k: (str(k["tarih"]), k["pist"], k["seq"], k["cfg"]), reverse=True)
-    H.append("<h3>Kuponlar (yeni tarih ustte)</h3>")
-    for k in kupolar:
-        g, tut = k["g"], k["tut"]
-        kad = k["kademe"]
-        if not k["bitti"]:
-            rozet = "<span class='rozet rb'>kosular devam ediyor</span>"
-        elif kad == 6:
-            rozet = "<span class='rozet r6'>TAM ISABET 6/6</span>"
-        elif kad:
-            rozet = f"<span class='rozet r{kad}'>son {kad} ayak (bilgi)</span>"
-        else:
-            rozet = "<span class='rozet r0'>isabetsiz</span>"
-        tarih_tr = pd.Timestamp(str(k["tarih"])).strftime("%d.%m.%Y")
-        net_cls = "poz" if k["net"] >= 0 else "neg"
+    H += _kumulatif_blok(kupolar)
+    H += _birlesik_blok(kupolar)
+
+    # ---- K69: her Altili TEK tablo, kupon turleri YAN YANA ----
+    gruplar = sorted({(k["tarih"], k["pist"], k["seq"]) for k in kupolar}, reverse=True)
+    H.append("<h3>Kuponlar (yeni tarih ustte) &mdash; kupon turleri yan yana</h3>")
+    for tarih, pist, seq in gruplar:
+        kk = {k["cfg"]: k for k in kupolar if (k["tarih"], k["pist"], k["seq"]) == (tarih, pist, seq)}
+        cfgler = [c for c in KONFIG if c in kk]
+        if not cfgler:
+            continue
+        ref = kk[cfgler[0]]["g"].sort_values("ayak")
+        tarih_tr = pd.Timestamp(str(tarih)).strftime("%d.%m.%Y")
+        t_bedel = sum(kk[c]["bedel"] for c in cfgler)
+        t_odul = sum(kk[c]["odul"] for c in cfgler)
+        tn = t_odul - t_bedel
         H.append("<div class=kart>")
-        H.append(f"<div class=baslik>{tarih_tr} &nbsp;|&nbsp; <b>{k['pist']}</b> &nbsp;|&nbsp; "
-                 f"{k['seq']}. ALTILI &nbsp;|&nbsp; <b>{k['cfg'].upper()}</b> kupon "
-                 f"({k['kombo']} kombinasyon) &nbsp; {rozet}<br>"
-                 f"<span class=k>kupon bedeli <b>{ro.para(k['bedel'])}</b> &nbsp;&rarr;&nbsp; "
-                 f"bizim odulumuz <b>{ro.para(k['odul'])}</b> &nbsp;&rarr;&nbsp; net "
-                 f"<span class='{net_cls}'><b>{ro.para(k['net'], isaret=True)}</b></span>"
-                 f"<br>{_resmi_satir(k)}</span></div>")
-        H.append("<table><tr><th>ayak</th><th>kosu</th><th class=l>BIZIM SECIMIMIZ "
-                 "<span class=mini>(at no &mdash; sistem sirasi / kamu sirasi)</span></th>"
-                 "<th class=l>KAZANAN AT</th><th>kazananin<br>sistem sirasi</th>"
-                 "<th>kazananin<br>kamu sirasi</th><th>ganyan<br>orani</th><th>sonuc</th></tr>")
-        for _, r in g.iterrows():
+        H.append(f"<div class=baslik>{tarih_tr} &nbsp;|&nbsp; <b>{pist}</b> &nbsp;|&nbsp; "
+                 f"{seq}. ALTILI<br><span class=k>{len(cfgler)} kupon turu &nbsp;&middot;&nbsp; "
+                 f"toplam bedel <b>{ro.para(t_bedel)}</b> &nbsp;&rarr;&nbsp; odul "
+                 f"<b>{ro.para(t_odul)}</b> &nbsp;&rarr;&nbsp; net "
+                 f"<span class='{'poz' if tn >= 0 else 'neg'}'><b>{ro.para(tn, isaret=True)}</b>"
+                 f"</span><br>{_resmi_satir(kk[cfgler[0]])}</span></div>")
+        H.append("<div style='overflow-x:auto'><table>")
+        H.append("<tr><th>ayak</th><th class=l>KAZANAN AT</th><th>kazananin<br>sistem / kamu</th>"
+                 "<th>ganyan<br>orani</th>"
+                 + "".join(f"<th class=l>{c.upper()}<br><span class=mini>{KONFIG[c]['aile']}</span></th>"
+                           for c in cfgler) + "</tr>")
+        for _, r in ref.iterrows():
+            ai = int(r["ayak"])
             rk = int(r["race_kod"]) if pd.notna(r["race_kod"]) else None
-            secimler = [int(x) for x in str(r["secim"]).split(",") if x != ""]
-            parcalar = []
-            for no in secimler:
-                bi = ro.at_bilgi(rk, no) if rk else {"sis": None, "kamu": None}
-                parcalar.append(f"<b>{no}</b> <span class=mini>({ro.sira_str(bi['sis'])}"
-                                f" / {ro.sira_str(bi.get('kamu'))})</span>")
-            sec_html = " &nbsp;&middot;&nbsp; ".join(parcalar)
-            if int(r["banker"]) == 1:
-                sec_html += " <span class=mini>[banker]</span>"
             kz = ro.kazanan_bilgi(rk) if rk else None
             if kz:
-                kz_html = f"<b>{kz['no']}</b> {str(kz['ad'])[:22]}"
-                kz_sis, kz_kamu, kz_oran = (ro.sira_str(kz["sis"]), ro.sira_str(kz["kamu"]),
-                                            ro.oran_str(kz["oran"]))
+                kz_html = f"<b>{kz['no']}</b> {str(kz['ad'])[:20]}"
+                kz_sk = f"{ro.sira_str(kz['sis'])} / {ro.sira_str(kz['kamu'])}"
+                kz_oran = ro.oran_str(kz["oran"])
+                kzno = _as_int(kz["no"])
             elif pd.notna(r["kazanan"]):
                 kz_html = f"<b>{int(r['kazanan'])}</b> <span class=mini>(defter kaydi yok)</span>"
-                kz_sis = kz_kamu = kz_oran = "-"
+                kz_sk = kz_oran = "-"
+                kzno = int(r["kazanan"])
             else:
-                kz_html, kz_sis, kz_kamu, kz_oran = "<span class=bek>bekleniyor</span>", "-", "-", "-"
-            t = tut[int(r["ayak"]) - 1]
-            if t is None:
-                scls, stxt = "bek", "bekleniyor"
-            elif t == 1:
-                scls, stxt = "tut", "TUTTU"
-            else:
-                scls, stxt = "kac", "kacti"
-            H.append(f"<tr><td>{int(r['ayak'])}</td><td>{int(r['kosu_no'])}</td>"
-                     f"<td class=l>{sec_html}</td><td class=l>{kz_html}</td>"
-                     f"<td>{kz_sis}</td><td>{kz_kamu}</td><td>{kz_oran}</td>"
-                     f"<td class={scls}>{stxt}</td></tr>")
-            # K58: o kosunun TUM sistem siralamasi -- ayaginin hemen altinda ayri satir
-            H.append("<tr><td></td><td colspan=7 class=l "
+                kz_html, kz_sk, kz_oran, kzno = "<span class=bek>bekleniyor</span>", "-", "-", None
+            H.append(f"<tr><td><b>{ai}</b><br><span class=mini>kosu {int(r['kosu_no'])}</span></td>"
+                     f"<td class=l>{kz_html}</td><td>{kz_sk}</td><td>{kz_oran}</td>")
+            tum_sec = set()
+            for c in cfgler:
+                gc = kk[c]["g"]
+                sr = gc[gc["ayak"] == ai]
+                if sr.empty:
+                    H.append("<td class=l><span class=mini>-</span></td>")
+                    continue
+                sr = sr.iloc[0]
+                secimler = [int(x) for x in str(sr["secim"]).split(",") if x != ""]
+                tum_sec |= set(secimler)
+                hucre = []
+                for no in secimler:
+                    bi = ro.at_bilgi(rk, no) if rk else {}
+                    et = (f"<b style='color:#137333'>{no}</b>" if no == kzno else f"{no}")
+                    hucre.append(f"{et} <span class=mini>{ro.sira_str(bi.get('sis'))}/"
+                                 f"{ro.sira_str(bi.get('kamu'))}</span>")
+                bk = " <span class=mini>[banker]</span>" if int(sr["banker"]) == 1 else ""
+                tuttu = kzno is not None and kzno in secimler
+                stil = " style='background:#e8f7ec'" if tuttu else ""
+                H.append(f"<td class=l{stil}>" + "<br>".join(hucre) + bk + "</td>")
+            H.append("</tr>")
+            # o kosunun TUM sistem siralamasi (K58) -- tum turler icin ORTAK, tek satir
+            H.append(f"<tr><td></td><td colspan={3+len(cfgler)} class=l "
                      "style='background:#f7f9fc;border-top:none'>"
-                     f"{_tum_siralama_html(rk, secimler)}</td></tr>")
-        H.append("</table></div>")
+                     f"{_tum_siralama_html(rk, tum_sec)}</td></tr>")
+
+        def ozet_satir(baslik, fn):
+            return (f"<tr><td colspan=4 class=l><b>{baslik}</b></td>"
+                    + "".join(f"<td class=l>{fn(kk[c])}</td>" for c in cfgler) + "</tr>")
+        H.append(ozet_satir("kombinasyon", lambda k: f"{k['kombo']}"))
+        H.append(ozet_satir("kagit bedel", lambda k: ro.para(k["bedel"])))
+        H.append(ozet_satir("durum", lambda k: (
+            "<span class='rozet rb'>devam</span>" if not k["bitti"] else
+            "<span class='rozet r6'>6/6 TUTTU</span>" if k["kademe"] == 6 else
+            f"<span class='rozet r{k['kademe']}'>son {k['kademe']} ayak</span>" if k["kademe"] else
+            "<span class='rozet r0'>isabetsiz</span>")))
+        H.append(ozet_satir("odul", lambda k: ro.para(k["odul"]) if k["odul"] else "&mdash;"))
+        H.append(ozet_satir("net", lambda k:
+                            f"<span class='{'poz' if k['net'] >= 0 else 'neg'}'>"
+                            f"<b>{ro.para(k['net'], isaret=True)}</b></span>"))
+        H.append("</table></div></div>")
 
     H += toplam_blok("TOPLAM DURUM (liste sonu)")
 
