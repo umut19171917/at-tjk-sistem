@@ -1252,3 +1252,42 @@ gorunuyor. Henuz kupon stratejisine cevrilmedi. `kod/altili_agf_yanlilik.py` (OF
   -> gercek temettulerle 1455 OOS olayda backtest. Bu, K68'deki (bot1−kamu) ayrismasindan FARKLI
   ve daha guclu bir sinyal: orada carpan +%45 kupon degistiriyordu ama bulgu yoktu; burada
   olculen sapma 3,40 kat.
+
+## 2026-07-31 — K75: Deger secimi (bot2/AGF^λ) — kenar GERCEK ama Altili'da HASAT EDILEMIYOR
+
+**K75 — K74'un bulduğu yanlilik kupona cevrilemedi. λ arttikca ort. temettu YUKSELIYOR (mekanizma
+calisiyor) ama isabet CÖKÜYOR; λ=1'de kupon 1318 olayda SIFIR kez tuttu. Canliya hicbir sey
+eklenmedi. `kod/altili_deger_test.py` (OFFLINE).**
+- **Mantik:** pari-mutuel'de EV ∝ Π(bot2_i / agf_i). Yani her ayakta "deger orani" en yuksek
+  atlari almak EV'yi maksimize etmeli. Tek parametreli aile tarandi: **skor = bot2 / AGF^λ**
+  (λ=0 mevcut sistem, λ=1 saf deger). Maliyet her λ'da BIREBIR AYNI (ayni ayak genislikleri),
+  getiri GERCEK t6 temettusu, 1318 OOS olay (AGF'si tam olanlar).
+- **SONUC (butce 96 / kapsam sekli):**
+  | λ | 6/6 | isabet% | ROI(6) | ort.temettu |
+  |---|---|---|---|---|
+  | **0,00 (mevcut)** | **64** | %4,86 | **−%14,1** | 1.674 |
+  | 0,25 | 48 | %3,64 | −%33,9 | 1.718 |
+  | 0,50 | 40 | %3,03 | −%26,1 | 2.305 |
+  | 0,75 | 15 | %1,14 | −%49,1 | **4.236** |
+  | 1,00 | **0** | %0,00 | **−%100** | — |
+  Butce 900'de ayni sekil: λ=0 → 215 isabet/−%53,3; λ=0,75 → 60 isabet/−%83,6; λ=1 → 3 isabet.
+  Esli fark: λ≥0,75'te GA **sifir DISINDA ve NEGATIF** (kesin kotu); λ≤0,5'te sifiri iceriyor
+  (fark yok). **Hicbir λ'da iyilesme YOK.**
+- **MEKANIZMA DOGRU CALISIYOR AMA:** ort. temettu λ ile duzenli yukseliyor (1.674 → 4.236),
+  yani secim gercekten "havuzun ucuz biraktigi" atlara kayiyor — K74 dogru. Ama isabet
+  bundan daha hizli cokuyor.
+- **KOK NEDEN — kenar neden hasat edilemiyor:** K74'teki 2,73 kat TEK AYAK ifadesidir. Altili
+  ALTI ayagin CARPIMIDIR:
+  (a) 6 ayagi birden ucuz atlardan secmek isabeti 0'a indirir (λ=1'de birebir bu oldu),
+  (b) **temettu HAVUZLA SINIRLIDIR** — teorik EV 2,73^6 = 419 kat der, ama kimsenin yazmadigi
+      kombinasyon havuzdan fazlasini odeyemez,
+  (c) q'yu ayak paylarinin carpimi saymak tam da bu uc kombinasyonlarda kirilir.
+  **Yani yanlilik GERCEK ama 6-ayakli carpim bahsinde yapisal olarak hasat edilemez.**
+- **KAPANIS:** Bu, K74'un acik biraktigi tek kapiydi ve kapandi. Altili tarafinda denenmedik
+  yontem kalmadi: kap boyutu (K57), budama (K57), dagitim (K65), bot1 (K67), bot1-kamu ayrismasi
+  (K68), ayak korelasyonu (K70), katman getirisi (K71), taban cizgisi (K72), kesinti (K73),
+  havuz yanliligi (K74), deger secimi (K75). **12 test, hepsi negatif.**
+- **MANTIKLI SONRAKI HALKA (yapilmadi, veri gerekir):** yanlilik ayak basina gercek oldugu icin
+  DAHA AZ AYAKLI bahislerde daha az yikici birlesir (4'lu = 4 carpim, 6'li = 6). BEKLEYENLER #2
+  (4'lu/5'li kupon turleri) bu yuzden artik SOMUT bir gerekce kazandi. Onkosul: 4'lu/5'li
+  temettu verisi arsivde YOK -> once veri toplanmali.
