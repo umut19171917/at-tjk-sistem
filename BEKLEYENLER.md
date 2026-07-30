@@ -84,7 +84,15 @@ yeniden fit et → "kural kitabı" da yeni veriden öğrensin. **Ödünç:** bun
 eğitime dönüşür, temiz OOS biter → yeni bir sınav dönemi tanımlamak gerekir. Sadece katsayı meselesi;
 özellikler zaten güncel. **Not:** track/kulvar/par özellikleri ≤2024 sabit (K38) — o da bu turda gözden geçirilebilir.
 
-### 7. EV-maksimize dağıtım — kamu ile AYRIŞTIĞIMIZ ayağa genişlik ver
+### 7. ✅ ÖLÇÜLDÜ (2026-07-31, K68) — ayrışma dağıtımı BULGU VERMEDİ, canlıya alınmadı
+**Sonuç:** `kod/altili_ayrisma_test.py` (1455 OOS, w=0/0,5/1/2/4, bütçe 96/288/900). Önceden
+yazılan üç ölçütün üçü de düştü: (a) monotonluk 900'de yok, (b) 12 eşli farkın 12'sinde GA sıfırı
+içeriyor, (c) en iyi w bütçeler arası tutarsız. Üstelik mevcut canlı kapsam mantığı hepsini yeniyor
+(−%19,4/−%31,7/−%41,2 vs en iyi ayrışma −%48,2/−%40,2/−%54,9). Tek olumlu iz: w büyüdükçe ort.
+temettü artıyor (798→1.078 @96) — K67'nin mekanizması görünüyor ama kârlılığa yetmiyor.
+Özgün madde aşağıda arşiv olarak duruyor.
+
+<sub>--- özgün madde (arşiv) ---</sub>
 **Eklendi:** 2026-07-26 · **İlgili:** K65, K1 · **TETİK:** kullanıcı isterse (beklenti DÜŞÜK)
 K65 "isabet-maksimize" (açgözlü) dağıtımı çürüttü: şekil istenen hale geldi (tek atlı ayak %5,9→%98,7)
 ve 6/6 sayısı arttı (185→225), **ama para kötüleşti** (ROI(6) −41,2→−55,0) çünkü açgözlü güvendiği
