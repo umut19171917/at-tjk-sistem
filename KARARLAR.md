@@ -1133,3 +1133,41 @@ Canliya dokunulmadi (kagit deneyi aynen suruyor); bu bir TAVSIYE kaydidir.**
   onceki 11 test) orta'nin da negatif oldugunu soyluyor, sadece n=1433 bunu ispata yetmiyor.
 - **Canli sistemde DEGISIKLIK YOK:** 7 config gozlem amaciyla kosmaya devam ediyor (K62/K65/K67/K68);
   bu kayit "gercek para olsaydi" sorusunun cevabidir.
+
+## 2026-07-31 — K72: Taban cizgisi — model SANSI yeniyor, KALABALIGI yenmiyor
+
+**K72 — orta'nin -%19,4'u modelin marifeti DEGIL; "favorileri oyna" tabanının kendisi.
+Model rastgeleyi ezici farkla yeniyor ama kamu favorilerini YENEMIYOR. Canliya dokunulmadi.
+`kod/altili_taban_test.py` (OFFLINE, salt-okunur).**
+- **Soru (kullanici):** "-%19,4 kesintiden iyi gorunuyor — bu modelin marifeti mi, yoksa
+  favorilere yaslanan her kupon boyle mi cikar?"
+- **Adil kiyas:** her olayda GERCEK orta kuponunun AYAK GENISLIKLERI alinir (or. [2,2,2,2,2,3]),
+  ayni genislikle alternatif seciciler kurulur -> **maliyet birebir ayni** (135.561 kombo, dordu de).
+  1433 OOS olay, esli bootstrap 4000.
+- **SONUC:**
+  | secici | 6/6 | isabet% | ROI(6) | ort.temettu | bot2 ile AYNI kupon |
+  |---|---|---|---|---|---|
+  | **bot2 (biz)** | 66 | %4,61 | **−%19,4** | 1.656 | — |
+  | kamu (sadece favoriler) | 65 | %4,54 | **−%17,4** | 1.722 | **%41,4** |
+  | bot1 (oran-kor) | 28 | %1,95 | −%22,2 | 3.769 | %0,2 |
+  | rastgele (25 tekrar) | 0-2 | %0,03 | −%59,6 | — | %0,0 |
+- **ESLI FARKLAR (bot2 eksi digeri):**
+  - vs **rastgele**: **+79,3 puan**, GA [+51,7, +114,3] -> **sifir DISINDA = gercek fark.**
+    Model sansi EZICI farkla yeniyor; siralama gercek bilgi tasiyor, gurultu degil.
+  - vs **kamu**: **−1,2 puan**, GA [−29,9, +21,4] -> **fark YOK** (ve isaret bizim aleyhimize).
+  - vs **bot1**: +5,4 puan, GA [−77,7, +64,1] -> fark yok.
+- **ANLAMI (net):** Kuponumuz fiilen KALABALIGIN kuponu. Secimimiz %41,4 oranında saf-favori
+  secimiyle **birebir ayni**; kalanlarda da olculebilir ustunluk uretmiyor. −%19,4 bizim
+  basarimiz degil, "Altilida favori oynamanin" getirisi (saf favori −%17,4, yani bizden bir tik
+  daha iyi). **K1 (etkin pazar) tezinin en temiz kaniti** — bilgi zaten fiyatta.
+- **Ama kucumsenmemeli:** model rastgeleye gore +79 puan uretiyor. Yani ozellikler/model
+  CALISIYOR; sadece piyasanin ZATEN bildigi seyi ogreniyor. "Bot2 = kamu" (K67: favori
+  ortakligi %89,9) bulgusunun sonuc-tarafindaki karsiligi budur.
+- **Yan bulgu:** bot1 yarisi kadar tutturup (28 vs 66) iki kattan fazla oduyor (3.769 vs 1.656)
+  ve ROI farki istatistiksel DEGIL -> K67 ile tutarli: kalabaliktan ayrilmak isabeti dusurup
+  odemeyi buyutuyor, toplamda basa bas.
+- **TAVSIYEYE ETKISI (K71):** "gercek para olsa yalniz orta" tavsiyesi zayifladi — orta oynamak
+  fiilen "favori oyna" demek ve o da negatif. Dogru cevap yine: **oynama.**
+- **ACIK SORU:** Altili havuzunun gercek kesinti orani nedir? Saf favori −%17,4 getiriyorsa
+  kesinti ~%17-20 civarindaysa favoriler ortalamayi yeniyor demektir; daha yuksekse daha da cok.
+  TJK Altili kesintisi kaynaklanmadi -> BEKLEYENLER'e.
