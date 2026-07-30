@@ -34,11 +34,33 @@ ama **tamamı tek bir 6/6'dan** (23.07 Ankara 2., 90 TL → 17.934 TL). O tek ku
 **Şart:** Kuralı tek YURİBOYKA vakasına göre kurgulama (hindsight/overfit — K33/K52 yasağı);
 genel ilke olarak sabitle, backtest robust üstünlük gösterirse konuş.
 
-### 2. 4'lü / 5'li / 7'li kupon türleri
-**Eklendi:** 2026-07-24 (kullanıcı "sonra" dedi) · **İlgili:** K5, K46
-TJK'nın diğer çok-koşulu bahisleri. Altılı (K53) deney olarak kuruldu; diğerleri henüz yok.
-K46'da "tüm bahis türleri" veriyle reddedilmişti — bunlar açılırsa yine deney amaçlı
-(gerçek bahis değil), önce backtest ile efektiflik sınanarak açılmalı.
+### 2. 4'lü / 5'li kupon türleri — ARTIK SOMUT GEREKÇESİ VAR (K74/K75)
+**Eklendi:** 2026-07-24 · **Güncellendi:** 2026-07-31 · **İlgili:** K5, K46, K74, K75
+**TETİK: KULLANICI hatırlatacak** (2026-07-31'de öyle dedi) — kendiliğinden başlama.
+
+**Neden artık ciddi bir aday:** K74, Altılı havuzunda **gerçek ve büyük** bir yanlılık ölçtü —
+AGF payı %2'nin altındaki atlar havuzun dediğinin **2,73 katı** kazanıyor; ganyanın AGF'den çok
+daha şanslı gördüğü atlarda oran **3,40**. K75 bunu Altılı kuponuna çevirmeyi denedi ve
+**başarısız oldu** — ama başarısızlığın sebebi yanlılığın sahte olması değil, **çarpımın uzunluğu**:
+- Yanlılık **ayak başına** gerçek (2,73 kat)
+- Altılı **6 ayağın çarpımı** → 6 ayağı birden ucuz attan seçmek isabeti sıfırlıyor (λ=1'de
+  1318 koşuda **sıfır** isabet), üstelik temettü havuzla sınırlı olduğu için teorik kazanç
+  (2,73⁶ = 419 kat) hiçbir zaman gerçekleşemiyor.
+
+**Hipotez:** Aynı ayak-başı kenar, **daha kısa çarpımda daha az yıkıcı** birleşir. 4'lü = 4 çarpım,
+5'li = 5, Altılı = 6. İsabet çöküşü üstel olduğu için ayak sayısını azaltmak dengeyi ciddi
+biçimde değiştirebilir. Bu, 12 negatif Altılı testinden sonra kalan **tek yapısal fikir**.
+
+**ÖN KOŞUL — veri yok:** `veri/altili_tam.csv` yalnızca 6'lı temettülerini (t6/t5/t4/t3) tutuyor.
+4'lü ve 5'li bahislerin **kendi temettü serileri arşivde YOK**. Yapılacak sıra:
+1. Ham feed'de 4'lü/5'li temettüsü var mı, hangi uçta — `kod/tani_json.py` ile tara
+2. Yoksa kazı tarafına ekle (`kazi.py`), ileri-yönlü biriktir + mümkünse geriye dönük çek
+3. `altili_tam.py` muadili bir olay tablosu üret (hangi koşular, hangi temettü)
+4. Ancak ondan sonra backtest: aynı `bot2/AGF^λ` ailesi, 4 ve 5 ayakta
+
+**Beklenti (önceden yazılıyor):** düşük. 12 test negatif, kesinti ~%49 ve muhtemelen bu
+bahislerde de benzer. Ama ilk kez körlemesine değil, **ölçülmüş bir mekanizmayı takip ederek**
+bakıyor olacağız — o yüzden yapmaya değer.
 
 ### 3. defter.html'i K55 görsel diline çevirme
 **Eklendi:** 2026-07-24 (teklif edildi, istenmedi) · **İlgili:** K55
