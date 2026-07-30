@@ -6,8 +6,8 @@ kullanılmaz** — tüm kayıt bu klasördeki dosyalardadır.
 
 ## Amaç
 Kuruluş sorusu: TJK müşterek bahislerinde **sürdürülebilir EV>0** mümkün mü? Benter-*ilhamlı*
-yaklaşımla (fundamental model + kamu oranı harmanı) soruldu ve **9 bağımsız testte cevaplandı:
-HAYIR** (verimli piyasa + %25-31 kesinti; K13-K46). **Güncel amaç (K48, 2026-07-17):** paper
+yaklaşımla (fundamental model + kamu oranı harmanı) soruldu ve **12+ bağımsız testte cevaplandı:
+HAYIR** (verimli piyasa + %25-31 ganyan / ~%49 Altılı kesintisi; K13-K46, K52-K75). **Güncel amaç (K48, 2026-07-17):** paper
 testi 25 Eylül'e kadar tamamlamak + izleme/öğrenme. Kullanıcı gerçek bahis OYNAMIYOR;
 K37/K41 çerçevesi askıda (ilk gerçek kuponla kendiliğinden yeniden aktif). Mod kararı: 25 Eylül.
 
@@ -18,10 +18,45 @@ Pari-mutuel + ganyan kesintisi **~%25,7** (veriden ölçüldü) → negatif topl
 ## Kapsam
 - **İçeride:** TR **İngiliz + Arap** düz koşuları (K46: iki ayrı model; Arap analiz katmanı,
   kesintisi ~%30,6 → ekonomisi İngiliz'den de sert). Ganyan + Plase ölçümü.
-- **Dışarıda:** Altılı/çok-koşulu, egzotikler, yabancı, 4 şüpheli pist
-  (Elazığ, Diyarbakır, Urfa/Şanlıurfa, Adana — Arap'ta da hariç). Paper test (K42) İngiliz-kilitli.
+- **İçeride (K53'ten beri): ALTILI GANYAN** — kâğıt gözlem akışı, 7 config (aşağıda).
+  *(Bu satır 2026-07-31'de düzeltildi: eski README Altılı'yı "dışarıda" gösteriyordu, artık
+  sistemin ana faaliyeti odur.)*
+- **Dışarıda:** 4'lü/5'li ve diğer çok-koşulu bahisler (BEKLEYENLER #2), egzotikler, yabancı,
+  4 şüpheli pist (Elazığ, Diyarbakır, Urfa/Şanlıurfa, Adana — Arap'ta da hariç).
+  Paper test (K42) İngiliz-kilitli.
 
-## Durum (2026-06-30)
+## ALTILI SİSTEMİ (güncel ana faaliyet, 2026-07-31)
+Kupon **tek anda**, 1. ayağa **30 dk kala** kurulur (`altili_canli.kupon_zamani_kur`).
+Telegram'a kurulum + sonuç bildirimi gider; sayfa: `raporlar/altili.html` (`altili_goster.bat`).
+
+| config | bütçe | dağıtım | puan | aile |
+|---|---|---|---|---|
+| dar | 24 | kapsam | bot2 | kamu |
+| orta | 96 | kapsam | bot2 | kamu |
+| genis | 288 | kapsam | bot2 | kamu |
+| genis900 | 900 | kapsam | bot2 | kamu |
+| acgozlu900 | 900 | açgözlü | bot2 | kamu |
+| **bot1_900** | 900 | açgözlü | **bot1** | temel |
+| **ayrisma900** | 900 | **ayrışma** | bot2 | ayrışma |
+
+**Hepsi −EV gözlem akışıdır, iyileştirme değil.** Gerekçeleri: K62 / K65 / K67 / K68 / K69.
+
+### Altılı'da ne öğrenildi (12 test, hepsi negatif)
+- **K72:** model **şansı eziyor** (+79 puan) ama **kalabalığı yenmiyor** (−1,2 puan, GA sıfırı
+  içeriyor). Seçimimiz kuponların %41,4'ünde saf-favori seçimiyle birebir aynı.
+- **K73:** Altılı kesintisi **~%49** (AGF'den tahmin). Favori oynamak havuz ortalamasını
+  **~30 puan yeniyor** → *"sistem havuzu yeniyor ama vergiyi yenemiyor."*
+- **K74:** havuzda **gerçek yanlılık var** — AGF payı <%2 olan atlar 2,73 kat fazla kazanıyor;
+  ganyan-AGF ayrışması yüksek olanlarda oran 3,40.
+- **K75:** ama bu **hasat edilemiyor** — 6 ayaklı çarpımda isabet çöküyor (λ=1'de 1318 koşuda
+  sıfır isabet) ve temettü havuzla sınırlı. → Kalan tek yapısal fikir: **daha az ayaklı bahisler**
+  (BEKLEYENLER #2).
+- **K70:** ayaklar birbirinden **bağımsız** → koşullu/alternatif kupon ek bilgi taşımıyor.
+- **K71:** 96 kombodan sonraki her katman **kanıtlı zararlı** (GA sıfırın dışında).
+- **K77:** sayfadaki sıralama, o koşuya ~4 dk kala alınır; kupon ise 30 dk önce kurulur
+  (ayak bazında 30→180 dk fark). "Sistem sıra atladı" görüntüsünün sebebi budur — atlama YOK.
+
+## Durum (temel altyapı — 2026-06-30; güncel durum için KARARLAR.md son 10 karar)
 - Faz 0 — Veri fizibilitesi: **TAMAM** (`raporlar/faz0-veri-fizibilite.md`).
 - Kapı #2 — Eldeki verinin incelenmesi: **TAMAM** (`raporlar/kapi2-veri-inceleme.md`).
   - Eldeki veri = **3 ay** (2024-10 … 2024-12), ~1.041 izinli-pist koşu. Başka veri yok.
