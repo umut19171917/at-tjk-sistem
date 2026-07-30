@@ -68,10 +68,20 @@ altili.html / paper.html K55 zengin formatına geçti (tahminler + sistem sıras
 kamu sırası + oran + bedel + ödül + toplam). defter.html hâlâ eski düzende. İstenirse aynı
 `rapor_ortak.py` yapıtaşlarıyla çevrilebilir; sistemin veri akışına dokunmaz.
 
-### 4. Kupon zamanı analizi — 30 vs 15 vs 10 dk (oran_log verisiyle, OFFLINE)
-**Eklendi:** 2026-07-24 · **Güncellendi:** 2026-07-25 · **İlgili:** K59 · **TETİK:** ~2-3 hafta
-oran_log verisi (yeterli Altılı günü) biriktiğinde. **Kullanıcı kararı (2026-07-25): canlı zamanlama
-30 dk KALSIN; bu soru canlıyı değiştirmeden, simülasyonla cevaplanacak.**
+### 4. Kupon zamanı analizi — 30 vs 15 dk (ARAÇ KURULDU, VERİ BEKLENİYOR)
+**Eklendi:** 2026-07-24 · **Güncellendi:** 2026-07-31 (K76) · **İlgili:** K59, K76
+**DURUM:** Test aracı kuruldu ve koştu → `kod/altili_zaman_test.py`. Ama **oran_log'da yapısal bir
+eksik bulundu:** her ayak KENDİ postasına 45 dk kala loglanıyordu; oysa kupon tek anda, 1. ayağa
+30 dk kala kuruluyor — o anda 2-6. ayaklar kendi postalarına 1-3 saat uzak olduğu için **hiç kayda
+girmiyordu**. 17 Altılıdan yalnızca 3'ü iki zaman diliminde de tam çıktı.
+**K76'da düzeltildi (ileri-yönlü):** artık pencerenin herhangi bir ayağı 45 dk içindeyse, o an
+başlamamış TÜM ayaklar loglanıyor → kupon-kurma anının tam fotoğrafı.
+**YENİ TETİK: ~40-50 tam Altılı birikince (≈2-3 ay, yani Ekim 2026 civarı)** → aracı tekrar koştur.
+İlerlemeyi görmek için: aracın başındaki "iki zaman diliminde de TAM olan Altılı" sayısına bak.
+**Şimdilik ne diyor (KARAR DEĞİL):** 3 Altılı/18 ayakta yalnız-30 tuttu 2, yalnız-15 tuttu 4;
+net +2 ayak, işaret testi **p=0,688** → anlamsız. Yön hafifçe "geç kur" lehine.
+**10 dk bandı düştü:** takip 15 dk'da bir çalışıyor, o pencereye geçiş düşmüyor — test edilemez.
+**Kullanıcı kararı (2026-07-25, geçerli): canlı zamanlama 30 dk KALSIN.**
 `oran_log.py` (K59) her ayağın oranını farklı anlarda (30 / 15 / ~5 dk kala) biriktiriyor.
 **Yöntem:** her Altılı için, 15-dk ve 10-dk snapshot oranlarından bot2'yi YENİDEN hesapla
 (bot1 sabit, sadece piyasa bileşeni değişir) → `kupon_kur`'u tekrar koştur → 30 vs 15 vs 10 dk
