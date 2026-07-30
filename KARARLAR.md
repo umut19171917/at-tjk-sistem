@@ -1291,3 +1291,32 @@ eklenmedi. `kod/altili_deger_test.py` (OFFLINE).**
   DAHA AZ AYAKLI bahislerde daha az yikici birlesir (4'lu = 4 carpim, 6'li = 6). BEKLEYENLER #2
   (4'lu/5'li kupon turleri) bu yuzden artik SOMUT bir gerekce kazandi. Onkosul: 4'lu/5'li
   temettu verisi arsivde YOK -> once veri toplanmali.
+
+## 2026-07-31 — K76: Kupon zamani testi (BEKLEYENLER #4) kosuldu — ARAC EKSIGI BULUNDU ve duzeltildi
+
+**K76 — 30-vs-15 dk testi kuruldu ve kosuldu; ama oran_log'un YAPISAL bir eksigi ortaya cikti:
+kupon kurulma aninda 2-6. ayaklar hic kaydedilmiyordu. `oran_log.py` duzeltildi (ileri-yonlu).
+Canli zamanlama 30 dk KALDI. `kod/altili_zaman_test.py` (OFFLINE) kalici arac olarak duruyor.**
+- **Once bir dogrulama:** harman katsayilari defter.csv'den GERI CIKARILDI — ayni kosuda log-oran
+  regresyonu: `ln(bot2_i/bot2_j) = α·ln(bot1_i/bot1_j) + γ·ln(kamu_i/kamu_j)`.
+  **α=0,2095  γ=0,9495  R²=0,999606** (325 kosu, 2.775 gozlem). Model formu birebir dogrulandi.
+  **Yan bulgu:** γ/α ≈ 4,5 -> Bot2 ezici agirlikla piyasayi takip ediyor. Bu, K67'deki
+  "Bot2 favorisi = kamu favorisi %89,9" bulgusunun BAGIMSIZ dogrulamasi (ayri yontem, ayni sonuc).
+- **ARAC EKSIGI (asil bulgu):** `oran_log` (K59) her ayagi KENDI postasina 45 dk kala logluyordu.
+  Ama kupon TEK ANDA, 1. ayaga 30 dk kala kuruluyor — o anda 2-6. ayaklar kendi postalarina
+  1-3 SAAT uzak, yani **hic kayda girmiyorlardi**. Kanit (29.07 ISTANBUL 1. Altili):
+  `14:00 -> yalniz ayak1 (44,9 dk)`, `14:15 -> ayak1 (14,9) + ayak2 (44,9)`. Yani "kuponu 15 dk
+  kala kursak ne olurdu" sorusu bu veriyle **CEVAPLANAMAZ** — 17 Altilidan yalnizca 3'u
+  iki zaman diliminde de tam cikti.
+- **DUZELTME (ileri-yonlu, K76):** yeni kural — pencerenin HERHANGI bir ayagi 45 dk icindeyse,
+  o an henuz BASLAMAMIS TUM ayaklar loglanir. Dogrulama (kuru): 29.07 ISTANBUL'da 1. ayaga
+  30 dk kala artik `ayaklar=[1..6], dk_kala=[30,60,90,120,150,180]`; 15 dk kala `[15,45,...,165]`.
+  Yani kupon-kurma aninin TAM fotografi cikiyor. Gecmis veri degismez; birikim ileriye donuk.
+  Yan etki: log hacmi ~3-4 kat artar (kabul edilebilir; haftalik commit'te zaten tasiniyor).
+- **MEVCUT VERININ SOYLEDIGI (sinirli, karar DEGIL):** elde 3 tam Altili / 18 ayak. Eslesmis ayak
+  kiyasi (orta config): ikisi de tuttu 9, **yalniz 30 dk 2**, **yalniz 15 dk 4**, ikisi de kacirdi 3.
+  Net **+2 ayak**, isaret testi **p=0,688** -> istatistiksel olarak ANLAMSIZ. Yon hafifce "gec kur"
+  lehine; bu, etkin-pazar beklentisiyle (son oran daha isabetli) ve K74 ile (ganyan iyi kalibre)
+  tutarli — ama K70'te de gorduğumuz gibi ayak kazanmak kupon kazanmak demek degil.
+- **KARAR:** canli zamanlama **30 dk KALIYOR**. Yeterli veri (hedef: ~40-50 tam Altili, ~2-3 ay)
+  birikince `altili_zaman_test.py` tekrar kosulacak. BEKLEYENLER #4 acik kaliyor, tetigi degisti.

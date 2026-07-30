@@ -44,14 +44,27 @@ def oran_kaydet(pistler, ymd, tarih):
             if o.get("_hata"):
                 continue
             for seq, pencere, _ilk in altili_pencereleri(o):
-                for ai, k in enumerate(pencere):
+                # K76: ONCE pencerenin dk_kala'larini cikar. Eskiden her ayak KENDI 45 dk'sina
+                # girince loglaniyordu -> kupon 1. ayaga 30 dk kala kurulurken 2-6. ayaklar
+                # HENUZ KAYDA GIRMIYORDU (onlar kendi postalarina 1-3 saat uzak). Bu yuzden
+                # "kuponu 15 dk kala kursak" sorusu VERIYLE CEVAPLANAMIYORDU (BEKLEYENLER #4).
+                # YENI KURAL: pencerenin HERHANGI bir ayagi 45 dk icindeyse, o an henuz
+                # BASLAMAMIS TUM ayaklar loglanir -> kupon-kurma aninin tam fotografi.
+                dk_list = []
+                for k in pencere:
                     saat = str(k.get("SAAT", "")).strip()
                     try:
                         post = datetime.strptime(f"{tarih} {saat}", "%Y-%m-%d %H:%M")
+                        dk_list.append((post - now).total_seconds() / 60.0)
                     except ValueError:
-                        continue
-                    dk = (post - now).total_seconds() / 60.0
-                    if not (0 <= dk <= PENCERE_DK):        # baslamamis + son 45 dk
+                        dk_list.append(None)
+                tetik = any(d is not None and 0 <= d <= PENCERE_DK for d in dk_list)
+                if not tetik:
+                    continue
+                for ai, k in enumerate(pencere):
+                    saat = str(k.get("SAAT", "")).strip()
+                    dk = dk_list[ai]
+                    if dk is None or dk < 0:               # baslamis ayak -> atla
                         continue
                     rk = _as_int(k.get("KOD"))
                     kno = _as_int(k.get("RACENO") or k.get("NO"))
