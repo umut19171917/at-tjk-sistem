@@ -965,3 +965,35 @@ olarak eklendi. Mevcut dort config AYNEN duruyor; hicbirinin mantigi degismedi.*
   DAHA AZ para kazandiracak (ort. temettu 3.489 -> 2.469 TL; en buyuk yakalanan 47.383 -> 22.374).
   Canli n cok kucuk (~yilda 100 olay) -> canli akis backtest'i CURUTEMEZ, sadece gorunur kilar.
 - **Yan etki:** kagit gideri Altili basina +1.125 TL/gun; altili.html GENEL TOPLAM eksisi hizlanir.
+
+## 2026-07-30 — K67: "Kamu botu hic olmasaydi?" — Bot1-tek Altili backtesti
+
+**K67 — Bot1 (oran-kor) tek basina Bot2'yi GECMIYOR; ama "kalabaliktan ayrilmak buyuk odemeleri
+aciyor" tezi YAPISAL olarak DOGRULANDI. Canliya hicbir sey eklenmedi. `kod/altili_bot1_test.py`
+(OFFLINE; yeni dosya veri/altili_olasilik_bot1.csv, mevcut altili_olasilik.csv AYNEN kaldi).**
+- **Soruyu doguran olcum:** Bot2 pratikte KAMUNUN KENDISI — 24.822 kosuda Bot2 favorisi = kamu
+  favorisi %89,9; sira korelasyonu 0,977; favori kazanma orani kamu %35,5 vs Bot2 %35,7 (fark
+  ~0,2 puan). Yani bugune kadarki HER kupon ozunde kalabaligin kuponu.
+- **Bot1 gercekten ayri:** Bot1 favorisi = kamu favorisi yalnizca %47,3. Bedeli var: Bot1 favorisi
+  kazanma orani %29,1 (Bot2 %35,7) -> kamuyu atmak isabetten OLUYOR.
+- **Onceden yazilan beklenti AYNEN cikti:** Bot1 daha AZ tutturur, daha COK oder. 900 butce/acgozlu:
+  isabet 225 -> 123 (yariya), ort. temettu 2.469 -> 10.248 TL (4 kat).
+- **8 hucre tarandi** (2 dagitim x 4 butce). Yedisi negatif. TEK pozitif: bot1+acgozlu+900 =
+  **ROI +%2,1** — ama %95 GA **[-64,5, +105,8]**, esli fark GA'si **[-8,7, +167,8] SIFIRI ICERIYOR**.
+  8 hucrede 1 pozitif = gurultuden beklenecek sayi (coklu kiyas uyarisi).
+- **YOGUNLASMA TESTI (kritik):** o +%2,1'in kaynagi TEK isabet — 539.029 TL. Cikarinca **-%41,6**.
+  Toplam getirinin %43'u tek isabetten, %63'u en buyuk uc isabetten. Medyan temettu ise sadece
+  2.056 TL. Yani siradan isabetler masrafi KARSILAMIYOR; her sey kuyruga bagli.
+- **AMA YAPISAL BULGU (sans degil):** 900/acgozlu'de **Bot2'nin 225 isabetinde en buyuk odeme
+  22.374 TL; 50 binin ustu SIFIR.** Bot1 ise 123 isabette 100 binin ustune **UC KEZ** cikti
+  (en buyuk 539.029). Bot2 buyuk temettu bolgesine hic girmiyor — cunku temettu tam da kalabalik
+  YANILDIGINDA buyur ve Bot2 kalabaligin ta kendisi. **Kullanicinin "ayri dusmek oduyor" sezgisi
+  mekanizma olarak DOGRU.**
+- **KARAR:** canliya Bot1 akisi EKLENMEDI, hicbir config degismedi. Gerekce: tez kuyruk olaylarina
+  dayaniyor (1455 olayda 3 adet 100bin+ = ~%0,2). Canlida ~gunde 2 Altili ile bir jackpot beklemek
+  ~250 gun demek; canli gozlem bu soruyu OMURDE cozemez. Karlilik bu veriyle ne dogrulanabilir
+  ne curutulebilir.
+- **Dogrulama:** yeniden uretilen bot2, mevcut altili_olasilik.csv ile birebir ayni (max fark
+  ~1e-16) -> walk-forward kurulumu dogru kopyalandi. py_compile OK.
+- **Not:** Bu, K19-K33/K44/K46/K52/K57/K65 dizisindeki 10. kenar testi. Digerlerinden farki:
+  ilk kez bir mekanizma DOGRULANDI (kuyruk erisimi), ama karliliga cevirilemedi.
