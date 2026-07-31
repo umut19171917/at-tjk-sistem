@@ -1479,3 +1479,54 @@ bir geçtiği için kesinti üç ayrı hasar yapabiliyor ve **üçü de sessizdi
 - Not: `TJK Takip` görevinde `StartWhenAvailable=True` — PC dönünce kaçan geçişi telafi
   etmeye çalışır, yani 15:30 kesintisinde kayıp 2 koşu yerine 1 olabilir. `WakeToRun`
   kullanıcı isteğiyle kapalı (PC çantada), dokunulmadı.
+
+**K83 — "Bugünkü Bursa'yı tutturmak için nasıl kupon gerekirdi?" (gerçek temettülerle ölçüm).**
+31 Tem BURSA: 1. Altılı **244.060 TL**, 2. Altılı **1.302.968 TL** ödedi. Bizim en iyimiz 3/6 ve 2/6.
+- **Kazananların bizim sıralamamızdaki yeri (KUPON ANINDA — bugün uzak-ayak verisi olduğu için
+  ilk kez hesaplanabildi):** BURSA-1 → 3,1,6,4,3,8 | BURSA-2 → **7,8,4,4,3,8**.
+  BURSA-2'de altı ayağın hiçbirinde kazanan ilk 3'te değil; 1,3 milyonun sebebi bu.
+- **En küçük "ilk-N" kuponu:** BURSA-1 1.728 kombo (2.160 TL), BURSA-2 21.504 kombo (26.880 TL)
+  — ama bu, hangi ayakta kaç at gerektiğini ÖNCEDEN bilmeyi varsayar. Gerçekçi tekdüze kupon
+  (her ayakta ilk 7) her iki Altılı'yı da tutardı: **126.052 TL/Altılı**. Tek başına ikisi de kârlı.
+- **AMA aynı genişliği her gün oynasak (22 Altılı, RESMİ temettülerle):**
+  | ilk N | tutan | ort.kombo | bedel | ödül | ROI |
+  |---|---|---|---|---|---|
+  | 4 | 5/22 | 4.096 | 112.640 | 135.463 | +%20,3 |
+  | 5 | 12/22 | 15.341 | 421.875 | 223.856 | −%46,9 |
+  | 7 | 20/22 | 96.804 | 2.662.109 | 2.077.842 | −%21,9 |
+  | 9 | **22/22** | 305.477 | 8.400.611 | 2.171.089 | **−%74,2** |
+  | 12 | 22/22 | 767.443 | 21.104.670 | 2.171.089 | −%89,7 |
+- **Ana bulgu: TUTTURMAK ZOR DEĞİL, BEDELİNİ ÇIKARMAK ZOR.** N=9'da 22 Altılı'nın 22'sini birden
+  tutturuyorsun ve %74 kaybediyorsun. Genişlik 6. kuvvetle büyür, ödül büyümez — hatta küçülür,
+  çünkü aynı kombinasyonu başkaları da bulur ve havuz bölünür.
+- **N=4'ün +%20,3'ü TUZAK:** 135.463 TL ödülün 102.131'i (%75) TEK bir Altılı'dan (30 Tem KOC-1).
+  O olay çıkarılınca ROI **−%70,4**. Temettü dağılımı zaten bunu söylüyor: medyan 17.262 TL,
+  **en büyük 3 Altılı toplam ödülün %77'si**.
+- **Tablo İYİMSER (dürüstlük notu):** yarış-anı sıralaması kullanıldı; kupon 30 dk önce kuruluyor.
+  BURSA-2 kupon anında 21.504, yarış anında 6.720 kombo gerektiriyordu → gerçekte **3,2 kat**
+  pahalı. Ayrıca n=22. Arşiv backtesti (K52, 1455 olay) da aynı yönde: −%32.
+
+**K84 — Devir (kimse bilemedi) parası nereye gidiyor? Beklediğimiz yere DEĞİL.**
+Kullanıcı sordu: "Bursa'yı bilen çıkmamışsa sonraki Altılı bizim için avantajlı olmaz mı?"
+**Olgu düzeltmesi:** Bursa'da bilen ÇIKTI (temettü ödendi, devir yok). Ama fikir doğru olduğu
+için arşiv tarandı — devir, Altılı'daki tek yapısal avantaj durumudur (devreden para kesintisini
+zaten ödemiştir).
+- **Devir NADİR:** 6.747 Altılı'da **24 devir = %0,36 → 281 Altılı'da bir.** Son yıllarda
+  hızlanmış (2025: 7, 2026: şimdiden 4). Tutar büyük: medyan 6,16 M TL, en büyük 24,86 M
+  (01/11/2025 ANKARA).
+- **"Sonraki Altılı avantajlı" DOĞRULANMADI.** Aynı pistteki bir sonraki Altılı medyanda
+  78.839 TL ödemiş (normal medyan 5.589 → 14,1 kat) — ilk bakışta doğrular gibi. Ama devrin
+  görünen geri dönüşü **0,017×**: devreden 6 milyonun sonraki Altılı'da karşılığı ~%2.
+  Para oraya gitmiyor; 14 kat büyük ihtimalle pist/zorluk etkisi.
+- **Para AYNI GÜN, AZ-AYAK bahislerinde:**
+  | | devir günü medyan | normal gün medyan | oran |
+  |---|---|---|---|
+  | t5 (5 ayak) | **198.489 TL** | 988 TL | **201 kat** |
+  | t4 | 18.768 TL | 270 TL | 70 kat |
+  | t3 | 3.840 TL | 76 TL | 51 kat |
+  *Mekanizma kural kitabından doğrulanmadı; ölçülen şey güçlü bir birliktelik. Ama yön açık:
+  6/6 sahipsiz kalınca değer az-ayak bahislerinde toplanıyor.*
+- **Devirlerin %71'i bizim OYNAMADIĞIMIZ pistlerde:** ŞANLIURFA(8), DİYARBAKIR(5), ELAZIĞ(2),
+  ADANA(1), DBAKIR(1) = 17/24 — hepsi `EXCL` listesinde. Kalan 7: BURSA(4), İSTANBUL, İZMİR, ANKARA.
+- **SONUÇ:** devir sonrasını beklemek işe yaramaz. Asıl bulgu BEKLEYENLER #2'yi (4'lü/5'li)
+  güçlendiriyor: Altılı'nın kayıp kuyruğu 5-ayak bahsinde toplanıyor.
