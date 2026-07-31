@@ -173,6 +173,57 @@ Not: depo kişisel bahis defteri içerir → **mutlaka private**. `kod/telegram_
 
 ---
 
+### 9 — Açgözlü uzak ayakta bankeri hak ediyor mu? (K79/K80)
+
+**Sorun:** ACGOZLU900 olasılık vektörünün *sivriliğine* göre genişlik dağıtıyor. 6. ayak kupon
+anında ~180 dk uzakta; o yarışın havuzu neredeyse boş → çarpık oran → sahte favori. Açgözlü
+bunu "eminim" diye okuyup en az atı oraya yazıyor. 12 bankerinin 6'sı 6. ayakta, 6. ayak
+isabeti %33 (1-5. ayak %75, p=0,014). Kapsam dağıtıcısı sahaya göre ölçtüğü için etkilenmiyor
+(kontrol: p=0,84) → sorun ayağın zorluğu değil, açgözlünün genişlik kararı.
+
+**"En az 2 at" kuralı REDDEDİLDİ** (kullanıcı, 31 Tem): semptomu bastırır ve açgözlünün asıl
+marifetini — gerçekten güvendiği ayakta daralabilmesini — öldürür. Banker yasaklanmayacak,
+**hak edilmesi** sağlanacak.
+
+**Denenip ELENEN fikir:** "bot1 de o atı ilk-2'de görüyorsa bankere izin ver". Test edildi:
+bot1 ilk-2'de görüyorsa 2/5, görmüyorsa 3/7 tuttu — **p=1,00, sinyal yok** (n=12, gücü de yok).
+Kanıt diye sunulamaz, bırakıldı.
+
+**ARAÇ HAZIR:** `kod/altili_suruklenme.py` (offline, salt-okunur). Her mesafe kovası için
+sıcaklık katsayısı lambda'yı ölçer: `p_kalibre = normalize(p^lambda)`, lambda<1 = vektör fazla
+sivri. Kazananın log-olabilirliğini enbüyüterek kestirir, koşu-bazlı bootstrap ile %90 GA verir.
+Katsayı **tahmin edilmez, ölçülür**.
+
+**Baz çizgisi ölçüldü (31 Tem):** 1. ayak (~30 dk) bot2 lambda = **0,944, GA [0,79 – 1,10]**
+→ 1'i içeriyor, yani yakın ayakta olasılık **iyi kalibre**, sorun yok. bot1 lambda = 1,020.
+Karşılaştırma noktası hazır; geriye 2-6. ayakları doldurmak kaldı.
+
+**TETİK — iki koşul birden:**
+1. `python kod/altili_suruklenme.py` çalıştır; B tablosunda **6. ayak satırının n'i ≥ 15**
+   olmalı (araç "yetersiz" yazmayı bıraktığında hazırdır).
+2. Aynı anda `acgozlu900` ile `bot1_900` ayak-sırasına göre kıyaslanabilir olmalı
+   (bot1_900 30 Tem'de canlıya girdi; ~25+ kupon gerekir).
+Günde ~3 Altılı geliyor → tahmini **~2-3 hafta (Ağustos ortası 2026)**.
+**Haftada bir çalıştır** — `n` sütunu ilerleme çubuğudur.
+
+**İLK ÇALIŞTIRMANIN ASIL AMACI (yarın):** K76 düzeltmesi 31 Tem'de girdi ve o ana kadar
+**tek satır uzak-ayak verisi üretmemişti**. Araç her açılışta "uzak ayak kaydı geliyor mu"
+diye bakıp açıkça söylüyor. Yarın çalıştır: 60/90/120/150/180 dk satırları görünmüyorsa
+düzeltme işlememiş demektir → 3 hafta değil 1 gün kaybederiz. (BEKLEYENLER #4 tam bu yüzden
+haftalarca cevapsız kalmıştı.)
+
+**KARAR KURALI — şimdiden bağlanıyor (hindsight yasağı):**
+- 6. ayak lambda'sının %90 GA'sı **1'i içeriyorsa** → eskime hikâyesi doğrulanmadı,
+  **açgözlü ellenmez**, K79 "ölçüldü, çıkmadı" diye kapanır.
+- GA'sı **tamamen 1'in altındaysa** → `acgozlu_v2` YENİ config olarak eklenir (K69 kalıbı;
+  çalışan akış ortasında değiştirilmez). Her ayağın olasılığı kendi kovasının ölçülmüş
+  lambda'sıyla düzleştirilir, sonra aynı açgözlü dağıtım koşar. Banker serbest kalır ama
+  ancak gerçekten sivri bir dağılımda ortaya çıkar.
+- Lambda değeri **koşturulan ölçümden** alınır; birden çok aday arasından "en iyi sonucu
+  vereni" seçmek YASAK.
+
+---
+
 ## KAPALI / KARARA BAĞLANMIŞ — tekrar açma, gerekçesi var
 
 - **Gerçek bahis çerçevesi** — ❌ askıya alındı (K48): kullanıcı gerçek para oynamıyor.
