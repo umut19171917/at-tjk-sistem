@@ -1449,3 +1449,33 @@ pistler, aynı koşullar → gerçek belirsizlik GA'nın gösterdiğinden büyü
 **KARAR: açgözlü ELLENMEZ, veri birikmeye devam.** BEKLEYENLER #9'un tetiği artık C bölümüdür:
 FARK'ın %90 GA'sı sıfırdan ayrılana kadar hiçbir şey değişmez. Bugünkü tablo bir ipucu değil,
 sadece aracın çalıştığının kanıtıdır.
+
+**K82 — Günlük hasar raporu: kesintinin sessiz maliyetini görünür kıldı.**
+Kullanıcı bazı günler **~15:00-16:00 arası yarım saat** PC'yi kapatmak zorunda. Takip 15 dk'da
+bir geçtiği için kesinti üç ayrı hasar yapabiliyor ve **üçü de sessizdi**.
+- **Ölçüm — kupon kurma anları (12 gün, 34 Altılı):** 12:30(1) 13:00(3) 13:30(2) 14:00(4)
+  14:45(1) **15:00(9)** 16:15(2) 16:45(1) 17:15(2) 17:30(1) 18:30(2) 18:31(4).
+  **15:00 günün en yoğun anı — 12 günün 9'unda.** 15:30 ve 15:45'te bugüne kadar
+  **hiç kupon kurulmamış.**
+- **Üç hasar türü, artan maliyetle:**
+  1. `DEFTER KAYDI YOK` (ucuz) — koşu deftere ancak takip [posta−5, posta+3] aralığında
+     geçerse yazılır; kaçarsa "geçmiş" mühürlenir, **bir daha denenmez**. Kupon/isabet/
+     kâr-zarar bozulmaz (sonuçlandırma sonuç feed'inden), ama sıralama görünmez ve o koşu
+     **λ ölçümünden düşer** (altili_suruklenme bot1'i ve posta oranını defter'den alır).
+  2. `GEC KURULDU` (sinsi) — kesinti pencereye kısmen denk gelirse kupon kaybolmaz, geç
+     kurulur (30 dk yerine 5 dk kala). Kupon var görünür ama **farklı bir deneydir**;
+     BEKLEYENLER #4 tam olarak bu soruyu ölçüyor → kirlenmiş zamanlama onu bozar.
+  3. `KURULMAYAN ALTILI` (pahalı) — 30 dk'lık pencereye iki geçiş düşer; ikisi de kaçarsa
+     o Altılı **hiç kurulmaz**: 7 kupon + o Altılı deneyden düşer.
+- **Mevcut hasar (12 gün):** 6 gün temiz. 1 kurulmayan Altılı (21 Tem ANKARA-2),
+  0 geç kurulan, 15 düşen defter kaydı. Ayrıca 2 "yarış sonrası kayıt" (20 Tem elle
+  girilen kuponlar) — bu kesinti hasarı DEĞİL, ayrı sayılıyor ki istatistiği kirletmesin.
+- **KULLANICIYA VERİLEN KURAL:** zorunlu kesinti **15:30'da başlasın, 15:00'te değil.**
+  15:00'te kesmek günlerin çoğunda bütün bir Altılı'yı öldürür; 15:30'da kesmek 1-2 koşunun
+  defter kaydına mal olur. 10:30 öncesi / 22:30 sonrası ise maliyet **sıfır**.
+- **Araç:** `kod/kayip_raporu.py` + `kayip_bak.bat` (offline, salt-okunur, çift-tık).
+  `altili_temettu.csv`'yi "hangi Altılı gerçekten koştu" kaynağı olarak kullanır →
+  kurulmayan Altılı sayısı bir **alt sınırdır** (o dosyada eksik olan burada da görünmez).
+- Not: `TJK Takip` görevinde `StartWhenAvailable=True` — PC dönünce kaçan geçişi telafi
+  etmeye çalışır, yani 15:30 kesintisinde kayıp 2 koşu yerine 1 olabilir. `WakeToRun`
+  kullanıcı isteğiyle kapalı (PC çantada), dokunulmadı.
