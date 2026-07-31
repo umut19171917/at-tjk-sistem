@@ -34,9 +34,26 @@ ama **tamamı tek bir 6/6'dan** (23.07 Ankara 2., 90 TL → 17.934 TL). O tek ku
 **Şart:** Kuralı tek YURİBOYKA vakasına göre kurgulama (hindsight/overfit — K33/K52 yasağı);
 genel ilke olarak sabitle, backtest robust üstünlük gösterirse konuş.
 
-### 2. 4'lü / 5'li kupon türleri — ARTIK SOMUT GEREKÇESİ VAR (K74/K75)
+### 2. 4'lü / 5'li kupon türleri — GEREKÇE GÜÇLENDİ (K74/K75/K84)
 **Eklendi:** 2026-07-24 · **Güncellendi:** 2026-07-31 · **İlgili:** K5, K46, K74, K75
 **TETİK: KULLANICI hatırlatacak** (2026-07-31'de öyle dedi) — kendiliğinden başlama.
+
+**K84 EKLEDİ — en güçlü gerekçe (31 Tem 2026):** arşivde 6.747 Altılı'nın **24'ünde (%0,36)**
+6/6'yı kimse bilemiyor. O günlerde değer az-ayak bahislerine akıyor:
+
+| | devir günü medyan | normal gün medyan | oran |
+|---|---|---|---|
+| **5 ayak** | **198.489 TL** | 988 TL | **201 KAT** |
+| 4 ayak | 18.768 TL | 270 TL | 70 kat |
+| 3 ayak | 3.840 TL | 76 TL | 51 kat |
+
+Yani Altılı'nın **en şişkin kuyruğu tam olarak 5-ayak bahsinde** toplanıyor; 6 ayak oynayan
+o günlerde eli boş kalıyor. Bu, "4'lü/5'li kuralım mı"yı meraktan çıkarıp ölçülebilir bir
+hipoteze çevirdi: *6-ayak ürününde harcadığımız aynı bütçe, 5-ayakta kuyruğu yakalar mı?*
+
+**İşe başlarken İLK doğrulanacak şey:** mekanizma kural kitabından teyit edilmedi — ölçülen
+şey güçlü bir birliktelik (n=24). "6/6 sahipsiz kalınca havuz az-ayak bahislerine mi dağıtılıyor,
+yoksa bu sadece o günlerin zorluğunun yansıması mı?" Bu ayrım yapılmadan strateji kurulmaz.
 
 **Neden artık ciddi bir aday:** K74, Altılı havuzunda **gerçek ve büyük** bir yanlılık ölçtü —
 AGF payı %2'nin altındaki atlar havuzun dediğinin **2,73 katı** kazanıyor; ganyanın AGF'den çok
