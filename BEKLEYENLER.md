@@ -246,6 +246,35 @@ v3 uydurma değil ama kanıtlı da değil; λ ölçümünün yerini TUTMAZ.
 Geçmiş kuponlar üzerinde ikisini deneyip "daha iyi sonuç vereni" seçmek YASAK — 12 kuponluk
 geçmişte kazanan seçmek, ölçüm değil kendini kandırmadır.
 
+**YAPISAL TESPİT — açgözlünün tek-atı bir GÜVEN BEYANI DEĞİL, bütçe artığıdır.**
+(Kod önerisi değil; λ geldiğinde yanlış yorumlamamak için not.) Sentetik sınama, 31 Tem:
+3 ayağa tepesi 0,80 olan girdi, 3 ayağa dağınık girdi verilip iki dağıtıcı koşuldu.
+
+| kaç ayakta 0,80'lik at var | KAPSAM (0.75/96) | tek-at | AÇGÖZLÜ (900) | tek-at |
+|---|---|---|---|---|
+| 1 | 1×2×2×2×3×3 (72) | 1 | 1×5×5×4×3×3 (900) | 1 |
+| 2 | 1×1×3×3×3×3 (81) | 2 | 1×1×5×5×5×5 (625) | 2 |
+| 3 | 1×1×1×4×4×4 (64) | **3** | 3×2×1×5×5×5 (750) | **1** |
+| 4 | 1×1×1×1×4×4 (16) | **4** | 4×2×2×2×5×5 (800) | **0** |
+| 6 | 1×1×1×1×1×1 (1) | **6** | 4×4×4×3×2×2 (768) | **0** |
+
+- **Kapsam ailesi:** banker testi ayak ayak bağımsız; sayaç/tavan YOK. Altısında birden banker
+  bulursa tek kombinasyonluk kupon yazar. Banker arttıkça kombo düşer, artan bütçe diğer
+  ayakları genişletir — istenen davranış.
+- **Açgözlü TERS çalışıyor:** ne kadar çok ayaktan eminse o kadar AZ tek at yazıyor. Altı ayağın
+  altısı da 0,80'lik favoriliyken HİÇ banker yazmıyor. Sebep: açgözlü güven ifade etmiyor,
+  **900 bütçesini harcamak zorunda**. Dağınık ayaklar doyunca artan bütçe geri dönüp güvenilen
+  ayağa 2., 3., 4. atı satın alıyor.
+- Ek artık: 1-2-3. ayakların girdisi **birebir aynıyken** 3/2/1 at almışlar — sıralı tarama +
+  tamsayı bütçe kısıtının yan ürünü. Ayak düzeyindeki çıktı bir yargı değil, aritmetik.
+- **Fiiliyat:** 106 kuponun 87'sinde 0, 19'unda 1 gerçek banker; **aynı kuponda 2 gerçek banker
+  hiç olmamış** (%70 yüksek eşik). Yani çoklu-banker durumu henüz gerçekleşmedi.
+- **v3 bunu ÇÖZMEZ** — v3 yalnızca hak edilmemiş tek atı engeller (taban 2). Buradaki kusur
+  tersi: açgözlü gerçekten emin olduğunda bile daralamıyor.
+- **Muhtemel DÖRDÜNCÜ aday (yazıldı, önerilmedi):** açgözlü bütçeyi harcamak ZORUNDA olmasın —
+  marjinal kazanç/bedel oranı bir eşiğin altına düşünce dursun (kupon 900 yerine 300'de biter).
+  Ama bu YENİ bir eşik = yine ölçülmesi gereken bir sayı. λ ölçümünden önce dokunulmaz.
+
 **KARAR KURALI — şimdiden bağlanıyor (hindsight yasağı):**
 - 6. ayak lambda'sının %90 GA'sı **1'i içeriyorsa** → eskime hikâyesi doğrulanmadı,
   **açgözlü ellenmez**, K79 "ölçüldü, çıkmadı" diye kapanır.
