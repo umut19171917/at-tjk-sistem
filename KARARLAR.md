@@ -1382,7 +1382,7 @@ Kullanıcı 28.07 KOCAELİ 2. Altılı'da fark etti: ACGOZLU900 son ayakta siste
   (dar=ilk2={7,9}, orta=ilk3={4,7,9}) → kupon anında sıra **9 > 7 > 4** idi. Oran seyri
   (`altili_oran_log.csv`, race_kod 226449): #9 → 4,35 (44 dk) → 8,05 (15 dk) → **13,65** (posta);
   #7 → 8,25 → 4,75 → **3,40**. Yani #9 kupon anında favoriydi, posta anında 8. sıraya düştü.
-- **Sistematik mi? (n=27 Altılı, 10'unda açgözlü var):**
+- **Sistematik mi? (n=27 Altılı, 12'sinde açgözlü var):**
   | ölçüm | 1. ayak | 6. ayak | p |
   |---|---|---|---|
   | seçimimiz = yarış-anı ilk-k (SONUÇTAN BAĞIMSIZ) | 15/27 | **4/27** | **0,0038** |
@@ -1398,7 +1398,7 @@ Kullanıcı 28.07 KOCAELİ 2. Altılı'da fark etti: ACGOZLU900 son ayakta siste
   eminim" deyip *en az* at verir (2,2, tüm ayakların en azı). 12 bankerinin **6'sı** 6. ayakta.
 - **İroni:** kullanıcının 25 Tem'de istediği "bir ayakta banker, gerisi geniş" şeklini üreten tek
   dağıtıcı açgözlü — ama bankeri en az bildiği ayağa koyuyor.
-- **Karar: ŞİMDİLİK KOD DEĞİŞMİYOR.** Açgözlü n=10 Altılı; p=0,014 ipucu, kanıt değil.
+- **Karar: ŞİMDİLİK KOD DEĞİŞMİYOR.** Açgözlü n=12 Altılı; p=0,014 ipucu, kanıt değil.
   Ayrıca düzeltme için gereken "geç ayak ne kadar güvenilmez" katsayısı şu an **tahmin** olurdu.
   K76 düzeltmesinden sonra `oran_log` artık kupon anında TÜM ayakları kaydediyor → birkaç hafta
   içinde bu katsayı ölçülerek çıkarılabilir. O zamana kadar gözlem.
