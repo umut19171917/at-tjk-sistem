@@ -1530,3 +1530,35 @@ zaten ödemiştir).
   ADANA(1), DBAKIR(1) = 17/24 — hepsi `EXCL` listesinde. Kalan 7: BURSA(4), İSTANBUL, İZMİR, ANKARA.
 - **SONUÇ:** devir sonrasını beklemek işe yaramaz. Asıl bulgu BEKLEYENLER #2'yi (4'lü/5'li)
   güçlendiriyor: Altılı'nın kayıp kuyruğu 5-ayak bahsinde toplanıyor.
+
+**K85 — K84'ÜN MEKANİZMASI YANLIŞTI (düzeltme) + TJK bahis ürünlerinin haritası.**
+K84'te "6/6 sahipsiz kalınca değer az-ayak bahislerine akıyor" yazmıştım ve mekanizmanın
+doğrulanmadığını not düşmüştüm. Doğrulandı: **yanlıştı.**
+- **Kanıt 1 (ham metin, 15/07/2026 ELAZIG):** Altılı devir kombinasyonu `12/8,10/8/6/4/12`;
+  aynı kartta `SIRALI 5 Lİ BAHİS(6/13/1/2/11): 1.587.498,75TL`, `4'LÜ GANYAN(8/6/4/12):
+  75.602,45TL`, `3'LÜ GANYAN(6/4/12): 7.105,90TL` — **bambaşka koşular/kombinasyonlar.**
+- **Kanıt 2 (kesin):** SIRALI 5 Lİ'nin **kendi 1201 devri** var. Altılı'nın teselli katmanı
+  olsaydı kendi başına devredemezdi. → `altili_tam.csv`'deki `t5_div/t4_div/t3_div` sütunları
+  Altılı katmanı DEĞİL, **aynı kartta koşan ayrı ürünlerin** ödemeleridir.
+- **DOĞRU AÇIKLAMA:** devir günlerindeki 201 kat, para akışı değil **ortak sürpriz**.
+  Altılı'yı kimsenin bilemediği gün, aynı kartın koşuları sürpriz üretmiştir; o koşuları
+  paylaşan diğer çok-ayaklı bahisler de büyük öder. Korelasyon var, nedensellik yok.
+- **K84'ün geçerli kalan kısmı:** devir sayıları, sıklıklar, "sonraki Altılı avantajlı
+  DEĞİL" bulgusu (0,017× geri dönüş) ve devirlerin %71'inin EXCL pistlerinde olması.
+
+**ÜRÜN HARİTASI (arşiv taraması, 4.219 kart / 2021-2026):**
+| ürün | devir | kart başına | medyan devir | hangi yıllarda var |
+|---|---|---|---|---|
+| SIRALI 5 Lİ BAHİS | 1201 | **%28,5** | 32.291 TL | 2021-2026 (kartların ~%80'i) |
+| **7'Lİ GANYAN** | **91** | %2,2 | **508.874 TL** | **YALNIZ 2026** (kartların %75'i) |
+| 6'LI GANYAN (Altılı) | 24 | %0,6 | 6.160.747 TL | 2021-2026 (%100) |
+| 7'Lİ PLASE | 14 | %0,3 | 631.682 TL | 2021-2026 |
+| 5'Lİ GANYAN | 3 | %0,1 | 6.086.044 TL | 2021-2026 (%100) |
+- **EN ÖNEMLİ BULGU: 7'Lİ GANYAN 2026'da çıkmış YENİ bir üründür.** 2021-2025 kartlarının
+  **%0'ında**, 2026 kartlarının **%75'inde** görünüyor (yılda 40 kart örneklemesi). 91 devrinin
+  tamamı 2026'da. Yeni ürün = kalabalık henüz kalibre olmamış + devir sık.
+  Bu, projede bugüne kadar bulunan **tek yapısal açıklık adayıdır.**
+- **3'lü/4'lü/5'li/6'lı GANYAN** = ardışık N koşunun kazananları. **SIRALI 5 Lİ BAHİS** ise
+  TEK koşuda ilk 5'i sırasıyla bilmek — o yüzden %28,5 devrediyor (zorluğu farklı sınıftan).
+- **KOD/VERİ DURUMU:** bu ürünlerin olay tabloları YOK (`altili_tam.csv` sadece Altılı için).
+  Backtest öncesi arşivden olay tablosu üretmek gerekir — ham veri mevcut, iş yapılabilir.
