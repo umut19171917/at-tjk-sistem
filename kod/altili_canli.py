@@ -566,11 +566,17 @@ def _resmi_satir(kupolar):
 def _tum_siralama_html(rk, secimler):
     """K58: o kosudaki TUM atlar SISTEM sirasina gore (ayri satirda). Bizim sectigimiz KALIN,
     kazanan YESIL kutu + tik. defter'den (salt-okunur). Kayit yoksa acikca soyler."""
+    # K81: eskiden iki dal da AYNI cumleyi basiyordu -> 31 Tem'de bugunun 24 ayaginin
+    # hepsinde uyari cikti, sayfa yeniden uretilince sifira dustu ve SEBEP ANLASILAMADI.
+    # Artik hangi dalin yandigi ve hangi race_kod oldugu yaziliyor; tekrarlarsa teshis anlik.
     if not rk:
-        return "<span class=mini>sistemin siralamasi: bu kosunun defter kaydi yok</span>"
+        return ("<span class=mini>sistemin siralamasi: bu ayagin <b>race_kod'u yok</b> "
+                "(kupon kaydinda bos)</span>")
     g = ro.kosu_atlari(rk)
     if g is None or len(g) == 0:
-        return "<span class=mini>sistemin siralamasi: bu kosunun defter kaydi yok</span>"
+        return (f"<span class=mini>sistemin siralamasi: <b>defter'de {rk} kaydi bulunamadi</b> "
+                f"&mdash; gun sonu 'sonucla' gecisinden once bakildiysa normaldir, "
+                f"sayfayi 22:30'dan sonra tazele</span>")
     g = g.copy()
     g["mr"] = pd.to_numeric(g["model_rank"], errors="coerce")
     g = g.sort_values("mr", na_position="last")

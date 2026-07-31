@@ -1406,3 +1406,46 @@ Kullanıcı 28.07 KOCAELİ 2. Altılı'da fark etti: ACGOZLU900 son ayakta siste
   kuralı; (b) geç ayaklarda olasılığı düzgüne doğru büzen güvenilirlik katsayısı; (c) ikisi de
   mevcut akışı bozmadan YENİ config olarak eklenir (K69 kalıbı) — çalışan ölçüm akışı
   ortasında değiştirilmez.
+
+**K81 — İlk uzak-ayak ölçümü: K76 doğrulandı, bot1 kontrolü beni yanlış sonuçtan kurtardı.**
+
+**(a) Sayfadaki "defter kaydı yok" uyarısı.** Kullanıcı 31 Tem 21:55'te üretilen `altili.html`'de
+bugünün 24 ayağının HEPSİNDE bu uyarıyı gördü. İnceleme: bugünün verisi **eksiksiz** (24/24 ayak,
+`model_rank` dolu). Sayfa 22:19'da yeniden üretilince uyarı **sıfıra düştü** (toplam 62 → 38).
+Kalan 38 uyarı gerçek ve tarihsel: 20-30 Tem'de 15 koşunun defter kaydı hiç oluşmamış (PC o
+anlarda kapalı) — kalıcı boşluk, düzeltilemez.
+**21:55'teki üretimin neden başarısız olduğu BELİRLENEMEDİ.** defter.csv'nin bugünkü satırları
+13:30–21:30 damgalı, yani o an dosyadaydılar; `defter.sonucla()` satır eklemez (yalnız sonuç
+alanlarını doldurur). Uydurma sebep yazılmadı.
+**Yapılan:** `_tum_siralama_html`'in iki dalı aynı cümleyi basıyordu → artık hangi dalın yandığı
+ve hangi `race_kod` olduğu yazılıyor ("race_kod'u yok" / "defter'de 226499 kaydı bulunamadı").
+Tekrarlarsa teşhis anlık olacak. **Pratik kural:** sayfayı takip'in gün-sonu geçişinden
+(≈22:30) sonra tazele.
+
+**(b) K76 DOĞRULANDI.** `oran_log`'da 31 Tem: **1144 uzak-ayak satırı, 16 koşu, en uzak 210 dk**.
+Dün sıfırdı. BEKLEYENLER #9'un beklediği veri akıyor.
+
+**(c) İlk λ ölçümü ve KRİTİK KONTROL.** Kovalara göre bot2 λ'sı çöküyor gibi göründü
+(0,854 → 0,482 → 0,400 → 0,328 → 0,338). Hikâye doğrulanmış gibiydi. **Ama bot1 λ'sı da aynı
+şekilde çöktü** (0,936 → 0,514 → 0,442 → 0,460 → 0,428). bot1 orana bakmaz, gün içinde
+değişmez → eskime doğru olsaydı bot1 SABİT kalmalıydı.
+**Sonuç:** düşüş eskimeden değil, **kova seçiminden** geliyor. Uzak ayaklar günün geç koşuları;
+sahaları kalabalık (6. ayak ort. 12,8 at vs 8-10) → intrinsik olarak zor → iki model de orada
+fazla iddialı görünüyor. A/B tabloları FARKLI koşuları kıyaslıyor = kusurlu tasarım.
+Kontrolü araca baştan koymuş olmam bu yanlış sonucu engelledi.
+
+**(d) Araç düzeltildi — C bölümü (eşleşmiş kıyas) eklendi.** Artık AYNI koşunun uzak (>60 dk)
+ve yakın (≤45 dk) fotoğrafı kıyaslanıyor. bot1 vektörü iki anda da aynı olduğundan fark
+tamamen piyasa bileşeninden gelir. İlk sonuç (16 koşu, tek gün):
+| | λ | %90 GA |
+|---|---|---|
+| UZAKTAN | 0,454 | [0,07 – 0,95] |
+| YAKINDAN | 0,638 | [0,27 – 1,00] |
+| **FARK (uzak−yakın)** | **−0,184** | **[−0,57 – +0,20]** |
+Aynı koşularda bot1 λ = 0,514 (zorluk taban çizgisi).
+**Yön beklenen tarafta ama GA sıfırı içeriyor → SONUÇSUZ.** n=16 ve hepsi tek günden (aynı
+pistler, aynı koşullar → gerçek belirsizlik GA'nın gösterdiğinden büyük).
+
+**KARAR: açgözlü ELLENMEZ, veri birikmeye devam.** BEKLEYENLER #9'un tetiği artık C bölümüdür:
+FARK'ın %90 GA'sı sıfırdan ayrılana kadar hiçbir şey değişmez. Bugünkü tablo bir ipucu değil,
+sadece aracın çalıştığının kanıtıdır.

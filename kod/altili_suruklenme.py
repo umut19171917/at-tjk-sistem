@@ -202,9 +202,77 @@ def main(bootstrap=1500):
         l1 = lambda_kestir(k["p1"])
         print(f"  {ad:22s}{n:>5d}{lz:>16.3f}{f'[{lo:.2f} .. {hi:.2f}]':>18s}{l1:>16.3f}")
 
+    # ---- C) ESLESMIS: AYNI KOSU, UZAKTAN vs YAKINDAN (K81) ----
+    # A/B tablolari FARKLI kosulari kiyasliyor -> uzak kovalar gunun GEC kosulari (saha daha
+    # kalabalik, intrinsik olarak zor). Nitekim bot1'in lambda'si da kovalarla dusuyor; oysa
+    # bot1 orana bakmaz, eskiyemez -> dusus eskime DEGIL, kosu secimi. Tek durust kiyas:
+    # ayni kosunun uzak fotografi ile yakin fotografi. bot1 vektoru ikisinde de AYNI oldugu
+    # icin fark tamamen PIYASA bileseninden gelir.
+    uzakp, yakinp, b1p = [], [], []
+    for rk, g in log.groupby("race_kod"):
+        dg = d[d.race_kod == rk].dropna(subset=["oran", "bot1"])
+        dg = dg[dg.oran > 1]
+        if len(dg) < 4:
+            continue
+        w = dg[dg.sonuc == 1]
+        if len(w) == 0:
+            continue
+        kaz_no = int(w.iloc[0]["no"])
+        b1m = {int(n): float(b) for n, b in zip(dg.no, dg.bot1)}
+        gu = g[g.dk_kala > 60]
+        gy = g[g.dk_kala <= 45]
+        if gu.empty or gy.empty:
+            continue
+        cift = []
+        for gg, en_uzak in ((gu, True), (gy, False)):
+            ts = gg.loc[gg.dk_kala.idxmax() if en_uzak else gg.dk_kala.idxmin(), "kayit_ts"]
+            s = gg[gg.kayit_ts == ts]
+            no = sorted({int(x) for x in s.no} & set(b1m))
+            if len(no) < 4 or kaz_no not in no:
+                cift = None; break
+            pm = devig([float(s[s.no == n].ganyan.iloc[0]) for n in no])
+            b1 = np.array([b1m[n] for n in no]); b1 = b1 / b1.sum()
+            z = alpha * np.log(b1) + gamma * np.log(pm)
+            pz = np.exp(z - z.max())
+            cift.append((pz / pz.sum(), b1, no.index(kaz_no), float(s.dk_kala.iloc[0])))
+        if not cift or len(cift) != 2:
+            continue
+        uzakp.append((cift[0][0], cift[0][2]))
+        yakinp.append((cift[1][0], cift[1][2]))
+        b1p.append((cift[0][1], cift[0][2]))
+
+    print("\n" + "=" * 92)
+    print("C) ESLESMIS KIYAS — AYNI kosu, uzaktan (>60 dk) vs yakindan (<=45 dk)   [ASIL OLCUT]")
+    print("=" * 92)
+    if len(uzakp) < ASGARI:
+        print(f"  n={len(uzakp)} — yetersiz (en az {ASGARI}). Ayni kosunun hem uzak hem yakin")
+        print("  fotografi gerekiyor; K76 sonrasi birikiyor.")
+    else:
+        lu = lambda_kestir(uzakp); lo_u, hi_u = lambda_ga(uzakp, bootstrap)
+        ly = lambda_kestir(yakinp); lo_y, hi_y = lambda_ga(yakinp, bootstrap)
+        lb = lambda_kestir(b1p)
+        print(f"  ayni {len(uzakp)} kosu, iki farkli anda olculdu:")
+        print(f"    UZAKTAN  bot2 lambda = {lu:.3f}   %90 GA [{lo_u:.2f} .. {hi_u:.2f}]")
+        print(f"    YAKINDAN bot2 lambda = {ly:.3f}   %90 GA [{lo_y:.2f} .. {hi_y:.2f}]")
+        print(f"    (ayni kosularda bot1 lambda = {lb:.3f} — iki anda da AYNI vektor,")
+        print(f"     zorluk taban cizgisi; uzak/yakin farki tamamen PIYASADAN gelir)")
+        rng = np.random.default_rng(7)
+        fark = []
+        for _ in range(bootstrap):
+            i = rng.integers(0, len(uzakp), len(uzakp))
+            a_ = lambda_kestir([uzakp[j] for j in i]); b_ = lambda_kestir([yakinp[j] for j in i])
+            if np.isfinite(a_) and np.isfinite(b_):
+                fark.append(a_ - b_)
+        if fark:
+            f5, f95 = np.percentile(fark, 5), np.percentile(fark, 95)
+            print(f"\n    FARK (uzak - yakin) = {lu-ly:+.3f}   %90 GA [{f5:+.2f} .. {f95:+.2f}]")
+            print("    GA sifiri iceriyorsa: uzaklik BASLI BASINA bozmuyor -> acgozlu ELLENMEZ.")
+
     print("\n" + "=" * 92)
     print("NASIL OKUNUR")
     print("=" * 92)
+    print("  * ASIL OLCUT (C) — A/B tablolari farkli kosulari kiyasladigi icin gunun geç")
+    print("    kosulari (kalabalik saha) yanlisligi tasir; bot1 sutunu bunun kanitidir.")
     print("  * 6. ayagin lambda'si 1'e yakinsa -> uzak ayak sanildigi kadar guvenilmez DEGIL,")
     print("    K79'daki 4/12 tesadufmus demektir; acgozlu ELLENMEZ.")
     print("  * 6. ayagin lambda'si belirgin kucukse (GA'si 1'i icermiyorsa) -> vektor sahiden")
