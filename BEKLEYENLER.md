@@ -212,6 +212,40 @@ diye bakıp açıkça söylüyor. Yarın çalıştır: 60/90/120/150/180 dk sat�
 düzeltme işlememiş demektir → 3 hafta değil 1 gün kaybederiz. (BEKLEYENLER #4 tam bu yüzden
 haftalarca cevapsız kalmıştı.)
 
+**ÜÇÜNCÜ ADAY — "banker hak edilsin" (yeni parametre GEREKTİRMEZ).**
+Sistemde bu test **zaten var**, sadece açgözlü ondan muaf. `kupon_kur` (kapsam ailesi,
+altili_backtest.py:39): bir ayak ancak tepedeki atın bot2 olasılığı `BANKER_ESIK = 0.70`'i
+**tek başına** geçerse tek ata iner. Açgözlü/ayrışmada böyle bir sınav yok — orada tek at
+bütçe aritmetiğinin artığıdır ("emindim" değil, "başka yere harcamak daha kârlıydı").
+
+Fiili durum (31 Tem, kurulmuş tüm kuponlar):
+| config | kupon | tek-at ayak | oranı | kaçı GERÇEK banker |
+|---|---|---|---|---|
+| dar | 30 | 60 | %33 | **6** |
+| orta | 30 | 6 | %3 | **6** |
+| geniş | 17 | 3 | %3 | **3** |
+| geniş900 | 17 | 3 | %3 | **3** |
+| açgözlü900 | 12 | 12 | %17 | **1** |
+
+orta/geniş/geniş900'de tek-at ayaklarının **tamamı** %70 sınavını geçmiş. Açgözlünün 12
+tek-at ayağından **yalnızca 1'i** geçiyor. — Ayrı bulgu: dar'ın 60 tek-at ayağının **54'ü
+banker değil, bütçe kıtlığı**; 24 kombo altı ayağa bölününce budayıcı zorla daraltıyor
+(ayak başına ort. 1,7 at). Dar'ın "bankerleri" büyük ölçüde açlık.
+
+**Aday `acgozlu_v3`:** aynı açgözlü dağıtım, tek fark — bir ayak ancak `p_tepe >= BANKER_ESIK`
+ise 1 atta bitebilir; geçemezse taban 2. Banker yasak değil, **hak edilmesi** gerekiyor
+(kullanıcının 31 Tem'deki şartı). Yeni sabit yok, sistemin kendi eşiği kullanılıyor.
+
+**Dürüst uyarı:** bu kural mevcut 12 tek-attan 11'ini iptal ederdi → açgözlüyü epeyce
+değiştirir ve **işe yarayacağı ÖLÇÜLMÜŞ DEĞİL**. Aynı oturumda "bot1 de ilk-2'de görüyorsa
+bankere izin ver" fikri de kulağa böyle mantıklı geliyordu, test edilince p=1,00 çıktı.
+v3 uydurma değil ama kanıtlı da değil; λ ölçümünün yerini TUTMAZ.
+
+**v2 ile v3 ARASINDA SEÇİM KURALI (şimdiden bağlanıyor):** λ bulgusu düzeltmeyi haklı
+çıkarırsa ikisi de AYRI config olarak canlıya alınır ve **ileri veriyle** yargılanır.
+Geçmiş kuponlar üzerinde ikisini deneyip "daha iyi sonuç vereni" seçmek YASAK — 12 kuponluk
+geçmişte kazanan seçmek, ölçüm değil kendini kandırmadır.
+
 **KARAR KURALI — şimdiden bağlanıyor (hindsight yasağı):**
 - 6. ayak lambda'sının %90 GA'sı **1'i içeriyorsa** → eskime hikâyesi doğrulanmadı,
   **açgözlü ellenmez**, K79 "ölçüldü, çıkmadı" diye kapanır.
