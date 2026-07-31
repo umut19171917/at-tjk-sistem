@@ -1348,3 +1348,29 @@ Canli zamanlama 30 dk KALDI. `kod/altili_zaman_test.py` (OFFLINE) kalici arac ol
 - **İstenirse çözüm (yapılmadı):** kupon kurulurken her atın o anki sırası `altili_kupon.csv`'ye
   yazılabilir (yeni sütun) → sayfa "kupon anındaki sıra / posta anındaki sıra" ikisini birden
   gösterir. İleri-yönlü, mevcut veriyi bozmaz. Kullanıcı "gerek yok" demişti (2026-07-25).
+
+**K78 — Sayfa "biz tutturamadık" diyordu ama tutturmuştuk (HATA DÜZELTMESİ).**
+Kullanıcı 29.07 İSTANBUL 1. Altılı kartında çelişki gördü: başlık `net +10.536,93 TL` yazarken
+hemen altında *"bu Altılı'yı bilenlerin aldığı; biz tutturamadık"* diyordu. ACGOZLU900 6/6
+tutturmuştu.
+- **Sebep:** `_resmi_satir(k)` TEK kupon alıyordu ve çağrısı `_resmi_satir(kk[cfgler[0]])` idi →
+  her zaman `KONFIG`'in ilk elemanı, yani **DAR**. Oysa o satır kartın başlığında, yani
+  Altılı'nın TAMAMINI özetleyen yerde duruyor. DAR tutmayınca "tutturamadık" yazıyordu.
+  K69'da kart başına tek tablo + yan yana sütun düzenine geçilirken bu satır tek-kupon
+  varsayımıyla kalmış; kapsam değişti, satır değişmedi.
+- **Düzeltme:** `_resmi_satir(kupolar)` artık o Altılı'nın TÜM türlerini alır, `kademe == 6`
+  olanları toplar ve adıyla yazar: *"tutturan kuponumuz: ACGOZLU900 (1/5 tür)"*. Hiçbiri
+  tutmadıysa kaç türün tutmadığını sayıyla söyler. `bitti` kontrolü de `all(...)` oldu.
+- **Doğrulama:** sayfa yeniden üretildi, 30 kartın 3'ünde isabet görünüyor —
+  30.07 ANKARA-1 `GENIS900, ACGOZLU900 (2/5)`, 29.07 İSTANBUL-1 `ACGOZLU900 (1/5)`,
+  23.07 ANKARA-2 `ORTA (1/2)`. Ödül toplamı 13.442,86 + 12.983,18 + 17.934,50 =
+  **44.360,54 TL** = kümülatif tablodaki Altılı ödülü (birebir tutuyor).
+- **Yalnızca gösterim hatasıydı:** `_kupon_ozet` ödülü zaten config bazında doğru hesaplıyordu;
+  ROI, kümülatif tablo, Telegram ve `altili_kupon.csv` etkilenmedi. Telegram mesajı zaten her
+  türü ayrı satırda ✅/tutmadı diye yazıyor, orada yanlış iddia yoktu.
+- **Aynı sayfada ikinci bayatlık:** giriş metni elle yazılmış *"Kupon dört boyda kurulur"* deyip
+  4 tür sayıyordu; 7 tür var. Metin artık `_tur_ozeti()` ile **KONFIG'den üretiliyor**
+  (aile başlıkları + kombo + dağıtıcı) → aynı şekilde bir daha bayatlayamaz.
+- **Ders (tekrar eden kalıp):** K69'da olduğu gibi bir bileşenin kapsamı genişleyince (tek kupon
+  → kupon ailesi), o kapsamı özetleyen metinler ayrıca gözden geçirilmeli. Elle yazılmış
+  özet metin = bayatlamaya açık; üretilebiliyorsa üretilmeli.

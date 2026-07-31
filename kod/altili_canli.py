@@ -521,19 +521,44 @@ def _kupon_ozet(g, tarih, pist, seq, cfg):
             "resmi": res, "bitti": all(t is not None for t in tut)}
 
 
-def _resmi_satir(k):
-    """O Altili'nin RESMI odemesi — kupon tutmasa da gosterilir (kacirilan odul)."""
-    r = k.get("resmi") or {}
+def _tur_ozeti():
+    """K78: sayfa girisindeki kupon-turu listesi KONFIG'den uretilir. Eskiden elle yazilmisti
+    ('dort boyda kurulur') ve 7 ture cikinca bayatladi -> artik bayatlayamaz."""
+    sat = []
+    for aile, ad in AILE_AD.items():
+        cs = [c for c, ay in KONFIG.items() if ay["aile"] == aile]
+        if not cs:
+            continue
+        sat.append(f"&nbsp;&nbsp;<b>{ad}</b> &rarr; " + ", ".join(
+            f"{c.upper()} <span class=mini>(~{KONFIG[c]['kombo']} kombo, "
+            f"{KONFIG[c]['dagitim']})</span>" for c in cs))
+    return "<br>".join(sat)
+
+
+def _resmi_satir(kupolar):
+    """O Altili'nin RESMI odemesi + hangi kupon TURLERIMIZ tutturdu (kacirilan odul).
+
+    K78 DUZELTME: eskiden tek kupon alirdi ve cagri `kk[cfgler[0]]` idi -> her zaman KONFIG'in
+    ilki (DAR). Baslik satiri ise Altili'nin TAMAMINI ozetliyor. Sonuc: 29.07 ISTANBUL 1.Altili'da
+    ACGOZLU900 6/6 tuttugu (net +10.536,93 TL) halde baslikta "biz tutturamadik" yaziyordu.
+    Artik TUM turlere bakilir; tutan varsa adiyla yazilir."""
+    kupolar = list(kupolar)
+    r = (kupolar[0].get("resmi") or {}) if kupolar else {}
+    tutan = [k["cfg"] for k in kupolar if k["kademe"] == 6]
     if r.get("temettu"):
         t = ro.para(r["temettu"])
-        if k["kademe"] == 6:
-            return f"<b>resmi temettu (1 birim): {t}</b> &mdash; bu kuponla tutturuldu"
+        if tutan:
+            ad = ", ".join(c.upper() for c in tutan)
+            return (f"<b>resmi temettu (1 birim): {t}</b> &mdash; "
+                    f"<span class=poz><b>tutturan kuponumuz: {ad}</b></span> "
+                    f"<span class=mini>({len(tutan)}/{len(kupolar)} tur)</span>")
         return (f"resmi temettu (1 birim): <b>{t}</b> "
-                f"<span class=mini>&mdash; bu Altili'yi bilenlerin aldigi; biz tutturamadik</span>")
+                f"<span class=mini>&mdash; bu Altili'yi bilenlerin aldigi; "
+                f"{len(kupolar)} kupon turumuzun hicbiri tutturamadi</span>")
     if r.get("devir"):
         return (f"<b>KIMSE BILEMEDI</b> &mdash; {ro.para(r['devir'])} "
                 f"<span class=mini>sonraki cekilise devretti (bu Altili'da odeme yapilmadi)</span>")
-    if not k["bitti"]:
+    if not all(k["bitti"] for k in kupolar):
         return "<span class=mini>resmi temettu: kosular bitince belli olacak</span>"
     return "<span class=mini>resmi temettu: bilinmiyor (feed'den alinamadi)</span>"
 
@@ -668,10 +693,9 @@ def html_yaz(df=None, ac=False):
          f"<div class=not>guncelleme {datetime.now():%d.%m.%Y %H:%M} &mdash; "
          "<b>GERCEK BAHIS DEGIL</b>, kagit uzerinde izleme/ogrenme (K48/K53). "
          "Backtest OOS &minus;%32, +EV yok (K52).<br>"
-         "Kupon dort boyda kurulur: <b>DAR</b> (~16 kombo), <b>ORTA</b> (~72-96), "
-         "<b>GENIS</b> (~288) ve <b>GENIS900</b> (kapsam 0.95, ~900 kombo/~1125 TL; K62 gozlem "
-         "akisi -- backtest'te en cok kaybeden, sadece merak icin izleniyor). "
-         "Birim fiyat 2026 tarifesi: Ist/Ank/Izm/Ada/Bur/Koc/Ant 1,25 TL, "
+         f"Su an <b>{len(KONFIG)} kupon turu</b> paralel izleniyor "
+         "(K78: metin KONFIG'den uretilir, elle guncellenmez):<br>" + _tur_ozeti() +
+         "<br>Birim fiyat 2026 tarifesi: Ist/Ank/Izm/Ada/Bur/Koc/Ant 1,25 TL, "
          "Elazig/Urfa/Diyarbakir 1,00 TL.<br>"
          "<b>Odul yalniz 6/6 tam isabette</b> odenir; 5/4/3 ayak TJK'da AYRI bahistir "
          "(teselli degil) &mdash; tabloda yalnizca bilgi amacli gosterilir.</div>"]
@@ -736,7 +760,7 @@ def html_yaz(df=None, ac=False):
                  f"toplam bedel <b>{ro.para(t_bedel)}</b> &nbsp;&rarr;&nbsp; odul "
                  f"<b>{ro.para(t_odul)}</b> &nbsp;&rarr;&nbsp; net "
                  f"<span class='{'poz' if tn >= 0 else 'neg'}'><b>{ro.para(tn, isaret=True)}</b>"
-                 f"</span><br>{_resmi_satir(kk[cfgler[0]])}</span></div>")
+                 f"</span><br>{_resmi_satir([kk[c] for c in cfgler])}</span></div>")
         H.append("<div style='overflow-x:auto'><table>")
         H.append("<tr><th>ayak</th><th class=l>KAZANAN AT</th><th>kazananin<br>sistem / kamu</th>"
                  "<th>ganyan<br>orani</th>"
