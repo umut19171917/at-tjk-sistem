@@ -1374,3 +1374,35 @@ tutturmuştu.
 - **Ders (tekrar eden kalıp):** K69'da olduğu gibi bir bileşenin kapsamı genişleyince (tek kupon
   → kupon ailesi), o kapsamı özetleyen metinler ayrıca gözden geçirilmeli. Elle yazılmış
   özet metin = bayatlamaya açık; üretilebiliyorsa üretilmeli.
+
+**K79 — Açgözlü bankeri YANLIŞ ayağa koyuyor (ölçüm; kod değişmedi).**
+Kullanıcı 28.07 KOCAELİ 2. Altılı'da fark etti: ACGOZLU900 son ayakta sistemin (yarış anı)
+**8. sıradaki** atını TEK yazmış, 5/6'da kalmış. Kupon şekli `2×9×2×5×5×1 = 900`.
+- **O vakada ne oldu:** kupon anındaki sıra diğer kuponlardan geri çıkarılabiliyor
+  (dar=ilk2={7,9}, orta=ilk3={4,7,9}) → kupon anında sıra **9 > 7 > 4** idi. Oran seyri
+  (`altili_oran_log.csv`, race_kod 226449): #9 → 4,35 (44 dk) → 8,05 (15 dk) → **13,65** (posta);
+  #7 → 8,25 → 4,75 → **3,40**. Yani #9 kupon anında favoriydi, posta anında 8. sıraya düştü.
+- **Sistematik mi? (n=27 Altılı, 10'unda açgözlü var):**
+  | ölçüm | 1. ayak | 6. ayak | p |
+  |---|---|---|---|
+  | seçimimiz = yarış-anı ilk-k (SONUÇTAN BAĞIMSIZ) | 15/27 | **4/27** | **0,0038** |
+  | ACGOZLU isabet (6. ayak vs 1-5) | 45/60 | **4/12** | **0,0138** |
+  | ACGOZLU isabet (tek-at ayak vs çok-at) | 44/60 | **5/12** | 0,0443 |
+  | **ORTA** isabet (6. ayak vs 1-5) — KONTROL | 78/150 | **15/30** | **0,8446** |
+- **Kontrol belirleyici:** 6. ayak zor DEĞİL — kapsam kuponu orada hiç kaybetmiyor (p=0,84).
+  Sorun ayağın kendisi değil, açgözlünün o ayaktaki **genişlik kararı**.
+- **Mekanizma:** kapsam dağıtıcısı sahanın kapsanmasına göre ölçer; 6. ayak en kalabalık saha
+  (ort. 12,8 at vs 8-10) olduğu için oraya *daha çok* at verir (orta 2,8) ve korunur.
+  Açgözlü ise olasılık vektörünün **sivriliğine** göre ölçer. 6. ayağın kupon anındaki oranları
+  ~3 saat uzaktaki ince/durgun havuzdan gelir → sahte bir favori üretir → açgözlü "burada
+  eminim" deyip *en az* at verir (2,2, tüm ayakların en azı). 12 bankerinin **6'sı** 6. ayakta.
+- **İroni:** kullanıcının 25 Tem'de istediği "bir ayakta banker, gerisi geniş" şeklini üreten tek
+  dağıtıcı açgözlü — ama bankeri en az bildiği ayağa koyuyor.
+- **Karar: ŞİMDİLİK KOD DEĞİŞMİYOR.** Açgözlü n=10 Altılı; p=0,014 ipucu, kanıt değil.
+  Ayrıca düzeltme için gereken "geç ayak ne kadar güvenilmez" katsayısı şu an **tahmin** olurdu.
+  K76 düzeltmesinden sonra `oran_log` artık kupon anında TÜM ayakları kaydediyor → birkaç hafta
+  içinde bu katsayı ölçülerek çıkarılabilir. O zamana kadar gözlem.
+- **Uygulanabilir seçenekler (yapılmadı, konuşulacak):** (a) açgözlüye "ayak başına en az 2 at"
+  kuralı; (b) geç ayaklarda olasılığı düzgüne doğru büzen güvenilirlik katsayısı; (c) ikisi de
+  mevcut akışı bozmadan YENİ config olarak eklenir (K69 kalıbı) — çalışan ölçüm akışı
+  ortasında değiştirilmez.
