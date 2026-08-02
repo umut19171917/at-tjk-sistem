@@ -319,6 +319,31 @@ geçmişte kazanan seçmek, ölçüm değil kendini kandırmadır.
   marjinal kazanç/bedel oranı bir eşiğin altına düşünce dursun (kupon 900 yerine 300'de biter).
   Ama bu YENİ bir eşik = yine ölçülmesi gereken bir sayı. λ ölçümünden önce dokunulmaz.
 
+**DÖRDÜNCÜ ADAY — saha büyüklüğüne göre genişlik dağıt (K88).**
+Ölçüm: kapsam ailesinin genişliği **bütçenin 6. kökü** (`24^(1/6)=1,70` · `96^(1/6)=2,15` ·
+`288^(1/6)=2,58` · `900^(1/6)=3,11`, gözlenenle birebir) — kapsam/banker eşikleri pratikte hiç
+bağlamıyor. Saha 4-7'den 12+'ya çıkarken seçilen at sayısı **sabit kalıyor** (korelasyon
+−0,15..+0,17). Oysa isabet %65,4 → %36,4 düşüyor.
+
+| saha | ort.at | isabet | rastgele | kazanç |
+|---|---|---|---|---|
+| 4-7 | 2,2 | %65,4 | %35,1 | 1,86 |
+| 8-9 | 2,1 | %51,9 | %24,0 | 2,16 |
+| 10-11 | 2,1 | %43,9 | %20,5 | 2,14 |
+| 12+ | 2,3 | %36,4 | %16,5 | 2,21 |
+
+Kazanç sütunu düşmediği için sorun modelin kalabalık sahada bozulması DEĞİL; sorun aynı
+bütçeyi zaten %65'te olduğumuz ayakla %36'da olduğumuz ayağa **eşit** dağıtmak. Altılı zincirin
+en zayıf halkasıyla belirlendiğinden, küçük sahadaki 3. at neredeyse hiçbir şey satın almıyor.
+
+**Aday `saha900`:** genişlik saha büyüklüğüyle ölçeklenir (küçük sahadan kıs, kalabalığa ver).
+Açgözlü bunu zaten KISMEN yapıyor (küçük saha 2,5 at → büyük saha ~4,0), kapsam ailesi hiç yapmıyor.
+
+**Neden diğer adaylardan farklı:** saha büyüklüğü **kupon kurulmadan önce kesin olarak
+biliniyor** — tahmin, kalibrasyon ya da uydurma parametre gerektirmiyor. λ'yı beklemesi gerekmez.
+**Ama yine de ölçülmeden canlıya alınmaz** — K79'da "bot1 teyidi" fikri de böyle mantıklı
+görünüp p=1,00 çıkmıştı.
+
 **KARAR KURALI — şimdiden bağlanıyor (hindsight yasağı):**
 - 6. ayak lambda'sının %90 GA'sı **1'i içeriyorsa** → eskime hikâyesi doğrulanmadı,
   **açgözlü ellenmez**, K79 "ölçüldü, çıkmadı" diye kapanır.

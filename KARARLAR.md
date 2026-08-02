@@ -1612,3 +1612,42 @@ ise henüz AYIRT EDİLEMİYOR.** (Ara okuma — karar değil, taban çizgisi.)
 - **ÖZET GERİLİM:** dar en iyi seçiyor ama 41 kuponda bir kez bile 6/6 yapamadı (sıfır gelir);
   geniş olanlar ara sıra tamamlıyor ama bedelini çıkaramıyor. **İyi seçmek ile kazanmak farklı
   şeyler ve biz birincisinde iyiyiz.** K52/K72'nin bulgusuyla tutarlı.
+
+**K88 — Kupon genişliği modelin güveninden DEĞİL, bütçenin 6. kökünden geliyor. Saha
+büyüklüğü hiç fiyatlanmıyor.** (Kullanıcı sordu: "sistem ayaklardaki at sayısını dikkate
+alıyor mu?")
+- **Kodda hiçbir dağıtıcı saha büyüklüğünü AÇIKÇA kullanmıyor.** `kupon_kur` kümülatif kapsama
+  bakar, açgözlü/ayrışma olasılık şekline; saha yalnızca üst sınır olarak geçer
+  (`k[j] >= len(sr[j])`).
+- **Kapsam ailesi saha büyüklüğünü fiiliyatta da GÖRMEZDEN geliyor.** Saha 4-7'den 12+'ya
+  (üç kat) çıkarken seçilen at sayısı sabit:
+  | config | saha 4-7 | 8-9 | 10-11 | 12+ | korelasyon |
+  |---|---|---|---|---|---|
+  | dar | 1,8 | 1,6 | 1,6 | 1,7 | −0,04 |
+  | orta | 2,2 | 2,1 | 2,1 | 2,3 | +0,17 |
+  | genis | 2,4 | 2,5 | 2,6 | 2,5 | +0,02 |
+  | genis900 | 3,1 | 3,0 | 3,1 | 3,0 | −0,15 |
+- **SEBEP (asıl bulgu): genişlik = bütçenin 6. dereceden kökü.**
+  `24^(1/6)=1,70` · `96^(1/6)=2,15` · `288^(1/6)=2,58` · `900^(1/6)=3,11` — gözlenen
+  ortalamalarla birebir. Yani **kapsam eşiği (0,75) ve banker eşiği (0,70) pratikte neredeyse
+  hiç bağlayıcı olmuyor**; her seferinde kombinasyon tavanı bağlıyor ve kuponu altı ayağa
+  eşit bölüyor.
+  → **Kullanıcının 25 Tem'deki "her ayakta aşağı yukarı aynı sayıda at var" gözleminin
+  gerçek sebebi budur** (K65'te budayıcıya bağlanmıştı; kök neden bütçe aritmetiğidir,
+  model kararsızlığı değil).
+- **Açgözlü/ayrışma tepki VERİYOR:** küçük sahada 2,5 at, büyük sahalarda ~4,0-4,4
+  (korelasyon +0,13). Kalabalık sahada olasılık yayvanlaşır → eklenen at daha çok olasılık
+  satın alır → açgözlü kendiliğinden oraya kayar. Saha büyüklüğünü dolaylı fiyatlıyor.
+- **SAHA ÖNEMLİ Mİ? EVET (orta ile ölçüldü):**
+  | saha | ort.at | isabet | rastgele | kazanç |
+  |---|---|---|---|---|
+  | 4-7 | 2,2 | **%65,4** | %35,1 | 1,86 |
+  | 8-9 | 2,1 | %51,9 | %24,0 | 2,16 |
+  | 10-11 | 2,1 | %43,9 | %20,5 | 2,14 |
+  | 12+ | 2,3 | **%36,4** | %16,5 | 2,21 |
+  İsabet %65→%36 düşerken at sayısı sabit. **Kazanç sütunu DÜŞMÜYOR** (hatta hafif artıyor)
+  → model kalabalık sahada kötüleşmiyor; 14 attan 2 seçmek 6 attan 2 seçmekten doğası gereği zor.
+- **SONUÇ:** Altılı altı ayağı birden ister → zincirin en zayıf halkası belirler. 5 atlık ayakta
+  zaten %65'teyiz, 14 atlık ayakta %36'dayız; ikisine eşit at yazmak israf. **Kullanılmayan
+  bir kaldıraç var: genişliği küçük sahalardan büyük sahalara kaydırmak.** Kod DEĞİŞMEDİ;
+  BEKLEYENLER #9'a dördüncü aday olarak yazıldı.
