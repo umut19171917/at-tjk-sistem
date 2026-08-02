@@ -152,7 +152,7 @@ Aynı koşum (`kod/altili_dagitim_test.py`) üstünde yeni bir dağıtıcı olar
 ROI(6) + eşli bootstrap GA. **Uyarı:** K1 etkin-pazar duvarı + K19-K33/K44/K46/K52'de 9 kenar testi
 zaten negatif çıktı; bu da büyük ihtimalle negatif çıkar. Ucuz olduğu için açık bırakıldı, umut değil.
 
-### 8. Altılı havuzunun GERÇEK kesinti oranı — kaynaklanmalı (kısmen cevaplandı)
+### 8. Kesinti oranları — RESMÎ KAYNAK YOK (arandı, K86); ölçümle çıkarılacak
 **Eklendi:** 2026-07-31 · **İlgili:** K72, K73 · **TETİK:** resmî kaynağa erişilince
 K72'de saf favori oynamak −%17,4 getirdi; "bu kesintiden iyi mi?" sorusu için Altılı havuzunun
 kesinti oranı lazımdı ve hiç kaynaklanmamıştı. **K73'te AGF verisinden tahmin edildi: ~%45-50**
@@ -161,6 +161,30 @@ kesinti oranı lazımdı ve hiç kaynaklanmamıştı. **K73'te AGF verisinden ta
 kaynakla (mevzuat/TJK sitesi) ve K73 tahminiyle karşılaştır. Doğrulanırsa K73'ün sonucu
 ("favori oynamak havuz ortalamasını ~30 puan yeniyor") sağlamlaşır. Ganyan tarafı zaten
 kaynaklıydı (%25,5 İngiliz / %30,6 Arap, K46).
+
+**GÜNCELLEME 2026-08-02 (K86) — ARANDI, RESMÎ ORAN YAYIMLANMIYOR.**
+- `At Yarışları Müşterek Bahisler Yönetmeliği` oran vermiyor, **5602 sayılı Kanun**'a atıf yapıyor.
+- **5602 sayılı Kanun** ürün bazında oran koymuyor; yalnızca yıllık ikramiye toplamının hasılatın
+  **%40'ından az %93'ünden fazla olamayacağını** şart koşuyor (md. 4/2). Ürün bazında oranı
+  **TJK kendi belirliyor ve yayımlamıyor.** At yarışlarında şans oyunları vergisi **%7** (md. 6/4).
+- TJK'nın "Bahisler" sayfası yalnızca **birim fiyatları** veriyor: 3'lü 2,00 · **4'lü 1,75** ·
+  **5'li 1,50** · **6'lı 1,25** · **7'li 2,00** · Sıralı 5'li 1,25 TL. (Asgari iştirak 20 TL,
+  azami 12.000 TL.)
+- **Devir kuralı resmen doğrulandı:** devreden tutar **aynı oyunun bir sonraki yerli yarış
+  gününe** aktarılır — [[K84]]/[[K85]]'teki devir mantığı geçerli.
+- **SONUÇ: bu madde web aramasıyla KAPANMAZ.** Kalan tek yol ölçüm.
+
+**ÖNERİLEN YÖNTEM (yapılmadı, onay bekliyor):** K73'ün kimliği genelleştirilir —
+`1 − kesinti = temettü × P(kazanan kombinasyon) / birim`. Altılı'da `P` AGF'den geliyordu;
+diğer ürünlerde AGF **yok** (feed'de yalnız `AGF1` var, Altılı'ya özel). Yerine ganyan
+oranlarından de-vig edilmiş kazanma olasılıklarının çarpımı kullanılır.
+**Yanlılık ve düzeltmesi:** ganyan havuzunun favori-sürpriz eğilimi egzotik havuzunkinden
+farklıdır. Aynı hesap ÖNCE Altılı için ganyan-türevli `P` ile yapılıp K73'ün AGF-türevli
+%48,6'sıyla karşılaştırılır → çıkan fark **düzeltme katsayısı** olur, 4'lü/5'li/7'li'ye o
+katsayıyla uygulanır. Mutlak kesinti tahmini kaba kalır ama **ürünler arası SIRALAMA** —
+asıl soru budur — güvenilir olur.
+**Ön koşul:** ham arşivden (4.219 kart, `BAHISLER_TR`) her ürünün temettüsü + kazanan
+kombinasyonu çıkarılıp koşulara eşlenmeli. **Önce fizibilite denemesi yapılmalı.**
 
 ---
 

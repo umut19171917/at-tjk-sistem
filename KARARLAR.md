@@ -1562,3 +1562,19 @@ doğrulanmadığını not düşmüştüm. Doğrulandı: **yanlıştı.**
   TEK koşuda ilk 5'i sırasıyla bilmek — o yüzden %28,5 devrediyor (zorluğu farklı sınıftan).
 - **KOD/VERİ DURUMU:** bu ürünlerin olay tabloları YOK (`altili_tam.csv` sadece Altılı için).
   Backtest öncesi arşivden olay tablosu üretmek gerekir — ham veri mevcut, iş yapılabilir.
+
+**K86 — Ürün bazında kesinti oranı ARANDI: TJK yayımlamıyor (BEKLEYENLER #8 kapanmadı).**
+K85'te 7'li ganyanın yeni ürün olduğu bulununca "hangi ürünün kesintisi düşük" sorusu kritik
+hale geldi. Kullanıcı aratma dedi; arandı.
+- **Yönetmelik** (At Yarışları Müşterek Bahisler Yönetmeliği) oran vermiyor → 5602 sayılı Kanun'a
+  atıf yapıyor. **5602 sayılı Kanun** ürün bazında oran koymuyor: yıllık ikramiye toplamı
+  hasılatın **%40-93** aralığında olmak zorunda (md. 4/2), ürün bazındaki oranı **TJK belirliyor
+  ve yayımlamıyor**. At yarışlarında şans oyunları vergisi **%7** (md. 6/4).
+- **Elde edilen resmî veriler:** birim fiyatlar — 3'lü 2,00 · 4'lü 1,75 · 5'li 1,50 · 6'lı 1,25 ·
+  **7'li 2,00** · Sıralı 5'li 1,25 TL. Asgari iştirak 20 TL, azami 12.000 TL.
+  → **7'li, Altılı'nın 1,6 KATI birim maliyetli**; genişlik 7. kuvvetle büyürken bu da biniyor.
+- **Devir kuralı resmen doğrulandı:** devreden tutar aynı oyunun **bir sonraki yerli yarış
+  gününe** aktarılır. K84/K85'teki devir okuması geçerli.
+- **SONUÇ: BEKLEYENLER #8 web aramasıyla kapanmaz.** Yöntem önerisi (ganyan-türevli P + Altılı
+  üzerinden kalibre edilmiş düzeltme katsayısı) BEKLEYENLER #8'e yazıldı; **fizibilite denemesi
+  yapılmadı, onay bekliyor.**

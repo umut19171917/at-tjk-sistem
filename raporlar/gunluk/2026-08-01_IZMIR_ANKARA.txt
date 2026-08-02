@@ -1,0 +1,78 @@
+
+[18:30 tetik]  IZMIR  KOSU 4 (yaris 18:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  4  18:30  1200m  3 Yaşlı Araplar  (10 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    8 RÜZGAR İZİ               14.7      31.4   31.0   23.7   2.40  F
+    6 KONÇİÇEK                 17.7      17.3   16.2   17.6   4.60  
+    4 BİBAHANIM                12.8      11.1   10.9   14.2   6.85  
+    1 ŞAHİN MELTEM              7.7       9.9   10.5   13.8   7.10  
+    7 LATİFE SULTAN             8.0       7.5    7.8    9.0   9.50  
+    5 ESRİN HATUN              11.6       6.2    6.0    5.3  12.45  >>CANLI
+    3 MERKÜT                   12.0       5.7    5.5    4.5  13.65  >>CANLI
+    9 ULU CİHAN                 4.9       5.3    6.0    7.0  12.35  
+    2 İLDA SULTAN               7.9       3.3    3.4    3.5  22.15  
+   10 AMANKIZIM                 2.6       2.3    2.8    1.4  26.80  
+
+[19:00 tetik]  IZMIR  KOSU 5 (yaris 19:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  5  19:00  1200m  3 Yaşlı Araplar  (10 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    1 ERDAĞI                   19.2      41.6   38.4   59.1   1.20  F
+    2 KUZEYİN POYRAZI           4.7      32.5   38.4    2.9   1.20  F
+    5 TOPLUSER                 24.9       9.8    8.1   14.0   5.65  >>CANLI
+    8 KRAL KARACA              18.6       9.0    7.9   16.8   5.85  >>CANLI
+    6 AYANA                     8.9       1.9    1.8    2.4  25.70  
+    4 MİRMET                    7.1       1.6    1.5    2.1  30.10  
+    3 MİREKTAY                  5.5       1.4    1.4    1.9  32.40  
+    9 MRS MALİBU                5.9       1.1    1.1    0.4  43.80  
+   10 SELMİNKIZ                 2.5       0.7    0.8    0.3  60.60  
+    7 ERENDİZ                   2.8       0.6    0.7    0.2  63.65  
+
+[19:30 tetik]  IZMIR  KOSU 6 (yaris 19:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  6  19:30  1600m  3 ve Yukarı İngilizler  (8 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    1 BUCALI BERAT             12.9      33.4   37.1   42.6   2.00  F
+    4 FEBRİS                   34.3      29.8   25.6   24.9   2.90  
+    3 MY STAR                  25.7      19.6   17.7   13.3   4.20  
+    2 GROUND SPEED             13.4       8.8    8.9   12.9   8.35  >>CANLI
+    6 AGE OF FIRE               5.1       3.4    4.1    1.6  18.15  
+    5 BATTLECAT                 3.8       2.0    2.5    2.7  29.95  
+    8 ZAGANOS                   2.5       1.7    2.3    0.9  32.30  
+    7 BARİ                      2.2       1.3    1.8    1.2  40.75  
+
+[20:00 tetik]  IZMIR  KOSU 7 (yaris 20:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  7  20:00  1200m  3 Yaşlı Araplar  (11 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    6 TINASEFE                 25.5      59.9   57.4    -     1.30  F
+   11 YİĞİT NUR                18.8      13.1   12.5    -     5.95  
+    2 KRALÇINAR                 6.9       8.3    9.3    -     8.00  
+   10 HATUN DİDEM              13.0       5.7    5.6    -    13.30  >>CANLI
+    4 OĞLUM KADİR               3.7       4.0    5.0    -    15.05  
+    7 ADI YAŞASIN               5.5       2.8    3.2    -    23.60  
+    1 HIRÇIN DADAŞ             13.3       1.9    1.8    -    41.25  >>CANLI
+    3 MUKATOVİÇ                 3.0       1.3    1.6    -    47.30  
+    9 ELMAS GÖZLÜM              4.2       1.1    1.3    -    56.80  
+    8 EFSANEVİTAY               3.2       1.0    1.2    -    64.85  
+    5 SELÇUKZADE                2.9       0.9    1.1    -    67.70  
+
+[20:30 tetik]  IZMIR  KOSU 8 (yaris 20:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  8  20:30  2100m  4 ve Yukarı Araplar  (14 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+   11 YOL GEZER                15.1      26.0   24.9    -     3.00  F
+    2 ÖZGÜNSULTAN              12.9      15.3   14.8    -     5.05  
+    1 SOSAN YILDIZI            15.2      11.8   11.0    -     6.80  
+    3 DERYADİL                 14.4      10.7   10.0    -     7.45  
+    5 ERGEN                    12.6      10.6   10.2    -     7.35  
+    6 SAMSAT                    4.4       5.6    6.3    -    11.85  
+    7 ÖZGÜLEN GÜZELİ            5.5       4.9    5.3    -    14.05  
+    4 PONÇİKTAY                 5.8       4.6    4.9    -    15.25  
+    9 ASEL SULTAN               3.2       2.4    2.8    -    26.70  
+    8 DİLBERHATUN               2.1       2.0    2.4    -    30.80  
+   12 MATİLDA HANIM             2.2       1.8    2.2    -    34.55  
+   10 DİLŞAHKAYA                3.3       1.7    1.9    -    38.95  
+   14 AFİŞE                     1.7       1.5    1.9    -    38.60  
+   13 KOLOPHON                  1.5       1.1    1.4    -    52.55  
