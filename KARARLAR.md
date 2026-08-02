@@ -1578,3 +1578,37 @@ hale geldi. Kullanıcı aratma dedi; arandı.
 - **SONUÇ: BEKLEYENLER #8 web aramasıyla kapanmaz.** Yöntem önerisi (ganyan-türevli P + Altılı
   üzerinden kalibre edilmiş düzeltme katsayısı) BEKLEYENLER #8'e yazıldı; **fizibilite denemesi
   yapılmadı, onay bekliyor.**
+
+**K87 — Kupon türlerinin ayak-ayak kıyası: beceri sıralaması genişliğin TERSİ; 900'lü üçlü
+ise henüz AYIRT EDİLEMİYOR.** (Ara okuma — karar değil, taban çizgisi.)
+- **Yöntem notu:** config'lerin kupon sayıları ve genişlikleri farklı → ham isabet kıyası geniş
+  kuponu haksız kazandırır. İki düzeltme: (1) **eşleşmiş küme** — yedi config'in de bulunduğu
+  11 Altılı / 66 ayak; (2) **KAZANÇ = isabet / rastgele**, burada rastgele = ort(seçilen at /
+  saha). Aynı genişlikte rastgele seçseydik ne olurdu; 1,00 = beceri yok, sadece genişlik.
+- **Eşleşmiş 66 ayak:**
+  | config | isabet | rastgele | KAZANÇ | ort.at |
+  |---|---|---|---|---|
+  | **dar** | %30,3 | %17,4 | **1,74** | 1,7 |
+  | orta | %36,4 | %22,3 | 1,63 | 2,2 |
+  | genis | %42,4 | %26,2 | 1,62 | 2,5 |
+  | genis900 | %51,5 | %31,8 | 1,62 | 3,1 |
+  | ayrisma900 | %59,1 | %39,9 | 1,48 | 3,9 |
+  | bot1_900 | %53,0 | %36,2 | 1,47 | 3,6 |
+  | acgozlu900 | %56,1 | %40,8 | 1,37 | 4,0 |
+- **BULGU 1:** ham isabet sıralaması = genişlik sıralaması (beceri ölçmez). KAZANÇ'a göre
+  sıralama **tersine döner**: modelin kenarı TEPEDE yoğun, genişledikçe seyreliyor.
+  Tüm geçmişte fark daha keskin: dar 2,21 → ayrisma900 1,48.
+- **BULGU 2 (BEKLEYENLER #9 için önemli):** 900 bütçeli üçlü eşleşmiş McNemar ile
+  **AYIRT EDİLEMİYOR** — acgozlu 37 vs ayrisma 39 (p=0,500), acgozlu 37 vs bot1 35 (p=0,851),
+  ayrisma 39 vs bot1 35 (p=0,572). n=66 ayak. **Nominal sıralamayı sonuç sanma.**
+  - İzlenecek iki nominal işaret (İDDİA DEĞİL): (a) ayrışma, açgözlünün tuttuğu hiçbir ayağı
+    kaçırmamış (yalnız-açgözlü 0, yalnız-ayrışma 2) ve biraz daha az atla; (b) **bot1_900
+    piyasaya HİÇ bakmadan başa baş gidiyor** (3,6 atla 35 vs 4,0 atla 37) — bot2'nin
+    ağırlığının %82'si piyasadanken dikkat çekici. bot1_900 zaten bunu ölçmek için kuruldu.
+- **BULGU 3:** kapsam merdiveninde tek anlamlı adım genis→genis900 (p=0,031, +6 isabet).
+  Eklenen her at ~0,12-0,17 ayak isabet satın alıyor, merdiven boyunca sabit.
+- **PARA:** eşleşmiş 11 Altılı'da hiçbiri 6/6 yapmadı → yedisi de −%100. Tüm geçmişte yalnız
+  orta (1 isabet) ve acgozlu900 (2 isabet) gelir üretti; 1-2 olaydan hüküm çıkmaz.
+- **ÖZET GERİLİM:** dar en iyi seçiyor ama 41 kuponda bir kez bile 6/6 yapamadı (sıfır gelir);
+  geniş olanlar ara sıra tamamlıyor ama bedelini çıkaramıyor. **İyi seçmek ile kazanmak farklı
+  şeyler ve biz birincisinde iyiyiz.** K52/K72'nin bulgusuyla tutarlı.

@@ -243,6 +243,9 @@ Karşılaştırma noktası hazır; geriye 2-6. ayakları doldurmak kaldı.
 1. `python kod/altili_suruklenme.py` çalıştır; B tablosunda **6. ayak satırının n'i ≥ 15**
    olmalı (araç "yetersiz" yazmayı bıraktığında hazırdır).
 2. Aynı anda `acgozlu900` ile `bot1_900` ayak-sırasına göre kıyaslanabilir olmalı
+   **İLK OKUMA YAPILDI (K87, 2 Ağu 2026): 66 eşleşmiş ayakta üçlü AYIRT EDİLEMİYOR**
+   (acgozlu 37 / ayrisma 39 / bot1 35; tüm p≥0,50). Taban çizgisi K87'de; tekrar bakıldığında
+   oradaki sayılarla kıyasla, sıfırdan hesaplama.
    (bot1_900 30 Tem'de canlıya girdi; ~25+ kupon gerekir).
 Günde ~3 Altılı geliyor → tahmini **~2-3 hafta (Ağustos ortası 2026)**.
 **Haftada bir çalıştır** — `n` sütunu ilerleme çubuğudur.
