@@ -159,6 +159,27 @@ def kupon_kur_ayrisma(ayak_atlari, agirlik, max_kombo, w=1.0):
     return [set(no for no, _ in sr[j][:k[j]]) for j in range(6)]
 
 
+def kupon_kur_birlesim(ayak_bot2, ayak_bot1, max_kombo):
+    """K90: BIRLESIM dagitici — iki botun tamamlayiciligini kullanir.
+    Her ayakta her atin skoru = max(bot1_norm, bot2_norm); vektor normalize edilip
+    ayni acgozlu dagitima verilir. Dogal davranis: iki bot AYNI atlari seviyorsa
+    dagilim sivri kalir -> kupon daralir (gercek guven); FARKLI atlari seviyorsa
+    kutle yayilir -> kupon genisler (belirsizlik sinyali).
+    GEREKCE (K89 olcumu, 78 eslesmis ayak): kamu botlari favoride %85, bot1 surprizde
+    %42; bot1 13 benzersiz ayak yakaladi, acgozlu 0 -> iki kaynak TAMAMLAYICI.
+    max (karisim degil) secildi cunku birlesim anlami 'IKI bottan biri oynardiysa
+    kuponda olsun'dur; 0,5*karisim bir botun cok sevdigi ati yariya dusurur."""
+    birles = []
+    for a2, a1 in zip(ayak_bot2, ayak_bot1):
+        d2 = {no: p for no, p in a2 if pd.notna(p) and p > 0}
+        d1 = {no: p for no, p in a1 if pd.notna(p) and p > 0}
+        s2, s1 = sum(d2.values()), sum(d1.values())
+        birles.append([(no, max(d2.get(no, 0.0) / s2 if s2 else 0.0,
+                                d1.get(no, 0.0) / s1 if s1 else 0.0))
+                       for no in (set(d2) | set(d1))])
+    return kupon_kur_acgozlu(birles, max_kombo)
+
+
 def degerlendir(olay, puan_map, puan_map_full, kapsam_esik, max_kombo, banker_esik,
                 birim=1.0, kademeli=True):
     """Tek Altili olayi icin kupon kur, odemeyi hesapla. Doner (maliyet, getiri, alti_tuttu)

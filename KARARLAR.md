@@ -1651,3 +1651,56 @@ alıyor mu?")
   zaten %65'teyiz, 14 atlık ayakta %36'dayız; ikisine eşit at yazmak israf. **Kullanılmayan
   bir kaldıraç var: genişliği küçük sahalardan büyük sahalara kaydırmak.** Kod DEĞİŞMEDİ;
   BEKLEYENLER #9'a dördüncü aday olarak yazıldı.
+
+**K89 — Dört 900'lük config'in eşleşmiş karşılaştırması (13 Altılı / 78 ayak, çift doğrulama).**
+Tüm sayılar iki bağımsız yolla doğrulandı: canlı sonuçlar defter'den satır satır yeniden
+hesaplandı (312 satır, 0 uyumsuzluk); bot1'in 6/6'sı resmî kombo ile ayrıca teyit edildi.
+- **bot1_900 6/6 yaptı (03.08 BURSA-1, 19.283,18 TL)** → eşleşmiş kümede tek para kazanan
+  (ROI +%39,3 — TEK olaydan, K83 tuzağı hatırda). Kritik an 2. ayak: kazanan #4 (6,90) —
+  bot1 yazdı, ÜÇ kamu config'i birden kaçırdı. Kupon dağılımı: bot1 1×6/6 + 4×5/6 (13'te 5
+  tepe); diğer üçünün toplamı 2×5/6.
+- **Karakterler:** bot1 = sürpriz avcısı (13 benzersiz ayak; kazanan 15+ oranlıysa %42 vs
+  diğerleri %25; ama favoriyi kaçırıyor — 5/6'larının 2'sinde yatan ayakta piyasa favorisi
+  vardı, biri 1,50'lik). acgozlu900 = **0 benzersiz ayak**, KAZANÇ en düşük (1,31), hiç 5/6'sı
+  yok, orta banda sıkışık. ayrisma900 ≈ açgözlünün üstkümesi (%71 birebir aynı kupon, Jaccard
+  0,89; farklılaştığında 3-0 ayrışma lehine — K87'deki 2-0 büyüdü, yön dönmedi, p=0,25).
+  genis900 = 8-15 oran bandında 0/7 (eşit bölme aritmetiği orta-pahalı sürprizi hiç almıyor).
+- McNemar'da hiçbir çift anlamlı değil (en düşük p=0,25) — nominal sıralama hüküm değil.
+- K79 notu: açgözlünün 6. ayak zaafı bu kümede görünmüyor (%62) — erken dönem verisiydi;
+  λ ölçümü yine de sürüyor (BEKLEYENLER #9).
+
+**K90 — Birleşim kuponu backtest edildi: KRİTER GEÇİLEMEDİ, canlıya ALINMADI.
+Açgözlü iptal EDİLMEDİ (kontrol grubu); emeklilik kriteri önceden bağlandı.**
+Kullanıcı önerdi (3 Ağu): bot1 kalsın, açgözlü iptal, K89 sentezinden yeni kupon (bütçe 2x'e
+kadar). Konuşuldu; şu plan onaylandı:
+- **Açgözlü iptal edilmedi.** İki gerekçe: (a) n=13 kuponla kazanan seçmek K87'nin kendi
+  uyarısını çiğner; (b) acgozlu900, ayrisma900'ün **kontrol grubu** — silinirse "ayrışma
+  ağırlığı işe yarıyor mu" sorusu (şu an 3-0, p=0,25) sonsuza dek ölçülemez kalır.
+  **EMEKLİLİK KRİTERİ (önceden bağlandı):** 40 eşleşmiş kupon dolduğunda açgözlünün benzersiz
+  ayak katkısı hâlâ 0 ise VE yalnız-X skoru hâlâ tek yönlüyse açgözlü kapatılır. BEKLEYENLER #9'da.
+- **Birleşim tasarımı ÖNCEDEN sabitlendi:** her ayakta skor = max(bot1_norm, bot2_norm),
+  normalize → aynı açgözlü dağıtım (`kupon_kur_birlesim`, altili_backtest.py — tek kaynak).
+  Bütçe 1800. Başka varyant taranmadı (tek değişken ilkesi). **Karar kriteri sonuç görülmeden
+  koda yazıldı:** birlesim1800, 1800'lük iki tek-bot kontrolünün İKİSİNDEN de hem ayak
+  isabetinde hem 6/6'da düşük olmamalı.
+- **Backtest (1433 OOS olay, sadece 6/6 öder, birim 1,25):**
+  | config | ayak isabet | 6/6 | 5/6 | ROI | ort.temettü |
+  |---|---|---|---|---|---|
+  | acgozlu1800_bot2 | **%77,9** | **300** | 575 | −61,1 | 4.027 |
+  | birlesim1800 | %76,7 | 259 | 590 | −60,1 | 4.778 |
+  | acgozlu1800_bot1 | %72,1 | 188 | 474 | −29,2 [GA −61..+17] | 11.694 |
+  - vs bot2-kontrol: ayak KALDI, 6/6 KALDI; eşli fark **anlamlı** (yalnız-birleşim 319,
+    yalnız-kontrol 420, p=0,0002). vs bot1-kontrol: geçti — ama kriter İKİSİNİ de istiyordu.
+  - **SONUÇ: RED — birlesim1800 canlıya alınmadı.** Aynı sonuç 900 bütçede de (189 vs 225,
+    p=0,0001) → mekanizma sorunu, bütçe sorunu değil.
+- **Başarısızlığın mekanizması (ÖLÇÜLDÜ, K85 dersi):** birleşimin kaybettiği 420 ayakta kazanan
+  medyan **bot2-sırası 4** (dağılım 2-5'te yoğun); kazandığı 319 ayakta medyan **bot1-sırası 3**.
+  Yani max-birleşim, bot2'nin orta sıralarını (piyasa bilgisi taşıyan bant) feda edip bot1'in
+  tepesini alıyor; takas net −101 ayak. **K89'daki tamamlayıcılık gerçek ama max-birleşim onu
+  kupona çevirmenin doğru yolu değil** — bot1'in benzersiz yakalayışları, bot2'nin orta
+  bandından daha seyrek.
+- ROI tarafında birleşim ile bot2-kontrol başa baş (−60 vs −61; birleşimin temettüsü daha
+  yüksek) — ama karar İSABET kriteriyle bağlıydı ve sonuca bakıp kriter değiştirilmez.
+- **NET DURUM: canlı sistem DEĞİŞMEDİ.** 7 config aynen; bot1 olduğu gibi; açgözlü emeklilik
+  kriteriyle izlemede. `kupon_kur_birlesim` kodda duruyor (ileride farklı birleştirme
+  denenirse zemin hazır), canlıda KULLANILMIYOR.

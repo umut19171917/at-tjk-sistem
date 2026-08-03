@@ -344,6 +344,18 @@ biliniyor** — tahmin, kalibrasyon ya da uydurma parametre gerektirmiyor. λ'y�
 **Ama yine de ölçülmeden canlıya alınmaz** — K79'da "bot1 teyidi" fikri de böyle mantıklı
 görünüp p=1,00 çıkmıştı.
 
+**AÇGÖZLÜ EMEKLİLİK KRİTERİ (K90, önceden bağlandı — 3 Ağu 2026):** kullanıcı açgözlüyü
+iptal etmek istedi; n=13'le kazanan seçmemek ve ayrışmanın KONTROL GRUBUNU korumak için
+ertelendi. Kriter: **40 eşleşmiş kupon** dolduğunda (şu an 13) açgözlünün benzersiz ayak
+katkısı hâlâ **0** ise VE açgözlü-ayrışma eşli skoru hâlâ tek yönlüyse (bugün 0-3) →
+acgozlu900 kapatılır, ayrışma tek başına devam eder. Sayılar K89/K90'da; karar günü gelince
+aynı ölçüm tekrarlanır, kriter DEĞİŞTİRİLMEZ.
+
+**BİRLEŞİM DENEMESİ SONUÇLANDI (K90): RED.** max(bot1,bot2) birleşimi 1433 OOS olayda
+bot2-kontrolünden anlamlı kötü (p=0,0002) → canlıya alınmadı. Tamamlayıcılık gerçek ama
+max-birleşim yanlış araç. İleride farklı birleştirme fikri gelirse `kupon_kur_birlesim`
+zemini hazır; yeni deneme için önce YENİ bir önceden-bağlanmış kriter yazılır.
+
 **KARAR KURALI — şimdiden bağlanıyor (hindsight yasağı):**
 - 6. ayak lambda'sının %90 GA'sı **1'i içeriyorsa** → eskime hikâyesi doğrulanmadı,
   **açgözlü ellenmez**, K79 "ölçüldü, çıkmadı" diye kapanır.
