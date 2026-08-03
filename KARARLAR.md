@@ -1704,3 +1704,27 @@ kadar). Konuşuldu; şu plan onaylandı:
 - **NET DURUM: canlı sistem DEĞİŞMEDİ.** 7 config aynen; bot1 olduğu gibi; açgözlü emeklilik
   kriteriyle izlemede. `kupon_kur_birlesim` kodda duruyor (ileride farklı birleştirme
   denenirse zemin hazır), canlıda KULLANILMIYOR.
+
+**K91 — "Bütçeyi 1800 yapsak 5/6'lar 6/6 olur muydu?" — ÖLÇÜLDÜ: %15-16 dönüşüyor,
+YÜKSEK ÖDÜLLÜLER DÖNÜŞMÜYOR (77'de 3).** Kullanıcı sordu (3 Ağu); 1433 OOS olayda dört
+config'in arşiv karşılığı 900 ve 1800 bütçeyle koşuldu, geçişler sayıldı.
+| config | P(6/6) 900→1800 | 5/6@900 | dönüşen | marjinal ROI (ikinci 900) |
+|---|---|---|---|---|
+| genis | %12,1→%17,2 | 404 | 65 (%16) | −%59,8 |
+| acgozlu | %15,7→%20,9 | 527 | 80 (%15) | −%58,2 |
+| **bot1** | %8,6→%13,1 | 405 | 63 (%16) | **−%40,0** |
+| ayrisma | %15,0→%21,1 | 533 | 87 (%16) | −%56,7 |
+- **P(6/6) her config'de ~+5 puan artıyor AMA ikinci 900'ün marjinal ROI'si ilkiyle aynı
+  sızıntıda** (~−%57-60; bot1 −%40). Kesinti duvarı artan her liraya aynı oranda uygulanır;
+  bütçe büyütmek sızıntı ORANINI değiştirmez.
+- **ASIL BULGU:** 100bin+ ödeyen 77 büyük-ödüllü 5/6'dan 1800 ile yalnız **3'ü** dönüştü.
+  Anatomi: dönüşen 5/6'larda kaçan kazanan kendi sıralamada medyan **4.** (ucuz — medyan
+  temettü 3-4bin); büyük ödüllülerde medyan **9.** Matematik: 2x bütçe = ayak başına 2^(1/6)
+  ≈ **1,12x** genişlik (2-3 ayağa birer at) → 4.'yü yakalar, 9.'yu yakalamaz. 9.'ya inmek
+  ~5-10x ister, o noktada bedel ödülü aşar (K83).
+- **YORUM (kullanıcının sürdürülebilirlik çerçevesi):** "5'te kaldım, az kaldı" hissi bu
+  ölçümle çürüdü — **5/6 bir yaklaşma sinyali DEĞİL.** Yüksek ödüllü 5/6'da kaçan at 9.
+  sıradaysa "az kalmadı, beş ayak şans güldü" doğru okumadır. 1800'ün satın aldığı 6/6'lar
+  tam da ucuz olanlar (kaçan yakınsa herkes yakındır → temettü düşük). Sürdürülebilir yol
+  bütçe kolundan geçmiyor; aday adresler: yeni ürün (7'li, K85) ve devir anları (K84/K85).
+- Canlı sistem DEĞİŞMEDİ; bütçeler 900 kaldı.
