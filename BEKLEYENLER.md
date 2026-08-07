@@ -122,6 +122,8 @@ yazmadıysak) devreye girer; yönü sonucu **daha kötü** gösterir, asla yanl�
 Yapılırsa: `sonucla_altili`'de çıkan-seçim tespiti + o ayağın posta-favorisini kazanan yerine koyma.
 
 ### 6. Model AĞIRLIKLARINI genişletilmiş pencereyle yeniden fit etme (walk-forward'ı ileri kaydır)
+
+**ERKEN CEVAP (K96, 7 Ağu 2026): yeniden fit GEREKSİZ görünüyor.** Yürüyen-ileri test — ağırlıklar 2025'te yeniden fit edilip 2026'da (2.513 koşu) mevcutlarla kıyaslandı: yeni α=0,200 γ=0,960 (bot1 payı %17) vs mevcut 0,208/0,950 (%18); 2026 log-olabilirlik farkı +0,00014, **%95 GA sıfırı içeriyor**. Ağırlıklar yıllar arası kararlı. Madde KAPATILMADI (tetik tarih bazlı, 25 Eyl) ama sürpriz beklenmiyor; o gün aynı ölçüm tekrarlanıp K96'daki sayılarla kıyaslanmalı, sıfırdan hesaplanmamalı.
 **Eklendi:** 2026-07-25 · **İlgili:** K38, K48 · **TETİK:** mevcut sınav dönemi kapanınca (K42/K48
 kararı, 25 Eylül 2026 veya sistem modu netleşince)
 **Durum bugün:** Özellikler (at formu/kariyeri, jokey 365-gün isabeti) güncel arşivden (2026 dahil)

@@ -1830,3 +1830,56 @@ ayrılana kadar hiçbir şey değişmez."* 7 Ağu'da ayrıldı.
 - **DÜRÜSTLÜK NOTU:** 6'lı satırı tanım gereği %48,6 çıkar (çapa). Diğerlerinin değeri
   "ayak başına yanlılık ürünler arası aynı" varsayımına dayanır. Ama SIRALAMA bu varsayımdan
   görece bağımsız ve 7'li'nin kötülüğü çok belirgin (ham iade 0,363 vs 6'lı 0,449).
+
+**K95 — Ayrışma mekanizması kuponu ancak %24 kıpırdatıyor: ayrisma900 bir BULGU değil,
+GÜÇSÜZ BİR TEST.** Kullanıcı fark etti (7 Ağu): "açgözlü ve ayrışma neredeyse tıpatıp kupon
+yapıyor". Ölçüldü, doğru — ve sebebi bulundu.
+- **Örtüşme (156 ortak ayak / 26 Altılı, w=1,0):** birebir aynı ayak **118/156 = %75,6**
+  (K89'da %71'di, veri büyüdükçe arttı) · ortalama Jaccard **0,916** · ayak genişliği farkı
+  ortalama −0,08 at · **Altılıların %50'sinde altı ayağın altısı da birebir aynı.**
+- **SEBEP (mekanizma teşhisi):** ağırlık çarpanı `1 + w·D`. Ölçüm: D ortalaması 0,239,
+  **bir Altılı içindeki ayaklar arası std yalnız 0,070**; Altılı-içi en yüksek/en düşük çarpan
+  oranı medyan **1,166**. Yani altı ayağın ağırlıkları birbirinden ancak %17 farklı.
+  Açgözlünün kazanç/bedel oranları arasındaki farklar çoğu zaman bundan büyük → sıralama
+  değişmiyor. **w=1,0 mekanizmayı fiilen etkisiz bırakıyor.**
+- **Sonuç okuması:** ayrıştığı 38 ayakta skor yalnız-açgözlü 2 / yalnız-ayrışma 4 (p=0,688).
+  Yön K87'den beri hep ayrışma lehine (0-2 → 0-3 → 2-4) ama hiç anlamlı olmadı — çünkü test
+  edilen ayak sayısı 38. **Bu bir tasarım kusuru, bulgu değil.** 500 ayakta bile ~120 ayrışma
+  olur; bu dozla soru muhtemelen KALICI OLARAK cevapsız kalır.
+- **w=1,0 K68'de BİLEREK sabitlenmişti** (en iyi w'yi seçmek overfit olurdu). Şimdi w'yi
+  yükseltmek meşru olabilir AMA yalnızca **sonuçtan bağımsız** bir ölçütle (ör. "ayakların
+  ~yarısı farklılaşsın"), isabete bakarak DEĞİL. Karar kullanıcıya bırakıldı; **kod
+  DEĞİŞMEDİ.**
+
+**K96 — Harman ağırlıkları (α/γ) DEĞİŞMEMELİ: yürüyen-ileri testle doğrulandı. bot1'in katkısı
+gerçek ama çok küçük.** Kullanıcı sordu: "kupon bazında verilere bakınca bu oranlarda değişiklik
+gerekli mi?"
+- **YÖNTEM NOTU:** kupon bazında cevaplanamaz — bot1_900'ün +%105 ROI'si 2 olaydan geliyor
+  (K93 dersi). Doğru alet **ayak seviyesi**: 2026'da 2.513 koşu. Dürüst kurulum: mevcut
+  ağırlıklar 2024'te fit edilmişti → **2025'te yeniden fit edildi, ikisi de 2026'da test edildi.**
+- **Ağırlıklar yıllar arası KARARLI:**
+  | | α | γ | bot1 payı |
+  |---|---|---|---|
+  | mevcut (2024 fit, canlıda) | 0,208 | 0,950 | %18 |
+  | 2025'te yeniden fit (havuz) | 0,200 | 0,960 | %17 |
+  | İngiliz ayrı | 0,240 | 0,940 | %20 |
+  | Arap ayrı | 0,180 | 0,960 | %16 |
+- **2026 TESTİ (koşu başına ort. log-olabilirlik):** yeniden-fit ağırlıklar mevcut olanlardan
+  **hiç iyi değil** — fark +0,00014 (havuz), −0,00037 (İngiliz), −0,00051 (Arap);
+  **%95 GA'ların hepsi sıfırı içeriyor.** → **DEĞİŞİKLİK GEREKSİZ.**
+- **ASIL BULGU — bot1'in katkısının büyüklüğü:**
+  | | log-olabilirlik / koşu |
+  |---|---|
+  | harman (0,21/0,95) | **−1,7674** |
+  | yalnız kamu | −1,7749 (harman +0,0075 iyi) |
+  | yalnız bot1 | −1,9300 (harman +0,163 iyi) |
+  bot1, kamuya göre kazanan atın tahmin olasılığını ortalama **%0,75** artırıyor. Gerçek ama
+  minik. bot1 tek başına belirgin KÖTÜ.
+- **bot1_900 HAKKINDAKİ YANILGI DÜZELTİLDİ:** 25 benzersiz ayak "bot1 daha iyi" demek değil,
+  **"bot1 FARKLI"** demek. Farklı ≠ iyi. Tahmin gücü zayıf; ama kalabalıktan koptuğu için
+  tuttuğunda az kişiyle bölüşüyor (iki 6/6'sının temettüleri bunu gösteriyor) — K67'nin öngörüsü.
+- **bot1 ağırlığını artırmanın mantığı isabet değil FİYAT olurdu** (bilerek isabetten feragat
+  edip ayrışma satın almak). O kol K75'te test edildi: `skor = bot2/AGF^λ`, λ=1'de 1318 olayda
+  **sıfır** isabet. **Kapalı.**
+- **BEKLEYENLER #6 (25 Eyl'de ağırlıkları yeniden fit et) için erken cevap:** yeniden fit
+  gereksiz görünüyor. Madde kapatılMADI (tetiği tarih bazlı) ama bu ölçüm oraya not düşüldü.
