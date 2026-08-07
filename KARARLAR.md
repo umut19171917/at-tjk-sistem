@@ -1783,3 +1783,50 @@ ayrılana kadar hiçbir şey değişmez."* 7 Ağu'da ayrıldı.
 - **Yön:** kalan iki açık adres ürün tarafında — **7'li ganyan** (2026'da çıkmış YENİ ürün,
   kalabalık kalibre olmamış, 91 devir; K85) ve **4'lü ganyan** (kısa zincir; BEKLEYENLER #2).
   İkisi de arşivden çıkarılabilir → **backtest EDİLEBİLİR**, acgozlu_v2'nin aksine.
+
+**K94 — Ürün bazında kesinti ÖLÇÜLDÜ: 4'lü/5'li Altılı'dan sadece 2-3 puan iyi, 7'li EN KÖTÜ
+(%57,6). "Yeni ürün fırsatı" hipotezi ÇÜRÜDÜ.** K86'da TJK'nın oranı yayımlamadığını bulmuştuk;
+ölçümle çıkarıldı.
+- **VERİ ALTYAPISI KURULDU:** `veri/nli_ganyan.csv` — ham arşivin 4.232 kartından çıkarılan
+  **27.442 olay** (3/4/5/6/7'li ganyan; tarih, pist, ayak race_kod'ları, kazanan kombo, temettü,
+  devir). Yapı çözüldü: **temettü bahsin BİTTİĞİ koşuya ilişir, ayaklar o koşuda biten N ardışık
+  koşudur.** Fizibilite: çıkarılan olayların **%99,1-100'ünde** ayaklar gerçek kazananlarla
+  doğrulandı. Mevcut hiçbir dosya değiştirilmedi.
+- **DEVİR ORANLARI (asıl sürpriz):**
+  | ürün | ödendi | devir | devir oranı |
+  |---|---|---|---|
+  | 3'lü | 8.060 | 0 | %0 |
+  | 4'lü | 5.691 | 0 | %0 |
+  | 5'li | 6.516 | 3 | %0,05 |
+  | 6'lı | 6.789 | 24 | %0,35 |
+  | **7'li** | 255 | **104** | **%29,0** |
+- **İKİ ARTIFAKT YAKALANDI VE DÜZELTİLDİ (ilk tablo yanıltıcıydı):**
+  1. **Enflasyon:** tarihsel temettüleri bugünün birim fiyatıyla bölmek kesintiyi 2021'de %57,
+     2026'da %15 gösteriyordu. Kesinti böyle davranmaz — birim fiyatlar da o yıllarda düşüktü.
+     K73'te aynı tuzağa düşülmüştü. **Çözüm: yalnız 2026.** (7'li zaten sadece 2026'da var →
+     adil kıyas ancak böyle olur; ham tablo 7'li'yi *en ucuz* gösteriyordu, tam ters.)
+  2. **Kalibrasyon üstel olmalı:** ganyan-türevli P'nin ayak başına yanlılığı k ise N ayaklı
+     üründe k^N birikir → sabit fark düzeltmesi YANLIŞ. `log(1−kesinti_est) =
+     log(1−kesinti_true) + N·log k`; k, 6'lı üzerinden çözüldü (**k=0,978**, ayak başına
+     P'yi %2,2 şişiriyor).
+- **SONUÇ (2026, standart tarifeli pistler, 2.526 olay):**
+  | ürün | n | KALİBRE KESİNTİ | %90 GA |
+  |---|---|---|---|
+  | 3'lü | 712 | %45,4 | [43,1 .. 46,8] |
+  | 4'lü | 402 | %45,6 | [41,0 .. 47,8] |
+  | 5'li | 518 | %46,8 | [43,8 .. 49,0] |
+  | 6'lı | 662 | %48,6 | *(kalibrasyon çapası — doğrulama değil)* |
+  | **7'li** | 232 | **%57,6** | **[51,8 .. 62,7]** |
+- **KARARLAR:**
+  - **7'li REDDEDİLDİ.** "Yeni ürün, kalabalık kalibre olmamış" hipotezi (K85) çürüdü:
+    kesintisi en yüksek (%57,6, GA 6'lı'nın üstünde), birim fiyatı en pahalı (2,00 TL =
+    Altılı'nın 1,6 katı) ve genişlik 7. kuvvetle büyüyor. %29 devir oranı ürünün *zorluğunun*
+    göstergesi, fırsatın değil — devreden para yeni çekilişte yine %57,6 kesintiyle karşılaşıyor.
+  - **4'lü/5'li: heyecan yok.** Altılı'dan 2-3 puan iyi, güven aralıkları örtüşüyor. Bizim
+    ölçülmüş kenarımız SIFIR (K52/K93) → 45 ile 49 arasındaki fark −%45 ile −%49 kayıp demek.
+    Kupon sistemi kurmaya değmez.
+  - **Ürün kolu KAPANDI.** Kesinti duvarı 3'lüden 7'liye kadar %45-58 bandında; hiçbir ürün
+    "sürdürülebilir kazanç" için yapısal açıklık sunmuyor.
+- **DÜRÜSTLÜK NOTU:** 6'lı satırı tanım gereği %48,6 çıkar (çapa). Diğerlerinin değeri
+  "ayak başına yanlılık ürünler arası aynı" varsayımına dayanır. Ama SIRALAMA bu varsayımdan
+  görece bağımsız ve 7'li'nin kötülüğü çok belirgin (ham iade 0,363 vs 6'lı 0,449).

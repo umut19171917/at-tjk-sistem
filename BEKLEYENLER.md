@@ -152,7 +152,7 @@ Aynı koşum (`kod/altili_dagitim_test.py`) üstünde yeni bir dağıtıcı olar
 ROI(6) + eşli bootstrap GA. **Uyarı:** K1 etkin-pazar duvarı + K19-K33/K44/K46/K52'de 9 kenar testi
 zaten negatif çıktı; bu da büyük ihtimalle negatif çıkar. Ucuz olduğu için açık bırakıldı, umut değil.
 
-### 8. Kesinti oranları — RESMÎ KAYNAK YOK (arandı, K86); ölçümle çıkarılacak
+### 8. Kesinti oranları — ÖLÇÜLDÜ (K94). KAPANDI.
 **Eklendi:** 2026-07-31 · **İlgili:** K72, K73 · **TETİK:** resmî kaynağa erişilince
 K72'de saf favori oynamak −%17,4 getirdi; "bu kesintiden iyi mi?" sorusu için Altılı havuzunun
 kesinti oranı lazımdı ve hiç kaynaklanmamıştı. **K73'te AGF verisinden tahmin edildi: ~%45-50**
@@ -161,6 +161,12 @@ kesinti oranı lazımdı ve hiç kaynaklanmamıştı. **K73'te AGF verisinden ta
 kaynakla (mevzuat/TJK sitesi) ve K73 tahminiyle karşılaştır. Doğrulanırsa K73'ün sonucu
 ("favori oynamak havuz ortalamasını ~30 puan yeniyor") sağlamlaşır. Ganyan tarafı zaten
 kaynaklıydı (%25,5 İngiliz / %30,6 Arap, K46).
+
+**>>> KAPANDI — 7 Ağu 2026 (K94): ölçümle çıkarıldı. <<<**
+2026, standart pistler, 2.526 olay, üstel kalibrasyon (k=0,978, 6'lı çapası):
+**3'lü %45,4 · 4'lü %45,6 · 5'li %46,8 · 6'lı %48,6 · 7'li %57,6.**
+Altyapı: `veri/nli_ganyan.csv` (27.442 olay, %99+ doğrulanmış). Ayrıntı K94'te.
+**Sonuç: hiçbir üründe yapısal açıklık yok; ürün kolu kapandı.**
 
 **GÜNCELLEME 2026-08-02 (K86) — ARANDI, RESMÎ ORAN YAYIMLANMIYOR.**
 - `At Yarışları Müşterek Bahisler Yönetmeliği` oran vermiyor, **5602 sayılı Kanun**'a atıf yapıyor.
