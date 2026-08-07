@@ -159,6 +159,47 @@ def kupon_kur_ayrisma(ayak_atlari, agirlik, max_kombo, w=1.0):
     return [set(no for no, _ in sr[j][:k[j]]) for j in range(6)]
 
 
+# K92: uzak-ayak kalibrasyonu. Degerler OLCULDU (altili_suruklenme C bolumu, n=87 kosu,
+# eslesmis: ayni kosunun uzak ve yakin fotografi):
+#   uzak (>75 dk)  lambda = 0,65  %90 GA [0,47 .. 0,88]  -> 1'i ICERMIYOR, duzeltme GEREKLI
+#   yakin (<=75 dk) lambda = 0,98  %90 GA [0,77 .. 1,22]  -> 1'i ICERIYOR, null kullanilir
+# Yakinda 1,0 (=degisiklik yok) secildi: (a) GA null'u iceriyor, (b) boylece v2 ile v1
+# arasindaki HER fark yalnizca uzak-ayak duzeltmesine atfedilebilir (temiz atif).
+LAM_UZAK = 0.65
+LAM_YAKIN = 1.0
+UZAK_ESIK_DK = 75          # ayak 1-2 yakin (~30/60 dk), ayak 3-6 uzak (~90-180 dk)
+
+
+def kupon_kur_kalibre(ayak_atlari, ayak_dk, max_kombo,
+                      lam_uzak=LAM_UZAK, lam_yakin=LAM_YAKIN, esik=UZAK_ESIK_DK):
+    """K92: her ayagin olasilik vektorunu KENDI mesafesinin olculmus lambda'siyla duzlestirip
+    ayni acgozlu dagitima verir.  p_kalibre = normalize(p^lambda)
+
+    NEDEN (K79 teshis + K92 olcum): kupon 1. ayaga 30 dk kala kurulur; 6. ayak o an ~180 dk
+    uzaktadir ve havuzu neredeyse bostur -> carpik oran -> SAHTE bir favori. Acgozlu olasilik
+    vektorunun SIVRILIGINE gore genislik dagittigi icin bu sahte favoriye kanip en az ati
+    oraya yazar. lambda<1 ile duzlestirilince sahte sivrilik erir, gercek sivrilik kalir
+    -> banker YASAKLANMAZ, hak edilmesi gerekir (kullanicinin 31 Tem sarti).
+
+    ayak_dk: her ayagin kupon anindaki posta-uzakligi (dakika). None -> yakin sayilir.
+    UYARI: lambda BACKTEST EDILEMEZ (arsivde gun-ici oran serisi yok; oran_log bu yuzden var).
+    Ileri-yonlu olcum: acgozlu900 ile ayak-ayak kiyaslanir."""
+    yeni = []
+    for atlar, dk in zip(ayak_atlari, ayak_dk):
+        lam = lam_uzak if (dk is not None and dk > esik) else lam_yakin
+        v = [(no, float(p)) for no, p in atlar if pd.notna(p) and p > 0]
+        if not v:
+            yeni.append([])
+            continue
+        if lam == 1.0:
+            yeni.append(v)
+            continue
+        q = [(no, p ** lam) for no, p in v]
+        s = sum(x for _, x in q)
+        yeni.append([(no, x / s) for no, x in q] if s > 0 else [])
+    return kupon_kur_acgozlu(yeni, max_kombo)
+
+
 def kupon_kur_birlesim(ayak_bot2, ayak_bot1, max_kombo):
     """K90: BIRLESIM dagitici — iki botun tamamlayiciligini kullanir.
     Her ayakta her atin skoru = max(bot1_norm, bot2_norm); vektor normalize edilip

@@ -356,6 +356,15 @@ bot2-kontrolünden anlamlı kötü (p=0,0002) → canlıya alınmadı. Tamamlay�
 max-birleşim yanlış araç. İleride farklı birleştirme fikri gelirse `kupon_kur_birlesim`
 zemini hazır; yeni deneme için önce YENİ bir önceden-bağlanmış kriter yazılır.
 
+**>>> TETİK ATEŞLENDİ — 7 Ağu 2026 (K92). Bu maddenin λ kolu KAPANDI. <<<**
+Eşleşmiş ölçüm n=87: uzak λ=0,650 [0,465..0,875] (1'i içermiyor), yakın λ=0,980 [0,765..1,220],
+FARK −0,330 [−0,545..−0,135] **anlamlı**. `acgozlu_v2` canlıya alındı (8. config, λ_uzak=0,65,
+eşik 75 dk). Tam λ(T) eğrisi kurulMADI (n=24, monoton değil, farklar anlamsız → overfit riski).
+Ayrıntı ve iç-örneklem sağlaması K92'de.
+**AÇIK KALAN:** ileri-yönlü ölçüm — acgozlu_v2 ile acgozlu900 ayak-ayak kıyaslanacak (tek fark
+uzak-ayak düzeltmesi). K87 taban çizgisi ve K89 yöntemi kullanılır. **v3 (banker hak edilsin)
+ve v4 (saha genişliği) BEKLETİLDİ** — tek seferde tek değişken.
+
 **KARAR KURALI — şimdiden bağlanıyor (hindsight yasağı):**
 - 6. ayak lambda'sının %90 GA'sı **1'i içeriyorsa** → eskime hikâyesi doğrulanmadı,
   **açgözlü ellenmez**, K79 "ölçüldü, çıkmadı" diye kapanır.

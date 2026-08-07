@@ -34,7 +34,8 @@ KOK = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(KOK / "kod"))
 from gunluk import hesapla, getjson, BASE, EXCL  # noqa: E402
 from altili_backtest import (kupon_kur, kupon_kur_acgozlu,  # noqa: E402
-                             kupon_kur_ayrisma, ayrisma_skoru)
+                             kupon_kur_ayrisma, ayrisma_skoru,
+                             kupon_kur_kalibre, UZAK_ESIK_DK, LAM_UZAK)
 from duzlestir import vir_float  # noqa: E402
 import rapor_ortak as ro  # noqa: E402
 
@@ -71,10 +72,14 @@ KONFIG = {
     "acgozlu900": {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot2", "aile": "kamu"},
     "bot1_900":   {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot1", "aile": "temel"},
     "ayrisma900": {"kapsam": 0.95, "kombo": 900, "dagitim": "ayrisma", "puan": "bot2", "aile": "ayrisma"},
+    # K92: uzak ayagin olasiligi OLCULMUS lambda ile duzlestirilir (bkz. kupon_kur_kalibre).
+    # acgozlu900 ile TEK farki budur -> aradaki her fark uzak-ayak duzeltmesine atfedilebilir.
+    "acgozlu_v2": {"kapsam": 0.95, "kombo": 900, "dagitim": "kalibre", "puan": "bot2", "aile": "kalibre"},
 }
 AILE_AD = {"kamu":    "KAMU BOTU (bot2 — piyasayı dinler)",
            "temel":   "TEMEL BOT (bot1 — orana hiç bakmaz)",
-           "ayrisma": "AYRIŞMA (bot2 seçer, genişlik ayrışmaya gider)"}
+           "ayrisma": "AYRIŞMA (bot2 seçer, genişlik ayrışmaya gider)",
+           "kalibre": "MESAFE KALİBRELİ (bot2, uzak ayak λ=%.2f ile düzeltilir)" % LAM_UZAK}
 BANKER_ESIK = 0.70                     # tek-at banker esigi (tum config ortak)
 KOL = ["kayit_ts", "tarih", "pist", "seq", "ilk_saat", "config", "ayak",
        "kosu_no", "race_kod", "saat", "secim", "banker", "nat",
@@ -171,6 +176,16 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
                             if km.notna().any() and b1.notna().any() else 0.0)
             ayak_meta.append({"kosu_no": kno, "race_kod": _as_int(k.get("KOD")),
                               "saat": str(k.get("SAAT", "")).strip()})
+        # K92: her ayagin KUPON ANINDAKI posta-uzakligi (dk). Kalibreli dagitici bunu kullanir.
+        # Saat cozulemezse None -> o ayak "yakin" sayilir (muhafazakar: duzeltme uygulanmaz).
+        _simdi = datetime.now()
+        ayak_dk = []
+        for _meta in ayak_meta:
+            try:
+                _post = datetime.strptime(f"{tarih} {_meta['saat']}", "%Y-%m-%d %H:%M")
+                ayak_dk.append((_post - _simdi).total_seconds() / 60.0)
+            except ValueError:
+                ayak_dk.append(None)
         if eksik:
             print(f"  {seq}. Altili (kosu {pencere[0].get('RACENO')}): bir ayak kapsam disi -> atlandi")
             continue
@@ -185,6 +200,8 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
                 sec = kupon_kur_acgozlu(puanlar, maxk)
             elif dagitim == "ayrisma":             # K68: acgozlu + ayrisma agirligi
                 sec = kupon_kur_ayrisma(puanlar, ayak_ayr, maxk, AYRISMA_W)
+            elif dagitim == "kalibre":             # K92: uzak ayak lambda ile duzlestirilir
+                sec = kupon_kur_kalibre(puanlar, ayak_dk, maxk)
             else:
                 sec = kupon_kur(puanlar, ay["kapsam"], maxk, BANKER_ESIK)
             if any(len(s) == 0 for s in sec):      # dagitici bos donduyse yazma (bozuk satir olmasin)

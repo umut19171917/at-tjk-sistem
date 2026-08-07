@@ -1728,3 +1728,58 @@ config'in arşiv karşılığı 900 ve 1800 bütçeyle koşuldu, geçişler say�
   tam da ucuz olanlar (kaçan yakınsa herkes yakındır → temettü düşük). Sürdürülebilir yol
   bütçe kolundan geçmiyor; aday adresler: yeni ürün (7'li, K85) ve devir anları (K84/K85).
 - Canlı sistem DEĞİŞMEDİ; bütçeler 900 kaldı.
+
+**K92 — BEKLEYENLER #9 TETİĞİ ATEŞLENDİ: uzak ayak gerçekten bozuyor. `acgozlu_v2` canlıya
+alındı (8. config).** 31 Tem'de kuralı sonuç görmeden bağlamıştık: *"FARK'ın %90 GA'sı sıfırdan
+ayrılana kadar hiçbir şey değişmez."* 7 Ağu'da ayrıldı.
+- **Eşleşmiş ölçüm (aynı koşunun uzak ve yakın fotoğrafı), n=87 koşu:**
+  | | λ | %90 GA |
+  |---|---|---|
+  | UZAK (>75 dk, ayak 3-6) | **0,650** | [0,465 .. 0,875] → **1'i İÇERMİYOR** |
+  | YAKIN (≤75 dk, ayak 1-2) | 0,980 | [0,765 .. 1,220] → 1'i içeriyor |
+  | **FARK** | **−0,330** | **[−0,545 .. −0,135] ANLAMLI** |
+  60 dk eşiğiyle de aynı (n=97, fark −0,320 [−0,505..−0,135]). 31 Tem'de n=16 ve GA sıfırı
+  içeriyordu; veri 5 katına çıkınca ayrıldı.
+- **TAM λ(T) EĞRİSİ KURULAMADI — ve kurulmadı.** 7 mesafenin hepsinde fotoğrafı olan koşu
+  yalnız 24; ölçülen eğri monoton bile değil (30dk 0,820 · 120dk 0,690 · **150dk 0,865** ·
+  180dk 0,750) ve mesafe farklarının **hiçbiri** anlamlı değil. Bu bir eğri değil gürültü;
+  6 parametreli λ tablosu kurmak doğrudan overfit olurdu (K33/K52 yasağı) → **REDDEDİLDİ.**
+  Yerine iki seviyeli tasarım: tek ölçülmüş parametre λ_uzak = 0,65.
+- **λ_yakın = 1,0 seçildi** (ölçülen 0,98, GA null'u içeriyor). Gerekçe: (a) GA 1'i içeriyor,
+  (b) böylece acgozlu_v2 ile acgozlu900 arasındaki **her fark yalnızca uzak-ayak
+  düzeltmesine** atfedilebilir — temiz atıf.
+- **BACKTEST EDİLEMEZ** (K90'dan farkı bu): arşivde gün-içi oran serisi yok, `oran_log` zaten
+  bu yüzden var. Yapılabilen tek kontrol geriye dönük **iç-örneklem** sağlamasıydı.
+- **Geriye dönük kontrol (17 Altılı, 31 Tem'den beri, kupon-anı fotoğraflarıyla):**
+  ayak isabeti v1 63/102 (%61,8) → v2 65/102 (%63,7); eşleşmiş yalnız-v1 3 / yalnız-v2 5,
+  **p=0,727 (anlamlı DEĞİL)**. 5/6: 3→4. Ort. kombo 869→860 (bütçe korunuyor).
+  **Tasarım niyeti DOĞRULANDI:** yakın ayak 4,41→2,97 at (daraldı), uzak ayak 4,00→**4,74** at
+  (genişledi). Sentetik testte de altı ayak birebir aynı girdiyken 3-3-3-3-3-3 → 3-1-4-4-4-4.
+  *Bu iç-örneklem sağlamasıdır, doğrulama değil — λ aynı dönemden ölçüldü. Amacı "tasarlandığı
+  işi yapıyor mu + bariz zarar var mı" idi; ikisi de cevaplandı.*
+- **CANLIYA ALINDI:** `acgozlu_v2` (kombo 900, dağıtım "kalibre", puan bot2, aile "kalibre").
+  Mevcut 7 config'e DOKUNULMADI. Ölçüm ileri-yönlü: acgozlu900 ile ayak-ayak kıyaslanacak
+  (tek fark uzak-ayak düzeltmesi).
+- **BEKLENTİ (önceden yazıldı):** ROI'yi kurtarmayacak (K93). Değeri para değil cevap:
+  "eskimeyi düzeltmek ayak isabetini artırıyor mu?" v3 (banker hak edilsin) ve v4 (saha
+  genişliği) BEKLETİLDİ — tek seferde tek değişken.
+
+**K93 — Kâğıt ROI backtest'e yakınsadı: +%18,8 → −%33,3. Ölçüm aygıtı çalışıyor.**
+31 Tem'de kullanıcı "+%18,8, kardayız" demişti; o gün 106 kuponun 4'ünün gelirin %100'ünü
+ürettiğini, P(≥+%18,8)=%9,2 olduğunu ve gerçekte −%19,4 olan bir stratejinin bile 5 ay sonra
+%25,7 ihtimalle pozitif görüneceğini hesaplamıştık. **Bir hafta içinde gerçekleşti.**
+| tarih | kümülatif Altılı ROI |
+|---|---|
+| 23 Tem | +%1394 (ilk 6/6) |
+| 30 Tem | **+%18,8** |
+| 2 Ağu | −%49,4 |
+| 6 Ağu | **−%33,3** |
+- **Yakınsama iki üründe birden:** Altılı −%33,3 vs backtest −%32 (K52). Ganyan (955 kâğıt
+  kupon) **−%25,4** vs ganyan kesintisi %25,5 (K46). İki bağımsız üründe teori ne diyorsa o.
+- **YORUM (kullanıcının sürdürülebilirlik çerçevesi):** bu başarısızlık değil, **ölçüm aygıtının
+  doğrulanması**. Sistem kenarı olmayan bir oyunda tam kesinti kadar kaybediyor. "Kupon şeklini
+  iyileştirerek kâra geçme" yolu bu tabloyla kapandı — K83'te de ölçülmüştü (hiçbir genişlik
+  kârlı değil, N=9'da 22/22 tutturup −%74).
+- **Yön:** kalan iki açık adres ürün tarafında — **7'li ganyan** (2026'da çıkmış YENİ ürün,
+  kalabalık kalibre olmamış, 91 devir; K85) ve **4'lü ganyan** (kısa zincir; BEKLEYENLER #2).
+  İkisi de arşivden çıkarılabilir → **backtest EDİLEBİLİR**, acgozlu_v2'nin aksine.
