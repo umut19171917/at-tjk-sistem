@@ -218,18 +218,23 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
             print(f"  {seq}. Altili (kosu {pencere[0].get('RACENO')}): bir ayak kapsam disi -> atlandi")
             continue
 
-        # K97: karar anindaki vektoru AYNEN kaydet (geri kurulmasin, varsayim girmesin)
-        for ai, gtab in enumerate(ayak_tablo):
-            for _, r in gtab.iterrows():
-                ani_satirlar.append({
-                    "kayit_ts": ts, "tarih": tarih, "pist": pist, "seq": seq, "ayak": ai + 1,
-                    "kosu_no": ayak_meta[ai]["kosu_no"], "race_kod": ayak_meta[ai]["race_kod"],
-                    "saat": ayak_meta[ai]["saat"],
-                    "dk_kala": (round(ayak_dk[ai], 1) if ayak_dk[ai] is not None else np.nan),
-                    "no": _as_int(r.get("no")), "at_ad": r.get("at_ad"),
-                    "bot1": r.get("bot1"), "bot2": r.get("bot2"), "kamu": r.get("kamu"),
-                    "oran": r.get("ganyan_muhtemel"), "kaynak": "canli",
-                })
+        # K97: karar anindaki vektoru AYNEN kaydet (geri kurulmasin, varsayim girmesin).
+        # Yardimci kayit -> hatasi kupon kurmayi engellemez (asagidaki yazma da korumali).
+        try:
+            for ai, gtab in enumerate(ayak_tablo):
+                for _, r in gtab.iterrows():
+                    ani_satirlar.append({
+                        "kayit_ts": ts, "tarih": tarih, "pist": pist, "seq": seq, "ayak": ai + 1,
+                        "kosu_no": ayak_meta[ai]["kosu_no"], "race_kod": ayak_meta[ai]["race_kod"],
+                        "saat": ayak_meta[ai]["saat"],
+                        "dk_kala": (round(ayak_dk[ai], 1) if ayak_dk[ai] is not None else np.nan),
+                        "no": _as_int(r.get("no")), "at_ad": r.get("at_ad"),
+                        "bot1": r.get("bot1"), "bot2": r.get("bot2"), "kamu": r.get("kamu"),
+                        "oran": r.get("ganyan_muhtemel"), "kaynak": "canli",
+                    })
+        except Exception as e:                                   # noqa: BLE001
+            print(f"  UYARI: {seq}. Altili kupon ani vektoru toplanamadi "
+                  f"({type(e).__name__}: {e}) -- kupon kurma etkilenmedi.")
 
         for cfg, ay in KONFIG.items():
             maxk, dagitim = ay["kombo"], ay["dagitim"]
@@ -262,7 +267,14 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
                     "kazanan": np.nan, "tuttu": np.nan, "sonuclandi": np.nan,
                 })
 
-    _kupon_ani_yaz(ani_satirlar)
+    # K97: anlik goruntu YARDIMCI kayittir; hatasi ASLA kupon kurmayi engellememeli.
+    # (Kupon kurulmazsa o Altili deneyden duser -- kayip_raporu.py'nin "KURULMAYAN ALTILI"
+    #  kalemi, en pahali hasar. Yeni bir dosyaya yazmak icin bu riski almayiz.)
+    try:
+        _kupon_ani_yaz(ani_satirlar)
+    except Exception as e:                                       # noqa: BLE001
+        print(f"  UYARI: kupon ani kaydi yazilamadi ({type(e).__name__}: {e}) "
+              f"-- kupon kurma etkilenmedi, geri kurma betigi bosluğu doldurur.")
     if not yeni_satirlar:
         return 0
     yeni = pd.DataFrame(yeni_satirlar)

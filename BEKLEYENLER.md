@@ -194,6 +194,26 @@ asıl soru budur — güvenilir olur.
 **Ön koşul:** ham arşivden (4.219 kart, `BAHISLER_TR`) her ürünün temettüsü + kazanan
 kombinasyonu çıkarılıp koşulara eşlenmeli. **Önce fizibilite denemesi yapılmalı.**
 
+### 10. ✅ ÖLÇÜLDÜ ve KAPANDI (2026-08-09, K98) — tamamlayıcı kupon DEĞER KATMIYOR
+
+**Sonuç:** Aynı gün içinde ölçüldü (kullanıcı "orta'yı çoğaltmak mantıklı mı?" diye sorunca).
+Önceden bağlanan ölçüt **GEÇİLEMEDİ** — üç ayrı bölme kuralının üçü de parayı bozdu:
+- 1→2→3→4 × orta@96: isabet %4,6→6,7→8,4→9,6 ama ROI −35,5→−51,6→−58,3→−59,8.
+  Aynı parayı **tek kupona genişleterek** vermek her seviyede daha iyi (@192: 90 isabet, −34,0%).
+- **"Tek ayakta bölmek = o ayağı genişletmek."** İki farklı bölme kuralı ("A ilk atlar/B sonraki"
+  ve "A tek sıralı/B çift sıralı") **birebir aynı** sonucu verdi (96 isabet, −51,6%), çünkü diğer
+  beş ayak ortakken iki kuponun BİRLEŞİMİ aynı kombinasyon kümesidir. Yeni bir şey değil.
+- **Banker rotasyonu** (maddenin asıl fikri; A: 1-3 dar/4-6 geniş, B: tersi): temettüyü **ikiye
+  katlıyor** (1.656→3.222 — de-chalking gerçekten çalışıyor) ama isabet 66→52 düşüyor.
+  Net −41,5%, şans arındırılınca −59,7%.
+- **YAPISAL SEBEP (K98-h, "tavan"):** kupon zorunlu olarak bir DİKDÖRTGENDİR. Kısıt olmadan
+  "en olası N kombinasyon" seçilebilseydi %32-64 daha çok tutturur ama **temettü yarıya iner**
+  ve ROI ~21 puan kötüleşir. En olası kombinasyonlar herkesin oynadığıdır → kapsamı büyütmek
+  kalabalığa katılmaktır. **Dikdörtgen kısıtı handikap değil, kazara işleyen bir
+  kalabalıktan-kaçınma mekanizmasıdır.** Bu, [[K65]]'i de yeni bir açıdan açıklar.
+**Bu kol kapandı; yeniden açmak için yeni bir MEKANİZMA gerekir, yeni bir bölme kuralı değil.**
+
+<sub>--- özgün madde (arşiv) ---</sub>
 ### 10. TAMAMLAYICI KUPON (banker rotasyonu) — ölçülmedi, ölçüt önceden bağlandı
 **Eklendi:** 2026-08-09 · **İlgili:** K89, K90, K96, K97
 **TETİK: KULLANICI söyleyince** — kendiliğinden başlama.
@@ -238,6 +258,21 @@ düşük DEĞİLSE. Düşükse "ayrıştırma değer katmıyor" yazılır ve kap
 **İlgili:** K42, K48
 K42 kâğıt testi 25 Eylül 2026'ya kadar koşuyor. O tarihte sistem modu kararı: günlük devam /
 talep-üzerine / arşivle. Karar için sicil o güne kadar birikecek.
+
+**CANLI OYNAMA PLANI — 2026-08-09'da konuşuldu, ölçüldü, ERTELENDİ (K98).**
+Kullanıcının önerisi "bot1 + ona alternatif bir kupon" idi. Ölçüm sonucu:
+- **bot1 canlı portföye KONMAMALI.** ROI'si −18,3% görünüyor ama **getirisinin %43'ü tek bir
+  kupondan** (539.029 TL). O olay çıkınca −53,2%. Kenar değil, piyango biçimi.
+- **Birleştirme (f) ve çoğaltma (g) elendi** — bkz. #10.
+- **Canlıya çıkılacaksa tek savunulabilir kupon: `orta`** (kapsam 0,75 / 96 kombinasyon),
+  Altılı başına **118 TL**, ortalama **−42 TL/Altılı**. Şansa en az bağımlı olan o
+  (ROI(−1) −44,4%, getirisinin yalnız %5'i en büyük kupondan). Zaten canlıda var olan config;
+  **yeni config gerekmez.**
+- **AMA "canlı, kâğıt gibi mi davranıyor?" sorusunun cevabı ZATEN VAR** (K93): ganyanda kâğıt
+  −%25,4 / teorik kesinti %25,5; Altılı'da −%33,3 / backtest −%32. İki bağımsız üründe kâğıt
+  gerçeği birebir tutturdu. **Canlı para koymanın ölçüme ekleyeceği bilgi yok.**
+- **Karar 25 Eylül'e bağlandı.** O tarihe kadar `acgozlu_v2`'nin ileri ölçümü birikiyor (#9).
+  Kod/config DEĞİŞMEDİ.
 
 ### 5. ✅ YAPILDI (kullanıcı beyanı 2026-07-27: "attım birkaç gün önce") — dış yedek yüklendi
 **İlgili:** yedekleme
@@ -299,6 +334,16 @@ Günde ~3 Altılı geliyor → tahmini **~2-3 hafta (Ağustos ortası 2026)**.
 diye bakıp açıkça söylüyor. Yarın çalıştır: 60/90/120/150/180 dk satırları görünmüyorsa
 düzeltme işlememiş demektir → 3 hafta değil 1 gün kaybederiz. (BEKLEYENLER #4 tam bu yüzden
 haftalarca cevapsız kalmıştı.)
+
+**K98 NOTU (2026-08-09) — v2 backtest'te BAĞIMSIZ DESTEK aldı, ama bütçeye özgü:**
+Arşivde (OOS 2025-26, 1.433 olay) λ=0,65'i geç ayaklara uygulamak açgözlüyü **−64,0% → −47,2%**
+iyileştirdi, temettüyü %41 artırdı. Kontrol: λ'yı **tüm** ayaklara uygulamak hiçbir şey yapmıyor
+(−65,2%), **erken** ayaklara uygulamak da (−64,5%) → etki "düzleştirme" değil, **geç ayaklara
+genişlik**. Yani açgözlünün kusuru sürüklenmeden bağımsız olarak arşivde de var.
+**AMA:** üstünlük yalnız @900'de. @288 ve @96'da genis (kapsam) v2'yi açık ara geçiyor
+(@96: −37,1% vs −64,4%). v2 "daha iyi mekanizma" değil, **900'e özgü düzeltme**.
+λ DEĞİŞTİRİLMEDİ (tarama 0,50'yi iyi gösteriyor ama backtest'ten λ seçmek overfit — K33/K52).
+Bu, ileri-yönlü ölçümün yerine GEÇMEZ; aşağıdaki tetik aynen geçerli.
 
 **ÜÇÜNCÜ ADAY — "banker hak edilsin" (yeni parametre GEREKTİRMEZ).**
 Sistemde bu test **zaten var**, sadece açgözlü ondan muaf. `kupon_kur` (kapsam ailesi,

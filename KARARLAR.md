@@ -1932,3 +1932,139 @@ yorumlarını sistematik olarak yanıltıyordu.
   K76/K80/K92 sürükleme bulgusunun bağımsız bir teyidi.
 - **BEKLEYENLER #9 (acgozlu_v2 ileri ölçümü) bu sütun olmadan doğru okunamazdı** — v2'nin tek
   farkı zaten uzak ayak düzeltmesi; kıyas cetveli yarış anı olursa düzeltmenin etkisi görünmez.
+
+**K98 — CANLIYA CIKIS ANALIZI: "bot1 + bir alternatif" plani ÖLÇÜMLE DÜŞTÜ; kalan tek
+savunulabilir canlı kupon `orta` (96 kombinasyon).** Kullanıcı 9 Ağu'da sordu: "canlı oynamak
+için bot1 ve ona alternatif bir kupon gerekiyor, mevcut kupon sayımız canlıya çıkamayacak kadar
+çok ve maliyetli — bot1 dışında 900'lüklerden hangisi? Seçmeyeceksek nasıl birleştiririz?"
+Beş turluk backtest (OOS 2025-26, 1.433 olay, yalnız 6/6 öder, birim 1,25 TL).
+
+**(a) DÖRT ADAY, TEK BAŞINA @900**
+| kupon | ort.kombo | ayak | KAZANÇ | 6/6 | ROI | ort.temettü |
+|---|---|---|---|---|---|---|
+| genis900 | 732 | %70,0 | **2,04** | 173 | −55,2% | 3.393 |
+| acgozlu900 | 862 | %74,3 | 1,89 | 225 | −64,0% | 2.469 |
+| ayrisma900 | 862 | %74,3 | 1,88 | 215 | −64,0% | 2.589 |
+| acgozlu_v2 | 862 | %74,6 | 1,86 | **234** | **−47,2%** | **3.483** |
+| bot1_900 | 862 | %68,0 | 1,70 | 123 | −18,3% | 10.248 |
+- **ayrisma900 elendi:** açgözlü ile eşleşmiş McNemar yalnız-ayrışma 119 / yalnız-açgözlü 124,
+  **p=0,80** (8.598 ayak). K95'in canlı bulgusu backtest'te de doğrulandı: ayrı kupon değil, kopya.
+- **acgozlu900 elendi:** v2 onu her para ölçüsünde geçiyor.
+
+**(b) v2'nin SÜRPRİZİ ve KONTROLÜ — asıl mekanizma teşhis edildi.** v2'nin arşivde iyi çıkması
+BEKLENMİYORDU: arşiv olasılıkları kapanış oranlarından gelir, düzeltilecek sürüklenme yoktur.
+İki hipotez ayırt edildi (λ=0,65 @900):
+| λ nereye | ROI | temettü |
+|---|---|---|
+| yok (açgözlü) | −64,0% | 2.469 |
+| **geç ayaklara (3-6)** | **−47,2%** | **3.483** |
+| tüm ayaklara | −65,2% | 2.452 |
+| erken ayaklara (1-2) | −64,5% | 2.460 |
+**Tekdüze düzleştirme hiçbir şey yapmıyor.** Etki tamamen *geç ayaklara genişlik vermekten*
+geliyor → açgözlünün gerçek kusuru "sivri vektöre kanmak" değil, **son ayaklara sistematik
+olarak az at yazmak**; bu kusur sürüklenmeden bağımsız olarak arşivde de var. λ=0,65 canlı
+sürüklenme verisinden ölçülmüştü ([[K92]]), backtest'ten seçilmedi → bağımsız teyit.
+**λ DEĞİŞTİRİLMEDİ:** tarama 0,50'yi daha iyi gösteriyor (−26,6%) ama backtest'e bakıp λ seçmek
+K33/K52'nin yasakladığı overfit'tir. Tarama buraya teşhis için kondu, parametre seçmek için değil.
+
+**(c) v2'nin ÜSTÜNLÜĞÜ BÜTÇEYE ÖZGÜ — küçükte tersine dönüyor.** (Bu ölçüm ilk cevabı düzeltti.)
+| bütçe | genis (kapsam) | acgozlu_v2 |
+|---|---|---|
+| @96 | **−37,1%** | −64,4% |
+| @288 | **−46,4%** | −65,0% |
+| @900 | −55,2% | **−47,2%** |
+v2 "daha iyi mekanizma" değil, **900'e özgü bir düzeltme**.
+
+**(d) PORTFÖY (bot1_900 + X, iki kupon ayrı oynanır)**
+| portföy | Altılı başına | en az bir 6/6 | ROI | ROI (en büyük 1 çıkınca) |
+|---|---|---|---|---|
+| + genis900 | 1.991 TL | 248 (%17,3) | −35,3% | −54,1% |
+| + acgozlu900 | 2.154 TL | 277 (%19,3) | −41,2% | −58,6% |
+| **+ acgozlu_v2** | 2.154 TL | **293 (%20,4)** | **−32,8%** | −50,2% |
+| *kontrol: bot1_1800 tek* | 2.168 TL | 188 (%13,1) | −29,2% | −46,6% |
+Önceden bağlanan iki ölçütü de v2 kazandı → **planın literal cevabı bot1_900 + acgozlu_v2.**
+
+**(e) AMA bot1'in SAYISI YANILTICI — bu bugünün en önemli bulgusu.** En büyük kuponlar teker
+teker çıkarılıp ROI yeniden hesaplandı:
+| kupon | ROI | −en büyük 1 | −en büyük 3 | −en büyük 5 |
+|---|---|---|---|---|
+| **bot1_900** | −18,3% | **−53,2%** | −70,1% | −72,9% |
+| bot1_1800 | −29,2% | −46,6% | −57,3% | −64,4% |
+| v2_900 | −47,2% | −50,3% | −54,1% | −56,9% |
+| genis900 | −55,2% | −57,5% | −61,4% | −64,8% |
+bot1_900'ün 1.433 Altılıdaki **tüm getirisinin %43'ü TEK bir kupondan** (539.029 TL'lik temettü),
+%63'ü ilk üçten. Medyan temettüsü 2.056 TL, Altılı başına bedeli 1.078 TL. Karşılaştır: genis900'de
+en büyük kuponun payı %5, v2'de %3. **bot1 bir kenar değil, piyango biçimidir.** K67'nin "tuttuğunda
+az kişiyle bölüşür" öngörüsü doğru ama bedeli getirinin tek olaya bağlanması. Canlı oyuncu birkaç
+yüz Altılı oynar; o tek olayı görme olasılığı düşüktür → **bot1 canlı portföye KONMAMALI.**
+
+**(f) BİRLEŞTİRME İŞE YARAMIYOR.** Üç bot2 kuponunu tek kupona indirmenin üç yolu (@900):
+birleşim+buda 173 / −55,2% · çoğunluk(≥2/3) 214 / −62,8% · ortalama vektör 202 / −64,1% ·
+en iyi tek (genis900) 173 / −55,2%. **"Birleşim+buda" genis900 ile 1.433 olayın 1.432'sinde
+KELİMESİ KELİMESİNE aynı kupon (%99,9)** — birleşimi bütçeye budarken en düşük olasılıklı atları
+atmak, tam olarak kapsam kuralının yaptığı şey. Diğer ikisi en iyi teklinden kötü.
+K90'ın (bot1+bot2 birleşimi) reddiyle aynı yöne bakıyor.
+
+**(g) ÇOĞALTMA DA İŞE YARAMIYOR — ve NEDENİ yapısal.** ("orta'yı birbirine alternatif çoğaltmak
+mantıklı mı?")
+| | kombo | bedel | 6/6 | ROI | ROI(−1) |
+|---|---|---|---|---|---|
+| **1 × orta@96** | 95 | 118 TL | 66 (%4,6) | **−35,5%** | **−44,4%** |
+| 2 × orta@96 | 189 | 236 TL | 96 (%6,7) | −51,6% | −56,0% |
+| 3 × orta@96 | 284 | 355 TL | 121 (%8,4) | −58,3% | −61,3% |
+| 4 × orta@96 | 378 | 473 TL | 138 (%9,6) | −59,8% | −62,0% |
+Aynı parayı tek kupona genişleterek vermek her seviyede daha iyi (@192: 90 isabet, −34,0%, 181 TL).
+- **Bölme kuralı kontrolü:** üç kural denendi. "A ilk atlar / B sonraki atlar" ile "A tek sıralı /
+  B çift sıralı" **birebir aynı sonucu verdi** (96 isabet, −51,6%) — çünkü diğer beş ayak ortakken
+  iki kuponun BİRLEŞİMİ aynı kombinasyon kümesidir. **Tek ayakta bölmek = o ayağı genişletmek.**
+  Aynı zamanda kodun doğruluk kontrolü.
+- **Banker rotasyonu** (kullanıcının tarif ettiği şey; A: 1-3 dar/4-6 geniş, B: tersi):
+  temettüyü **İKİYE KATLIYOR** (1.656 → 3.222, de-chalking gerçekten çalışıyor) ama isabet
+  66 → 52 düşüyor. Net −41,5%, şans arındırılınca −59,7%. Fikir doğru yöne bakıyor, bedeli büyük.
+
+**(h) TAVAN — sistemin neden kenar bulamadığının en temiz açıklaması.** Kupon zorunlu olarak bir
+DİKDÖRTGENDİR (seçim kümelerinin kartezyen çarpımı). Kısıt olmadan "en olası N kombinasyon"
+seçilebilseydi ne olurdu (heap ile k-en-iyi kombinasyon):
+| | 6/6 | sıklık | ROI | ort.temettü |
+|---|---|---|---|---|
+| orta@96 (dikdörtgen) | 66 | %4,6 | **−35,5%** | **1.656** |
+| tavan, 96 kombinasyon | **87** | **%6,1** | −56,3% | 864 |
+| tavan, 192 kombinasyon | 133 | %9,3 | −54,5% | 1.178 |
+| tavan, 288 kombinasyon | 164 | %11,4 | −57,6% | 1.335 |
+Tavan %32-64 daha fazla tutturuyor ama **temettüsü yarısı** ve ROI'si ~21 puan kötü.
+**En olası kombinasyonlar, herkesin oynadığı kombinasyonlardır; kapsamı büyütmek kalabalığa
+katılmaktır.** Bunun tersi de doğru: **kuponun dikdörtgen olma zorunluluğu bir handikap değil,
+kazara işleyen bir kalabalıktan-kaçınma mekanizmasıdır** — ikinci tercihlerin çapraz çarpımlarını
+almaya zorlar, ödeyen kombinasyonlar da onlardır.
+Bu, K65'i yeni bir açıdan açıklar: açgözlü isabeti maksimize ederek TAVANA doğru yürür, bu yüzden
+daha çok tutturur ve daha az kazanır (185→225 isabet, ROI −41→−55) — ölçülen tam olarak budur.
+**Kapsam ile fiyat bu havuzda BİRBİRİNE TERS çalışır ve hiçbir noktada sıfırın üstüne çıkmaz.**
+
+**(i) KARAR / TAVSİYE**
+- **Canlıya çıkılacaksa: tek kupon, `orta` (kapsam 0,75 / 96 kombinasyon), Altılı başına 118 TL.**
+  Şansa en az bağımlı olan o (ROI(−1) −44,4% ile birinci; getirisinin yalnız %5'i en büyük
+  kupondan). KAZANÇ'ı en yüksek olanlardan (2,42). 22 Altılıda bir 6/6, tutunca bedelin ~14 katı.
+  Ortalama 42 TL/Altılı kaybettirir.
+- **bot1 canlı portföye konmaz** (e maddesi). **Çoğaltma yapılmaz** (g). **Birleştirme yapılmaz** (f).
+- Kapsam eşiği kontrolü: 0,75 ile 0,95 arasında fark yok (bütçe zaten bağlıyor) → öneri
+  **canlıda hâlihazırda var olan `orta` config'idir**, yeni config gerekmez.
+- **DÜRÜSTLÜK NOTU:** tabloda @192'nin @96'dan iyi görünmesi (−34,0 vs −35,5) BULGU DEĞİLDİR —
+  dört değerlik taramanın en iyisi ve GA'lar iç içe ([−53,2,−12,9] vs [−58,1,−7,6]). λ için
+  söylenenin aynısı: taramadan bütçe seçmek overfit. Doğru okuma: **96-192 bandı aynı, 288'den
+  itibaren bozuluyor.**
+- **HİÇBİR KOD/CONFIG DEĞİŞMEDİ.** Bu karar bir ölçüm kaydıdır; canlıya çıkma kararı 25 Eyl'e
+  bağlı ([[K42]]/[[K48]]).
+
+**(j) YENİDEN ÜRETİLEBİLİRLİK:** yukarıdaki dokuz tablonun tamamını `kod/altili_canli_secim_test.py`
+üretir (offline, salt-okunur; `--bolum N` ile tek bölüm). Sayı denetlenemiyorsa karar da
+denetlenemez — bu yüzden geçici betikler değil kalıcı araç yazıldı.
+**Araçta yakalanan tuzak (not düşülüyor, tekrar etmesin):** `ayrisma_skoru` bot1 ile kamu'yu
+**eleman eleman** kıyaslar; p1/p2 olasılığa göre SIRALI tutulduğu için onlardan hesaplanamaz —
+hiza kayar ve skor bozulur (ilk yazımda bozulmuştu: p=0,50 çıktı, doğrusu p=0,80). Skor artık
+veri yüklenirken, DataFrame satırları hizalıyken bir kez hesaplanıyor.
+
+**(k) YAN İŞ — K97'nin kayıt yolu korumalı hale getirildi.** `kupon_hazirla` içindeki kupon-anı
+anlık görüntüsü **yardımcı** kayıttır; hatası kupon kurmayı ASLA engellememeli. İki yer de
+try/except'e alındı ve uyarı basıyor. Gerekçe: kupon kurulmazsa o Altılı deneyden düşer —
+`kayip_raporu.py`'nin "KURULMAYAN ALTILI" kalemi, ölçtüğümüz en pahalı hasar. Yeni bir dosyaya
+yazmak için o riski almayız; boşluğu zaten `kupon_ani_geri_kur.py` doldurur.
