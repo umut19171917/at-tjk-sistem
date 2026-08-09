@@ -677,6 +677,16 @@ def _siralama_html(tarih, pist, seq, ayak, kosu_no, rk, secimler, kzno):
                  f"({str(r0.get('kayit_ts'))[11:16]}, "
                  f"{('%.0f' % dk) if pd.notna(dk) else '?'} dk kala){ek}: </span>"
                  + _sira_etiketleri(sirali, secset, kzno))
+        # K99: BOT1 CETVELI ayri satir. bot1_900 secimini BU vektorle yapar; ustteki
+        # harman satiriyla karsilastirilamaz. Ayrisma buradan okunur -- "bot1 neden
+        # harmanin 5.'sini almadi" sorusunun cevabi bu satirdadir.
+        if "bot1_sira" in a.columns and pd.notna(a["bot1_sira"]).any():
+            b = a.dropna(subset=["bot1_sira"]).copy()
+            b_sirali = [(int(r["bot1_sira"]), int(r["no"]))
+                        for _, r in b.sort_values("bot1_sira").iterrows()]
+            H.append("<span class=mini><b>kosu %s</b> &middot; <b>BOT1 CETVELI</b> "
+                     "(orana bakmaz &mdash; <i>bot1_900</i> secimini bununla yapar): </span>"
+                     % kosu_no + _sira_etiketleri(b_sirali, secset, kzno))
 
     # --- 2) YARIS ANI ---------------------------------------------------------------
     if not rk:
@@ -878,8 +888,14 @@ def html_yaz(df=None, ac=False):
                  f"<b>{ro.para(t_odul)}</b> &nbsp;&rarr;&nbsp; net "
                  f"<span class='{'poz' if tn >= 0 else 'neg'}'><b>{ro.para(tn, isaret=True)}</b>"
                  f"</span><br>{_resmi_satir([kk[c] for c in cfgler])}</span></div>")
-        H.append("<div style='overflow-x:auto'><table>")
         # K97: sistem sirasi artik IKI kolonlu okunur -> K=kupon ani, Y=yaris ani
+        # K99: bot1 sutunlarinda ayrica B = bot1'in KENDI sirasi (secimi yapan cetvel)
+        H.append("<div class=k style='margin:6px 0 10px'>Hucre etiketleri: "
+                 "<b>K</b> = kupon anindaki harman sirasi &nbsp;&middot;&nbsp; "
+                 "<b>Y</b> = yaris anindaki harman sirasi &nbsp;&middot;&nbsp; "
+                 "<b>B</b> = <i>bot1'in kendi sirasi</i> (yalniz bot1 sutununda; "
+                 "secimi yapan cetvel odur, K degil)</div>")
+        H.append("<div style='overflow-x:auto'><table>")
         H.append("<tr><th>ayak</th><th class=l>KAZANAN AT</th>"
                  "<th>kazananin sistem sirasi<br><span class=mini>kupon ani &rarr; yaris ani</span></th>"
                  "<th>ganyan<br>orani</th>"
@@ -921,6 +937,13 @@ def html_yaz(df=None, ac=False):
                 sr = sr.iloc[0]
                 secimler = [int(x) for x in str(sr["secim"]).split(",") if x != ""]
                 tum_sec |= set(secimler)
+                # K99: config KENDI cetveliyle secim yapar. bot1 tabanli config'lerde
+                # yalniz K (harman) gostermek YANILTIYORDU: bot1 sutununda "K1 K2 K3 K4 K8"
+                # gorunup 5. atlanmis gibi duruyor, oysa bot1 KENDI ilk 5'ini kesintisiz
+                # almis (o "K8" bot1'in 3. atidir). Bot1 config'lerinde B<sira> once yazilir.
+                # (2026-08-09 vakasi: IZMIR 5. ayak, kazanan ROSILDA harman 5. / bot1 6. ->
+                #  bot1 kesimin bir altinda kaldigi icin almadi; hata degil ayrisma.)
+                bot1_cfg = KONFIG.get(c, {}).get("puan") == "bot1"
                 hucre = []
                 for no in secimler:
                     # K97: K = kupon anindaki sistem sirasi (KARAR bu vektorle verildi)
@@ -933,7 +956,13 @@ def html_yaz(df=None, ac=False):
                              and abs(float(ka["sis"]) - float(bi["sis"])) >= 3)
                     stl = " style='color:#b45309;font-weight:bold'" if kayar else ""
                     et = (f"<b style='color:#137333'>{no}</b>" if no == kzno else f"{no}")
-                    hucre.append(f"{et} <span class=mini{stl}>K{ks} Y{ys}</span>")
+                    if bot1_cfg:
+                        bs = ro.sira_str(ka.get("bot1_sira"))
+                        # B = SECIMI YAPAN cetvel; K/Y karsilastirma icin
+                        hucre.append(f"{et} <span class=mini><b>B{bs}</b></span>"
+                                     f" <span class=mini{stl}>K{ks} Y{ys}</span>")
+                    else:
+                        hucre.append(f"{et} <span class=mini{stl}>K{ks} Y{ys}</span>")
                 bk = " <span class=mini>[banker]</span>" if int(sr["banker"]) == 1 else ""
                 tuttu = kzno is not None and kzno in secimler
                 stil = " style='background:#e8f7ec'" if tuttu else ""

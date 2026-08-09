@@ -2068,3 +2068,47 @@ anlık görüntüsü **yardımcı** kayıttır; hatası kupon kurmayı ASLA enge
 try/except'e alındı ve uyarı basıyor. Gerekçe: kupon kurulmazsa o Altılı deneyden düşer —
 `kayip_raporu.py`'nin "KURULMAYAN ALTILI" kalemi, ölçtüğümüz en pahalı hasar. Yeni bir dosyaya
 yazmak için o riski almayız; boşluğu zaten `kupon_ani_geri_kur.py` doldurur.
+
+**K99 — RAPOR HATASI: bot1 sütunu YANLIŞ CETVELLE etiketleniyordu; `B` sırası eklendi.**
+Kullanıcı 9 Ağu İZMİR 1. Altılı'ya bakarken sordu: *"5. ayakta ROSİLDA kupon anında 5. sırada
+ama bot1 kuponunda 5 atın arasında yok"* ve netleştirdi: *"bot1 o ayakta 5 at yazmış ama kupon
+anında 5. olan atı değil 8. atı yazmış."* **Öncül doğruydu ve şikâyet haklıydı — ama sebep
+bot1'in seçimi değil, RAPORUN ETİKETİYDİ.**
+
+**(a) TEŞHİS.** `bot1_900` config'i `"puan": "bot1"` ile çalışır (K67) — seçimini **bot1'in
+kendi cetveliyle** yapar, harmanla değil. Ama HTML rapor hücrelerinde her config için AYNI
+etiket basılıyordu: `K` = harman kupon-anı sırası, `Y` = harman yarış-anı sırası. Sonuç: bot1
+sütununda `K1. K2. K3. K4. K8.` görünüyor ve **5, 6, 7 atlanmış gibi** duruyor. Oysa bot1
+kendi cetvelinde ilk 5'ini KESİNTİSİZ almıştı. O "K8" bot1'in **3. atıydı**.
+
+**(b) VAKANIN GERÇEĞİ (İZMİR, seq 1, 5. ayak, kupon anı 17:30 / 149 dk kala).**
+| bot1 sırası | at | bot1 p | harman sırası | oran |
+|---|---|---|---|---|
+| 1 | #3 DREAM FOR VICTORY | 0,1833 | 3. | 6,35 |
+| 2 | #8 SONANDA | 0,1665 | 2. | 4,90 |
+| 3 | **#4 MAMMA LUNA** | 0,1641 | **8.** | **24,65** |
+| 4 | #2 STORM BELLE | 0,1580 | 1. | 3,15 |
+| 5 | #6 FREYDIS | 0,0872 | 4. | 7,25 |
+| **6** | **#1 ROSİLDA (KAZANAN)** | **0,0704** | **5.** | 8,65 |
+
+bot1 kazananı **kesimin bir sıra altında** bıraktı. Harmanın 8. sıradaki atını (oran 24,65 —
+piyasaya göre uzak ihtimal) kendi 3. sırası olduğu için aldı. **Bu hata değil, ayrışmanın
+tanımı** — bot1 orana hiç bakmaz.
+
+**(c) DÜZELTME (`kod/altili_canli.py`).** (1) `puan == "bot1"` olan config'lerin hücrelerinde
+`B<sıra>` ÖNCE yazılır: `4 B3. K8. Y5.` → "bot1'in 3. atı, harman 8. sayıyordu, yarış anında
+5. oldu". (2) Ayak altına **BOT1 CETVELİ** satırı eklendi (KUPON ANI / YARIŞ ANI satırlarının
+yanına) — bot1'in tam sıralaması, seçilenler kalın, kazanan yeşil tik. (3) Tablo üstüne lejant.
+Doğrulama: rapor yeniden üretildi, 1.086 B-etiketi ve 263 BOT1 CETVELİ satırı basıldı; söz
+konusu hücre artık `2 B4. · 3 B1. · 4 B3. · 6 B5. · 8 B2.` = kesintisiz 1-5, cetvel satırı
+`1.#3 2.#8 3.#4 4.#2 5.#6 6.#1✓` ile kazananın neden dışarıda kaldığı tek bakışta görünüyor.
+
+**(d) NEDEN ÖNEMLİ.** K97'nin tekrarı: **yanlış cetvelle bakınca vaka yorumu yanılır.** K97'de
+kupon anı / yarış anı ayrımı yoktu ve tek tek vakalar yanlış okunuyordu; burada da bot1'in
+kararı harmanın cetveliyle yargılanıyordu. Kullanıcının "bu bir hata mı?" diye takılması
+raporun kusuru, botun değil. **Ölçüme etkisi YOK** (yalnız görselleştirme; seçim/backtest
+kodu değişmedi), ama vaka incelemesinin güvenilirliğine etkisi büyük.
+
+**(e) SINIR.** Tek vakadan "bot1 kötü sıralıyor" çıkarılmaz (hindsight yasağı). Toplu ölçüm
+zaten kayıtlı: bot1 isabeti %29,1 vs harman %35,7 (K67), ve K98-e uyarınca **bot1 canlı
+portföye konmaz** (getirisinin %43'ü tek kupondan). Bu karar o hükümleri DEĞİŞTİRMEZ.
