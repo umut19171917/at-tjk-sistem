@@ -97,6 +97,67 @@ def kazanan_bilgi(race_kod):
             "oran": r.get("ganyan_kapanis") if pd.notna(r.get("ganyan_kapanis")) else r.get("oran")}
 
 
+# ----------------------------- KUPON ANI siralamasi (K97) -----------------------------
+# Defter'deki model_rank KOSU ANININ (posta-5dk) siralamasidir. Kupon ise Altili'nin ILK
+# ayagindan ~30 dk once, TEK seferde kurulur -> son ayak icin karar 2-3 SAAT onceden verilir.
+# O anki siralama baska bir siralamadir ve KARARI YARGILARKEN dogru cetvel odur.
+# Ornek (09.08 Istanbul 2. Altili, kupon 15:14):
+#   kosu 6 kazanani #1 -> sayfada "sistem 2." ama kupon aninda 7 atin 6.'siydi
+#   kosu 8 kazanani #5 -> sayfada "sistem 10." ama kupon aninda 2. sirdaydi
+# Bu yuzden kupon ani vektoru artik AYRI dosyaya yazilir (altili_kupon_ani.csv).
+KUPON_ANI = KOK / "veri" / "altili_kupon_ani.csv"
+_ani_cache = None
+
+
+def kupon_ani_yukle():
+    """altili_kupon_ani.csv -> (tarih,pist,seq,ayak) bazli indeks. Salt-okunur, cache'li."""
+    global _ani_cache
+    if _ani_cache is not None:
+        return _ani_cache
+    if not KUPON_ANI.exists():
+        _ani_cache = pd.DataFrame()
+        return _ani_cache
+    a = pd.read_csv(KUPON_ANI, low_memory=False)
+    for c in ["seq", "ayak", "kosu_no", "race_kod", "no", "bot1", "bot2", "kamu",
+              "oran", "dk_kala"]:
+        if c in a.columns:
+            a[c] = pd.to_numeric(a[c], errors="coerce")
+    # kupon anindaki siralamalar: sistem (bot2 azalan) ve piyasa (kamu azalan)
+    grup = ["tarih", "pist", "seq", "ayak"]
+    a["sis_sira"] = a.groupby(grup)["bot2"].rank(ascending=False, method="min")
+    a["bot1_sira"] = a.groupby(grup)["bot1"].rank(ascending=False, method="min")
+    a["kamu_sira"] = a.groupby(grup)["kamu"].rank(ascending=False, method="min")
+    _ani_cache = a
+    return _ani_cache
+
+
+def kupon_ani_atlari(tarih, pist, seq, ayak):
+    """Bir ayagin KUPON ANINDAKI tablosu (bot2 azalan sirali). Kayit yoksa bos DataFrame.
+    NOT: ayni kosu iki Altili'da yer alabilir ve kupon anlari FARKLIDIR -> anahtar seq'i icerir."""
+    a = kupon_ani_yukle()
+    if a.empty:
+        return a
+    g = a[(a["tarih"].astype(str) == str(tarih)) & (a["pist"] == pist)
+          & (a["seq"] == int(seq)) & (a["ayak"] == int(ayak))]
+    return g.sort_values("sis_sira")
+
+
+def kupon_ani_bilgi(tarih, pist, seq, ayak, at_no):
+    """Tek atin kupon anindaki sirasi/olasiligi. Kayit yoksa None'lar."""
+    bos = {"sis": None, "bot1_sira": None, "kamu": None, "oran": None,
+           "bot2": None, "dk": None, "ts": None, "kaynak": None}
+    g = kupon_ani_atlari(tarih, pist, seq, ayak)
+    if len(g) == 0:
+        return bos
+    r = g[g["no"] == at_no]
+    if len(r) == 0:
+        return bos
+    r = r.iloc[0]
+    return {"sis": r.get("sis_sira"), "bot1_sira": r.get("bot1_sira"),
+            "kamu": r.get("kamu_sira"), "oran": r.get("oran"), "bot2": r.get("bot2"),
+            "dk": r.get("dk_kala"), "ts": r.get("kayit_ts"), "kaynak": r.get("kaynak")}
+
+
 # ----------------------------- Altili temettu (cache'li) -----------------------------
 PAT_ALTILI = re.compile(r"(?:(\d+)\.\s*)?6'LI GANYAN\(([\d/,]+)\):\s*([\d.,]+)\s*TL")
 

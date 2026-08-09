@@ -6,4 +6,6 @@ set PYTHONIOENCODING=utf-8
 cd /d "%~dp0"
 echo Altili ayak sonuclari isleniyor...
 .venv\Scripts\python.exe kod\altili_canli.py --sonucla
+echo Kupon ani siralamalari tamamlaniyor (K97; sadece eksikleri doldurur)...
+.venv\Scripts\python.exe kod\kupon_ani_geri_kur.py
 .venv\Scripts\python.exe kod\altili_canli.py --html

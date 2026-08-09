@@ -1883,3 +1883,52 @@ gerekli mi?"
   **sıfır** isabet. **Kapalı.**
 - **BEKLEYENLER #6 (25 Eyl'de ağırlıkları yeniden fit et) için erken cevap:** yeniden fit
   gereksiz görünüyor. Madde kapatılMADI (tetiği tarih bazlı) ama bu ölçüm oraya not düşüldü.
+
+**K97 — Sayfadaki "sistem sırası" YARIŞ ANININ sırasıydı; KARAR ANININ sırası artık ayrı
+gösteriliyor.** Kullanıcı 9 Ağu'da sordu: "bu liste kupon kurma anındaki sıralama mı, yoksa
+koşudan hemen önceki münferit sıralama mı?" Cevap: **koşu anınınki** — ve bu, tek tek vaka
+yorumlarını sistematik olarak yanıltıyordu.
+- **MEKANİZMA:** `_tum_siralama_html` sıralamayı defter.csv'deki `model_rank`'ten alıyordu;
+  defter satırı **postaya 5 dk kala** yazılır (takip.py, `--dk 5`). Kupon ise Altılı'nın **ilk**
+  ayağından ~30 dk önce, **tek seferde** kurulur → 6. ayağın kararı **2-3 saat** önceden verilir.
+  Hücrelerdeki `sis/kamu` notasyonu da (`ro.at_bilgi`) aynı kaynaktan geliyordu.
+- **KANIT (09.08 İstanbul 2. Altılı, kupon 15:14):** kupon anı ile posta anı arasında piyasa
+  sırası değişimi ayak ayak — 15 dk kala 6/11 · 45 dk 9/10 · 75 dk 7/9 · 105 dk 5/7 ·
+  135 dk 0/5 · **165 dk 13/13**.
+- **YORUMU TERSİNE ÇEVİREN İKİ VAKA (aynı günden):**
+  | koşu | kazanan | sayfada (yarış anı) | kupon anında |
+  |---|---|---|---|
+  | 6 | #1 JAZZ RUNNER | sistem **2.** | 7 atın **6.**'sı (oran 10,80 → 2,85) |
+  | 8 | #5 ARNAVUT KIZ | sistem **10.**/13 | **2.** (oran 4,45 → 16,20) |
+  Yani "kendi 2. atını yazmamış" görüntüsü yanlıştı (karar anında sondan ikinciydi), "10. atı
+  yazmış" görüntüsü de yanlıştı (karar anında 2. sıradaydı). **Kararı yargılarken doğru cetvel
+  kupon anıdır; sonucu okurken doğru cetvel yarış anıdır.**
+- **YAPILAN:**
+  1. `veri/altili_kupon_ani.csv` — kupon kurulurken kullanılan vektör (bot1/bot2/kamu/oran +
+     dk_kala) **aynen** kaydedilir (`kaynak='canli'`). Geri kurulmuyor, varsayım girmiyor.
+  2. `kod/kupon_ani_geri_kur.py` — geçmiş için: oran_log'un kupon anına en yakın anlık
+     görüntüsü + defter'deki bot1 (zamandan bağımsız) + o günün **rapor başlığındaki** α/γ ile
+     `bot2 = softmax(α·ln bot1 + γ·ln p_kamu)`. Yeniden fit YOK. 64 Altılının **51'i** geri
+     kuruldu; 20-24 Tem'in 13'ünde oran günlüğü olmadığı için **geri kurulMADI — uydurulmadı**,
+     sayfada açıkça öyle yazıyor. Geri kurulanlar `[geri kurulan]` etiketiyle gösterilir.
+  3. Sayfada her ayak için **İKİ ayrı sıralama satırı**, ikisi de **koşu numarasıyla** başlar.
+  4. Hücrelerde `K<sıra> Y<sıra>`; ikisi 3+ sıra ayrılırsa **turuncu** (piyasa kupondan sonra
+     ciddi kaymış demektir — K76/K80/K92 sürükleme).
+- **YAN DÜZELTME:** ayak satırındaki "(defter kaydı yok)" metni **yanlıştı** — kayıt vardı,
+  yalnız `defter.sonucla()` gün sonunda (son posta +40 dk, takip.py) bir kez çalıştığı için
+  henüz sonuçlanmamıştı. "(sistem sırası gün sonu işlenecek)" oldu. Ayrıca kazanan ✓ işareti
+  artık Altılı tarafındaki `kazanan`'dan da çizilebiliyor → gün içinde de görünüyor.
+- **BU HATANIN GEÇMİŞE ETKİSİ (dürüstlük notu):** sayfaya bakarak yapılan ayak-ayak yorumlar
+  bu yanlılığı taşır — **K79'un "son ayakta sistemin 8. atını tek yazmış"** tespiti dahil.
+  K92'nin λ ölçümü oran_log'dan eşleşmiş yapıldığı için **o bulgu ayakta**; etkilenen, tek tek
+  vaka anlatılarıdır. Bundan sonra vaka incelemesi K sütunundan okunacak.
+- **KAPSAM ve İKİ CETVELİN AYRIŞMASI (ölçüldü, 2026-08-09):** 384 ayağın **258'inde** kupon
+  anı kaydı var (126'sında yok: 78'i 20-24 Tem'de oran günlüğü henüz yokken, 48'i günün ilk
+  Altılısının uzak ayakları — oran günlüğü o ayakları kupon anında henüz loglamamıştı; bunlar
+  ileriye dönük canlı kayıtla kapanır). Eşleşen 2.508 at kaydında **K ile Y sırası yalnız
+  %30 aynı**, %48'i 1-2 sıra oynamış, **%22'si 3+ sıra** (turuncu eşiği). Postaya kalan süreye
+  göre 3+ kayma oranı: <30 dk **%15** · 30-60 %18 · 60-90 %21 · 90-120 %19 · **120+ dk %32**
+  (ortalama mutlak kayma 1,17 → 2,00 sıra). Yani iki cetvelin ayrışması **mesafeyle büyüyor** —
+  K76/K80/K92 sürükleme bulgusunun bağımsız bir teyidi.
+- **BEKLEYENLER #9 (acgozlu_v2 ileri ölçümü) bu sütun olmadan doğru okunamazdı** — v2'nin tek
+  farkı zaten uzak ayak düzeltmesi; kıyas cetveli yarış anı olursa düzeltmenin etkisi görünmez.

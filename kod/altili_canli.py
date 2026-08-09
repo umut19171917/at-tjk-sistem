@@ -41,6 +41,13 @@ import rapor_ortak as ro  # noqa: E402
 
 KUPON = KOK / "veri" / "altili_kupon.csv"
 HTMLA = KOK / "raporlar" / "altili.html"
+# K97: kupon KURULURKEN kullanilan olasilik vektoru. Defter'deki model_rank posta-5dk'nin
+# siralamasidir; kupon ise ilk ayaktan ~30 dk once TEK seferde kurulur, yani son ayagin karari
+# 2-3 saat onceden verilir. Iki siralama farklidir ve karari yargilarken dogrusu BUDUR.
+# 09.08 Istanbul 2. Altili: kosu 8'in kazanani sayfada "sistem 10.", kupon aninda 2. sirdaydi.
+KUPON_ANI = KOK / "veri" / "altili_kupon_ani.csv"
+KOL_ANI = ["kayit_ts", "tarih", "pist", "seq", "ayak", "kosu_no", "race_kod", "saat",
+           "dk_kala", "no", "at_ad", "bot1", "bot2", "kamu", "oran", "kaynak"]
 # config -> ayarlar. Alanlar:
 #   kapsam  : kumulatif kapsam esigi (SADECE dagitim="kapsam" kullanir)
 #   kombo   : butce tavani (kombinasyon)
@@ -94,6 +101,25 @@ def _oku():
 
 def _yaz(df):
     df.to_csv(KUPON, index=False, encoding="utf-8", columns=KOL)
+
+
+def _kupon_ani_yaz(satirlar):
+    """K97: kupon anindaki olasilik tablosunu upsert eder — anahtar (tarih,pist,seq).
+    Kupon yeniden kurulursa anlik goruntu de yenilenir ki ikisi hep AYNI ani anlatsin.
+    Geri kurulmus (kaynak='geri_kurulan') satirlar da ayni anahtarla ezilir: canli kayit
+    her zaman geri kurulana ustundur."""
+    if not satirlar:
+        return 0
+    yeni = pd.DataFrame(satirlar)
+    if KUPON_ANI.exists():
+        old = pd.read_csv(KUPON_ANI, low_memory=False)
+        anahtar = set(zip(yeni["tarih"], yeni["pist"], yeni["seq"].astype(int)))
+        tut = [(t, p, int(s)) not in anahtar for t, p, s in
+               zip(old["tarih"], old["pist"], pd.to_numeric(old["seq"], errors="coerce").fillna(-1))]
+        yeni = pd.concat([old[pd.Series(tut, index=old.index)], yeni], ignore_index=True)
+    KUPON_ANI.parent.mkdir(parents=True, exist_ok=True)
+    yeni.reindex(columns=KOL_ANI).to_csv(KUPON_ANI, index=False, encoding="utf-8")
+    return len(satirlar)
 
 
 # ----------------------------- pencere tespiti -----------------------------
@@ -152,12 +178,13 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
     tg = tg.copy()
     tg["kosu_no_i"] = pd.to_numeric(tg["kosu_no"], errors="coerce")
 
-    yeni_satirlar = []
+    yeni_satirlar, ani_satirlar = [], []
     ts = datetime.now().strftime("%Y-%m-%d %H:%M")
     for seq, pencere, ilk_saat in pencereler:
         # her ayagin (no, bot2) VE (no, bot1) listesi + ayrisma skoru
         # -- Bot2'si olmayan ayak varsa pencere ATLANIR (eskisi gibi)
         ayak_atlari, ayak_bot1, ayak_ayr, ayak_meta, eksik = [], [], [], [], False
+        ayak_tablo = []                       # K97: ayagin kupon anindaki TAM tablosu
         for k in pencere:
             kno = _as_int(k.get("RACENO") or k.get("NO"))
             g = tg[tg["kosu_no_i"] == kno]
@@ -167,6 +194,7 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
                 break
             atlar = [(int(r["no"]), float(r["bot2"])) for _, r in g.iterrows()]
             ayak_atlari.append(atlar)
+            ayak_tablo.append(g)
             # K67/K68: bot1 ve kamu ayni satirlarda; biri eksikse o config sessizce atlanir
             b1 = pd.to_numeric(g["bot1"], errors="coerce")
             km = pd.to_numeric(g["kamu"], errors="coerce")
@@ -189,6 +217,19 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
         if eksik:
             print(f"  {seq}. Altili (kosu {pencere[0].get('RACENO')}): bir ayak kapsam disi -> atlandi")
             continue
+
+        # K97: karar anindaki vektoru AYNEN kaydet (geri kurulmasin, varsayim girmesin)
+        for ai, gtab in enumerate(ayak_tablo):
+            for _, r in gtab.iterrows():
+                ani_satirlar.append({
+                    "kayit_ts": ts, "tarih": tarih, "pist": pist, "seq": seq, "ayak": ai + 1,
+                    "kosu_no": ayak_meta[ai]["kosu_no"], "race_kod": ayak_meta[ai]["race_kod"],
+                    "saat": ayak_meta[ai]["saat"],
+                    "dk_kala": (round(ayak_dk[ai], 1) if ayak_dk[ai] is not None else np.nan),
+                    "no": _as_int(r.get("no")), "at_ad": r.get("at_ad"),
+                    "bot1": r.get("bot1"), "bot2": r.get("bot2"), "kamu": r.get("kamu"),
+                    "oran": r.get("ganyan_muhtemel"), "kaynak": "canli",
+                })
 
         for cfg, ay in KONFIG.items():
             maxk, dagitim = ay["kombo"], ay["dagitim"]
@@ -221,6 +262,7 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
                     "kazanan": np.nan, "tuttu": np.nan, "sonuclandi": np.nan,
                 })
 
+    _kupon_ani_yaz(ani_satirlar)
     if not yeni_satirlar:
         return 0
     yeni = pd.DataFrame(yeni_satirlar)
@@ -580,37 +622,70 @@ def _resmi_satir(kupolar):
     return "<span class=mini>resmi temettu: bilinmiyor (feed'den alinamadi)</span>"
 
 
-def _tum_siralama_html(rk, secimler):
-    """K58: o kosudaki TUM atlar SISTEM sirasina gore (ayri satirda). Bizim sectigimiz KALIN,
-    kazanan YESIL kutu + tik. defter'den (salt-okunur). Kayit yoksa acikca soyler."""
-    # K81: eskiden iki dal da AYNI cumleyi basiyordu -> 31 Tem'de bugunun 24 ayaginin
-    # hepsinde uyari cikti, sayfa yeniden uretilince sifira dustu ve SEBEP ANLASILAMADI.
-    # Artik hangi dalin yandigi ve hangi race_kod oldugu yaziliyor; tekrarlarsa teshis anlik.
-    if not rk:
-        return ("<span class=mini>sistemin siralamasi: bu ayagin <b>race_kod'u yok</b> "
-                "(kupon kaydinda bos)</span>")
-    g = ro.kosu_atlari(rk)
-    if g is None or len(g) == 0:
-        return (f"<span class=mini>sistemin siralamasi: <b>defter'de {rk} kaydi bulunamadi</b> "
-                f"&mdash; gun sonu 'sonucla' gecisinden once bakildiysa normaldir, "
-                f"sayfayi 22:30'dan sonra tazele</span>")
-    g = g.copy()
-    g["mr"] = pd.to_numeric(g["model_rank"], errors="coerce")
-    g = g.sort_values("mr", na_position="last")
-    secset = {int(x) for x in secimler}
+def _sira_etiketleri(sirali, secset, kzno):
+    """[(sira, no)] -> HTML. Bizim sectigimiz KALIN, kazanan YESIL kutu + tik."""
     parcalar = []
-    for _, r in g.iterrows():
-        if pd.isna(r.get("no")):
-            continue
-        no = int(r["no"])
-        etiket = f"{ro.sira_str(r['mr'])}<b>#{no}</b>" if no in secset else f"{ro.sira_str(r['mr'])}#{no}"
-        if pd.notna(r.get("sonuc")) and int(r["sonuc"]) == 1:
-            etiket = (f"<span style='background:#d9f7d9;padding:0 4px;border-radius:3px'>"
-                      f"{etiket}&nbsp;&#10003;</span>")
-        parcalar.append(etiket)
-    return ("<span class=mini>Sistemin tum siralamasi "
-            "(<b>kalin</b>=bizim sectigimiz, yesil &#10003;=kazanan): </span>"
-            + " &nbsp; ".join(parcalar))
+    for sira, no in sirali:
+        et = f"{ro.sira_str(sira)}<b>#{no}</b>" if no in secset else f"{ro.sira_str(sira)}#{no}"
+        if kzno is not None and no == kzno:
+            et = (f"<span style='background:#d9f7d9;padding:0 4px;border-radius:3px'>"
+                  f"{et}&nbsp;&#10003;</span>")
+        parcalar.append(et)
+    return " &nbsp; ".join(parcalar)
+
+
+def _siralama_html(tarih, pist, seq, ayak, kosu_no, rk, secimler, kzno):
+    """K97: ayni ayagin IKI siralamasi, AYRI satirlarda ve acikca etiketli:
+      1) KUPON ANI -- kupon kurulurken elimizdeki vektor (altili_kupon_ani.csv).
+         KARARI yargilarken dogru cetvel budur; son ayak icin karar 2-3 saat onceden verilir.
+      2) YARIS ANI -- posta-5dk, defter'deki model_rank (K58'in eski davranisi).
+         SONUCU okurken dogru cetvel budur.
+    Ikisini karistirmak yaniltir: 09.08 Istanbul 2. Altili'da kosu 8'in kazanani yaris aninda
+    sistemin 10. ati, kupon aninda 2. atiydi; kosu 6'nin kazanani yaris aninda 2., kupon
+    aninda 6.'ydi. Her iki satirin basina KOSU NO yazilir -- satir kime ait, hic suphe kalmasin.
+    K81 mirasi: kayit yoksa hangi dalin yandigi acikca yazilir, sessiz bosluk birakilmaz."""
+    secset = {int(x) for x in secimler}
+    H = []
+
+    # --- 1) KUPON ANI ---------------------------------------------------------------
+    a = ro.kupon_ani_atlari(tarih, pist, seq, ayak)
+    if len(a) == 0:
+        H.append(f"<span class=mini><b>kosu {kosu_no}</b> &middot; KUPON ANI siralamasi: "
+                 f"<b>kayit yok</b> &mdash; 10 Agu oncesi kuponlar icin "
+                 f"<code>kupon_ani_geri_kur.py</code> ile geri kurulur; oran gunlugu (K76) "
+                 f"veya o gunun katsayilari eksikse geri kurulaMAZ, UYDURULMAZ</span>")
+    else:
+        r0 = a.iloc[0]
+        dk = pd.to_numeric(r0.get("dk_kala"), errors="coerce")
+        ek = ("" if str(r0.get("kaynak")) == "canli"
+              else " <b title='oran gunlugu + bot1 + o gunun katsayilari ile geri kuruldu'>"
+                   "[geri kurulan]</b>")
+        sirali = [(int(r["sis_sira"]), int(r["no"])) for _, r in a.iterrows()]
+        H.append(f"<span class=mini><b>kosu {kosu_no}</b> &middot; <b>KUPON ANI</b> siralamasi "
+                 f"({str(r0.get('kayit_ts'))[11:16]}, "
+                 f"{('%.0f' % dk) if pd.notna(dk) else '?'} dk kala){ek}: </span>"
+                 + _sira_etiketleri(sirali, secset, kzno))
+
+    # --- 2) YARIS ANI ---------------------------------------------------------------
+    if not rk:
+        H.append("<span class=mini><b>kosu %s</b> &middot; YARIS ANI siralamasi: bu ayagin "
+                 "<b>race_kod'u yok</b> (kupon kaydinda bos)</span>" % kosu_no)
+    else:
+        g = ro.kosu_atlari(rk)
+        if g is None or len(g) == 0:
+            H.append(f"<span class=mini><b>kosu {kosu_no}</b> &middot; YARIS ANI siralamasi: "
+                     f"<b>defter'de {rk} kaydi bulunamadi</b> &mdash; gun sonu 'sonucla' "
+                     f"gecisinden once bakildiysa normaldir, sayfayi 22:30'dan sonra tazele</span>")
+        else:
+            g = g.copy()
+            g["mr"] = pd.to_numeric(g["model_rank"], errors="coerce")
+            g = g.sort_values("mr", na_position="last")
+            sirali = [(r["mr"], int(r["no"])) for _, r in g.iterrows() if pd.notna(r.get("no"))]
+            H.append(f"<span class=mini><b>kosu {kosu_no}</b> &middot; <b>YARIS ANI</b> "
+                     f"siralamasi (postaya 5 dk kala): </span>"
+                     + _sira_etiketleri(sirali, secset, kzno))
+
+    return ("<div style='line-height:1.9'>" + "<br>".join(H) + "</div>")
 
 
 def _kumulatif_blok(kupolar):
@@ -721,7 +796,14 @@ def html_yaz(df=None, ac=False):
          "<br>Birim fiyat 2026 tarifesi: Ist/Ank/Izm/Ada/Bur/Koc/Ant 1,25 TL, "
          "Elazig/Urfa/Diyarbakir 1,00 TL.<br>"
          "<b>Odul yalniz 6/6 tam isabette</b> odenir; 5/4/3 ayak TJK'da AYRI bahistir "
-         "(teselli degil) &mdash; tabloda yalnizca bilgi amacli gosterilir.</div>"]
+         "(teselli degil) &mdash; tabloda yalnizca bilgi amacli gosterilir.<br>"
+         "<b>K97 &mdash; IKI AYRI SIRALAMA:</b> her ayakta sistemin sirasi iki kez gosterilir. "
+         "<b>K</b> = <b>kupon ani</b> sirasi (kupon Altili'nin ilk ayagindan ~30 dk once TEK "
+         "seferde kurulur; son ayagin karari 2-3 SAAT onceden verilir, karari yargilarken "
+         "dogru cetvel budur). <b>Y</b> = <b>yaris ani</b> sirasi (postaya 5 dk kala, defter; "
+         "sonucu okurken dogru cetvel budur). Ikisi 3+ sira ayrilirsa "
+         "<span style='color:#b45309;font-weight:bold'>turuncu</span> yazilir &mdash; o ayakta "
+         "piyasa kupon kurulduktan sonra ciddi kaymis demektir (K76/K80/K92 surukleme).</div>"]
 
     if df.empty:
         H.append("<p>Henuz kupon yok.</p>")
@@ -785,7 +867,9 @@ def html_yaz(df=None, ac=False):
                  f"<span class='{'poz' if tn >= 0 else 'neg'}'><b>{ro.para(tn, isaret=True)}</b>"
                  f"</span><br>{_resmi_satir([kk[c] for c in cfgler])}</span></div>")
         H.append("<div style='overflow-x:auto'><table>")
-        H.append("<tr><th>ayak</th><th class=l>KAZANAN AT</th><th>kazananin<br>sistem / kamu</th>"
+        # K97: sistem sirasi artik IKI kolonlu okunur -> K=kupon ani, Y=yaris ani
+        H.append("<tr><th>ayak</th><th class=l>KAZANAN AT</th>"
+                 "<th>kazananin sistem sirasi<br><span class=mini>kupon ani &rarr; yaris ani</span></th>"
                  "<th>ganyan<br>orani</th>"
                  + "".join(f"<th class=l>{c.upper()}<br><span class=mini>{KONFIG[c]['aile']}</span></th>"
                            for c in cfgler) + "</tr>")
@@ -795,15 +879,24 @@ def html_yaz(df=None, ac=False):
             kz = ro.kazanan_bilgi(rk) if rk else None
             if kz:
                 kz_html = f"<b>{kz['no']}</b> {str(kz['ad'])[:20]}"
-                kz_sk = f"{ro.sira_str(kz['sis'])} / {ro.sira_str(kz['kamu'])}"
                 kz_oran = ro.oran_str(kz["oran"])
                 kzno = _as_int(kz["no"])
+                y_sira = ro.sira_str(kz["sis"])
             elif pd.notna(r["kazanan"]):
-                kz_html = f"<b>{int(r['kazanan'])}</b> <span class=mini>(defter kaydi yok)</span>"
-                kz_sk = kz_oran = "-"
+                # K97: defter kaydi VAR ama gun sonu 'sonucla' gecisi henuz yapilmadi
+                # (defter.sonucla gunde bir kez, son postadan 40 dk sonra calisir - takip.py).
+                # Eski metin "defter kaydi yok" diyordu; yaniltiyordu.
+                kz_html = (f"<b>{int(r['kazanan'])}</b> "
+                           f"<span class=mini>(sistem sirasi gun sonu islenecek)</span>")
+                kz_oran = "-"
                 kzno = int(r["kazanan"])
+                y_sira = "-"
             else:
-                kz_html, kz_sk, kz_oran, kzno = "<span class=bek>bekleniyor</span>", "-", "-", None
+                kz_html, kz_oran, kzno, y_sira = "<span class=bek>bekleniyor</span>", "-", None, "-"
+            k_sira = "-"
+            if kzno is not None:
+                k_sira = ro.sira_str(ro.kupon_ani_bilgi(tarih, pist, seq, ai, kzno)["sis"])
+            kz_sk = (f"<b>{k_sira}</b> &rarr; {y_sira}" if kzno is not None else "-")
             H.append(f"<tr><td><b>{ai}</b><br><span class=mini>kosu {int(r['kosu_no'])}</span></td>"
                      f"<td class=l>{kz_html}</td><td>{kz_sk}</td><td>{kz_oran}</td>")
             tum_sec = set()
@@ -818,19 +911,29 @@ def html_yaz(df=None, ac=False):
                 tum_sec |= set(secimler)
                 hucre = []
                 for no in secimler:
+                    # K97: K = kupon anindaki sistem sirasi (KARAR bu vektorle verildi)
+                    #      Y = yaris anindaki sistem sirasi (defter, posta-5dk)
                     bi = ro.at_bilgi(rk, no) if rk else {}
+                    ka = ro.kupon_ani_bilgi(tarih, pist, seq, ai, no)
+                    ks, ys = ro.sira_str(ka.get("sis")), ro.sira_str(bi.get("sis"))
+                    # ikisi 3+ sira ayrildiysa dikkat cek: o ayakta piyasa ciddi kaymis
+                    kayar = (pd.notna(ka.get("sis")) and pd.notna(bi.get("sis"))
+                             and abs(float(ka["sis"]) - float(bi["sis"])) >= 3)
+                    stl = " style='color:#b45309;font-weight:bold'" if kayar else ""
                     et = (f"<b style='color:#137333'>{no}</b>" if no == kzno else f"{no}")
-                    hucre.append(f"{et} <span class=mini>{ro.sira_str(bi.get('sis'))}/"
-                                 f"{ro.sira_str(bi.get('kamu'))}</span>")
+                    hucre.append(f"{et} <span class=mini{stl}>K{ks} Y{ys}</span>")
                 bk = " <span class=mini>[banker]</span>" if int(sr["banker"]) == 1 else ""
                 tuttu = kzno is not None and kzno in secimler
                 stil = " style='background:#e8f7ec'" if tuttu else ""
                 H.append(f"<td class=l{stil}>" + "<br>".join(hucre) + bk + "</td>")
             H.append("</tr>")
-            # o kosunun TUM sistem siralamasi (K58) -- tum turler icin ORTAK, tek satir
+            # o kosunun TUM siralamasi (K58) -- tum turler icin ORTAK.
+            # K97: artik IKI satir (kupon ani / yaris ani) ve her ikisi de KOSU NO ile baslar;
+            # bu satirin ustteki ayaga mi alttakine mi ait oldugu belirsizligi boylece biter.
             H.append(f"<tr><td></td><td colspan={3+len(cfgler)} class=l "
                      "style='background:#f7f9fc;border-top:none'>"
-                     f"{_tum_siralama_html(rk, tum_sec)}</td></tr>")
+                     f"{_siralama_html(tarih, pist, seq, ai, int(r['kosu_no']), rk, tum_sec, kzno)}"
+                     "</td></tr>")
 
         def ozet_satir(baslik, fn):
             return (f"<tr><td colspan=4 class=l><b>{baslik}</b></td>"

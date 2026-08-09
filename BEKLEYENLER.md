@@ -194,6 +194,42 @@ asıl soru budur — güvenilir olur.
 **Ön koşul:** ham arşivden (4.219 kart, `BAHISLER_TR`) her ürünün temettüsü + kazanan
 kombinasyonu çıkarılıp koşulara eşlenmeli. **Önce fizibilite denemesi yapılmalı.**
 
+### 10. TAMAMLAYICI KUPON (banker rotasyonu) — ölçülmedi, ölçüt önceden bağlandı
+**Eklendi:** 2026-08-09 · **İlgili:** K89, K90, K96, K97
+**TETİK: KULLANICI söyleyince** — kendiliğinden başlama.
+
+**Soru (kullanıcının):** "Deneyimli oyuncular birbirine alternatif kupon kurar — farklı
+ayaklarda banker yaparak, at sayılarını artırıp eksilterek. Bizde buna yönelik ne var?"
+
+**BUGÜNKÜ DURUM ÖLÇÜLDÜ (2026-08-09, 64 Altılı / 194 sonuçlanmış ayak) — hiçbir şey yok:**
+- 8 kuponun farkı yalnız **bütçe** ve **dağıtım kuralı**; hiçbiri "diğerinin kaçırdığını
+  yakalayayım" diye kurulmuyor. Çeşitlilik tasarlanmadı, **artakaldı**.
+- Örtüşme (Jaccard): açgözlü900 ↔ ayrışma900 **%92** (ayakların **%77'sinde birebir aynı**),
+  orta ↔ geniş %88 (%64 birebir). bot2 ailesi pratikte tek kuponun yedi kostümü.
+- **Banker'lar dağılmıyor, yığılıyor:** ≥2 kuponun banker yaptığı 47 Altılıda, banker yapan
+  kuponların ortalama **%70'i AYNI ayağı** bankerliyor. Deneyimli oyuncunun yaptığının tersi.
+- Gerçekten alternatif olan **tek kupon bot1_900**: 194 ayağın **30'unu tek başına** tutturdu
+  (genis900 2, ayrışma 2, açgözlü 1, dar/orta/geniş **0**); örtüşmesi de en düşük (%37–46).
+  [[K89]]'u daha büyük örneklemde doğrular.
+- Portföyün faturası: 62 Altılıda 8 kupon birlikte 5 kez 6/6; Altılı başına **2.453
+  kombinasyon** (≈3.066 TL). Tek açgözlü900: 866 kombinasyon, 44 Altılıda 2 kez.
+
+**DÜRÜST ÇERÇEVE (önden yazılıyor ki sonuç görülünce esnetilmesin):** tamamlayıcı kupon
+beklenen değeri **değiştirmez**, varyansı değiştirir. "En az biri tutar" olasılığı yükselir,
+tutan kuponun getirisinden kaybeden kuponların bedeli düşülür. %48,6 kesinti duvarı
+([[K94]]) yerinde kalır. Bu bir kenar arayışı değil, **sürdürülebilirlik = varyans** sorusudur.
+
+**TASARIM (önceden sabit):** sabit toplam bütçe — tek 900 kombinasyonluk açgözlü **vs**
+tamamlayıcı iki 450'lik kupon (A: tek sayılı ayaklarda dar/çift sayılı ayaklarda geniş,
+B: tersi). Ayak rotasyonu **sonuca bakılmadan** belirlenir, taranmaz ([[K33]]/[[K52]]
+hindsight yasağı). Backtest EDİLEBİLİR: gün-içi oran gerekmez, yalnız dağıtım kuralıdır.
+K90'ın reddedilen "birleşim" fikrinden farkı: orada iki **model** birleştirildi, burada
+aynı modelden **ayrışan** kuponlar kurulur.
+
+**KARAR ÖLÇÜTÜ (önceden bağlanır, sonra değiştirilmez):** tamamlayıcı çift canlıya alınır
+⟺ OOS'ta **hem 6/6 sayısı hem ayak isabeti**, aynı parayı tek kupona veren kontrolden
+düşük DEĞİLSE. Düşükse "ayrıştırma değer katmıyor" yazılır ve kapanır.
+
 ---
 
 ## ZAMANLI — takvime bağlı
