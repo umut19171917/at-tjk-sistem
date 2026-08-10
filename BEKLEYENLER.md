@@ -440,10 +440,30 @@ katkısı hâlâ **0** ise VE açgözlü-ayrışma eşli skoru hâlâ tek yönl�
 acgozlu900 kapatılır, ayrışma tek başına devam eder. Sayılar K89/K90'da; karar günü gelince
 aynı ölçüm tekrarlanır, kriter DEĞİŞTİRİLMEZ.
 
+**>>> BU KRİTER ARTIK UYGULANAMAZ — 10 Ağu 2026, K100. Karşılandığı için değil, ÖNKOŞULU
+ortadan kalktığı için. <<<** Kriterin "o zaman" kısmı *"ayrışma tek başına devam eder"*
+diyordu; K100'de **ayrışma900 emekli edildi**, açgözlü900 kaldı. Tersi tercih edilmedi çünkü
+seçim sicile değil ROLE göre yapıldı: açgözlü900, `acgozlu_v2`'nin kontrol grubudur (bu madde).
+Ayrışma kaldırılsaydı v2 ölçümü ayakta kalır, açgözlü kaldırılsaydı kalmazdı.
+**Kriterin altındaki soru ("açgözlü portföye bir şey katıyor mu?") zaten cevaplandı:**
+benzersiz ayak katkısı canlıda 1/216, backtest'te 1/194 (K98-b, K100-b). Cevap: neredeyse hiç.
+Ama açgözlü900 canlıda **ölçüm aracı** olarak duruyor, kupon değeri için değil.
+**Bu satır silinmedi** — önceden bağlanmış bir kuralın ne olduğu ve neden uygulanmadığı
+kayıtta kalsın diye (kriteri sessizce düşürmek, kriteri sonuca göre değiştirmekle aynı hatadır).
+
 **BİRLEŞİM DENEMESİ SONUÇLANDI (K90): RED.** max(bot1,bot2) birleşimi 1433 OOS olayda
 bot2-kontrolünden anlamlı kötü (p=0,0002) → canlıya alınmadı. Tamamlayıcılık gerçek ama
 max-birleşim yanlış araç. İleride farklı birleştirme fikri gelirse `kupon_kur_birlesim`
 zemini hazır; yeni deneme için önce YENİ bir önceden-bağlanmış kriter yazılır.
+
+**K100 NOTU (10 Ağu 2026) — bu maddenin ölçüm zemini korundu ve bir tuzak eklendi.**
+Kalabalık budanırken (dar/geniş/geniş900/ayrışma900 emekli) **açgözlü900 bilerek bırakıldı**:
+v2'nin kontrolü odur, kaldırılsaydı bu madde ölçülemez hale gelirdi.
+Ayrıca `bot1_1800` eklendi — **v2 kıyasını etkilemez** (farklı aile, farklı cetvel), ama
+kıyas yapılırken şu akılda tutulacak: **bot1_1800, bot1_900'ün üst kümesi DEĞİL.** Açgözlü
+dağıtıcı bütçe artınca genişliği yeniden dağıtıyor (ölçüldü: 10.08 BURSA 1. Altılı'da 900'ün
+22 atının 21'i 1800'de var; 1. ayak 6→5 atarken 2. ayak 3→7 çıkıyor). Aynı şey **acgozlu900 ↔
+acgozlu_v2** için de geçerlidir — v2 "açgözlü + biraz genişlik" değil, farklı bir dağıtımdır.
 
 **>>> TETİK ATEŞLENDİ — 7 Ağu 2026 (K92). Bu maddenin λ kolu KAPANDI. <<<**
 Eşleşmiş ölçüm n=87: uzak λ=0,650 [0,465..0,875] (1'i içermiyor), yakın λ=0,980 [0,765..1,220],

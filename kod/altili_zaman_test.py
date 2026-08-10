@@ -129,7 +129,7 @@ def main():
     print("30 DK vs 15 DK — ayni Altili, ayni kurallar, tek fark KUPONUN KURULDUGU AN")
     print("=" * 92)
 
-    for cfg, ay in KONFIG.items():
+    for cfg, ay in KONFIG.items():          # K100: emekliler de taranir (gecmis kiyas anlamli)
         satir = {}
         for hedef, ad in HEDEFLER:
             ayak_tut = 0; ayak_top = 0; tam = 0; kombo_top = 0

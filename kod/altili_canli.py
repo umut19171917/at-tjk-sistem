@@ -7,10 +7,10 @@ AYRI dosya/sayfa: veri/altili_kupon.csv + raporlar/altili.html. defter/paper'a D
 
 Kupon mantigi (K52 backtest'iyle AYNI cekirdek: altili_backtest.kupon_kur):
   banker (Bot2 guveni >= esik -> tek at) + spread (kumulatif kapsam) + butce tavani.
-  DORT config: 'dar' (<=24), 'orta' (<=96, K53), 'genis' (<=288, K57) ve 'genis900'
-  (kapsam 0.95, <=900 kombo; K62 gozlem akisi -- derin kazananlari da kapsar, ~900-1125 TL).
-  K57: orta genisletilmedi (backtest: kazanc yok, dar zemin -%19'dan kotu); genis AYRI stream
-  olarak eklendi (kullanici istegi, iyilestirme iddiasi degil; -EV oldugu backtest'te olculu).
+  Hangi config'lerin kuruldugu TEK KAYNAKTAN okunur: asagidaki KONFIG sozlugu ve onun
+  "aktif" bayragi (aktif_konfig()/emekli_konfig()). Bu docstring sayi vermez -- K78'de
+  ogrenildi: elle yazilan liste bayatliyor. Sayfa girisi de KONFIG'den uretilir.
+  EMEKLI config (aktif=False): yeni kupon KURULMAZ, gecmis sicil raporda AYNEN kalir.
 Pencere: program BAHISLER_TR'de "N. 6'LI GANYAN bu kosudan baslar" -> o kosudan 6 ardisik kosu.
   Gunde 1-2 Altili olabilir (K46 kesfi); hepsi ayri islenir.
 Odeme yapisi (K52): 5/4/3'lu AYRI bahisler, teselli DEGIL -> yalniz 6/6 "tam isabet" kazanc sayilir;
@@ -56,6 +56,11 @@ KOL_ANI = ["kayit_ts", "tarih", "pist", "seq", "ayak", "kosu_no", "race_kod", "s
 #             "ayrisma" = K68 acgozlu'nun ayrisma-agirlikli hali
 #   puan    : secim hangi olasilikla yapilir -- "bot2" (harman) veya "bot1" (oran-kor)
 #   aile    : rapor/Telegram gruplamasi
+#   aktif   : K100 -- False ise YENI kupon KURULMAZ ama gecmis sicil AYNEN durur.
+#             Config'i sozlukten SILMEK yasak: silinirse raporda o config'in sutunu ve
+#             TOPLAM DURUM'daki bedeli/odulu sessizce kaybolur, isleyen bakiye bozulur
+#             (kumulatif blok kuponlari CSV'den okur, toplam blok KONFIG'den gezer ->
+#             ikisi ayrisir). Emeklilik = bayrak, silme DEGIL.
 #
 # GECMIS (hepsi kagit; hicbiri "iyilestirme" degil, GOZLEM akisi):
 #   K52/K57 : dar/orta/genis  -- asil kupon ailemiz, kapsam mantigi
@@ -70,19 +75,40 @@ KOL_ANI = ["kayit_ts", "tarih", "pist", "seq", "ayak", "kosu_no", "race_kod", "s
 #             GOZLEM olarak eklendi ("aklimizda soru kalmasin", 2026-07-31).
 #             w=1.0 SABIT ve TARANMADI: backtest'te en iyi cikan w'yi secmek overfit olurdu
 #             (K33/K52 hindsight yasagi) -> tarafsiz deger.
+#   K100 (2026-08-10): kalabalik budandi. dar/genis/genis900/ayrisma900 EMEKLI edildi --
+#             216 sonuclanmis ayakta benzersiz katkilari 0/0/2/2 idi ve hicbiri acik bir
+#             soruya cevap vermiyordu. ayrisma900 ayrica acgozlu900'un ikizi (canlida
+#             ayaklarin %78'inde BIREBIR ayni kupon; backtest McNemar p=0,80).
+#             acgozlu900 KALDI cunku acgozlu_v2'nin kontrol grubudur (BEKLEYENLER #9).
+#   K100    : bot1_1800 -- kullanici istegi. Backtest'te 900'un getirisi TEK olaya asili
+#             (ROI -18,3 ama en buyuk kupon cikinca -53,2); 1800'de -29,2/-46,6 yani
+#             GORUNEN ROI kotulesiyor, SANSTAN ARINDIRILMIS ROI iyilesiyor. Amac "buyuk
+#             odulleri yakalamak" DEGIL (olculdu: yuksek odullu 5/6'larin donusumu %10,
+#             dusuk odullulerin %17 -- butce buyukleri KURTARMIYOR), bot1'i piyangoluktan
+#             cikarmak. Olcum degeri dusuk (25 Eyl'e ~35 kupon), GOZLEM akisi olarak eklendi.
 AYRISMA_W = 1.0
 KONFIG = {
-    "dar":        {"kapsam": 0.75, "kombo": 24,  "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu"},
-    "orta":       {"kapsam": 0.75, "kombo": 96,  "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu"},
-    "genis":      {"kapsam": 0.75, "kombo": 288, "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu"},
-    "genis900":   {"kapsam": 0.95, "kombo": 900, "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu"},
-    "acgozlu900": {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot2", "aile": "kamu"},
-    "bot1_900":   {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot1", "aile": "temel"},
-    "ayrisma900": {"kapsam": 0.95, "kombo": 900, "dagitim": "ayrisma", "puan": "bot2", "aile": "ayrisma"},
+    "dar":        {"kapsam": 0.75, "kombo": 24,  "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False},
+    "orta":       {"kapsam": 0.75, "kombo": 96,  "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": True},
+    "genis":      {"kapsam": 0.75, "kombo": 288, "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False},
+    "genis900":   {"kapsam": 0.95, "kombo": 900, "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False},
+    "acgozlu900": {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot2", "aile": "kamu",    "aktif": True},
+    "bot1_900":   {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot1", "aile": "temel",   "aktif": True},
+    "bot1_1800":  {"kapsam": 0.95, "kombo": 1800, "dagitim": "acgozlu", "puan": "bot1", "aile": "temel",  "aktif": True},
+    "ayrisma900": {"kapsam": 0.95, "kombo": 900, "dagitim": "ayrisma", "puan": "bot2", "aile": "ayrisma", "aktif": False},
     # K92: uzak ayagin olasiligi OLCULMUS lambda ile duzlestirilir (bkz. kupon_kur_kalibre).
     # acgozlu900 ile TEK farki budur -> aradaki her fark uzak-ayak duzeltmesine atfedilebilir.
-    "acgozlu_v2": {"kapsam": 0.95, "kombo": 900, "dagitim": "kalibre", "puan": "bot2", "aile": "kalibre"},
+    "acgozlu_v2": {"kapsam": 0.95, "kombo": 900, "dagitim": "kalibre", "puan": "bot2", "aile": "kalibre", "aktif": True},
 }
+
+
+def aktif_konfig():
+    """K100: YENI kupon kurulacak config'ler. Emekliler KONFIG'de kalir (gecmis sicil icin)."""
+    return {c: a for c, a in KONFIG.items() if a.get("aktif", True)}
+
+
+def emekli_konfig():
+    return [c for c, a in KONFIG.items() if not a.get("aktif", True)]
 AILE_AD = {"kamu":    "KAMU BOTU (bot2 — piyasayı dinler)",
            "temel":   "TEMEL BOT (bot1 — orana hiç bakmaz)",
            "ayrisma": "AYRIŞMA (bot2 seçer, genişlik ayrışmaya gider)",
@@ -236,7 +262,7 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
             print(f"  UYARI: {seq}. Altili kupon ani vektoru toplanamadi "
                   f"({type(e).__name__}: {e}) -- kupon kurma etkilenmedi.")
 
-        for cfg, ay in KONFIG.items():
+        for cfg, ay in aktif_konfig().items():          # K100: emekliler kupon KURMAZ
             maxk, dagitim = ay["kombo"], ay["dagitim"]
             puanlar = ayak_bot1 if ay["puan"] == "bot1" else ayak_atlari
             if any(len(p) < 1 for p in puanlar):   # bot1 yoksa O CONFIG atlanir (digerleri kurulur)
@@ -291,7 +317,9 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
         out = yeni
     _yaz(out)
     n = yeni.groupby(["seq", "config"]).ngroups
-    print(f"{pist} {tarih}: {n} kupon kuruldu ({len(pencereler)} Altili x {len(KONFIG)} config).")
+    print(f"{pist} {tarih}: {n} kupon kuruldu "
+          f"({len(pencereler)} Altili x {len(aktif_konfig())} aktif config"
+          + (f"; emekli: {', '.join(emekli_konfig())}" if emekli_konfig() else "") + ").")
     return n
 
 
@@ -378,7 +406,13 @@ def bildir_sonuc(tarih, pist, seq):
     tarih_tr = pd.Timestamp(str(tarih)).strftime("%d.%m.%Y")
     sat = ["🏁 <b>ALTILI SONUÇLANDI</b>",
            f"📍 {pist} — {tarih_tr}, {int(seq)}. Altılı", ""]
-    ref = g_all[g_all["config"] == next(iter(KONFIG))].sort_values("ayak")
+    # K100: referans config SABIT olamaz -- eskiden next(iter(KONFIG))="dar" idi, dar emekli
+    # olunca yeni Altililarda o satir bos donup "Kazananlar" satiri sessizce kaybolurdu.
+    # Artik o Altili'da GERCEKTEN kupon kurulmus ilk config'ten okunur.
+    _ref_cfg = next((c for c in KONFIG if (g_all["config"] == c).any()), None)
+    if _ref_cfg is None:
+        return
+    ref = g_all[g_all["config"] == _ref_cfg].sort_values("ayak")
     kaz_par = []
     for _, r in ref.iterrows():
         kz = ro.kazanan_bilgi(_as_int(r["race_kod"]))
@@ -594,15 +628,23 @@ def _kupon_ozet(g, tarih, pist, seq, cfg):
 
 def _tur_ozeti():
     """K78: sayfa girisindeki kupon-turu listesi KONFIG'den uretilir. Eskiden elle yazilmisti
-    ('dort boyda kurulur') ve 7 ture cikinca bayatladi -> artik bayatlayamaz."""
+    ('dort boyda kurulur') ve 7 ture cikinca bayatladi -> artik bayatlayamaz.
+    K100: emekliler ayri satirda -- gecmis sicilleri tabloda DURUYOR, yalniz yeni kupon
+    kurulmuyor; sayfa bunu acikca soylesin ki 'kupon nerede?' diye aranmasin."""
     sat = []
+    akt = aktif_konfig()
     for aile, ad in AILE_AD.items():
-        cs = [c for c, ay in KONFIG.items() if ay["aile"] == aile]
+        cs = [c for c in akt if KONFIG[c]["aile"] == aile]
         if not cs:
             continue
         sat.append(f"&nbsp;&nbsp;<b>{ad}</b> &rarr; " + ", ".join(
             f"{c.upper()} <span class=mini>(~{KONFIG[c]['kombo']} kombo, "
             f"{KONFIG[c]['dagitim']})</span>" for c in cs))
+    em = emekli_konfig()
+    if em:
+        sat.append("&nbsp;&nbsp;<span class=mini><b>EMEKLI</b> (10.08.2026, K100 &mdash; yeni "
+                   "kupon kurulmuyor; gecmis sicilleri asagida AYNEN duruyor): "
+                   + ", ".join(c.upper() for c in em) + "</span>")
     return "<br>".join(sat)
 
 
@@ -813,7 +855,7 @@ def html_yaz(df=None, ac=False):
          f"<div class=not>guncelleme {datetime.now():%d.%m.%Y %H:%M} &mdash; "
          "<b>GERCEK BAHIS DEGIL</b>, kagit uzerinde izleme/ogrenme (K48/K53). "
          "Backtest OOS &minus;%32, +EV yok (K52).<br>"
-         f"Su an <b>{len(KONFIG)} kupon turu</b> paralel izleniyor "
+         f"Su an <b>{len(aktif_konfig())} kupon turu</b> paralel izleniyor "
          "(K78: metin KONFIG'den uretilir, elle guncellenmez):<br>" + _tur_ozeti() +
          "<br>Birim fiyat 2026 tarifesi: Ist/Ank/Izm/Ada/Bur/Koc/Ant 1,25 TL, "
          "Elazig/Urfa/Diyarbakir 1,00 TL.<br>"
@@ -850,7 +892,10 @@ def html_yaz(df=None, ac=False):
             net = odul - bedel
             tam = sum(1 for k in kk if k["kademe"] == 6)
             cls = "poz" if net >= 0 else "neg"
-            H2.append(f"<div style='margin:6px 0'><b>{cfg.upper()}</b> "
+            # K100: emekli config'ler burada KALIR (sicil ve genel toplam bozulmasin), etiketlenir
+            em = "" if KONFIG[cfg].get("aktif", True) else \
+                 " <span class=mini style='color:#92400e'>[EMEKLI &mdash; K100]</span>"
+            H2.append(f"<div style='margin:6px 0'><b>{cfg.upper()}</b>{em} "
                       f"<span class=k>({len(kk)} tamamlanan kupon, {tam} tam isabet)</span> &nbsp; "
                       f"bedel <b>{ro.para(bedel)}</b> &nbsp; odul <b>{ro.para(odul)}</b> &nbsp; "
                       f"net <span class='{cls}'><b>{ro.para(net, isaret=True)}</b></span></div>")
@@ -899,8 +944,12 @@ def html_yaz(df=None, ac=False):
         H.append("<tr><th>ayak</th><th class=l>KAZANAN AT</th>"
                  "<th>kazananin sistem sirasi<br><span class=mini>kupon ani &rarr; yaris ani</span></th>"
                  "<th>ganyan<br>orani</th>"
-                 + "".join(f"<th class=l>{c.upper()}<br><span class=mini>{KONFIG[c]['aile']}</span></th>"
-                           for c in cfgler) + "</tr>")
+                 + "".join(
+                     f"<th class=l>{c.upper()}"
+                     + ("" if KONFIG[c].get("aktif", True)
+                        else "<br><span class=mini style='color:#92400e'>EMEKLI</span>")
+                     + f"<br><span class=mini>{KONFIG[c]['aile']}</span></th>"
+                     for c in cfgler) + "</tr>")
         for _, r in ref.iterrows():
             ai = int(r["ayak"])
             rk = int(r["race_kod"]) if pd.notna(r["race_kod"]) else None

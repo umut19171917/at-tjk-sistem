@@ -2112,3 +2112,102 @@ kodu değişmedi), ama vaka incelemesinin güvenilirliğine etkisi büyük.
 **(e) SINIR.** Tek vakadan "bot1 kötü sıralıyor" çıkarılmaz (hindsight yasağı). Toplu ölçüm
 zaten kayıtlı: bot1 isabeti %29,1 vs harman %35,7 (K67), ve K98-e uyarınca **bot1 canlı
 portföye konmaz** (getirisinin %43'ü tek kupondan). Bu karar o hükümleri DEĞİŞTİRMEZ.
+
+**K100 — KALABALIK BUDANDI: dört config EMEKLİ, `bot1_1800` eklendi. Config silinmez,
+EMEKLİ edilir.** Kullanıcı 10 Ağu'da istedi: "canlı oynamıyorum, para kaybetmiyorum, aklıma
+gelen her şeyi deneyimlemek istiyorum — iptal edilecekleri iptal et, bot1_1800'ü kur, sisteme
+hiçbir zarar gelmesin." Önce önerinin her maddesi ölçüldü, sonra uygulandı.
+
+**(a) KULLANICININ VERDİĞİ SAYILAR DOĞRULANDI** (canlı sicil, sonuçlanmış kuponlar):
+| config | kupon | 6/6 | ayak isabeti | net | Altılı başına |
+|---|---|---|---|---|---|
+| dar | 66 | 0 | %39,4 | −1.320 | 20 TL |
+| orta | 66 | 1 | %45,7 | **+10.314** | 115 TL |
+| geniş | 53 | 0 | %48,4 | −14.602 | 276 TL |
+| geniş900 | 53 | 1 | %56,0 | −41.916 | 918 TL |
+| açgözlü900 | 48 | 2 | %60,8 | −32.274 | 1.083 TL |
+| bot1_900 | 36 | 2 | **%63,4** | **+11.957** | 1.075 TL |
+| ayrışma900 | 36 | 0 | %59,3 | −39.189 | 1.089 TL |
+| açgözlü_v2 | 10 | 0 | %60,0 | −10.735 | 1.074 TL |
+**UYARI — net TL karar dayanağı DEĞİL:** açgözlünün −32.274'ü 2 isabete, geniş900'ün −41.916'sı
+1 isabete dayanıyor; artıdaki ikisi de tek/çift isabetin eseri. 36-66 kuponluk sicilde net TL
+tek olayın gürültüsüdür ([[K98]]-e'nin aynı dersi). Karar iki sütuna dayandırıldı:
+**benzersiz katkı** ve **açık bir soruya cevap veriyor mu**.
+
+**(b) BENZERSİZ KATKI** (216 sonuçlanmış ayak; o ayağı SADECE o config tutturdu):
+dar **0** · orta **0** · geniş **0** · geniş900 2 · açgözlü900 1 · ayrışma900 2 · **bot1_900 32**.
+bot1 dışındaki hiçbir config portföye ayak kazandırmıyor — K98'in backtest bulgusunun
+(194 ayakta bot1 30, diğerleri 0-2) canlı karşılığı.
+
+**(c) EMEKLİ EDİLENLER ve gerekçeleri**
+- **ayrışma900** — açgözlü900'ün ikizi: canlıda ayakların **%78'inde birebir aynı kupon**,
+  Jaccard %92; backtest McNemar p=0,80 (8.598 ayak). [[K95]]'in açık bıraktığı "w kararı"
+  böylece (c) şıkkıyla kapandı.
+- **dar** — 0 benzersiz katkı. "Bu bedelle tutturmak imkânsız" iddiası neredeyse doğru:
+  backtest'te 1.433 Altılıda 19 isabet (%1,3), ~75 Altılıda bir. 66 kuponda 0 isabet
+  beklenenin içinde, bulgu değil.
+- **geniş** — 0 benzersiz katkı, komşularıyla %88/%83 örtüşme. Merdiven sorusu backtest'te
+  1.433 olayla kapandı ([[K88]]/[[K98]]).
+- **geniş900** — tek işi K65'in kontrolüydü (aynı bütçe, tek fark dağıtım); o kol
+  [[K83]]/[[K93]]/[[K98]]'de kapandı. Kapsam ailesi `orta` ile temsil ediliyor.
+**açgözlü900 KALDI** — ikizinden hangisinin kalacağı sicile göre değil ROLE göre seçildi:
+açgözlü900, `acgozlu_v2`'nin kontrol grubudur (BEKLEYENLER #9). Kaldırılsaydı tek açık
+deneyimiz dayanaksız kalırdı.
+
+**(d) `bot1_1800` EKLENDİ — ama kullanıcının gerekçesiyle DEĞİL.** İddia: "bot1 özellikle
+yüksek ödüllü yarışlarda 5'te kalıyor; kaçırdığı ayakta 1 at daha yazsa tutturacak."
+İki parçası da ayrı sınandı:
+- **"1 at daha yazsa" HINDSIGHT.** 5/6 kalınan olaylarda kazananın, config'in KENDİ cetvelinde
+  kesimin kaç sıra altında olduğu: bot1@900 **%31**, açgözlü@900 **%31**, geniş900 **%29**,
+  orta@96 **%33** (medyan derinlik hepsinde 2). Dördü aynı → bu bot1'e özgü bir yakınlık değil;
+  açgözlü dağıtıcı tanımı gereği kesim çizgisinde durur, kıl payı kaçırma her kuponda böyle
+  görünür. Hangi ayağı kaçıracağın önceden bilinmiyor.
+- **"Yüksek ödüllüleri yakalarız" YANLIŞ — tersi ölçüldü.** bot1@900 → bot1@1800: 405 near-miss'in
+  63'ü (%15,6) 6/6'ya dönüyor. **Yüksek ödüllülerin dönüşümü %10, düşük ödüllülerin %17.**
+  Dönenlerin medyan temettüsü 2.966 TL, dönmeyenlerin 6.276 TL; dönmeyenlerin en büyüğü
+  2.347.571 TL. Büyük ödül = sürpriz at = cetvelin DERİNİ, kesimin bir altı değil.
+  [[K91]]'in bot2 için bulduğunun bot1'deki karşılığı.
+- **GERÇEK gerekçe (farklı):** bot1@900'ün getirisi tek olaya asılı (ROI −18,3% ama en büyük
+  kupon çıkınca **−53,2%**). Bütçe merdiveni: 900 → 1350 → 1800 → 2700 → 3600 için görünen ROI
+  −18,3/−22,3/−29,2/−39,5/−42,5, **şanstan arındırılmış ROI −53,2/−45,7/−46,6/−51,2/−51,2**.
+  Yani 900 belirgin şekilde kötü, 1350-1800 bandı iyi. (Banttan tek değer SEÇİLMEDİ; beş
+  değerlik taramanın en iyisini almak λ ve @192'de reddedilen overfit'in aynısı olurdu —
+  1800 kullanıcının istediği değer olduğu için alındı, taramanın kazananı olduğu için değil.)
+- **ÖLÇÜM DEĞERİ ~SIFIR, açıkça söylendi:** 25 Eyl'e kadar ~35 kupon birikir; [[K87]]/[[K89]]'da
+  bu örneklemde hiçbir şeyin ayırt edilemediği görüldü. Bütçe sorusu backtest'te 1.433 olayla
+  zaten cevaplandı. Kullanıcı bunu bilerek istedi ("deneyimlemek istiyorum") → [[K68]] gibi
+  **GÖZLEM AKIŞI** olarak eklendi, bulgu iddiası yok.
+
+**(e) NASIL UYGULANDI — "sisteme zarar gelmesin" şartının karşılığı.**
+**Config SİLİNMEDİ, `aktif: False` bayrağı eklendi.** Silinseydi sessiz bozulma olurdu:
+`toplam_blok` KONFIG'i gezer, `_kumulatif_blok` kuponları CSV'den okur → silinen config
+CSV'de kalır ama toplamdan düşer, **işleyen bakiye ile TOPLAM DURUM birbirinden ayrışırdı.**
+Ayrıca o config'in sütunu geçmiş Altılı kartlarından da kaybolurdu. Emeklilik = bayrak.
+Uygulama sırasında bulunan ve kapatılan **üç ayrı kırılma noktası**:
+1. `_telegram_sonuc` referans satırı `next(iter(KONFIG))` = **"dar"** idi. Dar emekli olunca
+   yeni Altılılarda o satır boş dönüp **"Kazananlar" satırı sessizce kaybolacaktı**.
+   Artık o Altılı'da gerçekten kupon kurulmuş ilk config'ten okunuyor.
+2. `kayip_raporu.py` üç yerde **"7 kupon"** yazıyordu (elle). Artık `aktif_konfig()`'ten
+   üretiliyor — K78'in dersi: elle yazılan sayı bayatlar.
+3. Modül docstring'i hâlâ "DÖRT config: dar/orta/geniş/geniş900" diyordu. Sayı verme alışkanlığı
+   kaldırıldı; tek kaynak KONFIG.
+`_tur_ozeti` emeklileri ayrı satırda açıkça yazıyor; TOPLAM DURUM'da ve tablo başlıklarında
+**[EMEKLİ]** etiketi var — sicil görünür kalıyor, "kupon nerede?" diye aranmıyor.
+
+**(f) DOĞRULAMA (uygulama sonrası, üç bağımsız kontrol)**
+1. **Geçmiş sicil bozulmadı:** CSV'den KONFIG'e hiç bakmadan hesaplanan toplam bedel
+   **212.791,25 TL**; sayfanın GENEL TOPLAM'ı **212.791,25 TL**. Birebir. Emekli dört config
+   her iki TOPLAM DURUM bloğunda da duruyor.
+2. **Kuru çalışma (canlıya dokunmadan):** 10.08 BURSA'nın GERÇEK kupon-anı vektörleriyle
+   config döngüsü çalıştırıldı. 5 aktif config geçerli kupon kurdu (boş ayak yok, bütçe aşımı
+   yok), 4 emekli atlandı. bot1_1800: 1.680 ve 1.764 kombo (tavan 1800) = 2.100 / 2.205 TL.
+3. **BEKLENMEDİK BULGU:** `bot1_1800`, `bot1_900`'ün üst kümesi DEĞİL. 1. Altılı'da 900'ün
+   22 atının 21'i 1800'de var — açgözlü dağıtıcı bütçe artınca genişliği YENİDEN dağıtıyor
+   (1. ayak 6→5 atarken 2. ayak 3→7 çıkıyor). Yani ikisi "dar/geniş aynı kupon" değil,
+   **farklı kuponlar**. İleride kıyaslanırken bu akılda tutulmalı.
+
+**(g) SONUÇ.** Aktif: `orta` (115 TL) · `acgozlu900` (1.083) · `bot1_900` (1.075) ·
+`bot1_1800` (~2.150) · `acgozlu_v2` (1.074). Emekli: `dar`, `genis`, `genis900`, `ayrisma900`.
+Altılı başına kâğıt bedel ~5.649 → ~5.497 TL (bedel amaç değildi; amaç kalabalığın azalmasıydı:
+8 config → 5, ve kalan beşin her biri açık bir soruya bağlı).
+Ölçüm koduna, dağıtıcılara, backtest'e, `orta`nın ayarlarına DOKUNULMADI.

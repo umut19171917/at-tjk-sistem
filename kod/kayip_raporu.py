@@ -7,7 +7,8 @@ NEDEN VAR: kullanici bazi gunler ~15:30 civari yarim saat PC'yi kapatmak zorunda
 
   1) KURULMAYAN ALTILI (en pahali). Kupon yalnizca 1. kosuya <=30 dk kala kurulur
      (altili_canli.kupon_zamani_kur). O 30 dk'lik pencereye iki gecis duser; ikisi de
-     kacarsa o Altili HIC kurulmaz -> 7 kupon birden ve o Altili deneyden duser.
+     kacarsa o Altili HIC kurulmaz -> AKTIF config sayisi kadar kupon birden ve o Altili
+     deneyden duser (sayi KONFIG'den okunur, elle yazilmaz -- K100).
      Olcum: 15:00 gunun en yogun kupon anidir (12 gunun 9'unda), 15:30/15:45'te hic
      kupon kurulmamistir -> kesintiyi 15:30'da baslatmak bu hasari sifirlar.
 
@@ -34,6 +35,16 @@ import pandas as pd
 
 KOK = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(KOK / "kod"))
+
+# K100: "kac kupon kaybederiz" sayisi ELLE YAZILMAZ -- config sayisi degistikce bayatlar
+# (K78 dersi). Tek kaynak altili_canli.KONFIG'in aktif bayragidir. Import edilemezse
+# rapor yine calisir, yalniz sayi yerine "tum" yazar.
+try:
+    from altili_canli import aktif_konfig
+    AKTIF_SAYI = len(aktif_konfig())
+except Exception:                                            # noqa: BLE001
+    AKTIF_SAYI = None
+KUPON_ADET = f"{AKTIF_SAYI} kupon" if AKTIF_SAYI else "tum kuponlar"
 
 KUPON_DK = 30    # altili_canli.kupon_zamani_kur varsayilani
 GECIS_DK = 15    # takip gecis araligi -> normal kurulum farki [15, 30] dk arasi olmali
@@ -90,7 +101,7 @@ def main(gun=14):
                         if t == g and (t, p, s) not in kuruldu])
         for p, s in eksik:
             satir.append(f"    !! KURULMAYAN ALTILI: {p} {s}. Altili — kupon penceresi kacmis "
-                         f"(7 kupon + o Altili deneyden dustu)")
+                         f"({KUPON_ADET} + o Altili deneyden dustu)")
         t_kurulmayan += len(eksik)
 
         # 2) gec kurulan kupon (1. ayagin postasi ile kayit_ts farki)
@@ -138,7 +149,7 @@ def main(gun=14):
 
     print("\n" + "=" * 94)
     print(f"OZET ({len(gunler)} gun): {temiz} gun TEMIZ")
-    print(f"  kurulmayan Altili : {t_kurulmayan:>3d}   (en pahali — 7 kupon/Altili)")
+    print(f"  kurulmayan Altili : {t_kurulmayan:>3d}   (en pahali — {KUPON_ADET}/Altili)")
     print(f"  gec kurulan kupon : {t_gec:>3d}   (en sinsi — zamanlama kirlenmesi)")
     print(f"  yaris sonrasi kayit: {t_elle:>2d}   (elle/geriye donuk — kesinti hasari DEGIL)")
     print(f"  defter kaydi dusen: {t_defter:>3d} kosu (en ucuz — yalniz siralama+lambda)")
