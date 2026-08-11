@@ -214,6 +214,19 @@ kombinasyonu çıkarılıp koşulara eşlenmeli. **Önce fizibilite denemesi yap
 **Bu kol kapandı; yeniden açmak için yeni bir MEKANİZMA gerekir, yeni bir bölme kuralı değil.**
 
 <sub>--- özgün madde (arşiv) ---</sub>
+### 10-B. ✅ ÖLÇÜLDÜ ve KAPANDI (2026-08-10, K101) — banker takası ÇARE DEĞİL
+
+Kullanıcının 10 Ağu'daki tarifi ölçüldü (güven 1. ayak tek / 2. ayak geniş ↔ tersi; artı şekli).
+Önceden bağlanan ölçüt **dört hücrenin dördünde de düştü**: çift, aynı paradaki tek dikdörtgeni
+ne ROI(−1)'de ne temettüde geçebildi.
+**Teşhis DOĞRUYDU, çare işe yaramadı:** A banker ayağını olayların %50-61'inde kaçırıyor (kuponun
+gerçek katili orası) ama B o ölümlerin ancak **%2-4'ünü** kurtarıyor — kurtarabilmesi için A'nın
+diğer beş ayağı tutturmuş olması gerekiyor, üstelik B 2. ayağı tek ata indirerek yeni bir kırılma
+noktası yaratıyor ve ortak dört ayak iki kez satın alınıyor.
+Araç: `kod/altili_banker_takasi_test.py`. **Kupon şekli kolundaki 5. ret** (K68/K90/K98-f/K98-g/K101)
+→ bu kol kapandı; yeniden açmak için yeni MEKANİZMA gerekir, yeni şekil varyantı değil.
+
+<sub>--- özgün madde (arşiv) ---</sub>
 ### 10. TAMAMLAYICI KUPON (banker rotasyonu) — ölçülmedi, ölçüt önceden bağlandı
 **Eklendi:** 2026-08-09 · **İlgili:** K89, K90, K96, K97
 **TETİK: KULLANICI söyleyince** — kendiliğinden başlama.
@@ -278,7 +291,17 @@ Kullanıcının önerisi "bot1 + ona alternatif bir kupon" idi. Ölçüm sonucu:
 **İlgili:** yedekleme
 Yedek zip buluta/USB'ye yüklendi. **Bu iş artık TEKRARLANAN bir görev** — aşağıdaki #6'ya bak.
 
-### 6. Dış yedek TAZELEME — çünkü git UZAK DEPOYA bağlı DEĞİL (2026-07-27 bulgusu)
+### 6. ✅ ÇÖZÜLDÜ (2026-08-10) — git artık PRIVATE uzak depoya bağlı
+
+`umut19171917/at-tjk-sistem` (**private**) oluşturuldu, 80 commit'in tamamı itildi, `origin/main`
+ile yerel HEAD aynı hash'te. Tek-disk riski bitti: bundan sonra her commit makine dışına gider.
+Takip edilen içerik 52 MB (`.git` 17,6 MB) — ağır ve yeniden üretilebilir kısım (`veri/ham` 1,1 GB,
+`katilim.csv`, `ozellikli.csv`) zaten .gitignore'da, yedeğe girmiyor.
+**Kalan tek iş:** `veri/ham` arşivi hâlâ yalnız bu diskte. TJK arşivi kapanırsa `kazi.py` ile
+yeniden inemez → ara sıra harici disk/bulut kopyası almak yine de mantıklı (TETİK: 3 ayda bir).
+
+<sub>--- özgün madde (arşiv) ---</sub>
+### 6-eski. Dış yedek TAZELEME — çünkü git UZAK DEPOYA bağlı DEĞİL (2026-07-27 bulgusu)
 **Eklendi:** 2026-07-27 · **İlgili:** K50, #5 · **TETİK:** ayda bir (veya sistem modu değişince)
 **DÜZELTME — eski notta yanlış varsayım vardı:** "haftalık git commit (K50) kod+veriyi korur"
 deniyordu. `git remote -v` **BOŞ** → depo yalnızca yerel. Git yanlış silme/bozma'ya karşı korur ama

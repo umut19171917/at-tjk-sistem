@@ -2211,3 +2211,111 @@ Uygulama sırasında bulunan ve kapatılan **üç ayrı kırılma noktası**:
 Altılı başına kâğıt bedel ~5.649 → ~5.497 TL (bedel amaç değildi; amaç kalabalığın azalmasıydı:
 8 config → 5, ve kalan beşin her biri açık bir soruya bağlı).
 Ölçüm koduna, dağıtıcılara, backtest'e, `orta`nın ayarlarına DOKUNULMADI.
+
+**K101 — "ALTERNATİF KUPON" (banker takası) ÖLÇÜLDÜ → REDDEDİLDİ. Teşhis doğruydu, çare işe
+yaramıyor.** Kullanıcının tarifi (10 Ağu): *"alternatif altılı kuponları, oyuncunun güvenip tek
+attığı ayağın yıkılması olasılığı üzerine kurulur; ikinci kuponda ilk kuponun banker ayağı daha
+çok atla yazılır, varsa diğer favori ayak tek atılır."*
+
+**(a) BANKER TANIMI — kullanıcının düzeltmesi ve benim yanılgım.** Ben `BANKER_ESIK=0,70`'i arayıp
+"bizim kuponlarımızda banker yok" demiştim (ölçüm: bot1_900'ün 33 tek-at ayağının **sıfırı** eşiği
+geçiyor, tepe atın ort. olasılığı 0,40; acgozlu900'de 64'ün 5'i; yalnız `orta`da 10/10 geçiyor).
+Kullanıcı düzeltti: **banker kesinlik değil görece güvendir** — "bu ayakta bu ata güveniyorum,
+diğerlerini güçlü tutayım". Bu tanımla banker her Altılıda tanımlıdır (tepe olasılığı en yüksek
+ayak) ve benim "bizde banker yok" itirazım geçersizdir. Fikri gömen bir engel yokmuş.
+
+**(b) KURAL (serbest parametre YOK).** Güven sıralaması: i = 1., j = 2. ayak.
+`A: i=1 at, j>=2 at` · `B: j=1 at, i>=2 at` · kalan dört ayak açgözlüden; bütçe aşılırsa i/j
+DIŞINDAKİ en geniş ayaktan kısılır. A∪B, (i,j) düzleminde **artı** şeklidir — hiçbir tek kupon bu
+şekli kuramaz (kupon zorunlu olarak dikdörtgen, K98-h). **K98-g'deki "rotasyon" testi bunu
+KARŞILAMIYORDU**: o ayak sırasına göreydi (1-3 dar / 4-6 geniş), modelin güveniyle ilgisizdi ve
+kupon başına üç banker koyuyordu.
+
+**(c) UYGULAMA DERSİ — ilk tur mekanizmayı hiç çalıştırmamış.** B'de banker ayağını yalnızca
+*serbest bıraktım*; açgözlü en güvenilen ayağa zaten az at verdiği için o ayak olayların
+**%45-59'unda yine tek atta kaldı** → B, A ile aynı → sigorta hiç oluşmadı. Yani fikir olayların
+yarısında test EDİLMEMİŞTİ. Zorlanmış sürümde (i>=2) sigorta %100 oluştu. **Ölçüt değiştirilmedi**
+— düzeltilen şey ölçüt değil mekanizmanın uygulanışıydı.
+
+**(d) SONUÇ (OOS 2025-26, 1.433 olay, yalnız 6/6 öder, birim 1,25 TL).** Ölçüt önceden bağlanmıştı:
+*çift, aynı toplam paradaki tek dikdörtgeni hem ROI(−1)'de hem ort. temettüde geçmeli.*
+| | 6/6 | ROI | ROI(−1) | ort. temettü |
+|---|---|---|---|---|
+| çift bot2 2×450 | 197 | −68,3% | −69,5% | 2.387 |
+| **tek bot2 @900** | **225** | −64,0% | **−65,5%** | **2.469** |
+| çift bot2 2×900 | 295 | −65,5% | −66,5% | 3.581 |
+| **tek bot2 @1800** | **300** | −61,1% | **−64,1%** | **4.027** |
+| çift bot1 2×450 | 106 | −33,2% | **−42,9%** | 9.401 |
+| **tek bot1 @900** | **123** | −18,3% | −53,2% | **10.248** |
+| çift bot1 2×900 | 159 | −49,0% | −53,7% | 9.840 |
+| **tek bot1 @1800** | **188** | −29,2% | **−46,6%** | **11.694** |
+**Dört hücrenin dördünde de RED.** (bot1 2×450 ROI(−1)'de geçti ama temettüde kaldı → ölçüt
+gereği red; tek kriterle kurtarmak hindsight olurdu.)
+
+**(e) TAHMİNİMİN İKİ KANADI DA YANLIŞ ÇIKTI.** "Daha çok tutturur, daha ucuz temettü verir" VEYA
+"daha az tutturur, daha pahalı temettü verir" diye iki zıt kuvvet öngörmüştüm ve yönünü
+bilmediğimi yazmıştım. Ölçüm **ikisini de** yalanladı: çift hem daha az tutturdu **hem** daha ucuz
+temettü verdi. Öngörülmeyen sonuç.
+
+**(f) NEDENİ — asıl bulgu.** Kullanıcının teşhisi DOĞRU: A, banker ayağını olayların
+**%50 (bot2) / %61 (bot1)**'inde kaçırıyor; kuponun tek kırılma noktası gerçekten orası. Ama B o
+ölümlerin ancak **%2-4'ünü** kurtarabiliyor. Üç sebep:
+1. B'nin kurtarabilmesi için A'nın **diğer beş ayağı** tutturmuş olması gerekir — zaten düşük olasılık.
+2. B, 2. ayağı tek ata indirdiği için **yeni bir kırılma noktası** yaratır (sigorta bir delik
+   kapatıp başka delik açıyor).
+3. İki kuponun **ortak dört ayağı iki kez satın alınıyor**; aynı para tek kupona verilse altı ayağa
+   birden genişlik olurdu.
+
+**(g) BAĞLAM.** Bu, kupon ŞEKLİNİ akıllandırma kolundaki **beşinci** ret: K68 ayrışma · K90 birleşim ·
+K98-f birleştirme · K98-g çoğaltma · K101 banker takası. Hepsi K98-h'nin "tavan" bulgusuyla aynı
+yere çıkıyor: bu havuzda kupon şekliyle kenar üretilemiyor, dikdörtgen kısıtı zaten kazara işe
+yarıyor. **Kupon şekli kolu kapanmıştır**; yeniden açmak için yeni bir MEKANİZMA gerekir, yeni bir
+şekil varyantı değil.
+
+**(h) ARAÇ:** `kod/altili_banker_takasi_test.py` (offline, salt-okunur; `--gevsek` ile kusurlu ilk
+tur da üretilir). **HİÇBİR KOD/CONFIG DEĞİŞMEDİ** — canlı 5 config K100'deki gibi.
+
+**K102 — ATA ÖZEL KULVAR TERCİHİ test edildi → EKLENMEDİ. Eşdoğrusal DEĞİLmiş (tahminim yanlıştı)
+ama yardımı da yok.** Kullanıcı 10 Ağu'da sordu: *"sistem analizinde jokey, atın kulvarı, hava ve
+pist durumu, atın son antrenmanları değerlendiriliyor mu?"*
+
+**(a) MEVCUT DURUMUN ENVANTERİ** (soruya cevap): **VAR** → jokey (365 gün isabet oranı + jokey
+değişimi ikili sinyali), antrenör (aynı desen), kulvar **ama pist seviyesinde**
+(`kulvar_skor` = şehir × mesafe kovası × start kovası tarihsel galip oranı, ≤2024'ten, ırk ayrı),
+zemin (atın kum/çim galip oranı), pist hızı (hız figüründeki `gun_ofset`), takı değişimi,
+dinlenme süresi, kilo, handikap, yaş, cins, kariyer, form. **YOK** → hava/sıcaklık/nem/gece
+(veri %99,9 toplanıyor, özellik değil), going (K33'te test edilip ELENDİ), **antrenman/idman
+verisi feed'de hiç yok**. Denenmemiş tek şey: **ata özel kulvar tercihi**.
+
+**(b) TEST.** `kulvar_uygunluk` = atın BU start kovasındaki (1-3/4-6/7-9/10-12/13+) önceki galip
+oranı — `zemin_galip_oran` deseniyle birebir aynı, nokta-anında, yarış-içi z-skorlu. Doluluk %76,9.
+Walk-forward K38 ile aynı: eğit ≤2023 (7.259 koşu), harman 2024 (2.592), TEST 2025-26 (4.044).
+Ölçüt sonuç görülmeden bağlandı: **(a)** Bot2 test log-loss iyileşmesi ≥ 0,0010 (K33'te ölçülen
+"sıfır"ın 25 katı, Batch 1'in iki katı) **VE (b)** yeni katsayı, eşdoğrusal adaylardaki katsayı
+düşüşünün toplamından büyük olmalı.
+
+**(c) SONUÇ.**
+| | Bot1 | Bot2 (üretim) | α | γ |
+|---|---|---|---|---|
+| 17 özellik | 1,85969 | **1,69945** | +0,190 | +0,975 |
+| 18 özellik | 1,86002 | 1,69949 | +0,192 | +0,974 |
+İyileşme: Bot1 **−0,00033**, Bot2 **−0,00004** — ikisi de **kötüleşti**. Ölçüt (a) KALDI → EKLENMEZ.
+
+**(d) TAHMİNİM YANLIŞ ÇIKTI — kayda geçsin.** "going_uygunluk nasıl zemin ile eşdoğrusal çıktıysa,
+ata-özel kulvarın da kariyer_galip_oran ile aynı kaderi paylaşması muhtemel" demiştim. **Öyle
+olmadı:** ölçüt (b) **GEÇTİ** — eşdoğrusal adayların katsayıları neredeyse hiç kıpırdamadı
+(kulvar_skor_z +0,0827→+0,0832; zemin_galip_oran_z +0,1369→+0,1377; kariyer_galip_oran_z
+−0,0409→−0,0339, toplam düşüş 0,0070) ve yeni özellik kendi başına −0,0181 katsayı aldı. Yani
+**bağımsız bilgi taşıyor, ama işe yaramayan bir bilgi.** K33'ün "eşdoğrusallık" hikâyesi burada
+geçerli değil; bu sefer sebep başka: sinyal var ama gürültüden ibaret.
+Katsayının **negatif** olması da dikkat çekici — atın bir kulvar kovasındaki yüksek geçmiş galip
+oranı, her şey sabitken kazanmayla ters ilişkili. Muhtemel sebep: yüksek oran çoğunlukla küçük
+paydadan geliyor (o kovada az koşmuş at) → gürültü; gerçek sinyali `kariyer_galip_oran` zaten almış.
+
+**(e) K33'ÜN KAPANIŞI YERİNDE KALIR.** Bu, K19-K33 dizisinden sonraki ilk özellik testiydi ve
+sonuç değişmedi: **hiçbir kamuya açık veri özelliği Bot2'yi oynatmıyor.** Sebep K96'da ölçülü —
+Bot2'nin ağırlığının %82'si piyasadan geliyor; piyasa jokeyi, kulvarı, havayı zaten fiyatlamış.
+Kenar veri mühendisliğinde değil.
+
+**(f) ARAÇ:** `kod/kulvar_tercih_test.py` (offline, salt-okunur; `ozellikli.csv`'yi EZMEZ).
+Canlı model 17 özellikle çalışmaya devam ediyor, hiçbir kod/config değişmedi.
