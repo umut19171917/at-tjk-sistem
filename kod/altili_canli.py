@@ -939,10 +939,15 @@ def html_yaz(df=None, ac=False):
                  "<b>K</b> = kupon anindaki harman sirasi &nbsp;&middot;&nbsp; "
                  "<b>Y</b> = yaris anindaki harman sirasi &nbsp;&middot;&nbsp; "
                  "<b>B</b> = <i>bot1'in kendi sirasi</i> (yalniz bot1 sutununda; "
-                 "secimi yapan cetvel odur, K degil)</div>")
+                 "secimi yapan cetvel odur, K degil) &nbsp;&middot;&nbsp; "
+                 "<b>P</b> = <i>kamu (piyasa) sirasi</i>, kupon aninda "
+                 "<span style='color:#6d28d9'><b>mor</b></span> = sistem kamudan 3+ sira ayri "
+                 "&nbsp;&middot;&nbsp; <span style='color:#b45309'><b>turuncu</b></span> = "
+                 "kupon ani ile yaris ani 3+ sira kaymis</div>")
         H.append("<div style='overflow-x:auto'><table>")
         H.append("<tr><th>ayak</th><th class=l>KAZANAN AT</th>"
-                 "<th>kazananin sistem sirasi<br><span class=mini>kupon ani &rarr; yaris ani</span></th>"
+                 "<th>kazananin sirasi<br><span class=mini>sistem: kupon ani &rarr; yaris ani"
+                 "<br>+ kamu sirasi</span></th>"
                  "<th>ganyan<br>orani</th>"
                  + "".join(
                      f"<th class=l>{c.upper()}"
@@ -970,10 +975,13 @@ def html_yaz(df=None, ac=False):
                 y_sira = "-"
             else:
                 kz_html, kz_oran, kzno, y_sira = "<span class=bek>bekleniyor</span>", "-", None, "-"
-            k_sira = "-"
+            k_sira, p_sira = "-", "-"
             if kzno is not None:
-                k_sira = ro.sira_str(ro.kupon_ani_bilgi(tarih, pist, seq, ai, kzno)["sis"])
-            kz_sk = (f"<b>{k_sira}</b> &rarr; {y_sira}" if kzno is not None else "-")
+                _ka = ro.kupon_ani_bilgi(tarih, pist, seq, ai, kzno)
+                k_sira = ro.sira_str(_ka["sis"])
+                p_sira = ro.sira_str(_ka["kamu"])          # K103: kamu sirasi geri geldi
+            kz_sk = (f"<b>{k_sira}</b> &rarr; {y_sira}<br>"
+                     f"<span class=mini>kamu {p_sira}</span>" if kzno is not None else "-")
             H.append(f"<tr><td><b>{ai}</b><br><span class=mini>kosu {int(r['kosu_no'])}</span></td>"
                      f"<td class=l>{kz_html}</td><td>{kz_sk}</td><td>{kz_oran}</td>")
             tum_sec = set()
@@ -997,9 +1005,19 @@ def html_yaz(df=None, ac=False):
                 for no in secimler:
                     # K97: K = kupon anindaki sistem sirasi (KARAR bu vektorle verildi)
                     #      Y = yaris anindaki sistem sirasi (defter, posta-5dk)
+                    # K103: P = KAMU (piyasa) sirasi, kupon aninda. K97'de bu sutun
+                    # YANLISLIKLA DUSMUSTU: eskiden hucre "sis/kamu" basiyordu, K97 kamu'yu
+                    # kaldirip yerine kupon-ani sistemini koydu (eklemek yerine DEGISTIRDI).
+                    # Kamu sirasi bu projenin merkezinde: sistemin kalabalikla ayni mi ayri mi
+                    # dustugu ondan okunur (K67 bot1'in tum gerekcesi, K68 ayrisma, K98-h tavan).
                     bi = ro.at_bilgi(rk, no) if rk else {}
                     ka = ro.kupon_ani_bilgi(tarih, pist, seq, ai, no)
                     ks, ys = ro.sira_str(ka.get("sis")), ro.sira_str(bi.get("sis"))
+                    ps = ro.sira_str(ka.get("kamu"))
+                    # sistem kamudan 3+ sira AYRI ise isaretle: ayrisma orada
+                    ayri = (pd.notna(ka.get("sis")) and pd.notna(ka.get("kamu"))
+                            and abs(float(ka["sis"]) - float(ka["kamu"])) >= 3)
+                    pstl = " style='color:#6d28d9;font-weight:bold'" if ayri else ""
                     # ikisi 3+ sira ayrildiysa dikkat cek: o ayakta piyasa ciddi kaymis
                     kayar = (pd.notna(ka.get("sis")) and pd.notna(bi.get("sis"))
                              and abs(float(ka["sis"]) - float(bi["sis"])) >= 3)
@@ -1009,9 +1027,11 @@ def html_yaz(df=None, ac=False):
                         bs = ro.sira_str(ka.get("bot1_sira"))
                         # B = SECIMI YAPAN cetvel; K/Y karsilastirma icin
                         hucre.append(f"{et} <span class=mini><b>B{bs}</b></span>"
-                                     f" <span class=mini{stl}>K{ks} Y{ys}</span>")
+                                     f" <span class=mini{stl}>K{ks} Y{ys}</span>"
+                                     f" <span class=mini{pstl}>P{ps}</span>")
                     else:
-                        hucre.append(f"{et} <span class=mini{stl}>K{ks} Y{ys}</span>")
+                        hucre.append(f"{et} <span class=mini{stl}>K{ks} Y{ys}</span>"
+                                     f" <span class=mini{pstl}>P{ps}</span>")
                 bk = " <span class=mini>[banker]</span>" if int(sr["banker"]) == 1 else ""
                 tuttu = kzno is not None and kzno in secimler
                 stil = " style='background:#e8f7ec'" if tuttu else ""

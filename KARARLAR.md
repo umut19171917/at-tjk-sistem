@@ -2319,3 +2319,37 @@ Kenar veri mühendisliğinde değil.
 
 **(f) ARAÇ:** `kod/kulvar_tercih_test.py` (offline, salt-okunur; `ozellikli.csv`'yi EZMEZ).
 Canlı model 17 özellikle çalışmaya devam ediyor, hiçbir kod/config değişmedi.
+
+**K103 — KAMU SIRASI GERİ GELDİ. K97'de sessizce düşmüştü: sütun EKLENECEKKEN DEĞİŞTİRİLMİŞ.**
+Kullanıcı 11 Ağu'da sordu: *"altılı takipte atların kamu sıralaması da görülmüyor muydu daha
+önce?"* — doğruydu, ben düşürmüşüm.
+
+**(a) NE OLDU.** K97 öncesi hücre `no sis./kamu.` basıyordu (sistem sırası + kamu sırası), başlık
+da "kazananın sistem / kamu" idi. K97'de "kupon anı (K) / yarış anı (Y)" ayrımını eklerken kamu
+sütununu **eklemek yerine DEĞİŞTİRDİM**: hücre `K1. Y1.` oldu, kamu kayboldu. Kimse fark etmedi;
+kullanıcı iki hafta sonra hatırladı.
+
+**(b) NEDEN ÖNEMLİ.** Kaybedilen şey bu projenin merkezindeki karşılaştırma: **sistem kalabalıkla
+aynı mı, ayrı mı düştü.** bot1'in tüm gerekçesi (K67: "Bot2 pratikte kamunun kendisi, favori
+ortaklığı %89,9"), ayrışma dağıtıcısı (K68), tavan bulgusu (K98-h: kapsamı büyütmek kalabalığa
+katılmaktır) — hepsi kamu sırasıyla kıyasa dayanır. O sütun olmadan sayfada "biz kalabalıktan
+ayrıldık mı" sorusu **cevaplanamıyordu**.
+
+**(c) DÜZELTME.** Hücreler dört etiket taşıyor: **K** kupon anı harman sırası · **Y** yarış anı
+harman sırası · **B** bot1'in kendi sırası (yalnız bot1 config'lerinde, K99) · **P** kamu sırası.
+Örnek: `3 K2. Y3. P2.` ve bot1 sütununda `9 B1. K1. Y1. P1.`
+İki renk uyarısı: **turuncu** = K ile Y 3+ sıra kaymış (sürüklenme, K97) · **mor** = sistem kamudan
+3+ sıra ayrı (ayrışma). Üretilen sayfada 5.776 P etiketi, 218 mor işaret, 299 kazanan satırı.
+Kazanan sütunu: `7. → 8. / kamu 7.`
+**Kamu sırası KUPON ANINDAN alınır**, yarış anından değil — K ile aynı ana denk gelsin ki
+"karar verirken kalabalık ne diyordu" sorusu doğru cevaplansın. Veri zaten
+`veri/altili_kupon_ani.csv`'de duruyordu (K97'de toplanmaya başlamıştı), yeni veri gerekmedi.
+
+**(d) DERS — kayda geçsin.** *Bir sütun eklerken mevcut sütunu değiştirme.* K97'de yer darlığı
+yüzünden kamu'yu K ile "takas ettim" ve bunu ne karar notuna yazdım ne de kullanıcıya söyledim.
+Sayfa üretim kodunda bir alan silmek, o alanı besleyen ölçümü de görünmez kılıyor. Bundan sonra
+rapor alanı çıkarılacaksa **açıkça karara yazılır**; sığmıyorsa satır/renk ile çözülür, silinerek
+değil. (K78'in "elle yazılan liste bayatlar" dersinin kardeşi.)
+
+**(e) KAPSAM.** Yalnız görselleştirme; seçim, dağıtıcı, config, backtest **değişmedi**.
+Canlı 5 config K100'deki gibi.
