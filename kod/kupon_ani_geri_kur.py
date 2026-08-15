@@ -138,6 +138,7 @@ def main():
                 satirlar.append({
                     "kayit_ts": f"{snap['ts'].iloc[0]:%Y-%m-%d %H:%M}",
                     "tarih": w["tarih"], "pist": w["pist"], "seq": int(w["seq"]),
+                    "dk_grup": 30,          # K105: geri kurulanlarin tamami 30 dk grubudur
                     "ayak": int(ayak), "kosu_no": r.get("kosu_no"),
                     "race_kod": r.get("race_kod"), "saat": r.get("saat"),
                     "dk_kala": r.get("dk_kala"), "no": int(r["no"]),

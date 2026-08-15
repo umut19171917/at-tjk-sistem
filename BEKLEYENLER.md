@@ -85,7 +85,31 @@ altili.html / paper.html K55 zengin formatına geçti (tahminler + sistem sıras
 kamu sırası + oran + bedel + ödül + toplam). defter.html hâlâ eski düzende. İstenirse aynı
 `rapor_ortak.py` yapıtaşlarıyla çevrilebilir; sistemin veri akışına dokunmaz.
 
-### 4. Kupon zamanı analizi — 30 vs 15 dk (ARAÇ KURULDU, VERİ BEKLENİYOR)
+### 4. Kupon zamanı — 30 vs 15 dk · **CANLI KOL AÇILDI (K105, 15 Ağu 2026)**
+
+**DURUM DEĞİŞTİ.** "Ekim'i bekle" tetiği 31 Tem'de, oran_log kupon anının tam fotoğrafını
+çekmezken kondu; K76 bunu düzeltti ve o gün bugündür doğru veri birikiyor. Kullanıcı 15 Ağu'da
+"neden bekliyoruz" diye sordu, haklıydı — takvim notu tekrarlanmış, tetikteki SAYI kontrol
+edilmemişti. **Ders: tetik bir tarihse değil bir SAYIYSA, sayıya bakılır.**
+
+**Simülasyon güncel (15 Ağu, 18 tam Altılı, 108 ayak, orta):** ikisi de tuttu 41 · yalnız-30 10 ·
+yalnız-15 **15** · ikisi de kaçırdı 42 → net **+5 ayak, p=0,424** (anlamsız, yön "geç kur" lehine).
+İç kontrol: bot1_900 ve bot1_1800 farkı **tam +0** — bot1 orana bakmaz, teorinin dediği bu →
+simülasyonun kendisi doğrulandı.
+
+**CANLI: `orta_15` eklendi** (K105). `orta` ile tek farkı kurulma anı. bot1'e ikiz açılmadı
+(fark yapısal olarak +0). Altyapı: KONFIG'e `dk` alanı, kupon grup grup kurulur, kupon-anı
+kaydı `dk_grup` ile anahtarlı.
+
+**TETİK (yeni):** 25 Eyl civarı, `orta_15` ~60+ kupona ulaşınca → eşleşmiş ayak kıyası
+(aynı Altılı, iki zaman) + simülasyonla karşılaştır. **Canlı zamanlama o güne kadar 30 dk KALIR.**
+
+**10 dk hâlâ YOK:** takip 15 dk'da bir çalışıyor, o pencereye sistematik geçiş düşmüyor →
+örneklem yanlı kesilir. Çözümü görev sıklığını artırmak; sistemin çalışma düzenine dokunduğu
+için AYRI karar konusu, yapılmadı.
+
+<sub>--- özgün madde (arşiv) ---</sub>
+### 4-eski. Kupon zamanı analizi — 30 vs 15 dk (ARAÇ KURULDU, VERİ BEKLENİYOR)
 **Eklendi:** 2026-07-24 · **Güncellendi:** 2026-07-31 (K76) · **İlgili:** K59, K76
 **DURUM:** Test aracı kuruldu ve koştu → `kod/altili_zaman_test.py`. Ama **oran_log'da yapısal bir
 eksik bulundu:** her ayak KENDİ postasına 45 dk kala loglanıyordu; oysa kupon tek anda, 1. ayağa

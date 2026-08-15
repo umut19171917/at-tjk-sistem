@@ -118,12 +118,16 @@ def kupon_ani_yukle():
         _ani_cache = pd.DataFrame()
         return _ani_cache
     a = pd.read_csv(KUPON_ANI, low_memory=False)
+    if "dk_grup" not in a.columns:
+        a["dk_grup"] = 30
     for c in ["seq", "ayak", "kosu_no", "race_kod", "no", "bot1", "bot2", "kamu",
-              "oran", "dk_kala"]:
+              "oran", "dk_kala", "dk_grup"]:
         if c in a.columns:
             a[c] = pd.to_numeric(a[c], errors="coerce")
-    # kupon anindaki siralamalar: sistem (bot2 azalan) ve piyasa (kamu azalan)
-    grup = ["tarih", "pist", "seq", "ayak"]
+    a["dk_grup"] = a["dk_grup"].fillna(30)
+    # K105: siralamalar DK GRUBU icinde hesaplanir — 30 dk ve 15 dk fotograflari ayri
+    # vektorlerdir, birlikte siralanirsa ikisi de bozulur.
+    grup = ["tarih", "pist", "seq", "dk_grup", "ayak"]
     a["sis_sira"] = a.groupby(grup)["bot2"].rank(ascending=False, method="min")
     a["bot1_sira"] = a.groupby(grup)["bot1"].rank(ascending=False, method="min")
     a["kamu_sira"] = a.groupby(grup)["kamu"].rank(ascending=False, method="min")
@@ -131,22 +135,27 @@ def kupon_ani_yukle():
     return _ani_cache
 
 
-def kupon_ani_atlari(tarih, pist, seq, ayak):
+def kupon_ani_atlari(tarih, pist, seq, ayak, dk_grup=30):
     """Bir ayagin KUPON ANINDAKI tablosu (bot2 azalan sirali). Kayit yoksa bos DataFrame.
-    NOT: ayni kosu iki Altili'da yer alabilir ve kupon anlari FARKLIDIR -> anahtar seq'i icerir."""
+    NOT: ayni kosu iki Altili'da yer alabilir ve kupon anlari FARKLIDIR -> anahtar seq'i icerir.
+    K105: dk_grup — 30 dk mi 15 dk mi kurulan kuponun fotografi. Istenen grup yoksa 30'a duser
+    (geriye uyum: eski kayitlarin tamami 30)."""
     a = kupon_ani_yukle()
     if a.empty:
         return a
-    g = a[(a["tarih"].astype(str) == str(tarih)) & (a["pist"] == pist)
-          & (a["seq"] == int(seq)) & (a["ayak"] == int(ayak))]
+    m = ((a["tarih"].astype(str) == str(tarih)) & (a["pist"] == pist)
+         & (a["seq"] == int(seq)) & (a["ayak"] == int(ayak)))
+    g = a[m & (a["dk_grup"] == float(dk_grup))]
+    if len(g) == 0 and float(dk_grup) != 30.0:
+        g = a[m & (a["dk_grup"] == 30.0)]
     return g.sort_values("sis_sira")
 
 
-def kupon_ani_bilgi(tarih, pist, seq, ayak, at_no):
+def kupon_ani_bilgi(tarih, pist, seq, ayak, at_no, dk_grup=30):
     """Tek atin kupon anindaki sirasi/olasiligi. Kayit yoksa None'lar."""
     bos = {"sis": None, "bot1_sira": None, "kamu": None, "oran": None,
            "bot2": None, "dk": None, "ts": None, "kaynak": None}
-    g = kupon_ani_atlari(tarih, pist, seq, ayak)
+    g = kupon_ani_atlari(tarih, pist, seq, ayak, dk_grup)
     if len(g) == 0:
         return bos
     r = g[g["no"] == at_no]

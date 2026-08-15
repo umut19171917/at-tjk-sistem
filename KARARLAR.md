@@ -2353,3 +2353,119 @@ değil. (K78'in "elle yazılan liste bayatlar" dersinin kardeşi.)
 
 **(e) KAPSAM.** Yalnız görselleştirme; seçim, dağıtıcı, config, backtest **değişmedi**.
 Canlı 5 config K100'deki gibi.
+
+**K104 — ALTILI DIŞI KOL İLK KEZ ÖLÇÜLDÜ: gerçek ganyan kesintisi %28,3 (varsaydığımız %25,5
+değil), PLASE kesintisi %10-14 ile ölçtüğümüz EN UCUZ ürün. Seçim zararı YOK.** Kullanıcı 15
+Ağu'da sordu: *"altılı dışındaki bahislerde ne durumdayız?"* — K93'ten beri bu kola hiç
+bakılmamıştı.
+
+**(a) NE OYNUYORUZ.** Tek kol: K42 kâğıt testi, 4 Tem – 25 Eyl, **yalnız İngiliz** koşularında
+(K46 ile canlıya Arap eklendi ama deney ortasında kapsam değiştirilemez; veriyle doğrulandı:
+1.042 kuponun 1.042'si İngiliz). Kupon 15 TL sabit, hafta bütçesi 3.000 TL.
+S1 model top-pick ganyan · S2 aynı atın plasesi · S3 kamu favorisi ganyan · S4 aynı atın plasesi ·
+S5 CANLI (bot1'in kamudan çok yüksek gördüğü non-favori) ganyan. Plase yalnız saha≥7'de.
+**PLASE'nin ne ödediği kendi verimizden türetildi:** kazanan plase kuponlarında at ya 1. (88) ya
+2. (42); 3. ve sonrası 85 kuponun tamamı kayıp → **ilk 2'ye ödüyor**, saha büyüklüğünden bağımsız.
+
+**(b) YÖNTEM — ROI'yi ikiye ayır.** Mükemmel kalibre bir havuzda hangi atı oynarsan oyna beklenen
+ROI = −kesinti (kanıt: p_devig·O = 1/Σ(1/O) = 1−t, her at için aynı). Demek ki −t'den sapma
+YALNIZCA seçimin piyasadan kötü olmasından gelir. İki parça ayrı ölçüldü: (A) gerçek kesinti
+her koşuda kapanış oranlarından, (B) kalibrasyon = gerçek galibiyet / piyasanın dediği.
+
+**(c) GANYAN — seçim zararı YOK, sorun kesintinin kendisi.**
+| | kupon | galip | piyasanın dediği | kalibrasyon | %95 GA |
+|---|---|---|---|---|---|
+| tüm ganyan | 802 | 227 | 232,4 | **0,977** | [0,88 – 1,08] |
+| S1 (model) | 285 | 101 | 102,8 | 0,983 | [0,84 – 1,13] |
+| S3 (favori) | 285 | 100 | 102,8 | 0,972 | [0,83 – 1,11] |
+| S5 (canlı) | 232 | 26 | 26,7 | 0,972 | [0,64 – 1,32] |
+Kalibrasyon 1,00'i rahatça içeriyor → seçtiğimiz atlar piyasanın öngördüğü kadar kazanıyor.
+**Açık kesintiden geliyor:** İngiliz koşularında kapanıştan ölçülen gerçek kesinti **ortalama
+%28,3** (medyan %25,6 — teorik %25,5 ile birebir — ama %10-%90 aralığı **%25,3 – %37,0**, kuyruk
+ağır). Kalibrasyon 0,977 ve t=%28,2 ile hesaplanan ROI −%29,8; gerçekleşen −%34,2 [−43,1, −24,5].
+Model tahmini aralığın içinde → **açıklanamayan artık yok.**
+**K93 DÜZELTMESİ:** "ganyan −%25,4, kesinti %25,5, birebir tuttu" demiştim; o eşleşme kısmen
+tesadüfmüş. Doğru referans %25,5 değil, oynadığımız koşuların gerçek ortalaması **%28,3**.
+
+**(d) PLASE — kesinti %10-14, ölçtüğümüz en ucuz ürün.** İlk-2 olasılığı Harville ile.
+Kalibrasyon 0,960 [0,85–1,06] → burada da seçim zararı yok. Kesinti kestirimi: kalibrasyon 1,00
+kabul edilirse **%14,0**; ölçülen kalibrasyonla **%10,4**. Harville favorinin plase olasılığını
+şişirdiği için ikinci sayı kesintiyi olduğundan büyük gösterir → **gerçek değer %10-14 arası.**
+Ürün sıralaması (K94 + bu ölçüm): **plase %10-14** · ganyan %28,3 · 3'lü %45,4 · 4'lü %45,6 ·
+5'li %46,8 · 6'lı %48,6 · 7'li %57,6. **Plase açık ara en ucuz ürün.**
+Yine de −%14 negatif ve GA [−26,7, −1,5] sıfırı içermiyor: ucuz ≠ kârlı.
+
+**(e) BAĞIMSIZ DOĞRULAMA — 14 Ağu İstanbul 2. Altılı (2.780.891 TL).** Altılı temettüsü / aynı
+altı atı üst üste ganyan oynamanın getirisi = **3,74**. Teorik beklenti (Altılı kesintiyi BİR kez,
+altı ganyan ALTI kez alır): (1−0,486)/(1−0,283)⁶ = **3,78**. Tek olaydan, hiçbir model varsayımı
+olmadan, iki kesinti ölçümümüz (ganyan %28,3 · Altılı %48,6) aynı anda doğrulandı.
+
+**(f) YAYVANLIK KOLU AÇILDI ve KAPANDI — "ne zaman oynamalı" ilk kez soruldu.** 14 Ağu'da
+İstanbul yüksek ödedi ama kazananların kupon anı sıraları 2,8,2,1,3,2 idi — **sürpriz değil**.
+Yüksek ödül ayakların YAYVAN olmasından geldi (ayak başına ort. favori olasılığı %29; Bursa'da
+%32-34, temettü 9-11 bin). Yayvanlık kupon kurulmadan ÖNCE bilinir → kullanılabilir mi?
+**Çerçeve:** havuz etkinse bu boyut ROI'yi DEĞİŞTİREMEZ. Fark çıkarsa gözlemlenebilir etkinsizlik.
+Ölçüt önceden bağlandı: medyandan bölme (eşik taraması YASAK), fark GA'sı sıfırı içermeyecek ve
+üç config'in en az ikisinde aynı yönde olacak.
+**SONUÇ: BULGU YOK.** orta@96 +9,9 [−36,8,+64,5] · acgozlu@900 −7,7 [−21,4,+6,9] ·
+bot1@900 −43,0 [−208,6,+67,2] — üçünde de GA sıfırı içeriyor, **yönler bile tutarsız**.
+**Mekanizma doğrulandı ama net etkisi sıfır:** yayvanlık temettüyü öngörüyor (225 isabette
+log(temettü) ile korelasyon **−0,316**; yayvan yarıda temettü 2.832 vs sivri 1.108, 2,6 katı) ama
+isabeti aynı oranda düşürüyor (21 vs 45 tutturma). İkisi birbirini götürüyor.
+Kuintil tablosunda 4. kova parlıyor (bot1'de +%113,8) ama monoton değil ve tek dev temettüden —
+oradan eşik seçmek K33/K52 overfit'i olurdu, ölçüt tam bunun için önceden bağlanmıştı.
+**Zamanlama kolunun ilk ölçümü negatif.**
+
+**(g) ARAÇLAR:** ölçümler scratchpad'de yapıldı; kalıcı araç YAZILMADI (tek seferlik teşhis).
+Tekrar gerekirse yöntem bu maddede tam olarak tarif edilidir. Hiçbir kod/config değişmedi.
+
+
+**K105 — ZAMANLAMA KOLU CANLIYA: `orta_15` eklendi; kupon artık İKİ ayrı anda kurulabiliyor.**
+Kullanıcı 15 Ağu'da sordu: *"neden 15 hatta 10 dk kala aynı kuponların versiyonlarını şimdi
+kurmuyoruz, Ekim'i neden bekliyoruz?"* — itiraz haklıydı.
+
+**(a) EKİM TETİĞİ BAYATTI.** BEKLEYENLER #4'ün "Ekim" tahmini 31 Tem'de, `oran_log` kupon anının
+tam fotoğrafını çekmezken kondu (17 Altılıdan yalnız 3'ü iki zaman diliminde tamdı). K76 bunu
+düzeltti ve 15 gündür doğru veri birikiyor; ben tetikteki **sayıyı** kontrol etmek yerine
+takvimdeki "Ekim" notunu tekrarladım. Araç bugün koşturuldu: **18 tam Altılı** (3'ten yükselmiş).
+
+**(b) SİMÜLASYON GÜNCEL SONUCU (18 Altılı, 108 ayak, `orta`):** ikisi de tuttu 41 · yalnız 30 dk
+10 · yalnız 15 dk 15 · ikisi de kaçırdı 42 → **net +5 ayak, p=0,424** (anlamsız). Yön "geç kur"
+lehine ama kanıt yok. Config bazında ayak farkı: orta +5 · ayrışma +5 · genis900 +4 · v2 +4 ·
+genis +3 · açgözlü +3 · **bot1_900 +0 · bot1_1800 +0 · dar +0**.
+**bot1'in tam SIFIR çıkması iç kontroldür:** bot1 orana bakmaz, zamanla değişmez → teorinin
+öngördüğü tam olarak budur. Simülasyonun kendisi doğrulanmış oldu.
+
+**(c) CANLI KOL AÇILDI: `orta_15`.** `orta` ile TEK farkı kurulma anı (30 → 15 dk). Gerekçe:
+simülasyonun kendi varsayımları var (oran_log anlık görüntüsü, bot2'nin geri hesaplanması,
+±8 dk tolerans); gerçek kupon bunları ortadan kaldırır. **bot1 config'lerine 15 dk ikizi
+AÇILMADI** — bot1 orana bakmaz, simülasyonda farkı tam +0 çıktı; ikiz açmak boş harcama olurdu.
+Yalnız `orta` ikizlendi: canlıya çıkılacaksa aday o (K98-i) ve en güçlü işaret onda.
+Maliyet: ~96 kombo ≈ 120 TL/Altılı.
+
+**(d) ALTYAPI — KONFIG'e `dk` alanı, kupon artık grup grup kurulur.** İki tehlike vardı ve ikisi
+de kapatıldı:
+1. `kupon_zamani_kur`'un "kurulmuş mu" kontrolü **(tarih,pist,seq)** düzeyindeydi → 30 dk geçişi
+   kupon kurunca pencere "bitti" sayılıyordu; 15 dk grubu **hiç kurulmazdı**. Artık kontrol
+   **config** düzeyinde ve `kupon_hazirla`'ya `sadece_cfg` geçiliyor → gruplar birbirinin
+   satırına DOKUNMUYOR.
+2. `altili_kupon_ani.csv` upsert'i **(tarih,pist,seq)** anahtarlıydı → 15 dk geçişi 30 dk'nın
+   fotoğrafını **ezerdi** ve K97'nin tüm "karar anındaki vektör" kaydı bozulurdu. Anahtara
+   **`dk_grup`** eklendi; sıralamalar da grup İÇİNDE hesaplanıyor. Eski satırlar (sütunsuz) 30
+   sayılır — geriye uyumlu. Raporda her config KENDİ anının fotoğrafıyla etiketleniyor.
+Telegram bildirimi de gruba özel (30 dk mesajı 15 dk kuponunu içermez).
+
+**(e) GÜVENLİK TESTİ — canlı dosyalara DOKUNMADAN.** Geçici dizinde dört sınama: (1) 15 dk yazınca
+30 dk fotoğrafı duruyor mu → EVET (18+18 satır); (2) aynı grup tekrar yazılınca çoğaltıyor mu →
+HAYIR; (3) iki grubun sıralamaları birbirini bozuyor mu → HAYIR, her grup kendi içinde 1-2-3;
+(4) `dk_grup` sütunu olmayan eski dosya → 30 sayılıyor. **Hepsi geçti.**
+Rapor yeniden üretildi, GENEL TOPLAM bağımsız CSV hesabıyla birebir (289.463,75 TL) → geçmiş
+sicil bozulmadı.
+
+**(f) 10 DK NEDEN YOK.** Takip görevi 15 dakikada bir çalışıyor; 10 dk penceresine sistematik
+olarak geçiş düşmüyor → bazı günler kupon kurulamaz, örneklem yanlı kesilir. Çözümü var (görev
+sıklığını artırmak) ama sistemin çalışma düzenine dokunur; **yapılmadı**, ayrı karar konusu.
+
+**(g) BEKLENTİ.** 25 Eyl'e ~40 gün, günde ~2 Altılı → `orta_15` için ~80 kupon birikir. Eşleşmiş
+ayak kıyası (aynı Altılı, iki zaman) yapılacak; simülasyondaki +5/p=0,42 ile kıyaslanacak.
+Canlı zamanlama kararı 25 Eyl'e kadar **30 dk KALIR** — `orta_15` gözlem akışıdır, değişiklik değil.

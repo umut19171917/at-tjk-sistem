@@ -46,8 +46,11 @@ HTMLA = KOK / "raporlar" / "altili.html"
 # 2-3 saat onceden verilir. Iki siralama farklidir ve karari yargilarken dogrusu BUDUR.
 # 09.08 Istanbul 2. Altili: kosu 8'in kazanani sayfada "sistem 10.", kupon aninda 2. sirdaydi.
 KUPON_ANI = KOK / "veri" / "altili_kupon_ani.csv"
-KOL_ANI = ["kayit_ts", "tarih", "pist", "seq", "ayak", "kosu_no", "race_kod", "saat",
-           "dk_kala", "no", "at_ad", "bot1", "bot2", "kamu", "oran", "kaynak"]
+# K105: dk_grup = bu anlik goruntu HANGI kupon-kurma anina ait (30 / 15). Iki zaman dilimi
+# paralel kuruldugu icin anahtara girmek ZORUNDA -- yoksa 15 dk gecisi 30 dk'nin fotografini
+# ezer ve K97'nin tum "karar anindaki vektor" kaydi bozulur.
+KOL_ANI = ["kayit_ts", "tarih", "pist", "seq", "dk_grup", "ayak", "kosu_no", "race_kod",
+           "saat", "dk_kala", "no", "at_ad", "bot1", "bot2", "kamu", "oran", "kaynak"]
 # config -> ayarlar. Alanlar:
 #   kapsam  : kumulatif kapsam esigi (SADECE dagitim="kapsam" kullanir)
 #   kombo   : butce tavani (kombinasyon)
@@ -86,20 +89,40 @@ KOL_ANI = ["kayit_ts", "tarih", "pist", "seq", "ayak", "kosu_no", "race_kod", "s
 #             odulleri yakalamak" DEGIL (olculdu: yuksek odullu 5/6'larin donusumu %10,
 #             dusuk odullulerin %17 -- butce buyukleri KURTARMIYOR), bot1'i piyangoluktan
 #             cikarmak. Olcum degeri dusuk (25 Eyl'e ~35 kupon), GOZLEM akisi olarak eklendi.
+#   dk      : K105 -- kupon ILK ayaga kac dk kala kurulur (30 varsayilan). Ayni gun iki
+#             farkli anda kupon kurulabilir; her dk grubu KENDI gecisinde kurulur ve
+#             birbirinin satirlarina DOKUNMAZ.
+#   K105    : orta_15 -- `orta` ile TEK farki kurulma ani (30 -> 15 dk). BEKLEYENLER #4'un
+#             canli kolu. Simulasyon (altili_zaman_test) 18 Altilida orta icin +5 ayak
+#             gosterdi ama p=0,42 (anlamsiz) ve simulasyonun kendi varsayimlari var
+#             (oran_log anlik goruntusu + bot2'nin geri hesaplanmasi). Bu config o
+#             varsayimlari ORTADAN KALDIRIR: gercek kupon, gercek kayit.
+#             bot1 config'lerine 15 dk ikizi ACILMADI: bot1 orana bakmaz, zamanla
+#             DEGISMEZ -> simulasyonda da farki tam olarak +0 cikti (ic kontrol).
 AYRISMA_W = 1.0
 KONFIG = {
-    "dar":        {"kapsam": 0.75, "kombo": 24,  "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False},
-    "orta":       {"kapsam": 0.75, "kombo": 96,  "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": True},
-    "genis":      {"kapsam": 0.75, "kombo": 288, "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False},
-    "genis900":   {"kapsam": 0.95, "kombo": 900, "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False},
-    "acgozlu900": {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot2", "aile": "kamu",    "aktif": True},
-    "bot1_900":   {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot1", "aile": "temel",   "aktif": True},
-    "bot1_1800":  {"kapsam": 0.95, "kombo": 1800, "dagitim": "acgozlu", "puan": "bot1", "aile": "temel",  "aktif": True},
-    "ayrisma900": {"kapsam": 0.95, "kombo": 900, "dagitim": "ayrisma", "puan": "bot2", "aile": "ayrisma", "aktif": False},
+    "dar":        {"kapsam": 0.75, "kombo": 24,  "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False, "dk": 30},
+    "orta":       {"kapsam": 0.75, "kombo": 96,  "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": True,  "dk": 30},
+    "orta_15":    {"kapsam": 0.75, "kombo": 96,  "dagitim": "kapsam",  "puan": "bot2", "aile": "zaman",   "aktif": True,  "dk": 15},
+    "genis":      {"kapsam": 0.75, "kombo": 288, "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False, "dk": 30},
+    "genis900":   {"kapsam": 0.95, "kombo": 900, "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False, "dk": 30},
+    "acgozlu900": {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot2", "aile": "kamu",    "aktif": True,  "dk": 30},
+    "bot1_900":   {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot1", "aile": "temel",   "aktif": True,  "dk": 30},
+    "bot1_1800":  {"kapsam": 0.95, "kombo": 1800, "dagitim": "acgozlu", "puan": "bot1", "aile": "temel",  "aktif": True,  "dk": 30},
+    "ayrisma900": {"kapsam": 0.95, "kombo": 900, "dagitim": "ayrisma", "puan": "bot2", "aile": "ayrisma", "aktif": False, "dk": 30},
     # K92: uzak ayagin olasiligi OLCULMUS lambda ile duzlestirilir (bkz. kupon_kur_kalibre).
     # acgozlu900 ile TEK farki budur -> aradaki her fark uzak-ayak duzeltmesine atfedilebilir.
-    "acgozlu_v2": {"kapsam": 0.95, "kombo": 900, "dagitim": "kalibre", "puan": "bot2", "aile": "kalibre", "aktif": True},
+    "acgozlu_v2": {"kapsam": 0.95, "kombo": 900, "dagitim": "kalibre", "puan": "bot2", "aile": "kalibre", "aktif": True,  "dk": 30},
 }
+
+
+def dk_gruplari():
+    """K105: aktif config'lerin kullandigi kupon-kurma anlari (buyukten kucuge)."""
+    return sorted({a.get("dk", 30) for a in aktif_konfig().values()}, reverse=True)
+
+
+def grup_konfig(dk):
+    return {c: a for c, a in aktif_konfig().items() if a.get("dk", 30) == dk}
 
 
 def aktif_konfig():
@@ -110,6 +133,7 @@ def aktif_konfig():
 def emekli_konfig():
     return [c for c, a in KONFIG.items() if not a.get("aktif", True)]
 AILE_AD = {"kamu":    "KAMU BOTU (bot2 — piyasayı dinler)",
+           "zaman":   "ZAMANLAMA KOLU (orta ile aynı kural, 15 dk kala kurulur)",
            "temel":   "TEMEL BOT (bot1 — orana hiç bakmaz)",
            "ayrisma": "AYRIŞMA (bot2 seçer, genişlik ayrışmaya gider)",
            "kalibre": "MESAFE KALİBRELİ (bot2, uzak ayak λ=%.2f ile düzeltilir)" % LAM_UZAK}
@@ -130,7 +154,9 @@ def _yaz(df):
 
 
 def _kupon_ani_yaz(satirlar):
-    """K97: kupon anindaki olasilik tablosunu upsert eder — anahtar (tarih,pist,seq).
+    """K97: kupon anindaki olasilik tablosunu upsert eder.
+    K105: anahtar (tarih,pist,seq,DK_GRUP) — dk_grup olmadan 15 dk gecisi 30 dk'nin
+    fotografini ezerdi. Eski satirlarda sutun yoksa 30 sayilir (geriye uyum).
     Kupon yeniden kurulursa anlik goruntu de yenilenir ki ikisi hep AYNI ani anlatsin.
     Geri kurulmus (kaynak='geri_kurulan') satirlar da ayni anahtarla ezilir: canli kayit
     her zaman geri kurulana ustundur."""
@@ -139,9 +165,14 @@ def _kupon_ani_yaz(satirlar):
     yeni = pd.DataFrame(satirlar)
     if KUPON_ANI.exists():
         old = pd.read_csv(KUPON_ANI, low_memory=False)
-        anahtar = set(zip(yeni["tarih"], yeni["pist"], yeni["seq"].astype(int)))
-        tut = [(t, p, int(s)) not in anahtar for t, p, s in
-               zip(old["tarih"], old["pist"], pd.to_numeric(old["seq"], errors="coerce").fillna(-1))]
+        if "dk_grup" not in old.columns:
+            old["dk_grup"] = 30
+        old["dk_grup"] = pd.to_numeric(old["dk_grup"], errors="coerce").fillna(30)
+        anahtar = set(zip(yeni["tarih"], yeni["pist"], yeni["seq"].astype(int),
+                          yeni["dk_grup"].astype(float)))
+        tut = [(t, p, int(s), float(dg)) not in anahtar for t, p, s, dg in
+               zip(old["tarih"], old["pist"],
+                   pd.to_numeric(old["seq"], errors="coerce").fillna(-1), old["dk_grup"])]
         yeni = pd.concat([old[pd.Series(tut, index=old.index)], yeni], ignore_index=True)
     KUPON_ANI.parent.mkdir(parents=True, exist_ok=True)
     yeni.reindex(columns=KOL_ANI).to_csv(KUPON_ANI, index=False, encoding="utf-8")
@@ -182,7 +213,7 @@ def _as_int(x):
 
 
 # ----------------------------- kupon hazirla -----------------------------
-def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
+def kupon_hazirla(pist, ymd, tarih, sadece_seq=None, sadece_cfg=None, dk_grup=30):
     """Pistin canli kartini puanla (Ingiliz+Arap), Altili pencereleri icin dar+orta kupon kur,
     deftere upsert. sadece_seq verilirse yalniz o Altili penceresini kurar (takip: her Altili
     kendi ilk kosusundan ~30dk once). Doner: kurulan (pencere x config) sayisi."""
@@ -250,7 +281,8 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
             for ai, gtab in enumerate(ayak_tablo):
                 for _, r in gtab.iterrows():
                     ani_satirlar.append({
-                        "kayit_ts": ts, "tarih": tarih, "pist": pist, "seq": seq, "ayak": ai + 1,
+                        "kayit_ts": ts, "tarih": tarih, "pist": pist, "seq": seq,
+                        "dk_grup": dk_grup, "ayak": ai + 1,
                         "kosu_no": ayak_meta[ai]["kosu_no"], "race_kod": ayak_meta[ai]["race_kod"],
                         "saat": ayak_meta[ai]["saat"],
                         "dk_kala": (round(ayak_dk[ai], 1) if ayak_dk[ai] is not None else np.nan),
@@ -262,7 +294,11 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
             print(f"  UYARI: {seq}. Altili kupon ani vektoru toplanamadi "
                   f"({type(e).__name__}: {e}) -- kupon kurma etkilenmedi.")
 
-        for cfg, ay in aktif_konfig().items():          # K100: emekliler kupon KURMAZ
+        # K100: emekliler kupon KURMAZ. K105: yalniz bu gecise ait config'ler kurulur --
+        # 15 dk gecisi 30 dk'nin satirlarina DOKUNMAMALI (deney kirlenmesin).
+        _hedef = (aktif_konfig() if sadece_cfg is None
+                  else {c: a for c, a in KONFIG.items() if c in sadece_cfg})
+        for cfg, ay in _hedef.items():
             maxk, dagitim = ay["kombo"], ay["dagitim"]
             puanlar = ayak_bot1 if ay["puan"] == "bot1" else ayak_atlari
             if any(len(p) < 1 for p in puanlar):   # bot1 yoksa O CONFIG atlanir (digerleri kurulur)
@@ -317,8 +353,8 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None):
         out = yeni
     _yaz(out)
     n = yeni.groupby(["seq", "config"]).ngroups
-    print(f"{pist} {tarih}: {n} kupon kuruldu "
-          f"({len(pencereler)} Altili x {len(aktif_konfig())} aktif config"
+    print(f"{pist} {tarih}: {n} kupon kuruldu ({len(pencereler)} Altili x "
+          f"{yeni['config'].nunique()} config, {dk_grup} dk grubu"
           + (f"; emekli: {', '.join(emekli_konfig())}" if emekli_konfig() else "") + ").")
     return n
 
@@ -332,13 +368,17 @@ def _at_ad_map(o):
     return m
 
 
-def bildir_kupon(pist, tarih, seq, o):
-    """Kurulan (pist,seq) Altili kuponunu Telegram'dan NUMARA + ISIMLE bildir (uc config).
+def bildir_kupon(pist, tarih, seq, o, sadece_cfg=None, dk_grup=30):
+    """Kurulan (pist,seq) Altili kuponunu Telegram'dan NUMARA + ISIMLE bildir.
+    K105: sadece_cfg verilirse YALNIZ o gecise ait config'ler bildirilir (iki zamanli
+    kurulumda mesaj karismasin; 30 dk mesaji 15 dk kuponunu icermez, tersi de).
     telegram_at config'i yoksa sessizce gecer (bot kurulmadan da guvenli). try-korumali cagirilir."""
     import telegram_at
     df = _oku()
     g = df[(df["tarih"] == tarih) & (df["pist"] == pist)
            & (pd.to_numeric(df["seq"], errors="coerce") == seq)]
+    if sadece_cfg is not None:
+        g = g[g["config"].isin(sadece_cfg)]
     if g.empty:
         return
     admap = _at_ad_map(o)
@@ -346,7 +386,7 @@ def bildir_kupon(pist, tarih, seq, o):
     ilk_saat = str(g["ilk_saat"].iloc[0])
     sat = ["🎫 <b>ALTILI KUPONU KURULDU</b>",
            f"📍 {pist} — {tarih_tr}, {int(seq)}. Altılı",
-           f"🕐 İlk koşu {ilk_saat} (30 dk kala)", ""]
+           f"🕐 İlk koşu {ilk_saat} ({dk_grup} dk kala)", ""]
     toplam_bedel = 0.0
     son_aile = None
     for cfg, ay in KONFIG.items():                     # KONFIG sirasi = aile sirasi
@@ -450,33 +490,50 @@ def bildir_sonuc(tarih, pist, seq):
 
 
 # ----------------------------- takip tetigi (zaman-bazli) -----------------------------
-def kupon_zamani_kur(pistler, ymd, tarih, dk_kala=30):
-    """takip.py her turda cagirir. Her Altili penceresi icin: ilk kosusuna <=dk_kala kaldiysa
-    VE ilk kosu HENUZ baslamadiysa VE bugun bu (pist,seq) icin kupon YOKSA -> kur.
-    Idempotent (kurulmus olani atlar). Doner: kurulan kupon sayisi. Hata firlatmaz (takip guvenligi)."""
+def kupon_zamani_kur(pistler, ymd, tarih, dk_kala=None):
+    """takip.py her turda cagirir. K105: artik HER DK GRUBU icin ayri kontrol yapilir.
+    Bir Altili penceresi icin, o grubun config'lerinden HENUZ kupon yoksa VE ilk kosuya
+    <=grup_dk kaldiysa VE ilk kosu baslamadiysa -> YALNIZ o grubun config'leri kurulur.
+
+    ONEMLI (deney guvenligi): eskiden 'kurulmus mu' kontrolu (tarih,pist,seq) duzeyindeydi;
+    30 dk gecisi kupon kurunca pencere 'bitti' sayiliyordu. Iki zamanli kurulumda bu,
+    15 dk grubunun HIC kurulmamasina yol acardi. Artik kontrol (tarih,pist,seq,CONFIG)
+    duzeyinde ve kupon_hazirla'ya sadece_cfg gecilir -> gruplar birbirinin satirina DOKUNMAZ.
+
+    Idempotent. Doner: kurulan kupon sayisi. Hata firlatmaz (takip guvenligi).
+    dk_kala verilirse (elle cagri) yalnizca o grup kurulur."""
     kurulan = 0
     df = _oku()
     now = datetime.now()
+    gruplar = [dk_kala] if dk_kala is not None else dk_gruplari()
     for pist in pistler:
         try:
             o = getjson(f"{BASE}/program/{ymd}/full/{pist}.json")
             if o.get("_hata"):
                 continue
             for seq, pencere, ilk_saat in altili_pencereleri(o):
-                if len(df) and ((df["tarih"] == tarih) & (df["pist"] == pist)
-                                & (df["seq"] == seq)).any():
-                    continue                       # zaten kurulmus
                 try:
                     ilk_post = datetime.strptime(f"{tarih} {ilk_saat}", "%Y-%m-%d %H:%M")
                 except ValueError:
                     continue
-                if ilk_post - timedelta(minutes=dk_kala) <= now < ilk_post:
-                    n = kupon_hazirla(pist, ymd, tarih, sadece_seq=seq)
+                for gdk in gruplar:
+                    cfgler = list(grup_konfig(gdk))
+                    if not cfgler:
+                        continue
+                    if len(df):
+                        var = df[(df["tarih"] == tarih) & (df["pist"] == pist)
+                                 & (df["seq"] == seq)]["config"].unique()
+                        if all(c in var for c in cfgler):
+                            continue               # bu grup zaten kurulmus
+                    if not (ilk_post - timedelta(minutes=gdk) <= now < ilk_post):
+                        continue
+                    n = kupon_hazirla(pist, ymd, tarih, sadece_seq=seq,
+                                      sadece_cfg=cfgler, dk_grup=gdk)
                     kurulan += n
                     df = _oku()
-                    if n:                              # K60: yeni kupon -> Telegram bildirimi
+                    if n:                          # K60: yeni kupon -> Telegram bildirimi
                         try:
-                            bildir_kupon(pist, tarih, seq, o)
+                            bildir_kupon(pist, tarih, seq, o, sadece_cfg=cfgler, dk_grup=gdk)
                         except Exception as e:
                             print(f"  altili telegram bildirim hatasi: {type(e).__name__}")
         except Exception as e:
@@ -1011,7 +1068,9 @@ def html_yaz(df=None, ac=False):
                     # Kamu sirasi bu projenin merkezinde: sistemin kalabalikla ayni mi ayri mi
                     # dustugu ondan okunur (K67 bot1'in tum gerekcesi, K68 ayrisma, K98-h tavan).
                     bi = ro.at_bilgi(rk, no) if rk else {}
-                    ka = ro.kupon_ani_bilgi(tarih, pist, seq, ai, no)
+                    # K105: her config KENDI kurulma anindaki fotografla etiketlenir
+                    ka = ro.kupon_ani_bilgi(tarih, pist, seq, ai, no,
+                                            dk_grup=KONFIG.get(c, {}).get("dk", 30))
                     ks, ys = ro.sira_str(ka.get("sis")), ro.sira_str(bi.get("sis"))
                     ps = ro.sira_str(ka.get("kamu"))
                     # sistem kamudan 3+ sira AYRI ise isaretle: ayrisma orada
