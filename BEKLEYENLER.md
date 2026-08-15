@@ -97,9 +97,13 @@ yalnız-15 **15** · ikisi de kaçırdı 42 → net **+5 ayak, p=0,424** (anlams
 İç kontrol: bot1_900 ve bot1_1800 farkı **tam +0** — bot1 orana bakmaz, teorinin dediği bu →
 simülasyonun kendisi doğrulandı.
 
-**CANLI: `orta_15` eklendi** (K105). `orta` ile tek farkı kurulma anı. bot1'e ikiz açılmadı
-(fark yapısal olarak +0). Altyapı: KONFIG'e `dk` alanı, kupon grup grup kurulur, kupon-anı
-kaydı `dk_grup` ile anahtarlı.
+**CANLI: `orta_15` + `acgozlu900_15` eklendi** (K105). Her biri 30 dk'lık ikiziyle kural
+olarak BİREBİR aynı, tek fark kurulma anı. **İki genişlik seçildi bilerek:** dar (96 kombo) ve
+geniş (900 kombo) — zamanlamanın etkisi genişliğe göre değişebilir (simülasyon işareti düz değil:
+dar +0, orta +5, geniş900 +4). **bot1'e ikiz açılmadı** (orana bakmaz → fark yapısal olarak +0).
+**acgozlu_v2'ye ikiz açılmadı** (en yeni deney; ikinci değişken tek-değişken ilkesini bozar,
+v2'nin kontrolü 30 dk'lık acgozlu900 olarak kalır). 15 dk grubu tavanı ~1.245 TL/Altılı.
+Altyapı: KONFIG'e `dk` alanı, kupon grup grup kurulur, kupon-anı kaydı `dk_grup` ile anahtarlı.
 
 **TETİK (yeni):** 25 Eyl civarı, `orta_15` ~60+ kupona ulaşınca → eşleşmiş ayak kıyası
 (aynı Altılı, iki zaman) + simülasyonla karşılaştır. **Canlı zamanlama o güne kadar 30 dk KALIR.**

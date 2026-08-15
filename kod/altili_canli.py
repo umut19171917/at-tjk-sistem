@@ -99,6 +99,14 @@ KOL_ANI = ["kayit_ts", "tarih", "pist", "seq", "dk_grup", "ayak", "kosu_no", "ra
 #             varsayimlari ORTADAN KALDIRIR: gercek kupon, gercek kayit.
 #             bot1 config'lerine 15 dk ikizi ACILMADI: bot1 orana bakmaz, zamanla
 #             DEGISMEZ -> simulasyonda da farki tam olarak +0 cikti (ic kontrol).
+#   K105-b  : acgozlu900_15 -- zamanlamanin etkisi kupon GENISLIGINE gore degisebilir.
+#             `orta` 96 kombo (dar): bir sira kaymasi secimi hemen bozar. acgozlu900
+#             900 kombo (genis): cok daha toleransli. Simulasyon isareti de duz degil --
+#             dar +0, orta +5, genis +3, genis900 +4, acgozlu +3. Tek config ile "gec
+#             kurmak iyi mi" sorusu yalnizca DAR kupon icin cevaplanir.
+#             acgozlu_v2'ye ikiz ACILMADI: v2 zaten en yeni deney (24 kupon), uzerine
+#             ikinci degisken bindirmek TEK DEGISKEN ilkesini bozar. v2'nin kontrolu
+#             30 dk'lik acgozlu900 olarak KALIR (BEKLEYENLER #9 bozulmaz).
 AYRISMA_W = 1.0
 KONFIG = {
     "dar":        {"kapsam": 0.75, "kombo": 24,  "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False, "dk": 30},
@@ -107,6 +115,7 @@ KONFIG = {
     "genis":      {"kapsam": 0.75, "kombo": 288, "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False, "dk": 30},
     "genis900":   {"kapsam": 0.95, "kombo": 900, "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False, "dk": 30},
     "acgozlu900": {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot2", "aile": "kamu",    "aktif": True,  "dk": 30},
+    "acgozlu900_15": {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot2", "aile": "zaman", "aktif": True, "dk": 15},
     "bot1_900":   {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot1", "aile": "temel",   "aktif": True,  "dk": 30},
     "bot1_1800":  {"kapsam": 0.95, "kombo": 1800, "dagitim": "acgozlu", "puan": "bot1", "aile": "temel",  "aktif": True,  "dk": 30},
     "ayrisma900": {"kapsam": 0.95, "kombo": 900, "dagitim": "ayrisma", "puan": "bot2", "aile": "ayrisma", "aktif": False, "dk": 30},
@@ -133,7 +142,7 @@ def aktif_konfig():
 def emekli_konfig():
     return [c for c, a in KONFIG.items() if not a.get("aktif", True)]
 AILE_AD = {"kamu":    "KAMU BOTU (bot2 — piyasayı dinler)",
-           "zaman":   "ZAMANLAMA KOLU (orta ile aynı kural, 15 dk kala kurulur)",
+           "zaman":   "ZAMANLAMA KOLU (30 dk'lık ikiziyle AYNI kural, 15 dk kala kurulur)",
            "temel":   "TEMEL BOT (bot1 — orana hiç bakmaz)",
            "ayrisma": "AYRIŞMA (bot2 seçer, genişlik ayrışmaya gider)",
            "kalibre": "MESAFE KALİBRELİ (bot2, uzak ayak λ=%.2f ile düzeltilir)" % LAM_UZAK}

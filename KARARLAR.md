@@ -2466,6 +2466,18 @@ sicil bozulmadı.
 olarak geçiş düşmüyor → bazı günler kupon kurulamaz, örneklem yanlı kesilir. Çözümü var (görev
 sıklığını artırmak) ama sistemin çalışma düzenine dokunur; **yapılmadı**, ayrı karar konusu.
 
+**(g-EK, aynı gün) — `acgozlu900_15` de eklendi.** İlk kurulumda yalnız `orta` ikizlenmişti;
+kullanıcı "sadece orta için mi?" diye sorunca gerekçe yeniden tartıldı ve **zayıf bulundu**.
+Sebep: **zamanlamanın etkisi kupon GENİŞLİĞİNE göre değişebilir.** `orta` 96 kombo (dar) — bir
+sıra kayması seçimi hemen bozar; `acgozlu900` 900 kombo (geniş) — çok daha toleranslı. Simülasyon
+işareti de düz değil: dar +0 · orta +5 · geniş +3 · genis900 +4 · açgözlü +3. Tek config ile
+"geç kurmak iyi mi" sorusu yalnızca DAR kupon için cevaplanmış olurdu.
+**`acgozlu_v2`'ye ikiz AÇILMADI:** v2 zaten en yeni deney (24 kupon); üzerine ikinci bir değişken
+bindirmek TEK DEĞİŞKEN ilkesini bozar. v2'nin kontrolü 30 dk'lık `acgozlu900` olarak KALIR →
+BEKLEYENLER #9 bozulmadı.
+Eşleşmiş çiftler doğrulandı: `orta`↔`orta_15` ve `acgozlu900`↔`acgozlu900_15` — kapsam, kombo,
+dağıtım ve puan alanları birebir aynı, **tek fark `dk`**. 15 dk grubunun tavanı ~1.245 TL/Altılı.
+
 **(g) BEKLENTİ.** 25 Eyl'e ~40 gün, günde ~2 Altılı → `orta_15` için ~80 kupon birikir. Eşleşmiş
 ayak kıyası (aynı Altılı, iki zaman) yapılacak; simülasyondaki +5/p=0,42 ile kıyaslanacak.
 Canlı zamanlama kararı 25 Eyl'e kadar **30 dk KALIR** — `orta_15` gözlem akışıdır, değişiklik değil.
