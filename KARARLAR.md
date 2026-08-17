@@ -2481,3 +2481,131 @@ dağıtım ve puan alanları birebir aynı, **tek fark `dk`**. 15 dk grubunun ta
 **(g) BEKLENTİ.** 25 Eyl'e ~40 gün, günde ~2 Altılı → `orta_15` için ~80 kupon birikir. Eşleşmiş
 ayak kıyası (aynı Altılı, iki zaman) yapılacak; simülasyondaki +5/p=0,42 ile kıyaslanacak.
 Canlı zamanlama kararı 25 Eyl'e kadar **30 dk KALIR** — `orta_15` gözlem akışıdır, değişiklik değil.
+
+**K106 — DIŞ ANALİZ CEVABI: K104'te YÖN HATASI bulundu, `orta`'nın siciline tek-bilet uyarısı
+kondu, config kapsama alarmı eklendi, ÖLÇÜM A0 kuruldu ve **hiçbir config kalabalığı
+yenemiyor**.** 17 Ağu 2026'da kullanıcı, `SISTEM.md`'yi dışarıdan analiz eden bir belge getirdi
+(veriye/koda/KARARLAR'a erişimi yok, yalnız SISTEM.md metni). Belgenin doğrulanabilir her iddiası
+veriyle sınandı.
+
+**(a) BENİM HATAM — K104'ün plase pasajı iki yönden yanlış.**
+1. **Yön hatası.** K104'te *"Harville favorinin plase olasılığını şişirdiği için ikinci sayı
+   kesintiyi olduğundan büyük gösterir"* yazmışım. **Ters.** `t = 1 − (1+ROI)/kalibrasyon`;
+   ROI=−0,140 iken kal=0,96 → t=%10,4 · kal=1,00 → t=%14,0 · kal=1,05 → t=%18,1.
+   Kalibrasyon **yükseldikçe** kesinti tahmini **yükselir**. Harville favorinin ilk-2
+   olasılığını şişirir → beklenen isabet fazla → ölçülen kalibrasyon **olduğundan DÜŞÜK** →
+   gerçek kesinti %10,4'ten **YÜKSEK**. Doğrusu: **%10,4 bir TABANDIR**, tavan değil.
+2. **Bağımsız ölçüm değil.** %14,0 doğrudan −ROI; %10,4 ise ROI'nin kalibrasyonla düzeltilmiş
+   hâli. **İkisi de kâğıt sonucundan türetilmiş.** Dolayısıyla *"plase kaybının tamamı
+   kesintiden geliyor"* cümlesi **döngüseldir** — kaybı kaybın kendisiyle açıklıyor.
+   Dış analiz bunu 4.9'da yakaladı ve haklı.
+**DÜZELTİLMİŞ İFADE:** plase kesintisi **bağımsız olarak ÖLÇÜLMEDİ**; mevcut veriyle
+ölçülemez (plase havuzunun para dağılımı gerekir). Elde olan: kesinti **en az %14**, muhtemelen
+daha yüksek. Ganyanın %28,3'ünden ve Altılı'nın %48,6'sından hâlâ ucuz görünüyor ama
+"%10-14 bandı" ifadesi **geçersizdir**. Kalibrasyon bulgusu (0,960 → seçim zararı yok)
+bundan ETKİLENMEZ; o bağımsız ölçümdür.
+
+**(b) ÖLÇÜM A0 KURULDU — `kod/ayak_kalibrasyon.py`.** Sorun doğru teşhis edilmişti: canlı sicilde
+6 adet 6/6 var, kupon düzeyinde hiçbir config ayırt edilemez ve 25 Eyl'de de edilemeyecek. Ama
+**ayak düzeyinde ~2.850 gözlem** duruyordu ve kullanılmıyordu.
+**Sorulan:** *"Bizim cetvelimiz, AYNI PARAYLA, kalabalığın cetvelinden daha iyi mi seçiyor?"*
+Her ayakta config k at yazıyor; aynı ayakta, aynı k ile KAMU cetvelinin ilk k'si alınıp
+eşleşmiş (McNemar) kıyas yapılıyor.
+
+**TASARIM DEĞİŞİKLİĞİ — dış analizin önerisinden saptım, gerekçesiyle.** Onlar birincil ölçüt
+olarak kalibrasyon oranını (R_sistem/R_kamu) önerdi ve ham R'nin **gürültü-seçim yanlılığı**
+taşıdığını sentetik testle gösterdi (kasten en kötü atı seçen kol R=1,30 ile "en umut verici"
+görünüyordu — kazananın laneti). Tespit **doğru**. Ama çözümleri yanlılığı azaltır, gidermez
+(iki cetvelin gürültü yapısı aynı değil) ve bot2 ile kamu **%89,9 örtüştüğü** için gücü düşüktür.
+**Eşleşmiş isabet bu sorunun tamamından bağışıktır:** olasılık değeri hiç kullanılmaz, yalnızca
+"kazanan seçimin içinde miydi" sorulur. Kalibrasyon oranı **betimleyici** olarak basılıyor,
+karara girmiyor.
+Metodoloji: olasılıklar `altili_kupon_ani.csv`'den (KUPON ANI, K97 — yarış anı verisiyle
+yargılamak K97'de düzeltilen sızıntının aynısı olurdu); her config **kendi dk grubunun**
+fotoğrafını kullanıyor (K105); bootstrap birimi **ayak değil ALTILI olayı** (aynı Altılı'nın
+altı ayağı bağımsız değil).
+
+**(c) SONUÇ — HİÇBİR CONFIG KALABALIĞI YENMİYOR.**
+| config | ayak | kapsam | yalnız-sistem | yalnız-kamu | McNemar p | karar |
+|---|---|---|---|---|---|---|
+| acgozlu900 | 391 | %92 | 8 | 3 | 0,227 | kenar kanıtı yok |
+| bot1_900 | 342 | %97 | 55 | 49 | 0,624 | kenar kanıtı yok |
+| acgozlu_v2 | 195 | %98 | 4 | 0 | 0,125 | kenar kanıtı yok |
+| ayrisma900 | 204 | %94 | 3 | 1 | 0,625 | kenar kanıtı yok |
+| bot1_1800 | 138 | %100 | 18 | 21 | 0,749 | kenar kanıtı yok |
+| orta_15 | 42 | %100 | 3 | 1 | 0,625 | kenar kanıtı yok |
+| acgozlu900_15 | 36 | %100 | 0 | 0 | 1,000 | kenar kanıtı yok |
+| *dar/orta/genis/genis900* | | %69-86 | | | | **GEÇERSİZ (kapsam<%90)** |
+**Hiçbirinde p<0,05.** ~2.850 ayakta, aynı parayla, bizim cetvelimiz kalabalığın cetvelinden
+**ölçülebilir biçimde farklı değil.** Bu, projenin bugüne kadar ürettiği **en temiz "kenar yok"
+ifadesidir** — çünkü ilk kez kupon şekli, bütçe ve kesinti değişkenlerinden arınmış olarak
+yalnızca SEÇİM KATMANI test edildi.
+`acgozlu_v2`'nin olay-bootstrap aralığı sıfırı içermiyor (+2,1 puan [+0,5, +4,1]) ama bu
+**yalnız 4 uyumsuz ayaktan** geliyor; McNemar p=0,125. Bu sayıda uyumsuzlukta bootstrap
+anti-muhafazakârdır → **aşırı okunmamalı**, ölçüt McNemar'dır.
+**KAPSAM SORUNU (yeni iş):** `orta` %77 kapsamla GEÇERSİZ çıktı — `altili_kupon_ani.csv`
+20-24 Tem'i hiç, 26-30 Tem'i kısmen kapsıyor (K97 geri kurma sınırı). En çok ilgilendiğimiz
+config için ölçüm henüz yapılamıyor. Kapsam arttıkça tekrar koşulmalı.
+
+**(d) `orta`'nın siciline TEK-BİLET uyarısı kondu.** Dış analiz 4.1a: `bot1_900` için
+"getirinin %43'ü tek kupondan" uyarısı vardı ama `orta` için yoktu. Ölçtüm: **`orta`'nın
+17.934 TL ödülünün %100'ü TEK biletten** (23.07 Ankara 2.). +8.424'lük net **bir olaydır**;
+o olay çıkarsa ROI −%100. Artık raporda 1-2 isabetli her config'in yanında ödülün en büyük
+bilete düşen payı yazıyor. (Aynı uyarı `acgozlu900_15` %100 ve `genis900` %100 için de çıkıyor.)
+Ayrıca **GENEL TOPLAM'a kapsam notu** eklendi: o sayı bir portföy tavsiyesi değil, paralel
+yürüyen deneylerin ortak faturasıdır (harcamanın çoğu 900-1800'lük gözlem akışlarından gelir;
+K98-i'nin tavsiyesi yalnız `orta`).
+
+**(e) CONFIG KAPSAMA ALARMI — `bekci.py` genişletildi.** Disiplin kuralı 8 "kupon kurulmazsa
+o Altılı deneyden düşer, ölçülen en pahalı hasar budur" diyordu ama buna karşı **hiçbir alarm
+yoktu**; bekçi yalnız takip nabzına bakıyordu. Nabız atmaya devam ederken bir config sessizce
+kupon kurmayı bırakabilir — ve K103'ün dersi (kamu sırası K97'de sessizce düştü, **iki hafta**
+fark edilmedi) bunun tekrar edeceğini söylüyor.
+Yeni kural: bugün kupon kurulmuş her Altılı'da, o pencerenin dk grubuna ait TÜM aktif
+config'ler bulunmalı; eksikse ekranda uyarı. Yanlış alarm koruması: config'in sicildeki ilk
+gününden önceki Altılılar sayılmaz, ve yalnız **ilk koşusu başlamış** Altılılar denetlenir
+(15 dk grubu henüz kurulmamışken eksik görünmesin). Salt-okunur; kupon kurmaz.
+İlk çalıştırma: *"bekci: nabiz var (9 dk once), sorun yok. bekci: config kapsamasi tam."*
+
+**(f) DIŞ ANALİZİN VERİYLE ÇÜRÜYEN İDDİALARI — üç tane.**
+1. **"AGF aktif hatta hiç yok" (5.2) — YANLIŞ.** `agf1` beş yıldır toplanıyor:
+   `defter.csv` (**%66 dolu**, 5.481 satır), `altili_oran_log.csv`, `katilim.csv`
+   (+`agfsira1`). Doğru olan: AGF bir **özellik/rekabet ölçüsü olarak kullanılmıyor**.
+   "kazi.py'ye alan eklensin" (D2) önerisi gereksiz.
+2. **Devir "en güçlü aday" (5.1) — aritmetiği doğru, fırsatı yok denecek kadar seyrek.**
+   Başabaş eşiği D=0,486·Y hesabı doğru. Ama (i) **payda elimizde yok** — hiçbir dosyada
+   hasılat/havuz toplamı (Y) yok; (ii) daha önemlisi **Altılı'da devir neredeyse hiç olmuyor**:
+   `altili_tam.csv` 6.747 olayın **24'ünde** t6_devir dolu (%0,36), `devir.csv`'de de 24
+   "6'LI GANYAN" kaydı var (1.201'i SIRALI 5'Lİ — ayrı ürün, K85). İki bağımsız dosya aynı
+   sayıyı veriyor. Altılı'nın %99,6'sında kazanan çıkıyor.
+3. **"Kesinti dağılımı saha büyüklüğünden" (5.4) — ÖLÇTÜM, DÜŞTÜ.** 566 koşu:
+   saha 4-6 %28,7 · 7-8 %26,8 · 9-10 %28,7 · 11-12 %28,2 · 13+ %29,7.
+   **Saha ile kesinti korelasyonu +0,075** (sıfır), monoton değil. Irk de açıklamıyor
+   (Arap %28,5 · İngiliz %28,2). Medyan her bantta %25,5-25,8 → **tarife sabit**, ortalamayı
+   şişiren kuyruğun kaynağı saha değil. "Düşük kesintili koşuları seç" önerisinin dayanağı yok.
+
+**(g) DIŞ ANALİZİN DOĞRU ÇIKAN DİĞER TESPİTLERİ.** 4.1b (TOPLAM tavsiyeyi temsil etmiyor) →
+düzeltildi. 4.2 (25 Eyl / #4 çelişkisi) → doğru, bkz. (h). 4.4 (belirsizlik aralıkları
+SISTEM.md'de yok) → doğru; ama endişelerinin cevabı KARARLAR'da: **λ_uzak=0,650 GA
+[0,465–0,875], 1'i İÇERMİYOR** → `acgozlu_v2` gürültüye ayarlı değil. 4.6 (feed tavanı
+projenin birincil kısıtıdır) → doğru ve SISTEM.md'de öne çıkarıldı. 4.7 (kapsama alarmı) →
+(e)'de yapıldı; `acgozlu900_15=0` vakası masumdu (15 Ağu'da pencere kapandıktan sonra eklendi).
+
+**(h) 25 EYLÜL ÇELİŞKİSİ ÇÖZÜLDÜ.** BEKLEYENLER #4'ün tetiği ~60 kupon; elde 7 (`orta_15`) ve
+6 (`acgozlu900_15`) var, 25 Eyl'e ~40 yarış günü kaldı → tetik o tarihte **dolmayacak**.
+Kural 6 ("tetik tarih değil sayıysa sayıya bakılır") gereği: **25 Eylül kararı zamanlama
+kolunu KAPSAMAZ.** O tarihte verilecek karar sistem modu kararıdır (K42/K48); zamanlama kolu
+kendi sayısal tetiğiyle, muhtemelen Kasım'da değerlendirilir. İki tarih birbirine bağlanmaz.
+
+**(i) KATILMADIĞIM ÖNERİ.** Dış analiz 15 dk ikizlerinin (C2) **yapısal gerekçeyle**
+kapatılmasını önerdi: 30→15 geçişinde en çok bilgi kazanan ayak, sürüklenmesi en az olan
+1. ayaktır. Argüman kısmen doğru ama kol **iki gün önce açıldı**, Altılı başına 120 TL ve
+elde simülasyondan +5 ayaklık bir işaret var. Veri toplamaya başlamış bir kolu iki gün sonra
+teoriyle kapatmak, projenin "ölçmeden konuşma" ilkesine ters. **Kol açık kalır.**
+`bot1_1800` için önerileri (C1) yerinde — 900→1800 ayak genişliğini yalnız %12 artırıyor
+(3,107→3,487) ve K98-e bot1'i zaten portföyden dışlamıştı — ama config kullanıcının açık
+isteğiyle eklendi; **karar kullanıcınındır**, tek taraflı emekli edilmedi.
+
+**(j) ARAÇ:** `kod/ayak_kalibrasyon.py` (offline, salt-okunur). Ölçütler dosya başında,
+sonuç görülmeden bağlandı. `bekci.py` genişletildi (nabız + kapsama, ikisi de salt-okunur).
+Canlı seçim/dağıtım/config koduna **dokunulmadı**.

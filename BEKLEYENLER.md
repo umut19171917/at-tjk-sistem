@@ -105,8 +105,14 @@ dar +0, orta +5, geniş900 +4). **bot1'e ikiz açılmadı** (orana bakmaz → fa
 v2'nin kontrolü 30 dk'lık acgozlu900 olarak kalır). 15 dk grubu tavanı ~1.245 TL/Altılı.
 Altyapı: KONFIG'e `dk` alanı, kupon grup grup kurulur, kupon-anı kaydı `dk_grup` ile anahtarlı.
 
-**TETİK (yeni):** 25 Eyl civarı, `orta_15` ~60+ kupona ulaşınca → eşleşmiş ayak kıyası
+**TETİK (K106'da düzeltildi):** `orta_15` **~60 kupona** ulaşınca → eşleşmiş ayak kıyası
 (aynı Altılı, iki zaman) + simülasyonla karşılaştır. **Canlı zamanlama o güne kadar 30 dk KALIR.**
+
+> **25 EYLÜL BU KOLU KAPSAMAZ (K106).** Tetik ~60 kupon; 17 Ağu itibarıyla `orta_15` 7,
+> `acgozlu900_15` 6 kupon. 25 Eyl'e ~40 yarış günü var → tetik o tarihte **dolmayacak**.
+> Kural 6 gereği tarihe değil sayıya bakılır: 25 Eylül'de verilecek karar **sistem modu**
+> kararıdır (K42/K48), zamanlama kolu ayrı ve kendi sayısal tetiğiyle (~Kasım) değerlendirilir.
+> İki tarih birbirine BAĞLANMAZ.
 
 **10 dk hâlâ YOK:** takip 15 dk'da bir çalışıyor, o pencereye sistematik geçiş düşmüyor →
 örneklem yanlı kesilir. Çözümü görev sıklığını artırmak; sistemin çalışma düzenine dokunduğu

@@ -961,7 +961,16 @@ def html_yaz(df=None, ac=False):
             # K100: emekli config'ler burada KALIR (sicil ve genel toplam bozulmasin), etiketlenir
             em = "" if KONFIG[cfg].get("aktif", True) else \
                  " <span class=mini style='color:#92400e'>[EMEKLI &mdash; K100]</span>"
-            H2.append(f"<div style='margin:6px 0'><b>{cfg.upper()}</b>{em} "
+            # K106: TEK BILET UYARISI. Altili yalniz 6/6 oder; 1-2 isabetli bir config'in
+            # tum odulu bir-iki olaydan gelir. bot1_900 icin bu uyari K98-e'de vardi ama
+            # `orta` icin YOKTU -> +8.424'luk net "kanitlanmis" gibi okunuyordu (dis analiz 4.1a).
+            # Olculen: orta'nin odulunun %100'u TEK biletten (23.07 Ankara 2.).
+            tek = ""
+            if 0 < tam <= 2 and odul > 0:
+                pay = max(k["odul"] for k in kk) / odul * 100
+                tek = (f" <span class=mini style='color:#b45309'>[DIKKAT: odulun "
+                       f"%{pay:.0f}'i TEK biletten &mdash; {tam} isabet; kanit degil]</span>")
+            H2.append(f"<div style='margin:6px 0'><b>{cfg.upper()}</b>{em}{tek} "
                       f"<span class=k>({len(kk)} tamamlanan kupon, {tam} tam isabet)</span> &nbsp; "
                       f"bedel <b>{ro.para(bedel)}</b> &nbsp; odul <b>{ro.para(odul)}</b> &nbsp; "
                       f"net <span class='{cls}'><b>{ro.para(net, isaret=True)}</b></span></div>")
@@ -971,6 +980,15 @@ def html_yaz(df=None, ac=False):
                   f"<b>GENEL TOPLAM</b> &nbsp; bedel {ro.para(gen_bedel)} &nbsp; "
                   f"odul {ro.para(gen_odul)} &nbsp; net "
                   f"<span class='{cls} buyuk'>{ro.para(gnet, isaret=True)}</span>")
+        # K106: bu toplam TAVSIYE EDILEN portfoyu TEMSIL ETMEZ. Harcamanin buyuk kismi
+        # 900+ kombinasyonlu gozlem akislarindan gelir (acgozlu900 ~1.077 TL/kupon,
+        # orta ~115 TL/kupon); K98-i'nin canli tavsiyesi ise YALNIZ `orta`dir.
+        # Sayfanin en gorunur sayisi, tavsiyeyle ilgisi olmayan bir portfoyun sicilidir.
+        H2.append("<div class=mini style='margin-top:8px;color:#92400e'>"
+                  "<b>Bu toplam bir PORTFOY TAVSIYESI DEGILDIR.</b> Harcamanin cogu 900-1800 "
+                  "kombinasyonlu <i>gozlem akislarindan</i> gelir. K98-i'nin canliya cikis "
+                  "tavsiyesi <b>yalniz ORTA</b>'dir (~118 TL/Altili). Toplam, paralel yuruyen "
+                  "deneylerin ortak faturasidir.</div>")
         H2.append("</div>")
         return H2
 

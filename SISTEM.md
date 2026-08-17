@@ -1,8 +1,9 @@
 # TJK AT YARIŞI ÖLÇÜM SİSTEMİ — TAM DURUM
 
 > **Bu dosya bir devir belgesidir.** Yeni bir Claude oturumuna sistemin tamamını
-> anlatmak için hazırlandı. Üretim tarihi: **16 Ağustos 2026**.
-> Otorite sırası: `KARARLAR.md` (numaralı karar günlüğü, K1–K105) > `BEKLEYENLER.md`
+> anlatmak için hazırlandı. Üretim tarihi: **16 Ağustos 2026** ·
+> **güncellendi 17 Ağustos 2026 (K106 — dış analiz cevabı, ÖLÇÜM A0, plase düzeltmesi).**
+> Otorite sırası: `KARARLAR.md` (numaralı karar günlüğü, K1–K106) > `BEKLEYENLER.md`
 > (ertelenmiş işler + tetikleri) > bu dosya. Çelişki olursa KARARLAR kazanır.
 
 ---
@@ -195,11 +196,11 @@ Bunların hepsi **ölçüldü**, varsayılmadı:
 
 | büyüklük | değer | kaynak |
 |---|---|---|
-| harman α / γ | **0,21 / 0,95** | K96, R²=0,9996 |
+| harman α / γ | **0,21 / 0,95** | K96 — R²=0,9996 *(katsayıların geri çıkarılabilirliği; modelin öngörü gücü DEĞİL)* |
 | Bot1'in net katkısı | **%0,75** | K96 |
-| uzak ayak λ | **0,65** (>75 dk), yakın 1,0 | K92, eşleşmiş n=87 koşu |
+| uzak ayak λ | **0,650**, %90 GA **[0,465 – 0,875]** → 1'i İÇERMİYOR | K92, eşleşmiş n=87 koşu |
 | **ganyan kesintisi (İngiliz)** | **%28,3 ortalama**, medyan %25,6, %10-90: %25,3–%37,0 | **K104** |
-| **plase kesintisi** | **%10–14** | **K104** |
+| **plase kesintisi** | **≥%14** (bağımsız ölçülmedi — K106) | K104 → **K106 düzeltmesi** |
 | 3'lü ganyan | %45,4 | K94 |
 | 4'lü | %45,6 | K94 |
 | 5'li | %46,8 | K94 |
@@ -242,6 +243,19 @@ Tersi de doğru: **kuponun dikdörtgen olma zorunluluğu bir handikap değil, ka
 bir kalabalıktan-kaçınma mekanizmasıdır.** Bu, K65'i (açgözlü daha çok tutturur, daha az
 kazandırır) yeni bir açıdan açıklar.
 
+### ⚠️ PROJENİN BİRİNCİL KISITI: FEED
+
+Aşağıdaki kapalı kolların hepsi aynı duvara çarpıyor ve duvarın adı **veri erişimi**.
+Benter'in Hong Kong'da ulaştığı sonuç modelleme zekâsından çok idman zamanları, veteriner
+kayıtları ve sectional time'lardan geliyordu. **TJK feed'inde bunların hiçbiri yok.**
+
+α=0,21'in küçüklüğü bir model zayıflığı değil, **mevcut veri kümesinin bilgi tavanıdır.**
+K102 bunun kanıtı: ata-özel kulvar tercihi bağımsız bilgi taşıyor (katsayı −0,0181) ama yine
+de faydasız — çünkü piyasa, bizim erişebildiğimiz her şeyi zaten fiyatlamış.
+
+> **Feed genişlemeden model genişlemez.** Yeni bir oturum "belki şu özelliği eklesek" turuna
+> girmeden önce bu satırı okumalı.
+
 ### Diğer kapalı kollar
 - **Bütçe (K88/K91/K98):** genişletmek kenar satın almıyor, tutturma sıklığı satın alıyor.
   900→1800 P(6/6)'yı ~5 puan artırır, marjinal ROI aynı sızıntıda. Yüksek ödüllü
@@ -256,6 +270,29 @@ kazandırır) yeni bir açıdan açıklar.
 - **Zamanlama — yayvanlık (K104-f):** "sahaların açık olduğu günlerde ROI daha mı iyi?"
   → **BULGU YOK**. Yayvanlık temettüyü öngörüyor (korelasyon −0,316; temettü 2,6 katı) ama
   isabeti aynı oranda düşürüyor (21 vs 45). Havuz bu boyutta **etkin**.
+
+### SEÇİM KATMANI TEK BAŞINA TEST EDİLDİ — hiçbir config kalabalığı yenmiyor (K106)
+
+Bugüne kadarki bütün ölçümler kupon şekli, bütçe ve kesintiyi birlikte taşıyordu. **ÖLÇÜM A0**
+(`kod/ayak_kalibrasyon.py`) ilk kez yalnız **seçim katmanını** test etti:
+
+> *Her ayakta config k at yazıyor. Aynı ayakta, aynı k ile KAMU cetvelinin ilk k'si alınırsa,
+> hangisi kazananı daha çok tutuyor?*
+
+~2.850 ayakta, eşleşmiş McNemar ile: **hiçbir config'te p<0,05.**
+
+| config | ayak | yalnız-sistem | yalnız-kamu | p |
+|---|---|---|---|---|
+| acgozlu900 | 391 | 8 | 3 | 0,227 |
+| bot1_900 | 342 | 55 | 49 | 0,624 |
+| acgozlu_v2 | 195 | 4 | 0 | 0,125 |
+| bot1_1800 | 138 | 18 | 21 | 0,749 |
+
+**Aynı parayla, bizim cetvelimiz kalabalığın cetvelinden ölçülebilir biçimde farklı değil.**
+Bu, projenin ürettiği en temiz "kenar yok" ifadesidir — kupon şekli ve kesinti değişkenlerinden
+arınmış.
+*Kapsam notu:* `dar/orta/genis/genis900` kupon-anı kaydı %69-86 olduğu için **GEÇERSİZ**
+sayıldı (ön-kayıtlı %90 eşiği). `orta` için ölçüm henüz yapılamıyor; kapsam arttıkça tekrarlanmalı.
 
 ### Kâğıt ROI teoriye yakınsadı (K93)
 Altılı −%33,3 (backtest −%32) · ganyan −%25,4 (o zamanki referans). **Kenar yok.**
@@ -280,7 +317,18 @@ Altılı −%33,3 (backtest −%32) · ganyan −%25,4 (o zamanki referans). **K
 net −4.618 (−%29,5). Ganyan −%34,2 · plase −%14,0. **Seçim zararı yok** (kalibrasyon 0,977
 ve 0,960, ikisi de 1,00'i içeriyor).
 
-> **UYARI — `bot1_900` yanıltıcıdır.** Net −6.400 iyi görünüyor ama backtest'te bot1@900'ün
+> **UYARI 1 — TOPLAM satırı bir PORTFÖY TAVSİYESİ DEĞİLDİR.** Harcamanın çoğu 900-1800
+> kombinasyonlu gözlem akışlarından gelir (`acgozlu900` ~1.077 TL/kupon, `orta` ~115 TL/kupon).
+> K98-i'nin canlıya çıkış tavsiyesi **yalnız `orta`**. Bu toplam, paralel yürüyen deneylerin
+> ortak faturasıdır.
+
+> **UYARI 2 — `orta`'nın +8.424'ü TEK BİR OLAYDIR.** Altılı yalnız 6/6 öder; `orta`'nın 1
+> isabeti var, dolayısıyla 17.934 TL ödülün **%100'ü tek biletten** (23.07 Ankara 2.). O olay
+> çıkarsa `orta` −9.510, ROI −%100. Backtest'te "getirisinin yalnız %5'i en büyük kupondan"
+> diyor; **canlıda %100.** İki sayı yan yana okunursa `orta` kanıtlanmış sanılır — değildir.
+> (K106; rapor artık bu uyarıyı otomatik basıyor.)
+
+> **UYARI 3 — `bot1_900` yanıltıcıdır.** Net −6.400 iyi görünüyor ama backtest'te bot1@900'ün
 > tüm getirisinin **%43'ü tek bir kupondan** geliyordu (539.029 TL'lik temettü); o olay
 > çıkınca ROI −%18,3'ten **−%53,2**'ye düşüyor. **Kenar değil, piyango biçimi.** Canlı
 > portföye konmamalı (K98-e).
@@ -411,7 +459,7 @@ sıra ayrı (ayrışma).
 `takip.py` (15 dk'lık geçiş, durumsuz) · `altili_canli.py` (kupon üretimi + HTML, 65 KB) ·
 `gunluk.py` (canlı puanlama) · `defter.py` (kâğıt defter) · `paper.py` (K42 testi) ·
 `oran_log.py` (gün-içi oran) · `rapor_ortak.py` (rapor zenginleştirme, salt-okunur) ·
-`telegram_at.py` · `bekci.py` · `veri_commit.py`
+`telegram_at.py` · `bekci.py` (**nabız + config kapsama alarmı**, K106) · `veri_commit.py`
 
 **Boru hattı:** `kazi.py` → `duzlestir.py` → `ozellik.py` → `model.py` ·
 `altili_tam.py` · `altili_olasilik.py` · `guncelle.py`
@@ -420,7 +468,7 @@ sıra ayrı (ayrışma).
 `altili_backtest.py` (dağıtıcıların tek kaynağı) · `altili_canli_secim_test.py` (K98'in
 dokuz tablosu) · `altili_banker_takasi_test.py` (K101) · `kulvar_tercih_test.py` (K102) ·
 `altili_suruklenme.py` (K80 λ) · `altili_zaman_test.py` (30 vs 15 dk) ·
-`kayip_raporu.py` (K82) · `kupon_ani_geri_kur.py` (K97 geri kurma)
+`kayip_raporu.py` (K82) · `kupon_ani_geri_kur.py` (K97 geri kurma) · **`ayak_kalibrasyon.py`** (K106 ÖLÇÜM A0 — seçim katmanı)
 
 **Arşiv testler (kapanmış kollar):** `altili_bot1_test.py` · `altili_dagitim_test.py` ·
 `altili_ayrisma_test.py` · `altili_birlesim_test.py` · `altili_kap_test.py` ·
