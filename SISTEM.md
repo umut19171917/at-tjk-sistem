@@ -2,8 +2,8 @@
 
 > **Bu dosya bir devir belgesidir.** Yeni bir Claude oturumuna sistemin tamamını
 > anlatmak için hazırlandı. Üretim tarihi: **16 Ağustos 2026** ·
-> **güncellendi 17 Ağustos 2026 (K106 — dış analiz cevabı, ÖLÇÜM A0, plase düzeltmesi).**
-> Otorite sırası: `KARARLAR.md` (numaralı karar günlüğü, K1–K106) > `BEKLEYENLER.md`
+> **güncellendi 18 Ağustos 2026 (K107 — 16 Ağu sessiz gün kaybı, A0 güç eşiği, defter kapsama alarmı).**
+> Otorite sırası: `KARARLAR.md` (numaralı karar günlüğü, K1–K107) > `BEKLEYENLER.md`
 > (ertelenmiş işler + tetikleri) > bu dosya. Çelişki olursa KARARLAR kazanır.
 
 ---
@@ -147,7 +147,7 @@ yalnız bilgi amaçlı gösterilir.
 | görev | sıklık | komut |
 |---|---|---|
 | **TJK Takip** | **15 dk**'da bir | `kod/takip.py` |
-| **TJK Bekçi** | 2 saatte bir | `kod/bekci.py` (takip nabzı kontrolü) |
+| **TJK Bekçi** | 2 saatte bir | `kod/bekci.py` — üç denetim: **nabız** (K49) + **config kapsaması** (K106) + **defter kapsaması** (K107). Hepsi salt-okunur. |
 | **TJK Veri Commit** | haftalık (Pzt 22:45) | `kod/veri_commit.py` |
 
 `takip.py` her geçişte: günün ilk geçişinde arşivi günceller → vadesi gelen koşuları işler
@@ -211,6 +211,12 @@ Bunların hepsi **ölçüldü**, varsayılmadı:
 
 > **K93 DÜZELTMESİ (K104):** "ganyan −%25,4 = kesinti %25,5, birebir tuttu" ifadesi kısmen
 > tesadüftü. Doğru referans %25,5 değil, oynadığımız koşuların gerçek ortalaması **%28,3**.
+
+> ⚠️ **DAĞILIM KAYMASI — BACKTEST SAYILARI CANLIYA BİREBİR TAŞINMAZ (K107).**
+> `altili_backtest.py`'nin `prep()`'i yalnızca **muhtemel + kapanış oranı bulunan ve tek
+> kazananı olan** koşuları alır. Canlı taraf ise kartta ne varsa puanlar. Backtest evreni bu
+> yüzden canlı evrenden sistematik olarak ayrılır (temizlenmiş bir örneklem). Yukarıdaki K96
+> türevleri ve backtest ROI'leri **yön göstergesidir, seviye göstergesi değil.**
 
 > **BAĞIMSIZ DOĞRULAMA:** 14 Ağu İstanbul 2. Altılı 2.780.891 TL ödedi. Temettü ÷ (aynı altı
 > atın ganyan parlayı) = **3,74**. Teorik beklenti (Altılı kesintiyi bir kez, altı ganyan
@@ -281,18 +287,34 @@ Bugüne kadarki bütün ölçümler kupon şekli, bütçe ve kesintiyi birlikte 
 
 ~2.850 ayakta, eşleşmiş McNemar ile: **hiçbir config'te p<0,05.**
 
-| config | ayak | yalnız-sistem | yalnız-kamu | p |
-|---|---|---|---|---|
-| acgozlu900 | 391 | 8 | 3 | 0,227 |
-| bot1_900 | 342 | 55 | 49 | 0,624 |
-| acgozlu_v2 | 195 | 4 | 0 | 0,125 |
-| bot1_1800 | 138 | 18 | 21 | 0,749 |
+| config | ayak | kapsam | yalnız-sis | yalnız-kamu | p | karar |
+|---|---|---|---|---|---|---|
+| acgozlu900 | 402 | %92 | 9 | 3 | 0,146 | **kenar kanıtı yok** |
+| bot1_900 | 353 | %97 | 57 | 49 | 0,497 | **kenar kanıtı yok** |
+| bot1_1800 | 149 | %100 | 20 | 21 | 1,000 | **kenar kanıtı yok** |
+| acgozlu_v2 | 206 | %99 | 4 | 0 | 0,125 | BAKILAMAZ (4<6) |
+| ayrisma900 | 204 | %94 | 3 | 1 | 0,625 | BAKILAMAZ (4<6) |
+| orta_15 | 53 | %100 | 3 | 1 | 0,625 | BAKILAMAZ (4<6) |
+| acgozlu900_15 | 47 | %100 | 0 | 0 | 1,000 | BAKILAMAZ (0<6) |
+| dar · orta · genis · genis900 | 275-424 | %69-86 | — | — | — | GEÇERSİZ (kapsam<%90) |
 
-**Aynı parayla, bizim cetvelimiz kalabalığın cetvelinden ölçülebilir biçimde farklı değil.**
-Bu, projenin ürettiği en temiz "kenar yok" ifadesidir — kupon şekli ve kesinti değişkenlerinden
-arınmış.
-*Kapsam notu:* `dar/orta/genis/genis900` kupon-anı kaydı %69-86 olduğu için **GEÇERSİZ**
-sayıldı (ön-kayıtlı %90 eşiği). `orta` için ölçüm henüz yapılamıyor; kapsam arttıkça tekrarlanmalı.
+**GEÇERLİ HÜKÜM — `acgozlu900`, `bot1_900`, `bot1_1800` için:** aynı parayla, bizim cetvelimiz
+kalabalığın cetvelinden **ölçülebilir biçimde farklı değil.** Projenin ürettiği en temiz
+"kenar yok" ifadesi — kupon şekli ve kesinti değişkenlerinden arınmış.
+
+⚠️ **GÜÇ EŞİĞİ (K107 — K106'daki ifademin düzeltmesi).** Tam binom testi, iki yönlü α=0,05'e
+ulaşmak için **en az 6 uyumsuz çift** ister (n=4 → hepsi tek yanlı olsa bile p=0,125).
+Dört config bu eşiğin altında → onlar için **"kenar yok" DEĞİL, "bu örneklemle bakılamaz."**
+Ölçüt `ayak_kalibrasyon.py`'de `ASGARI_UYUMSUZ = 6`; karar akışı kapsam → **güç** → p.
+
+⚠️ **ÇOKLU TEST.** 11 config × 2 test bakılıyor. Olay-bootstrap'te `acgozlu_v2` (+1,9 puan
+[+0,5, +3,9]) ve `acgozlu900` (+1,5 [+0,0, +3,0]) GA'ları sıfırı dışlıyor — **kenar bulgusu
+değildir**: (1) `acgozlu_v2`'de McNemar aynı veride BAKILAMAZ diyor; (2) 11 config'te bir GA'nın
+şansa sıfırı dışlaması ~0,55 kez beklenir; (3) yüzdelik bootstrap bu seyreklikte
+anti-muhafazakârdır. **Ön-kayıtlı birincil ölçüt McNemar'dır**, bootstrap betimleyicidir.
+
+*Kapsam notu:* `dar/orta/genis/genis900` kupon-anı kaydı %69-86 → ön-kayıtlı %90 eşiğiyle
+**GEÇERSİZ**. Kapsam arttıkça tekrarlanmalı.
 
 ### Kâğıt ROI teoriye yakınsadı (K93)
 Altılı −%33,3 (backtest −%32) · ganyan −%25,4 (o zamanki referans). **Kenar yok.**
@@ -358,7 +380,7 @@ kendisi doğrulandı. Bu yüzden bot1'e 15 dk ikizi **açılmadı**.
 
 | # | konu | tetik |
 |---|---|---|
-| 2 | 4'lü / 5'li kupon türleri | **kullanıcı hatırlatacak**; K94 gerekçeyi zayıflattı (kesinti Altılı'dan yalnız 2-3 puan iyi) |
+| 2 | 4'lü / 5'li kupon türleri | **ÖN KOŞUL KARŞILANDI (K107)** — `nli_ganyan.csv`'de 4'lü 5.691 / 5'li 6.519 olay, temettü **ve** ayak kodlarıyla duruyor; kol kurulabilir. Tetik: **kullanıcı hatırlatacak**. Beklenti düşük (K94: kesinti Altılı'dan yalnız 2-3 puan iyi; K75: λ taraması olumsuz) |
 | 3 | `defter.html`'i K55 görsel diline çevirme | sıra gelince |
 | 4 | 30 vs 15 dk | **canlı kol açıldı**, ~60 kupon sonra |
 | 5 | Altılı sonuçlamada favori-devri kuralı | doğruluk kritikleşirse |
@@ -429,6 +451,19 @@ sıra ayrı (ayrışma).
   **15:00 en yoğun**. Zorunlu kesinti **15:30'da başlamalı** (K82). 10:30 öncesi / 22:30
   sonrası maliyet sıfır. Üç hasar türü: kurulmayan Altılı (en pahalı) · geç kurulan kupon
   (en sinsi, zamanlama ölçümünü kirletir) · düşen defter kaydı (en ucuz).
+- **ÖLÇÜLEN HASAR ORANI (son 14 gün, `kod/kayip_raporu.py`):** 14 günün **4'ü tamamen temiz**;
+  2 kurulmayan Altılı (= 14 kupon deneyden düştü) · **0 geç kurulan kupon** · 0 yarış sonrası
+  kayıt · 35 düşen defter koşusu. Araç kendi sayısının **alt sınır** olduğunu söylüyor.
+- ⚠️ **SESSİZ KOL ÖLÜMÜ — 16 Ağu 2026 vakası (K107).** Takip gün boyu döndü (17 koşu "bitti",
+  oran_log dolu, 4 Altılı'ya 7 config kupon kurdu) ama `defter.csv` ve `paper_kupon.csv`'ye
+  **tek satır yazılmadı**. Sicildeki tek böyle gün; 32 günün taramasında başka yok. O günün
+  kalibrasyon/ROI/paper kaydı **kalıcı olarak kayıp** — geriye yazmak K36'nın yasakladığı şey.
+  Kök neden bulunamadı çünkü tanı mesajları `print`'e gidiyordu ve görev **pythonw** ile sessiz
+  koşuyor. İki düzeltme: `takip.py`'de o mesajlar artık `_log`'a düşüyor; `bekci.py`'ye üçüncü
+  denetim (**defter kapsaması**) eklendi — "bitti" mührü sayısı vs deftere yazılan koşu sayısı,
+  ≥2 fark → ekran uyarısı. Geriye dönük sınandı: **32 gün, 1 alarm, sıfır yanlış alarm.**
+  **DERS:** bir kolun sessizce ölmesi, hata vermesinden pahalıdır. `except` bloğuna düşen her
+  mesaj log'a da yazılır; `print` tek başına kayıt sayılmaz.
 - **`kod/telegram_config.json` git'te değil** — bot yeniden kurulursa elle konmalı.
 - **Yabancı yarışlar sistemin dışında.** `gunluk.yerli_pistler()` feed'deki `GUN` alanına
   bakar; TR pistlerinde sayısal, yabancıda `None` → elenirler. Arşivde tek bir yabancı
@@ -459,7 +494,7 @@ sıra ayrı (ayrışma).
 `takip.py` (15 dk'lık geçiş, durumsuz) · `altili_canli.py` (kupon üretimi + HTML, 65 KB) ·
 `gunluk.py` (canlı puanlama) · `defter.py` (kâğıt defter) · `paper.py` (K42 testi) ·
 `oran_log.py` (gün-içi oran) · `rapor_ortak.py` (rapor zenginleştirme, salt-okunur) ·
-`telegram_at.py` · `bekci.py` (**nabız + config kapsama alarmı**, K106) · `veri_commit.py`
+`telegram_at.py` · `bekci.py` (**nabız + config kapsaması + defter kapsaması**, K106/K107) · `veri_commit.py`
 
 **Boru hattı:** `kazi.py` → `duzlestir.py` → `ozellik.py` → `model.py` ·
 `altili_tam.py` · `altili_olasilik.py` · `guncelle.py`

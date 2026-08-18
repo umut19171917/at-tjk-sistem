@@ -34,8 +34,8 @@ ama **tamamı tek bir 6/6'dan** (23.07 Ankara 2., 90 TL → 17.934 TL). O tek ku
 **Şart:** Kuralı tek YURİBOYKA vakasına göre kurgulama (hindsight/overfit — K33/K52 yasağı);
 genel ilke olarak sabitle, backtest robust üstünlük gösterirse konuş.
 
-### 2. 4'lü / 5'li kupon türleri — GEREKÇE GÜÇLENDİ (K74/K75/K84)
-**Eklendi:** 2026-07-24 · **Güncellendi:** 2026-07-31 · **İlgili:** K5, K46, K74, K75
+### 2. 4'lü / 5'li kupon türleri — ÖN KOŞUL KARŞILANDI, KOL AÇILABİLİR (K74/K75/K84 → K107)
+**Eklendi:** 2026-07-24 · **Güncellendi:** 2026-08-18 (K107) · **İlgili:** K5, K46, K74, K75, K94, K107
 **TETİK: KULLANICI hatırlatacak** (2026-07-31'de öyle dedi) — kendiliğinden başlama.
 
 **K84 EKLEDİ — en güçlü gerekçe (31 Tem 2026):** arşivde 6.747 Altılı'nın **24'ünde (%0,36)**
@@ -68,12 +68,28 @@ daha şanslı gördüğü atlarda oran **3,40**. K75 bunu Altılı kuponuna çev
 5'li = 5, Altılı = 6. İsabet çöküşü üstel olduğu için ayak sayısını azaltmak dengeyi ciddi
 biçimde değiştirebilir. Bu, 12 negatif Altılı testinden sonra kalan **tek yapısal fikir**.
 
-**ÖN KOŞUL — veri yok:** `veri/altili_tam.csv` yalnızca 6'lı temettülerini (t6/t5/t4/t3) tutuyor.
-4'lü ve 5'li bahislerin **kendi temettü serileri arşivde YOK**. Yapılacak sıra:
-1. Ham feed'de 4'lü/5'li temettüsü var mı, hangi uçta — `kod/tani_json.py` ile tara
-2. Yoksa kazı tarafına ekle (`kazi.py`), ileri-yönlü biriktir + mümkünse geriye dönük çek
-3. `altili_tam.py` muadili bir olay tablosu üret (hangi koşular, hangi temettü)
-4. Ancak ondan sonra backtest: aynı `bot2/AGF^λ` ailesi, 4 ve 5 ayakta
+**~~ÖN KOŞUL — veri yok~~ → KARŞILANDI (K107, 18 Ağu 2026).** Eski not `veri/altili_tam.csv`'ye
+bakıyordu (orada gerçekten yalnız 6'lı t6/t5/t4/t3 var) ama **veri K94'ten beri elimizdeydi:**
+`veri/nli_ganyan.csv`, K94'ün kesinti ölçümünün yan ürünü olarak üretilmiş ve fark edilmemiş.
+
+| ürün | olay | temettü dolu | ayak race_kod'ları dolu | medyan temettü |
+|---|---|---|---|---|
+| 3'lü | 8.060 | ✅ | ✅ | 73 TL |
+| **4'lü** | **5.691** | ✅ | ✅ | **249 TL** |
+| **5'li** | **6.519** | ✅ | ✅ | **1.006 TL** |
+| 6'lı | 6.813 | ✅ | ✅ | 5.774 TL |
+| 7'li | 359 | ✅ | ✅ | 170.016 TL |
+
+Temettü **ve** ayak kodları birlikte duruyor → backtest için gereken her şey var.
+**Eski 1-3. maddeler düşer** (tara / kazıya ekle / olay tablosu üret). Doğrudan 4. maddeden
+başlanır:
+
+4. Backtest: aynı `bot2/AGF^λ` ailesi, 4 ve 5 ayakta. Bütçe Altılı ile **eşitlenerek**
+   (aynı para, farklı ayak sayısı) — yoksa kıyas anlamsız olur.
+
+**ÖLÇÜT ÖNCEDEN BAĞLANACAK** (K33/K52): kol açılmadan önce "hangi sonuç fikri öldürür"
+yazılır. K75'in λ taraması (ROI λ=0,25'ten itibaren kötüleşiyor) ilgili önsel; kesinti farkı
+da zayıf (4'lü %45,6 · 5'li %46,8 · 6'lı %48,6 → **yalnız 2-3 puan**).
 
 **Beklenti (önceden yazılıyor):** düşük. 12 test negatif, kesinti ~%49 ve muhtemelen bu
 bahislerde de benzer. Ama ilk kez körlemesine değil, **ölçülmüş bir mekanizmayı takip ederek**

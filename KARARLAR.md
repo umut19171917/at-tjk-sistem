@@ -2609,3 +2609,177 @@ isteğiyle eklendi; **karar kullanıcınındır**, tek taraflı emekli edilmedi.
 **(j) ARAÇ:** `kod/ayak_kalibrasyon.py` (offline, salt-okunur). Ölçütler dosya başında,
 sonuç görülmeden bağlandı. `bekci.py` genişletildi (nabız + kapsama, ikisi de salt-okunur).
 Canlı seçim/dağıtım/config koduna **dokunulmadı**.
+
+---
+
+**K107 — SESSİZ BİR GÜN KAYBI BULUNDU (16 Ağu: defter+paper SIFIR), A0'ın GÜCÜ ölçüldü ve
+ifadesi düzeltildi, ikinci dış denetim raporu değerlendirildi.** 18 Ağu 2026.
+
+## (a) 16 AĞUSTOS 2026 — TAKİP DÖNDÜ, DEFTER YAZILMADI. Sicildeki TEK böyle gün.
+
+Hasar taraması sırasında `defter.csv`'de 16 Ağu'nun **tamamen boş** olduğu görüldü. Kontrol
+edildi, tesadüf değil — o gün sistemin diğer her parçası çalışmıştı:
+
+| kayıt | 15 Ağu | **16 Ağu** | 17 Ağu |
+|---|---|---|---|
+| `takip_gecis.txt` "bitti" mührü | 16 koşu | **17 koşu** | 10 koşu |
+| `altili_oran_log.csv` | 1.349 | **1.430** | 847 |
+| `altili_kupon.csv` | 96 | **168** (7 config × 4 Altılı) | 84 |
+| `altili_kupon_ani.csv` | 225 | **442** (sicildeki en yüksek) | 252 |
+| **`defter.csv`** | 148 | **0** | 102 |
+| **`paper_kupon.csv`** | 18 | **0** | 14 |
+
+Yani: takip her 15 dk'da geçiş yaptı, 17 koşuyu işleyip "bitti" mührünü bastı, oran kaydetti,
+dört Altılı'ya yedi config kupon kurdu — **ama kâğıt defterine ve paper testine tek satır
+girmedi.** 32 yarış gününün taraması yapıldı: **bu tek gün.** Diğer 31 günün hepsinde
+"bitti" mührü sayısı ile deftere yazılan koşu sayısı **birebir eşit**.
+
+**KAYIP:** o günün kalibrasyon kaydı, ganyan ROI'si, top-pick isabeti ve paper kuponları.
+Geri kurulamaz — `defter.py kaydet` yarış-öncesi anlık kayıttır; şimdi geriye dönük yazmak
+K36'nın açıkça yasakladığı şeydir (kapanış oranıyla sahte "tahmin" üretmek). **Kayıp kalıcıdır
+ve öyle kalacaktır.**
+
+**KÖK NEDEN BULUNAMADI — ve bu, bulgunun kendisidir.** Elenenler: `hesapla()` bugün 16 Ağu
+verisiyle yeniden çağrıldı, ISTANBUL 93 / IZMIR 67 puanlı satır döndürdü → **model çalışıyordu**;
+zaten `altili_canli.py` de aynı `hesapla`'yı kullanır ve o gün kupon kurdu. Yazma izni de
+sorunsuzdu (aynı klasöre `oran_log` ve `altili_kupon` yazıldı). Geriye iki aday kalıyor —
+`defter.yaz_tg`'nin istisna fırlatması (K39'un adını koyduğu "dosya Excel'de açık" durumu) ya da
+n=0 dalına düşmesi. **Hangisi olduğu bilinemiyor**, çünkü:
+
+> `isle_kosu` içindeki üç tanı mesajı da (`DEFTER YAZILAMADI`, `deftere yazılmadı: kapsam dışı`,
+> `paper kupon üretilemedi`) `print`'e gidiyordu. Görev **pythonw** ile sessiz koştuğu için
+> stdout hiçbir yere düşmüyor. `_log`'a bağlı olan tek şey geçiş özetiydi ve o özet o gün
+> **"işlenen 1, bekleyen 16"** diye tıkır tıkır yazmaya devam etti.
+
+Bu, K103'ün (kamu sırası iki hafta sessizce düştü) aynısıdır: **sistem çalışıyor gibi
+görünürken bir kolu ölmüştü.** Fark şu ki K103 iki haftada, bu iki günde yakalandı — çünkü
+K106'da hasar taraması alışkanlık hâline gelmişti.
+
+**İKİ DÜZELTME YAPILDI:**
+
+1. **`takip.py` — sessizlik kapatıldı.** Üç mesaj da artık `_log`'a düşüyor
+   (`veri/takip_log.txt`). Yeni `_gorunur_log()` sarmalayıcısı tam korumalı: `_log`'un kendisi
+   patlarsa `isle_kosu` **çökmemeli** (çökerse koşu "bitti" mührünü alamaz ve sonraki geçiş
+   aynı koşuyu yeniden dener). Davranış değişikliği yok — yalnızca kayıt eklendi.
+2. **`bekci.py` — üçüncü denetim: DEFTER KAPSAMA.** Kural: bugün "bitti" mührü almış koşu
+   sayısı ile `defter.csv`'de bugüne yazılmış ayrı koşu sayısı karşılaştırılır. Defter yazımı
+   mühürden **önce** olduğu için gecikme yanılması yok. Eşik: **≥3 koşu işlenmişken ≥2 koşu
+   eksikse** uyarır (tek koşunun tg'den düşmesi normaldir).
+   **GERİYE DÖNÜK SINANDI: 32 gün, 1 alarm, o da 16 Ağu (17 işlendi / 0 yazıldı). Sıfır yanlış
+   alarm.** Salt-okunur.
+
+**DERS (disiplin kuralı 8'e ek):** *bir kolun sessizce ölmesi, o kolun hata vermesinden daha
+pahalıdır.* Hata veren kol fark edilir; sessiz kol veri kaybettirmeye devam eder. Bundan sonra
+`except` bloğuna düşen her mesaj **log'a da** yazılacak; `print` tek başına kayıt sayılmaz.
+
+## (b) ÖLÇÜM A0'IN GÜCÜ — K106'daki İFADEM FAZLA GÜÇLÜYDÜ, DÜZELTİLDİ
+
+K106'da *"hiçbir config kalabalığı yenmiyor"* yazdım. Dört config için bu **söylenemezdi**.
+Tam binom testinde iki yönlü α=0,05'e ulaşmak için **en az 6 uyumsuz çift** gerekir:
+
+| uyumsuz çift n | hepsi tek yanlı olsa p |
+|---|---|
+| 3 | 0,250 |
+| 4 | 0,125 |
+| 5 | 0,0625 |
+| **6** | **0,031** ← ilk yeterli |
+
+Yani n=4 olan bir config'te sonuç **4-0** çıksa bile p=0,125'tir; test **hiçbir sonuçla**
+anlamlılık üretemezdi. Böyle bir config için "kenar kanıtı yok" demek, ölçüm yapılmadığı hâlde
+ölçüm yapılmış gibi konuşmaktır. `kod/ayak_kalibrasyon.py`'ye `ASGARI_UYUMSUZ = 6` eşiği ve
+**BAKILAMAZ** hükmü eklendi; karar akışı artık: kapsam → **güç** → p.
+
+**DÜZELTİLMİŞ A0 TABLOSU (18 Ağu):**
+
+| config | ayak | kapsam | yalnız-sis | yalnız-kamu | p | karar |
+|---|---|---|---|---|---|---|
+| `acgozlu900` | 402 | %92 | 9 | 3 | 0,146 | **kenar kanıtı yok** |
+| `bot1_900` | 353 | %97 | 57 | 49 | 0,497 | **kenar kanıtı yok** |
+| `bot1_1800` | 149 | %100 | 20 | 21 | 1,000 | **kenar kanıtı yok** |
+| `acgozlu_v2` | 206 | %99 | 4 | 0 | 0,125 | BAKILAMAZ (4<6) |
+| `ayrisma900` | 204 | %94 | 3 | 1 | 0,625 | BAKILAMAZ (4<6) |
+| `orta_15` | 53 | %100 | 3 | 1 | 0,625 | BAKILAMAZ (4<6) |
+| `acgozlu900_15` | 47 | %100 | 0 | 0 | 1,000 | BAKILAMAZ (0<6) |
+| `dar` `orta` `genis` `genis900` | 275-424 | %69-86 | — | — | — | GEÇERSİZ (kapsam<%90) |
+
+**GEÇERLİ HÜKÜM:** `acgozlu900`, `bot1_900` ve `bot1_1800` için — ~900 ayakta, aynı parayla —
+bizim cetvelimiz kalabalığınkinden **ölçülebilir biçimde farklı değil.** Diğerleri için
+**henüz veri yok**; hüküm yok.
+
+**ÇOKLU TEST NOTU (dış raporun haklı olduğu nokta).** A0'da 11 config × 2 test (McNemar +
+olay-bootstrap) bakılıyor. Olay-bootstrap'te `acgozlu_v2` (+1,9 puan [+0,5, +3,9]) ve
+`acgozlu900` (+1,5 [+0,0, +3,0]) güven aralıkları sıfırı dışlıyor — **ama bu bir kenar bulgusu
+değildir.** Üç sebep: (1) `acgozlu_v2`'de McNemar aynı veride BAKILAMAZ diyor, yani sonucu 4
+uyumsuz çift taşıyor; (2) 11 config'te %95 GA'lardan birinin şansa sıfırı dışlaması ~0,55 kez
+beklenir; (3) yüzdelik bootstrap, bu kadar seyrek ayrık veride anti-muhafazakârdır.
+**Ön-kayıtlı birincil ölçüt McNemar'dır** (K106'da sonuç görülmeden bağlandı); bootstrap
+betimleyicidir. Kayda geçiyor ki ileride biri bu sayıyı bulup "kenar vardı" demesin.
+Bugüne kadar hiçbir düzeltme sonuç değiştirmedi çünkü **sicilimiz baştan sona boş** — FDR
+düzeltmesinin pratikte düzeltecek bir pozitifi yok.
+
+## (c) İKİNCİ DIŞ DENETİM RAPORU — 2 iddia çürüdü, 3 sayı/okuma hatası, 1 gerçek katkı
+
+Kullanıcı `at_dis_denetim_raporu.md` başlıklı ikinci bir dış analiz getirdi (yine yalnız
+`SISTEM.md` metnine bakıyor; veri/kod/KARARLAR erişimi yok).
+
+**ÇÜRÜYENLER:**
+- **"ACİL: `plase_test.py` sonucu hiçbir yere girmemiş"** — YANLIŞ ve iddianın en yüksek
+  önceliklisiydi. Araç kesinti değil **ROI** ölçer; sonucu (−%12,5 / −%14,0) **K42'de zaten
+  kayıtlı.** KARARLAR.md'de tek arama yapılsaydı çürürdü; rapor "K1–K106 okundu" diyor.
+- **"`bot1_900` aktif ama K98-e portföye konmamalı diyor → tutarsızlık"** — YANLIŞ. K98-e
+  *"canlı portföye"* der; `bot1_900` **kâğıt akışıdır**, canlı portföy değildir. Çelişki yok.
+
+**SAYI/OKUMA HATALARI:**
+- **"`orta` sicilinde 552 kupon"** — hayır, **93 kupon**. 552 `altili_kupon.csv`'deki *satır*
+  sayısına yakın (kupon = 6 ayak = 6 satır). **6 kat şişirilmiş** bir taban.
+- R² etiketi zaten K106'da düzeltilmişti (katsayı geri-kazanımı, öngörü gücü değil); rapor
+  düzeltilmemiş gibi yazıyor.
+- `defter.csv` sayıları dolu-satır ayrımı yapılmadan alınmış.
+
+**GERÇEK KATKI (tek):** post-hoc güç analizi istemesi. (b) maddesi bunun ürünüdür ve **benim
+hatamı düzeltti.** Bir dış gözün en çok işe yaradığı yer, veriye erişmeden de sorulabilen
+metodoloji sorusu oldu — sayı iddialarında ise erişimsizlik onu sürekli yanılttı.
+
+**İLKE (K106'daki gözlemin pekişmesi):** dış analiz, *yöntem* sorularında değerli; *sayı*
+iddialarında ise SISTEM.md'den okuduğunu veriyle karıştırıyor. Bundan sonraki dış raporlarda
+sıra: önce yöntem eleştirisi sınanır, sayı iddiaları doğrudan veriye vurulur.
+
+## (d) BEKLEYENLER #2'NİN ÖN KOŞULU MEĞER KARŞILANMIŞ — 4'lü/5'li kolu AÇILABİLİR
+
+BEKLEYENLER #2 *"ÖN KOŞUL — veri yok: 4'lü ve 5'li bahislerin kendi temettü serileri arşivde
+YOK"* diyordu ve yapılacaklar listesinin 1. maddesi "ham feed'de var mı, tara" idi. **Tarandı:
+veri K94'ten beri elimizde.** `veri/nli_ganyan.csv` (K94'ün yan ürünü, kimse fark etmemiş):
+
+| ürün | olay | temettü dolu | ayak kodları dolu | medyan temettü |
+|---|---|---|---|---|
+| 3'lü | 8.060 | ✅ | ✅ | 73 TL |
+| **4'lü** | **5.691** | ✅ | ✅ | **249 TL** |
+| **5'li** | **6.519** | ✅ | ✅ | **1.006 TL** |
+| 6'lı | 6.813 | ✅ | ✅ | 5.774 TL |
+| 7'li | 359 | ✅ | ✅ | 170.016 TL |
+
+Temettü **ve** ayak race_kod'ları birlikte duruyor → backtest kurulabilir. BEKLEYENLER #2'nin
+1-3. maddeleri **düşer**, doğrudan 4. maddeden (backtest) başlanır.
+**Önceki beklenti değişmiyor, düşük:** K75 aynı mekanizmayı 6 ayakta ölçtü ve λ=0,25'ten
+itibaren ROI kötüleşti. Yeni olan tek şey, hipotezin **daha kısa çarpımda** hiç sınanmamış
+olması. Ölçüt yine sonuç görülmeden bağlanacak.
+
+## (e) HASAR ORANI ÖLÇÜLDÜ (son 14 gün)
+
+`kod/kayip_raporu.py`: **14 günün 4'ü tamamen temiz.** 2 kurulmayan Altılı (7 kupon/Altılı →
+14 kupon deneyden düştü) · **0 geç kurulan kupon** (en sinsi tür hiç görülmedi) · 0 yarış
+sonrası kayıt · 35 düşen defter koşusu — buna 16 Ağu'nun 17 koşusu dâhil, yani **düşen defter
+kayıtlarının yarısı tek bir günden.** Araç kendi sayısının **alt sınır** olduğunu söylüyor
+(`altili_temettu.csv`'de eksik olan Altılı burada da görünmez).
+
+## (f) `prep()` DAĞILIM KAYMASI — backtest sayıları canlıya DOĞRUDAN taşınmaz
+
+`altili_backtest.py`'nin `prep()`'i yalnızca **muhtemel + kapanış oranı olan ve tek kazananı
+bulunan** koşuları alır. Canlı taraf ise kartta ne varsa puanlar. Bu, backtest evrenini canlı
+evrenden **sistematik olarak** ayırır (eksik oranlı/çoklu kazananlı koşular temizlenmiş bir
+örneklem). K96 ve benzeri backtest sayıları bu yüzden canlı beklentiye **birebir çevrilemez**;
+yön göstergesidir, seviye göstergesi değil. SISTEM.md'ye not düşüldü.
+
+**Dokunulan dosyalar:** `kod/bekci.py` (üçüncü denetim), `kod/takip.py` (yalnız log ekleme,
+davranış değişikliği yok), `kod/ayak_kalibrasyon.py` (güç eşiği), `SISTEM.md`, `BEKLEYENLER.md`.
+**Canlı seçim/dağıtım/config koduna DOKUNULMADI.**

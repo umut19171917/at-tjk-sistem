@@ -46,6 +46,18 @@ def _log(msg):
         pass
 
 
+def _gorunur_log(msg):
+    """K107: isle_kosu'nun except bloklarindan cagrilir. _log'un kendisi patlarsa
+    isle_kosu'yu COKERTMEMELI (o zaman kosu 'bitti' muhrunu alamaz) -> tam korumali."""
+    try:
+        _log(msg)
+    except Exception:                                            # noqa: BLE001
+        try:
+            print(msg)
+        except Exception:                                        # noqa: BLE001
+            pass
+
+
 def _durum_oku(tarih):
     """Bugunun marker seti: {'GUNCELLE', 'YOK', 'SONUCLA', 'ANKARA 3 bitti', ...}"""
     if not GECIS.exists():
@@ -127,11 +139,16 @@ def isle_kosu(pist, ymd, tarih, no, saat, dosya):
         nk, n = defter.yaz_tg(tg, tarih, pist, only_kosu=no)
         if n:
             defter.html_yaz()   # tarayici tablosunu tazele
-        print(f"  -> deftere islendi ({n} at)" if n else "  -> (deftere yazilmadi: kapsam disi/gecmis)")
+            print(f"  -> deftere islendi ({n} at)")
+        else:
+            # K107: bu dal 16 Agu'da GUN BOYU sessizce calisti (17 kosu islendi, 0 yazildi).
+            # print pythonw altinda kayboluyordu -> artik log'a da dusuyor.
+            _gorunur_log(f"{pist} kosu {no}: DEFTERE YAZILMADI (kapsam disi/gecmis)")
     except Exception as e:
         # defter.csv kilitli (or. Excel'de acik) vb. -> GUNUN TAKIBI COKMESIN (K39);
         # rapor dosyasi/ekran zaten yazildi, sadece defter kaydi bu kosuda dusmus olur.
-        print(f"  -> DEFTER YAZILAMADI ({type(e).__name__}: {e}) -> dosyayi kapat; takip devam ediyor")
+        _gorunur_log(f"{pist} kosu {no}: DEFTER YAZILAMADI ({type(e).__name__}: {e}) "
+                     "-> dosyayi kapat; takip devam ediyor")
     try:
         # K42 paper test: ayri dosya/sayfa; hata takibi ASLA bozmasin
         import paper
@@ -141,7 +158,8 @@ def isle_kosu(pist, ymd, tarih, no, saat, dosya):
                 paper.html_yaz()
                 print(f"  -> paper: {npk} kupon acildi (K42; raporlar/paper.html)")
     except Exception as e:
-        print(f"  -> paper kupon uretilemedi ({type(e).__name__}) - takip devam ediyor")
+        _gorunur_log(f"{pist} kosu {no}: paper kupon uretilemedi ({type(e).__name__}: {e}) "
+                     "- takip devam ediyor")
     return True
 
 

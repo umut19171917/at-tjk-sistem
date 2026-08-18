@@ -1,5 +1,5 @@
 """
-bekci.py — K47/K49: takip NABZI + K106: CONFIG KAPSAMA denetimi.
+bekci.py — K47/K49: takip NABZI + K106: CONFIG KAPSAMA + K107: DEFTER KAPSAMA denetimi.
 
 NABIZ (K47/K49): eski surum "bugun basladi mi" soruyordu ve 16 Tem'de yetersiz kaldi
 (10:32 basladi, ~15:00 oldu, bekci sustu, 9 kosu gitti). K49'dan sonra takip her 15 dk'da bir
@@ -17,6 +17,17 @@ config'ler bulunmali. Eksik varsa uyari. SALT-OKUNUR -- hicbir dosyaya yazmaz, k
 YANLIS ALARM KORUMASI: bir config'in ILK kuruldugu gunden onceki Altililar sayilmaz
 (yeni eklenen config gecmisi yakalamaz); 15 dk grubu, 30 dk grubunun kuruldugu ama 15 dk
 penceresinin henuz gelmedigi anlarda eksik gorunur -> yalniz ILK KOSUSU BASLAMIS Altililar denetlenir.
+
+DEFTER KAPSAMA (K107): 16 Agu 2026'da takip GUN BOYU dondu (17 kosu "bitti", oran_log dolu,
+Altili kuponlari kuruldu) ama defter.csv ve paper_kupon.csv'ye TEK SATIR yazilmadi. Sicildeki
+tek boyle gun; iki gun sonra fark edildi. Hatanin sessiz kalma sebebi: isle_kosu icindeki
+defter/paper hata mesajlari print'e gidiyordu, gorev pythonw ile kostugu icin hicbir yere
+dusmuyordu (takip.py K107'de _log'a baglandi).
+Kural: takip_gecis.txt'de bugun "bitti" muhru almis kosu sayisi ile defter.csv'de bugune
+yazilmis AYRI kosu sayisi karsilastirilir. defter yazimi muhurden ONCE olur -> gecikme yok;
+sicilde bugune kadar ikisi HER GUN birebir esit (tek istisna 16 Agu: 17 vs 0).
+Tolerans: >=3 kosu islenmisken >=2 kosu eksikse uyarir (tek kosunun tg'den dusmesi normaldir).
+SALT-OKUNUR.
 """
 import sys
 from datetime import datetime
@@ -25,7 +36,11 @@ from pathlib import Path
 KOK = Path(__file__).resolve().parent.parent
 HB = KOK / "veri" / "takip_son.txt"
 KUPON = KOK / "veri" / "altili_kupon.csv"
+GECIS = KOK / "veri" / "takip_gecis.txt"
+DEFTER = KOK / "veri" / "defter.csv"
 ESIK_DK = 45
+DEFTER_ASGARI_ISLENEN = 3      # bu kadar kosu islenmeden defter denetimi yapilmaz
+DEFTER_TOLERANS = 2            # bu kadar ve fazlasi eksikse uyari
 
 
 def _uyar(baslik, metin):
@@ -101,6 +116,28 @@ def kapsama_kontrol(now):
     return eksik
 
 
+def defter_kontrol(now):
+    """K107: bugun islenen kosu sayisi ile deftere yazilan kosu sayisi tutuyor mu?
+    Doner: (islenen, yazilan) veya None (denetim yapilamadi / sorun yok)."""
+    try:
+        import pandas as pd
+        if not (GECIS.exists() and DEFTER.exists()):
+            return None
+        bugun = now.strftime("%Y-%m-%d")
+        islenen = sum(1 for s in GECIS.read_text(encoding="utf-8", errors="replace").splitlines()
+                      if s.startswith(bugun + "\t") and s.endswith(" bitti"))
+        if islenen < DEFTER_ASGARI_ISLENEN:
+            return None                    # gun daha yeni basladi -> denetim erken
+        d = pd.read_csv(DEFTER, low_memory=False)
+        yazilan = d.loc[d["tarih"] == bugun, "race_kod"].nunique()
+    except Exception as e:                                       # noqa: BLE001
+        print(f"bekci: defter denetimi atlandi ({type(e).__name__}) -- diger kontroller etkilenmedi.")
+        return None
+    if islenen - int(yazilan) < DEFTER_TOLERANS:
+        return None
+    return islenen, int(yazilan)
+
+
 def main():
     now = datetime.now()
     if not (10 * 60 + 40 <= now.hour * 60 + now.minute <= 22 * 60 + 30):
@@ -109,18 +146,33 @@ def main():
     if not nabiz_kontrol(now):
         return                              # nabiz yoksa kapsama zaten anlamsiz
     eksik = kapsama_kontrol(now)
-    if not eksik:
+    if eksik:
+        sat = "\n".join(f"  {p} {s}. Altili -> {c} ({dk} dk grubu)" for p, s, c, dk in eksik[:12])
+        print(f"[UYARI] eksik config: {len(eksik)}")
+        _uyar("TJK: BIR CONFIG KUPON KURMADI!",
+              f"Bugun {len(eksik)} yerde aktif config'in kuponu YOK:\n\n{sat}\n\n"
+              "Bu, olculen EN PAHALI hasardir: o Altili o config icin deneyden duser.\n\n"
+              "Kontrol:\n"
+              "  1) veri/takip_log.txt -> 'altili kupon hatasi' satiri var mi?\n"
+              "  2) Config yeni eklendiyse ve pencere kacirildiysa normaldir.\n\n"
+              "(Detay: KARARLAR.md K106)")
+    else:
         print("bekci: config kapsamasi tam.")
+
+    d = defter_kontrol(now)
+    if d is None:
+        print("bekci: defter kapsamasi tam.")
         return
-    sat = "\n".join(f"  {p} {s}. Altili -> {c} ({dk} dk grubu)" for p, s, c, dk in eksik[:12])
-    print(f"[UYARI] eksik config: {len(eksik)}")
-    _uyar("TJK: BIR CONFIG KUPON KURMADI!",
-          f"Bugun {len(eksik)} yerde aktif config'in kuponu YOK:\n\n{sat}\n\n"
-          "Bu, olculen EN PAHALI hasardir: o Altili o config icin deneyden duser.\n\n"
+    islenen, yazilan = d
+    print(f"[UYARI] defter eksik: {islenen} kosu islendi, {yazilan} kosu yazildi")
+    _uyar("TJK: DEFTERE YAZILMIYOR!",
+          f"Bugun {islenen} kosu islendi ama deftere yalniz {yazilan} kosu yazildi.\n\n"
+          "16 Agu 2026'da bu GUN BOYU surdu (17 kosu islendi, 0 yazildi) ve iki gun sonra\n"
+          "fark edildi: o gunun kalibrasyon/ROI kaydi TAMAMEN kayip.\n\n"
           "Kontrol:\n"
-          "  1) veri/takip_log.txt -> 'altili kupon hatasi' satiri var mi?\n"
-          "  2) Config yeni eklendiyse ve pencere kacirildiysa normaldir.\n\n"
-          "(Detay: KARARLAR.md K106)")
+          "  1) veri/defter.csv veya veri/paper_kupon.csv Excel'de ACIK MI? -> kapat\n"
+          "  2) veri/takip_log.txt -> 'DEFTER YAZILAMADI' / 'paper kupon uretilemedi'\n\n"
+          "(Detay: KARARLAR.md K107)")
 
 
 if __name__ == "__main__":
