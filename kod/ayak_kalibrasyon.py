@@ -46,7 +46,17 @@ KARAR ESIKLERI (SONUC GORULMEDEN BAGLANDI)
 --------------------------------------------------------------------------------------
   McNemar p < 0,05 ve yalniz-kamu > yalniz-sistem  -> config EMEKLI adayi
   McNemar p < 0,05 ve yalniz-sistem > yalniz-kamu  -> TEK ADAY, derinlestir
-  p >= 0,05                                        -> "kenar kaniti yok" etiketi, sicilde kalir
+  p >= 0,05 VE yeterli guc varsa                   -> "kenar kaniti yok"
+  YETERLI GUC YOKSA                                -> "BAKILAMADI" (sonuc BILDIRILMEZ)
+
+GUC ESIGI (K107'de eklendi — kendi hatamin duzeltmesi):
+  Tam binom, iki yonlu, alpha=0,05 icin anlamlilik ANCAK >=6 uyumsuz cift varsa MUMKUNDUR:
+      n=4 -> hepsi tek yanli olsa bile p=0,125 | n=5 -> p=0,0625 | n=6 -> p=0,031  <- ilk yeterli
+  Yani n<6 olan bir config icin test HICBIR sonucla anlamlilik uretemez. Boyle bir config'e
+  "kenar kaniti yok" demek YANLISTIR; dogrusu "bu orneklemle BAKILAMAZ".
+  K106'da bu ayrim yapilmamis ve dort config (acgozlu_v2 n=4, ayrisma900 n=4, orta_15 n=4,
+  acgozlu900_15 n=0) icin fazla guclu bir ifade kurulmustu. Dis denetim (18 Agu) bunu
+  post-hoc guc analizi isteyerek ortaya cikardi; ifade K107'de yumusatildi.
 
 GECERSIZLIK: bir config icin kupon-ani kaydi bulunan ayak orani %90'in altindaysa o config
 icin olcum GECERSIZ sayilir (once veri butunlugu onarilir).
@@ -70,6 +80,9 @@ from altili_canli import KONFIG  # noqa: E402
 NBOOT = 5000
 RNG = np.random.default_rng(20260817)
 KAPSAM_ESIGI = 0.90
+# K107: tam binomda alpha=0,05'e ulasabilmek icin gereken ASGARI uyumsuz cift sayisi.
+# n=5 -> en iyi ihtimalle p=0,0625 (yetmez); n=6 -> p=0,031 (yeter).
+ASGARI_UYUMSUZ = 6
 
 
 def veri():
@@ -149,8 +162,13 @@ def main():
             continue
         kaps = bul / top
         p = mcnemar(a_only, b_only)
+        n_uy = a_only + b_only
+        # K107: guc kontrolu KARAR'dan ONCE gelir. n<6 ise test anlamlilik URETEMEZ ->
+        # "kenar kaniti yok" demek yanlis olur, dogrusu "bakilamaz".
         if kaps < KAPSAM_ESIGI:
             karar = "GECERSIZ (kapsam<%90)"
+        elif n_uy < ASGARI_UYUMSUZ:
+            karar = f"BAKILAMAZ (uyumsuz={n_uy}<{ASGARI_UYUMSUZ})"
         elif p >= 0.05:
             karar = "kenar kaniti yok"
         elif a_only > b_only:
@@ -158,7 +176,7 @@ def main():
         else:
             karar = "EMEKLI ADAYI"
         print(f"{cfg:>15} {bul:>6} %{100*kaps:>5.0f} {h_sis:>7} {h_kam:>6} "
-              f"{a_only:>11} {b_only:>12} {a_only-b_only:>+6} {p:>10.4f} {karar:>22}")
+              f"{a_only:>11} {b_only:>12} {a_only-b_only:>+6} {p:>10.4f} {karar:>26}")
         ozet.append((cfg, olay, a_only, b_only, bul))
 
     print("\n" + "=" * 116)
