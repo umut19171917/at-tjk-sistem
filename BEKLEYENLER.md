@@ -34,8 +34,29 @@ ama **tamamı tek bir 6/6'dan** (23.07 Ankara 2., 90 TL → 17.934 TL). O tek ku
 **Şart:** Kuralı tek YURİBOYKA vakasına göre kurgulama (hindsight/overfit — K33/K52 yasağı);
 genel ilke olarak sabitle, backtest robust üstünlük gösterirse konuş.
 
-### 2. 4'lü / 5'li kupon türleri — ÖN KOŞUL KARŞILANDI, KOL AÇILABİLİR (K74/K75/K84 → K107)
-**Eklendi:** 2026-07-24 · **Güncellendi:** 2026-08-18 (K107) · **İlgili:** K5, K46, K74, K75, K94, K107
+### 2. ✅ ÖLÇÜLDÜ ve KAPANDI (2026-08-18, K108) — 4'lü/5'li REDDEDİLDİ, mekanizma yok
+**Eklendi:** 2026-07-24 · **KAPANDI:** 2026-08-18 (K108) · **İlgili:** K5, K46, K74, K75, K84, K94, K107, K108
+
+> ## 🔒 KAPANIŞ ÖZETİ (K108, 18 Ağu 2026)
+>
+> **Ölçüldü, reddedildi.** Araç: `kod/nli_backtest.py`. Tasarım: 4'lü/5'li/6'lı TJK'da aynı
+> koşuda biter ve ayakları iç içedir (4.931 üçlünün %100'ü) → **990 eşleşmiş olayda**, aynı
+> gün/pist/saha, **aynı parayla** (TL eşitlendi, birim fiyatlar farklı: 1,75/1,50/1,25) kıyas.
+>
+> - **S1 (mekanizma):** 16 testin **1'i** geçti; şansa beklenen 0,8. Geçen hücre ne fiyat-güvenli
+>   alt kümede ne öteki dağıtıcıda tekrarlıyor. **Fark neyse kesintinin ucuzluğuyla açıklanıyor.**
+> - **S2 (oynanabilirlik):** 24 hücrenin **sıfırında** ROI ≥ 0. En iyi hücre **−%38,5** (4'lü).
+> - **S3 (tavan):** Ayak azalınca isabet **4-8 kat** artıyor, ortalama ödeme **0,15-0,54 katına**
+>   düşüyor, çarpım ~**1,0**. K98-h tavanı kısa üründe de aynen geçerli — tavan bir kupon-şekli
+>   özelliği değil, **piyasa özelliği**.
+>
+> **K84'ün devir gözlemi açıklandı:** devir günü 5-ayak medyanının 201 kat sıçraması gerçekti
+> ama zorluğun göstergesiydi, açıklığın değil (6/6'yı kimsenin bilemediği gün 5'li de zordur).
+>
+> **YENİDEN AÇILMASI İÇİN:** yeni bir mekanizma iddiası **ve** yeni veri gerekir.
+> "Bir daha bakalım" gerekçe değildir. (Kural 6 / K33 overfit yasağı.)
+
+**Aşağıdaki metin KAPANMADAN ÖNCEKİ hâliyle durur — gerekçe zinciri görünsün diye silinmedi.**
 **TETİK: KULLANICI hatırlatacak** (2026-07-31'de öyle dedi) — kendiliğinden başlama.
 
 **K84 EKLEDİ — en güçlü gerekçe (31 Tem 2026):** arşivde 6.747 Altılı'nın **24'ünde (%0,36)**

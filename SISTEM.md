@@ -2,8 +2,8 @@
 
 > **Bu dosya bir devir belgesidir.** Yeni bir Claude oturumuna sistemin tamamını
 > anlatmak için hazırlandı. Üretim tarihi: **16 Ağustos 2026** ·
-> **güncellendi 18 Ağustos 2026 (K107 — 16 Ağu sessiz gün kaybı, A0 güç eşiği, defter kapsama alarmı).**
-> Otorite sırası: `KARARLAR.md` (numaralı karar günlüğü, K1–K107) > `BEKLEYENLER.md`
+> **güncellendi 18 Ağustos 2026 (K107 — sessiz gün kaybı + defter alarmı; K108 — 4'lü/5'li kolu ölçüldü ve KAPANDI).**
+> Otorite sırası: `KARARLAR.md` (numaralı karar günlüğü, K1–K108) > `BEKLEYENLER.md`
 > (ertelenmiş işler + tetikleri) > bu dosya. Çelişki olursa KARARLAR kazanır.
 
 ---
@@ -316,6 +316,23 @@ anti-muhafazakârdır. **Ön-kayıtlı birincil ölçüt McNemar'dır**, bootstr
 *Kapsam notu:* `dar/orta/genis/genis900` kupon-anı kaydı %69-86 → ön-kayıtlı %90 eşiğiyle
 **GEÇERSİZ**. Kapsam arttıkça tekrarlanmalı.
 
+### 4'lü / 5'li ürün kolu — ÖLÇÜLDÜ, REDDEDİLDİ (K108)
+TJK'da 4'lü/5'li/6'lı **aynı koşuda biter, ayakları iç içedir** (4.931 üçlünün %100'ü) →
+990 eşleşmiş olayda, aynı gün/pist/saha, **aynı parayla** kıyaslandı (birim fiyatlar farklı:
+1,75 / 1,50 / 1,25 TL, o yüzden kombo değil TL eşitlendi).
+
+- **Mekanizma yok:** 16 testin 1'i geçti (şansa beklenen 0,8), o da tekrarlamıyor.
+- **Oynanamaz:** 24 hücrenin sıfırında ROI ≥ 0. En iyi hücre **−%38,5**.
+- **TAVAN KISA ÜRÜNDE DE GEÇERLİ:** ayak azalınca isabet **4-8 kat** artıyor, ortalama ödeme
+  **0,15-0,54 katına** düşüyor, çarpım ≈ **1,0**. → **Tavan bir kupon-şekli özelliği değil,
+  PİYASA özelliğidir.** Kolay tutan bahsi herkes tutuyor; hangi yoldan kolaylaştırdığın
+  fark etmiyor.
+- **Yan teyit:** ölçülen ROI'ler bağımsız hesaplanan kesintinin üstüne oturdu (6'lı −%63,4 vs
+  kesinti %66,8) → "kupon sadece kesintiyi ödüyor" üçüncü bir üründen doğrulandı.
+
+Araç: `kod/nli_backtest.py` (salt offline). Ürün kolu böylece hem kesinti tarafından (K94)
+hem kupon tarafından (K108) kapandı.
+
 ### Kâğıt ROI teoriye yakınsadı (K93)
 Altılı −%33,3 (backtest −%32) · ganyan −%25,4 (o zamanki referans). **Kenar yok.**
 
@@ -380,7 +397,7 @@ kendisi doğrulandı. Bu yüzden bot1'e 15 dk ikizi **açılmadı**.
 
 | # | konu | tetik |
 |---|---|---|
-| 2 | 4'lü / 5'li kupon türleri | **ÖN KOŞUL KARŞILANDI (K107)** — `nli_ganyan.csv`'de 4'lü 5.691 / 5'li 6.519 olay, temettü **ve** ayak kodlarıyla duruyor; kol kurulabilir. Tetik: **kullanıcı hatırlatacak**. Beklenti düşük (K94: kesinti Altılı'dan yalnız 2-3 puan iyi; K75: λ taraması olumsuz) |
+| 2 | ~~4'lü / 5'li kupon türleri~~ | **KAPANDI (K108, 18 Ağu)** — 990 eşleşmiş olayda ölçüldü, mekanizma yok, en iyi ROI −%38,5. Bkz. §8 |
 | 3 | `defter.html`'i K55 görsel diline çevirme | sıra gelince |
 | 4 | 30 vs 15 dk | **canlı kol açıldı**, ~60 kupon sonra |
 | 5 | Altılı sonuçlamada favori-devri kuralı | doğruluk kritikleşirse |
@@ -500,7 +517,7 @@ sıra ayrı (ayrışma).
 `altili_tam.py` · `altili_olasilik.py` · `guncelle.py`
 
 **Ölçüm araçları (offline, salt-okunur):**
-`altili_backtest.py` (dağıtıcıların tek kaynağı) · `altili_canli_secim_test.py` (K98'in
+`altili_backtest.py` (dağıtıcıların tek kaynağı) · `nli_backtest.py` (**K108 — 4'lü/5'li kolu; N-ayak dağıtıcıları N=6'da orijinalle eşdeğerliği sınanmış**) · `altili_canli_secim_test.py` (K98'in
 dokuz tablosu) · `altili_banker_takasi_test.py` (K101) · `kulvar_tercih_test.py` (K102) ·
 `altili_suruklenme.py` (K80 λ) · `altili_zaman_test.py` (30 vs 15 dk) ·
 `kayip_raporu.py` (K82) · `kupon_ani_geri_kur.py` (K97 geri kurma) · **`ayak_kalibrasyon.py`** (K106 ÖLÇÜM A0 — seçim katmanı)

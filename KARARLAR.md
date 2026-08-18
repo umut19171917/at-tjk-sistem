@@ -2783,3 +2783,127 @@ yön göstergesidir, seviye göstergesi değil. SISTEM.md'ye not düşüldü.
 **Dokunulan dosyalar:** `kod/bekci.py` (üçüncü denetim), `kod/takip.py` (yalnız log ekleme,
 davranış değişikliği yok), `kod/ayak_kalibrasyon.py` (güç eşiği), `SISTEM.md`, `BEKLEYENLER.md`.
 **Canlı seçim/dağıtım/config koduna DOKUNULMADI.**
+
+---
+
+**K108 — 4'LÜ / 5'Lİ KOLU ÖLÇÜLDÜ → REDDEDİLDİ. BEKLEYENLER #2 KAPANDI. "Daha kısa çarpım
+kenarı korur" hipotezi çürüdü; K98-h tavanı kısa üründe de birebir geçerli.** 18 Ağu 2026.
+Araç: `kod/nli_backtest.py` (salt offline, hiçbir dosyaya yazmaz).
+
+## (a) TASARIM — eşleşmiş üçlü, kolun asıl kazanımı
+
+TJK'da 4'lü/5'li/6'lı **aynı koşuda biter ve ayakları iç içedir**: 6'lının son 5 ayağı = 5'li,
+son 4 ayağı = 4'lü. Arşivdeki **4.931 üçlünün %100'ünde** doğrulandı. Bu, hipotezi izole eden
+bir tasarım verdi: aynı gün, aynı pist, aynı saha, aynı son koşu, aynı para — **tek değişken
+kaç ayak tutturman gerektiği.** Gün/pist/zorluk etkisi tamamen elenir.
+
+**AYNI PARA, AYNI KOMBO DEĞİL.** Resmî 2026 birim fiyatları eşit değil (K86): 4'lü 1,75 ·
+5'li 1,50 · 6'lı 1,25 TL. Kombo eşitlemek 4'lüye %40 fazla para harcatırdı. Bütçe **TL
+cinsinden** eşitlendi: Altılı 900 kombo × 1,25 = **1.125 TL** → 4'lü 642 · 5'li 750 kombo.
+İkinci bütçe 120 TL. Ödeme yalnız tam isabet (4/4, 5/5, 6/6); Altılı tarafı da `kademeli=False`
+alındı ki üç ürün aynı kuralla yarışsın.
+
+**Örneklem:** OOS 2025-26 **990** eşleşmiş üçlü (birincil) · 2026 **330** (fiyat-güvenli
+alt küme). Puanlar `altili_olasilik_bot1.csv` (walk-forward, eğit ≤2023 · harman 2024).
+
+## (b) İKİ DOĞRULAMA — ölçütle birlikte, sonuç görülmeden bağlanmıştı
+
+**(a) Dağıtıcı eşdeğerliği: GEÇTİ.** N-ayak dağıtıcıları `altili_backtest.py`'nin 6-ayak
+mantığının genellemesidir; mantık sessizce değişmesin diye 4.000 rastgele kart × 12 ayarda
+orijinalle karşılaştırıldı: **fark 0.** N=6'da birebir aynı kuponu üretiyorlar.
+
+**(b) Boru hattı kontrolü: GEÇTİ ama K94'ten sapıyor.** İma edilen iade
+= medyan[(temettü/birim) × P_kamu(kazanan kombo)]:
+
+| ürün | 2026 ima edilen kesinti | K94 (kalibre) | OOS 2025-26 |
+|---|---|---|---|
+| 3'lü | %51,9 | %45,4 | %52,9 |
+| 4'lü | %54,0 | %45,6 | %59,9 |
+| 5'li | %57,1 | %46,8 | %65,6 |
+| 6'lı | %60,8 | %48,6 | %66,8 |
+
+**Sıralama aynı** (ayak arttıkça kesinti artıyor) ama benim sayılarım 6-12 puan yüksek.
+Sebep bilinen: K94 ayak başına yanlılığı `k=0,978` çözerek üstel düzeltme uyguladı ve 6'lıyı
+**%48,6'ya çapaladı**; benimki **ham/kalibresiz**, yani üst tahmindir. Karar için önemli olan
+sıralamadır ve o birebir tutuyor.
+**Asıl doğrulama başka yerden geldi:** ölçülen kupon ROI'leri, bağımsız hesaplanan kesintinin
+tam üstüne oturdu — 6'lı ROI −%63,4 vs kesinti %66,8 · 4'lü −%58,7 vs %59,9. **Kupon ne
+kazandırıyor ne kaybettiriyor; sadece kesintiyi ödüyor.** Projenin merkezi bulgusunun
+üçüncü bir üründen bağımsız teyidi.
+
+## (c) S1 — MEKANİZMA YOK. Hipotez çürüdü.
+
+Ölçüt önceden şuydu: eşleşmiş ROI farkının %95 GA **alt sınırı**, K94'ün kesinti farkından
+(D4 taban +3,0 · D5 taban +1,8 puan) **büyük olmalı**. 16 test (2 pencere × 2 bütçe ×
+2 dağıtıcı × 2 ürün):
+
+| pencere · bütçe · dağıtıcı | D4 (4'lü − 6'lı) | D5 (5'li − 6'lı) |
+|---|---|---|
+| OOS · 1.125 TL · açgözlü | +4,7 [−6,5, +15,1] | +6,5 [−4,3, +17,3] |
+| OOS · 1.125 TL · kapsam | −1,5 [−18,2, +13,2] | −1,7 [−18,4, +14,7] |
+| OOS · 120 TL · açgözlü | **+21,3 [+7,9, +33,8]** ← tek geçen | +11,6 [−0,3, +23,6] |
+| OOS · 120 TL · kapsam | +8,4 [−12,2, +27,4] | −1,7 [−18,9, +14,7] |
+| 2026 · 1.125 TL · açgözlü | +3,8 [−20,8, +26,2] | +9,9 [−13,3, +32,7] |
+| 2026 · 1.125 TL · kapsam | −18,9 [−48,5, +4,8] | −8,8 [−34,5, +12,1] |
+| 2026 · 120 TL · açgözlü | +22,6 [−7,4, +50,0] | +17,5 [−8,6, +42,9] |
+| 2026 · 120 TL · kapsam | +13,8 [−22,3, +45,7] | +3,4 [−28,2, +31,9] |
+
+**16 testin 1'i geçti.** α=0,05'te şansa beklenen yanlış pozitif **0,8** — yani gözlenen tam
+olarak boş hipotezin öngördüğü kadar. Üstelik geçen hücre **fiyat-güvenli alt kümede
+tekrarlamıyor** (aynı hücre 2026'da +22,6 [−7,4, +50,0] → geçmiyor) ve **öteki dağıtıcıda
+tekrarlamıyor**. K107'de FDR notunu yazarken tarif ettiğim desenin ta kendisi.
+**HÜKÜM: mekanizma yok. Ne kadar fark varsa kesintinin ucuzluğuyla açıklanıyor.**
+
+*Not (ölçütü sertleştiren yönde):* eğer taban olarak K94'ün kalibre farkları yerine (b)'deki
+kendi ham farklarım kullanılsaydı taban +6,8/+3,7'ye çıkardı ve tek geçen hücre de düşerdi.
+Ölçüt sonradan değiştirilmedi; kayda geçiyor ki hüküm bu yönde daha da güçlü.
+
+## (d) S2 — OYNANAMAZ. 24 hücrenin sıfırında ROI ≥ 0.
+
+| ürün | en iyi hücre | en kötü hücre |
+|---|---|---|
+| 4'lü | **−%38,5** | −%69,0 |
+| 5'li | −%43,6 | −%60,4 |
+| 6'lı | −%50,1 | −%70,8 |
+
+Ön-kayıtlı S2 eşiği "mutlak ROI ≥ 0 **ve** GA alt sınırı > −%5" idi. En iyi hücre bile
+−%38,5. Kullanıcının çerçevesi *"sürdürülebilir yol"* (K48): **−%38, −%50'den iyi olduğu için
+oynanabilir olmaz.** 4'lü Altılı'dan ucuz bir kayıptır, kâr değil.
+
+## (e) S3 — K98-h TAVANI KISA ÜRÜNDE DE GEÇERLİ. Kolun en öğretici sonucu.
+
+Ayak sayısı azaldıkça aynı para çok daha geniş ayak alıyor (642^(1/4)=**4,97 at/ayak** vs
+900^(1/6)=**3,08**) ve isabet patlıyor. Ama ödeme tam o oranda düşüyor:
+
+| bütçe · dağıtıcı | ürün | isabet | isabet katı | ort. ödeme | ödeme katı | **çarpım** |
+|---|---|---|---|---|---|---|
+| 1.125 TL · açgözlü | 4'lü | %63,0 | 4,26× | 696 TL | 0,26× | **1,12** |
+| | 5'li | %32,1 | 2,17× | 1.418 TL | 0,53× | **1,16** |
+| | 6'lı | %14,8 | 1,00× | 2.655 TL | 1,00× | 1,00 |
+| 120 TL · açgözlü | 4'lü | %25,7 | 6,27× | 211 TL | 0,25× | **1,59** |
+| | 6'lı | %4,1 | 1,00× | 831 TL | 1,00× | 1,00 |
+
+Sekiz hücrenin hepsinde çarpım **0,73 – 1,59** bandında, medyanı ~1,09. Yani:
+**isabeti 4-8 kat artırıyorsun, ödemen 0,15-0,54 katına düşüyor, net elinde hemen hemen
+hiçbir şey kalmıyor.** K98-h Altılı'da "kapsamı genişletmek = kalabalığa katılmak" demişti;
+burada aynı şey **ayak sayısını azaltarak** yapıldı ve **aynı duvara** çarpıldı. Tavan bir
+kupon-şekli özelliği değil, **piyasa özelliği** — kolay tutan bahsi herkes tutuyor.
+
+## (f) KARARLAR
+
+1. **BEKLEYENLER #2 KAPANDI.** 4'lü/5'li kolu **reddedildi**. Yeniden açılması için yeni
+   bir mekanizma iddiası **ve** yeni veri gerekir; "bir daha bakalım" gerekçe değildir.
+2. **K84'ün devir gözlemi açıklandı.** Devir günlerinde 5 ayak medyanının 201 kat sıçraması
+   gerçekti ama **fırsat değildi**: o günler 6/6'nın kimsenin bilemediği günlerdir, yani
+   5'li de zordur. Zorluğun göstergesi, açıklığın değil (K94'ün 7'li için söylediğinin aynısı).
+3. **K75 farklı bir açıdan doğrulandı.** K75 "kısa çarpımda bakılmadı" boşluğuyla kapanmıştı;
+   o boşluk artık kapalı. Ayak başına kenar (K74) **hiçbir çarpım uzunluğunda** paraya
+   dönüşmüyor.
+4. **12 negatif Altılı testinden sonra kalan tek yapısal fikir de öldü.** Ürün kolu
+   (K94'te kesinti tarafından, K108'de kupon tarafından) tamamen kapandı.
+
+## (g) DOKUNULMAYANLAR
+
+`kod/nli_backtest.py` yeni ve salt-okunur; hiçbir dosyaya yazmaz. Canlı seçim/dağıtım/config
+koduna, `altili_backtest.py`'ye, defter/paper akışına **dokunulmadı**. `altili_backtest.py`'nin
+6-ayak fonksiyonları kopyalanmadı, genelleştirildi ve eşdeğerliği sınandı (bkz. (b)-a).
