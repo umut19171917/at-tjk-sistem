@@ -2,8 +2,8 @@
 
 > **Bu dosya bir devir belgesidir.** Yeni bir Claude oturumuna sistemin tamamını
 > anlatmak için hazırlandı. Üretim tarihi: **16 Ağustos 2026** ·
-> **güncellendi 18 Ağustos 2026 (K107 — sessiz gün kaybı + defter alarmı; K108 — 4'lü/5'li kolu ölçüldü ve KAPANDI).**
-> Otorite sırası: `KARARLAR.md` (numaralı karar günlüğü, K1–K108) > `BEKLEYENLER.md`
+> **güncellendi 18 Ağustos 2026 (K107 sessiz gün kaybı · K108 4'lü/5'li KAPANDI · K109 ayak sicili + ORAN SÜRÜKLENMESİ tuzağı).**
+> Otorite sırası: `KARARLAR.md` (numaralı karar günlüğü, K1–K109) > `BEKLEYENLER.md`
 > (ertelenmiş işler + tetikleri) > bu dosya. Çelişki olursa KARARLAR kazanır.
 
 ---
@@ -316,6 +316,37 @@ anti-muhafazakârdır. **Ön-kayıtlı birincil ölçüt McNemar'dır**, bootstr
 *Kapsam notu:* `dar/orta/genis/genis900` kupon-anı kaydı %69-86 → ön-kayıtlı %90 eşiğiyle
 **GEÇERSİZ**. Kapsam arttıkça tekrarlanmalı.
 
+### ⚠️ ORAN SÜRÜKLENMESİ TUZAĞI — muhtemel oranla DEĞER hesaplanmaz (K109)
+Kupon anındaki muhtemel oran, kapanışa doğru **sistematik ve taraflı** biçimde kayar
+(1.002 kazanan ayak, son kayıt ~16 dk kala):
+
+| kupon-anı oranı | ortalama değişim |
+|---|---|
+| <4 | **+%61,1** (açılıyor) |
+| 4-8 | +%1,5 |
+| 8-16 | −%23,9 |
+| 16+ | **−%61,4** (çöküyor) |
+
+Müşterek bahiste ödenen fiyat **kapanış** fiyatıdır; muhtemel oranla hesaplanan kazanç
+**tahsil edilemez**. Yanlışlık orana kör config'leri kayırır: `bot1_900`'ün ayak-ganyan
+ROI'si muhtemelle **+%19,4**, son görülen fiyatla **−%17,9** — **37 puanlık yanılsama.**
+Mevcut ölçümler bu hatayı taşımıyor (defter `ganyan_kapanis` kullanır, A0 orana hiç bakmaz,
+K104 kapanışla ölçtü). **Yeni bir değer ölçüsü kurarken ilk sorulacak soru budur.**
+
+### Ayak düzeyi sicili — iki config ailesi gerçekten farklı, ama para etmiyor (K109)
+1.896 ayakta ölçüldü. **bot1 ailesi orana kör olmanın ders kitabı davranışını gösteriyor:**
+favoride ~20-27 puan bırakıyor (`bot1_1800` %71,1 vs `acgozlu900` %98,3 — kamu 1.'si kazanınca),
+sürprizde ~18-20 puan kazanıyor (%46-48 vs %28-32 — kamu 5+'i kazanınca). `orta` ise 154
+sürpriz ayağın **2'sini** tutmuş (%1,3) → **`orta` neredeyse tanım gereği kalabalığın kendisi.**
+Bu fark **gerçek ama paraya dönüşmüyor** (yukarıdaki sürüklenme).
+
+**Marjinal katkı:** eklenen n. atın verimi (isabet artışı / maliyet artışı) **hiçbir yerde
+1'i geçmiyor**; 3. attan sonra 0,87-0,92'de düz. Tatlı nokta yok — genişletmek her yerde
+eşit derecede biraz zararlı. K98-h/K108'in ayak düzeyindeki ifadesi.
+
+**Banker:** yedi config'in **beşinde** kamuyla fark tam **+0,0** → tek at yazdığımızda
+kamunun favorisini yazıyoruz. Kuponun en pahalı kararında sistemin kalabalıktan ayrımı yok.
+
 ### 4'lü / 5'li ürün kolu — ÖLÇÜLDÜ, REDDEDİLDİ (K108)
 TJK'da 4'lü/5'li/6'lı **aynı koşuda biter, ayakları iç içedir** (4.931 üçlünün %100'ü) →
 990 eşleşmiş olayda, aynı gün/pist/saha, **aynı parayla** kıyaslandı (birim fiyatlar farklı:
@@ -517,7 +548,7 @@ sıra ayrı (ayrışma).
 `altili_tam.py` · `altili_olasilik.py` · `guncelle.py`
 
 **Ölçüm araçları (offline, salt-okunur):**
-`altili_backtest.py` (dağıtıcıların tek kaynağı) · `nli_backtest.py` (**K108 — 4'lü/5'li kolu; N-ayak dağıtıcıları N=6'da orijinalle eşdeğerliği sınanmış**) · `altili_canli_secim_test.py` (K98'in
+`ayak_analiz.py` (**K109 — aktif config'lerin ayak düzeyi sicili + oran sürüklenmesi**) · `altili_backtest.py` (dağıtıcıların tek kaynağı) · `nli_backtest.py` (**K108 — 4'lü/5'li kolu; N-ayak dağıtıcıları N=6'da orijinalle eşdeğerliği sınanmış**) · `altili_canli_secim_test.py` (K98'in
 dokuz tablosu) · `altili_banker_takasi_test.py` (K101) · `kulvar_tercih_test.py` (K102) ·
 `altili_suruklenme.py` (K80 λ) · `altili_zaman_test.py` (30 vs 15 dk) ·
 `kayip_raporu.py` (K82) · `kupon_ani_geri_kur.py` (K97 geri kurma) · **`ayak_kalibrasyon.py`** (K106 ÖLÇÜM A0 — seçim katmanı)

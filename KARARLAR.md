@@ -2907,3 +2907,166 @@ kupon-şekli özelliği değil, **piyasa özelliği** — kolay tutan bahsi herk
 `kod/nli_backtest.py` yeni ve salt-okunur; hiçbir dosyaya yazmaz. Canlı seçim/dağıtım/config
 koduna, `altili_backtest.py`'ye, defter/paper akışına **dokunulmadı**. `altili_backtest.py`'nin
 6-ayak fonksiyonları kopyalanmadı, genelleştirildi ve eşdeğerliği sınandı (bkz. (b)-a).
+
+---
+
+**K109 — AYAK DÜZEYİ SİCİLİ ÇIKARILDI: bot1 ailesi gerçekten SÜRPRİZ yakalıyor (yapısal, gerçek),
+ama "+%19,4 ganyan ROI" bir YANILSAMA çıktı — ORAN SÜRÜKLENMESİ TUZAĞI bulundu ve kayda geçti.**
+18 Ağu 2026. Araç: `kod/ayak_analiz.py` (salt-okunur). Kullanıcının sorusu: *"Altılı tutması
+önemli değil — koşu bazında en başarılı kuponlar hangileri ve NEDEN?"*
+
+**Kapsam:** 20 Tem – 18 Ağu, **1.896 sonuçlanmış ayak**, 7 aktif config, kupon-anı kapsamı %91.
+Kupon anındaki kimlikler `altili_kupon_ani.csv`'den okundu (K97 — yarış anı verisiyle
+yargılamak sızıntı olurdu).
+
+## (a) ⚠️ ORAN SÜRÜKLENMESİ TUZAĞI — bu maddenin kendisi bir bulgudur
+
+İlk ölçümde `bot1_900` için **ayak-ganyan ROI +%19,4** çıktı (kamu aynı genişlikte −%24,2;
+fark **+43,5 puan**). Bu projede bu büyüklükte pozitif bir sayı hiç görülmemişti, o yüzden
+yayımlanmadan önce kırılmaya çalışıldı. **Kırıldı.**
+
+**Kupon anındaki MUHTEMEL oran, kapanışa doğru sistematik olarak kayıyor** (1.002 kazanan ayak,
+son kayıt ort. 16 dk kala):
+
+| kupon-anı oranı | n | ortalama değişim |
+|---|---|---|
+| <4 | 519 | **+%61,1** ← açılıyor |
+| 4-8 | 322 | +%1,5 |
+| 8-16 | 125 | −%23,9 |
+| 16+ | 36 | **−%61,4** ← çöküyor |
+
+Erken muhtemel oran gürültülüdür ve para geldikçe ortalamaya döner. **Sonuç: kupon anında
+"sürpriz" görünen at, kapanışta o kadar sürpriz değildir.** Ve bu yanlışlık **taraflıdır** —
+tam olarak orana kör config'leri kayırır, çünkü onlar sürekli "yüksek oranlı görünen" atı seçer.
+
+| config | ROI (muhtemel) | ROI (son görülen) | **yanılsama** |
+|---|---|---|---|
+| **bot1_900** | **+%19,4** | **−%17,9** | **+37,3 puan** |
+| **bot1_1800** | **+%4,2** | **−%21,3** | **+25,5 puan** |
+| acgozlu900 | −%27,1 | −%22,4 | −4,7 |
+| acgozlu_v2 | −%23,4 | −%20,6 | −2,7 |
+| orta | −%32,1 | −%15,0 | −17,1 |
+
+Ayrıca dayanıksızdı: 223 isabetin **en büyük 10'u çıkarılınca +%19,4 → −%5,3.**
+
+**KURAL (kayda geçiyor):** *müşterek bahiste ödenen fiyat kapanış fiyatıdır; kupon anındaki
+muhtemel oranla hesaplanan hiçbir kazanç **tahsil edilemez**. Muhtemel oran değer hesabında
+KULLANILAMAZ.* Mevcut ölçümler bu hatayı taşımıyor (defter `ganyan_kapanis` kullanır; A0 orana
+hiç bakmaz; K104 kapanışla ölçtü) — tuzak bugün ilk kez bu yeni ölçüde kuruldu ve yakalandı.
+
+**DÜZELTİLMİŞ HÜKÜM (son görülen fiyatla, olay-bootstrap %95 GA):**
+
+| config | Altılı | ROI | %95 GA | hüküm |
+|---|---|---|---|---|
+| acgozlu900 | 75 | −%22,4 | [−29,7, −14,7] | negatif, kesin |
+| bot1_1800 | 27 | −%21,3 | [−33,2, −7,1] | negatif, kesin |
+| acgozlu_v2 | 37 | −%20,6 | [−29,7, −11,1] | negatif, kesin |
+| bot1_900 | 63 | −%17,9 | [−27,5, −7,1] | negatif, kesin |
+| orta | 80 | −%15,0 | [−26,7, −3,1] | negatif, kesin |
+| acgozlu900_15 | 10 | −%6,6 | [−21,7, +10,1] | ayırt edilemiyor |
+| orta_15 | 11 | +%12,6 | [−22,8, +43,9] | ayırt edilemiyor |
+
+**Hiçbir config'te pozitif kanıt yok.** Üstelik "son görülen" de kapanış değil (~16 dk kala);
+sürüklenme oradan sonra da sürer ve kazananın fiyatını genelde daha da düşürür → **bu ROI'ler
+hâlâ iyimser taraftadır.**
+
+## (b) GERÇEK VE YAPISAL BULGU — iki config ailesi birbirinden ciddi biçimde farklı
+
+Ayak isabeti, **kazananın kamu sırasına** göre ayrıştırılınca aileler net ayrılıyor:
+
+| config | kamu 1. (favori) | kamu 5+ (sürpriz) |
+|---|---|---|
+| acgozlu900 | **%98,3** (118) | %27,9 (147) |
+| acgozlu_v2 | **%100,0** (60) | %31,7 (82) |
+| orta | %97,5 (122) | **%1,3** (154) |
+| **bot1_900** | %77,7 (103) | **%46,0** (137) |
+| **bot1_1800** | %71,1 (45) | **%48,3** (58) |
+
+Kazananın oran kovasında aynı yapı:
+
+| config | oran <2 | oran 16+ |
+|---|---|---|
+| orta | %100,0 | **%0,0** |
+| acgozlu900 | %100,0 | %7,4 |
+| **bot1_900** | %91,4 | **%44,9** |
+
+**Bu, orana körlüğün ders kitabı davranışıdır ve gerçektir:** bot1 favoride ~20-27 puan
+bırakıyor, sürprizde ~18-20 puan kazanıyor. Yani bot1 "daha iyi" değil, **farklı** — ve
+temettünün büyük olduğu yerde daha çok bulunuyor. **Ama (a)'da görüldüğü gibi bu, paraya
+dönüşmüyor**; çünkü kupon anında sürpriz görünen at kapanışta sürpriz değil.
+`orta`'nın %1,3'ü ise ayrı bir uyarıdır: 154 sürpriz ayağın 2'sini tutmuş — **`orta`
+neredeyse tanım gereği kalabalığın kendisidir.**
+
+## (c) MARJİNAL KATKI — eklenen HİÇBİR at parasını çıkarmıyor
+
+Kazananın bizim kendi sıralamamızdaki yerinden türetildi (1.726 ayak):
+
+| n. at | bu at kazandırdı | kümülatif isabet | kombo çarpanı | **marjinal verim** |
+|---|---|---|---|---|
+| 1 | %27,2 | %27,2 | 1,00 | — |
+| 2 | %17,3 | %44,5 | 2,00 | **0,82** |
+| 3 | %14,4 | %58,9 | 1,50 | **0,88** |
+| 5 | %9,3 | %77,9 | 1,25 | **0,91** |
+| 8 | %3,9 | %95,2 | 1,14 | **0,91** |
+| 10 | %1,3 | %98,3 | 1,11 | **0,91** |
+
+**Hiçbiri 1'i geçmiyor** ve 3. attan sonra **0,87-0,92'de düz gidiyor** — yani "tatlı nokta"
+diye bir şey yok, genişletmek her yerde eşit derecede biraz zararlı. Bu, K98-h tavanının ve
+K108'in ayak düzeyindeki üçüncü ifadesidir. Üstelik burada maliyet **tek ayak** üzerinden
+hesaplandı; kupon 6 ayağın çarpımı olduğu için gerçek maliyet çok daha ağırdır.
+
+## (d) BANKER SİCİLİ — banker yazmak, kalabalığa katılmaktır
+
+| config | banker ayak | isabet | kamu aynı (1 at) | FARK |
+|---|---|---|---|---|
+| acgozlu900 | 96 | %36,5 | %35,9 | **−1,1** |
+| acgozlu_v2 | 53 | %35,8 | %35,8 | **+0,0** |
+| bot1_900 | 54 | %31,5 | %28,8 | +3,8 |
+| bot1_1800 | 22 | %18,2 | %18,2 | **+0,0** |
+| orta | 20 | %55,0 | %52,9 | **+0,0** |
+| acgozlu900_15 | 15 | %26,7 | %26,7 | **+0,0** |
+| orta_15 | 3 | %33,3 | %33,3 | **+0,0** |
+
+**Yedi config'in beşinde fark tam olarak +0,0** — yani tek at yazdığımızda **kamunun favorisini
+yazıyoruz.** Banker, kuponun en pahalı kararıdır (tutmazsa kupon o anda biter) ve orada
+sistemin kalabalıktan hiçbir ayrımı yok. K101'in banker takası reddine ek bir gerekçe.
+
+## (e) ADİL KIYAS ÖZETİ (aynı ayak, aynı sayıda at, kamu cetveli)
+
+| config | ayak | ort. genişlik | HAM isabet | FARK (kamuya göre) | VERİM (at/isabet) |
+|---|---|---|---|---|---|
+| acgozlu900_15 | 60 | 4,13 | %73,3 | +0,0 | 5,64 |
+| bot1_1800 | 162 | 4,16 | %63,6 | +0,6 | 6,54 |
+| acgozlu_v2 | 222 | 4,05 | %63,5 | +2,3 | 6,38 |
+| acgozlu900 | 450 | 4,04 | %63,3 | +1,7 | 6,38 |
+| bot1_900 | 378 | 3,70 | %61,1 | +2,5 | 6,06 |
+| orta_15 | 66 | 2,20 | %56,1 | +4,5 | **3,92** |
+| orta | 558 | 2,17 | %45,9 | **−0,9** | 4,73 |
+
+**HAM isabeti genişlik belirler; tek başına kıyas aracı değildir** (K87'nin uyarısı).
+FARK sütunu A0'ın (K106) aynı ölçüsüdür ve orada hiçbiri anlamlı çıkmamıştı — burada da
+işaretler küçük ve tutarsız. `orta` ayrıca kupon-anı kapsamı %78 olduğu için ön-kayıtlı %90
+eşiğinin altında; sayısı okunur, karara bağlanmaz.
+**En ucuz isabet `orta_15`'te** (3,92 at/isabet) ama n=66.
+
+## (f) ZAMANLAMA KOLUNA ÖN-KAYITLI TAHMİN (yeni; K105/BEKLEYENLER #4)
+
+(a)'daki sürüklenme, zamanlama kolu için **bir mekanizma** veriyor: kamu fiyatı geç saatte
+daha bilgili. bot2 = softmax(α·ln bot1 + γ·ln p_kamu) ve p_kamu kupon anındaki orandan
+türetiliyor → **30 dk'daki p_kamu, 15 dk'dakinden daha gürültülü olmalı.**
+
+> **TAHMİN, ŞİMDİ YAZILIYOR:** 15 dk config'leri, 30 dk ikizlerini ayak isabetinde
+> **geçmelidir.** Şu anki durum bu yönde ama örneklem hükümsüz: `acgozlu900_15` %73,3 vs
+> `acgozlu900` %63,3 (n=60 vs 450) · `orta_15` %56,1 vs `orta` %45,9 (n=66 vs 558).
+> **Tetik BEKLEYENLER #4'ün kendi sayısal eşiğidir; bu tahmin o eşik dolmadan
+> DEĞERLENDİRİLMEYECEK.** Erken bakmak tam olarak K33'ün yasakladığı şeydir.
+
+## (g) SON İKİ GÜNÜN TAM İSABETLERİ (kullanıcının sorusunun çıkış noktası)
+
+17 Ağu BURSA 1: `acgozlu900` ve `acgozlu900_15` **6/6**. 18 Ağu ANKARA 1: `bot1_900` ve
+`bot1_1800` **6/6**. Dört tam isabet iki günde. **Bu bir sinyal değildir** — 42 kupon
+kuruldu, dördü tuttu; K98-h'nin ve A0'ın gösterdiği gibi tam isabet sayısı config ayırt
+etmez. Bu yüzden kullanıcının sorusu (ayak düzeyi) doğru sorudur ve bu karar onun cevabıdır.
+
+**Dokunulmayanlar:** `kod/ayak_analiz.py` yeni ve salt-okunur. Canlı seçim/dağıtım/config
+koduna, defter/paper akışına **dokunulmadı**.
