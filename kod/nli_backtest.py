@@ -291,6 +291,14 @@ def kesinti_kontrol(n, puan, kazanan, yillar):
 
 
 def main():
+    # K110: turetilmis veri bayatsa SESSIZ KALMASIN (19 Agu dersi: yigin 20-41 gun
+    # eskiydi, Agustos kosularinin sifiri olasilik dosyasindaydi ve hicbir uyari yoktu).
+    # Import main() ICINDE: canli yol bu modulu asla yuklemesin.
+    try:
+        from tazelik import uyar
+        uyar("nli_ganyan.csv", "altili_olasilik_bot1.csv")
+    except Exception:                                            # noqa: BLE001
+        pass
     print("=" * 108)
     print("K108 — 4'LU / 5'LI KUPON KOLU (BEKLEYENLER #2). Salt offline, hicbir dosyaya yazmaz.")
     print("=" * 108)

@@ -229,7 +229,12 @@ def gecis(args):
         return
 
     RAPOR.mkdir(parents=True, exist_ok=True)
-    dosya = RAPOR / f"{tarih}_{'_'.join(pistler)}.txt"
+    # K110: dosya adi SIRALI pist listesinden. yerli_pistler() sirayi feed'den aliyor ve
+    # sira gun icinde degisebiliyor -> ayni gun icin iki ayri dosya olusuyordu
+    # (2026-08-18_ANKARA_KOCAELI.txt VE 2026-08-18_KOCAELI_ANKARA.txt; 20+ gunde oldu).
+    # sorted() yalniz DOSYA ADINDA; pistler listesinin kendi sirasi DEGISTIRILMEZ ki
+    # kosu isleme/kupon kurma sirasi aynen kalsin.
+    dosya = RAPOR / f"{tarih}_{'_'.join(sorted(pistler))}.txt"
     islenen = 0
     for r in sched:
         key = f"{r['pist']} {r['no']}"

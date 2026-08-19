@@ -56,6 +56,20 @@ def _oku():
 
 
 def _yaz(df):
+    # K110 TEKILLIK KORUMASI: bir (tarih,race_kod,at_kod) deftere IKI KEZ giremez.
+    # 01.07.2026'da girmisti: iki kosu once 15:0x'te, sonra 18:31'de yeniden kaydedilmis
+    # (32 satir) -> o iki kosu kalibrasyon/ROI ozetinde CIFT sayiliyordu. Bugunku K36
+    # korumasi (posta gecmis kosu yazilmaz) bunu zaten engelliyor ama upsert deseni
+    # ("cozulmusleri koru" + concat) yapisal olarak aciktir; burasi son savunma hattidir.
+    # EN ERKEN kayit tutulur: yaris-oncesi tahmin odur, deneyin degeri de ondadir.
+    n0 = len(df)
+    if n0:
+        ts = pd.to_datetime(df["kayit_ts"], errors="coerce")
+        df = (df.assign(_ts=ts).sort_values("_ts", kind="stable")
+                .drop_duplicates(subset=["tarih", "race_kod", "at_kod"], keep="first")
+                .drop(columns=["_ts"]).sort_index())
+        if len(df) < n0:
+            print(f"UYARI (defter tekillik): {n0 - len(df)} mukerrer satir yazilmadan once atildi.")
     df.to_csv(DEFTER, index=False, encoding="utf-8", columns=KOL)
 
 

@@ -122,7 +122,15 @@ altili.html / paper.html K55 zengin formatına geçti (tahminler + sistem sıras
 kamu sırası + oran + bedel + ödül + toplam). defter.html hâlâ eski düzende. İstenirse aynı
 `rapor_ortak.py` yapıtaşlarıyla çevrilebilir; sistemin veri akışına dokunmaz.
 
-### 4. Kupon zamanı — 30 vs 15 dk · **CANLI KOL AÇILDI (K105, 15 Ağu 2026)**
+### 4. Kupon zamanı — 30 vs 15 dk · **CANLI KOL AÇIK (K105)** · **5 dk VERİSİ DE VARMIŞ (K110)**
+
+> **K110 EKLEDİ (19 Ağu 2026):** *"5 dk kala kursak ne olurdu"* sorusu için veri toplamaya
+> **gerek yok — zaten elimizde.** `defter.csv` her koşuyu postaya **medyan 0 dk kala**
+> kaydediyor (%100'ü ≤6 dk) ve satırda bot1/bot2/kamu/oran **hepsi dolu**; Altılı ayak
+> koşularının %88'ini kapsıyor. Yani 5 dk'lık kupon simülasyonu offline kurulabilir,
+> canlı sisteme hiç dokunmadan.
+> ⚠️ Bunu yaparken `altili_oran_log.csv` KULLANILMAZ: o dosya kapanışı hiç görmüyor
+> (medyan 14,9 dk kala durur; K110/§14). Fiyat için `defter.ganyan_kapanis`.
 
 **DURUM DEĞİŞTİ.** "Ekim'i bekle" tetiği 31 Tem'de, oran_log kupon anının tam fotoğrafını
 çekmezken kondu; K76 bunu düzeltti ve o gün bugündür doğru veri birikiyor. Kullanıcı 15 Ağu'da

@@ -305,8 +305,19 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None, sadece_cfg=None, dk_grup=30
 
         # K100: emekliler kupon KURMAZ. K105: yalniz bu gecise ait config'ler kurulur --
         # 15 dk gecisi 30 dk'nin satirlarina DOKUNMAMALI (deney kirlenmesin).
-        _hedef = (aktif_konfig() if sadece_cfg is None
-                  else {c: a for c, a in KONFIG.items() if c in sadece_cfg})
+        # K110 (C1): sadece_cfg verildiginde de EMEKLI config'e kupon KURULMAZ.
+        # Eskiden bu dal KONFIG'den seciyordu (aktif_konfig()'den degil) -> emekli bir
+        # config adi sadece_cfg'ye girse kupon kurulurdu. Bugunku tek cagiran grup_konfig()
+        # zaten filtreliyor, yani pratik risk yoktu; ama "emekli kupon kurmaz" garantisi
+        # cagirana degil FONKSIYONUN KENDISINE ait olmali (K100'un kurali).
+        _aktif = aktif_konfig()
+        if sadece_cfg is None:
+            _hedef = _aktif
+        else:
+            _hedef = {c: a for c, a in _aktif.items() if c in sadece_cfg}
+            _emekli_istendi = [c for c in sadece_cfg if c not in _aktif]
+            if _emekli_istendi:
+                print(f"  UYARI: emekli config istendi, kurulmadi: {_emekli_istendi}")
         for cfg, ay in _hedef.items():
             maxk, dagitim = ay["kombo"], ay["dagitim"]
             puanlar = ayak_bot1 if ay["puan"] == "bot1" else ayak_atlari

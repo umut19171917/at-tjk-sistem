@@ -24,6 +24,21 @@ from itertools import product
 KOK = Path(__file__).resolve().parent.parent
 EXCL = {"ADANA", "ELAZIG", "DIYARBAKIR", "SANLIURFA", "DBAKIR"}
 
+# K110: KUPON BEDELI GERCEK TARIFEDEN. Eskiden birim=1.0 varsayilani kullaniliyordu; gercek
+# Altili birim fiyati kapsamdaki TUM pistlerde 1,25 TL (1,00 TL'li pistler = EXCL'dekiler).
+# Bu, backtest ROI'sini 11-16 PUAN iyimser gosteriyordu (orta -19,4 -> -35,5; genis900
+# -44,0 -> -55,2). Tek kaynak rapor_ortak.birim_fiyat; ama bu modulu CANLI yol import ediyor
+# (altili_canli -> kupon_kur) -> import ASLA patlamamali, o yuzden korumali + yerel yedek.
+try:
+    sys.path.insert(0, str(KOK / "kod"))
+    from rapor_ortak import birim_fiyat as _birim_fiyat        # noqa: E402
+except Exception:                                              # noqa: BLE001
+    _BIRIM_1TL = {"ELAZIG", "SANLIURFA", "DIYARBAKIR", "DBAKIR"}
+
+    def _birim_fiyat(pist):
+        """rapor_ortak yuklenemezse yedek (ayni tarife)."""
+        return 1.00 if str(pist).strip().upper() in _BIRIM_1TL else 1.25
+
 
 def kupon_kur(ayak_atlari, kapsam_esik, max_kombo, banker_esik):
     """ayak_atlari: 6 elemanli liste; her eleman [(no, bot2), ...] Bot2-azalan sirali.
@@ -222,11 +237,17 @@ def kupon_kur_birlesim(ayak_bot2, ayak_bot1, max_kombo):
 
 
 def degerlendir(olay, puan_map, puan_map_full, kapsam_esik, max_kombo, banker_esik,
-                birim=1.0, kademeli=True):
+                birim=None, kademeli=True):
     """Tek Altili olayi icin kupon kur, odemeyi hesapla. Doner (maliyet, getiri, alti_tuttu)
     veya None (ayak puani/kazanani eksikse).
     kademeli=True: 6 tutmazsa son-5/4/3 teselli de sayilir (VARSAYIM — TJK'da teselli var mi
-      KESIN dogrulanmadi). kademeli=False: SADECE 6 tutturan oder (en-kotu/muhafazakar sinir)."""
+      KESIN dogrulanmadi). kademeli=False: SADECE 6 tutturan oder (en-kotu/muhafazakar sinir).
+
+    K110 BIRIM: birim=None -> olayin SEHRINDEN gercek tarife cozulur (1,25 TL). Eskiden
+    varsayilan 1.0 idi ve main() hic gecersiz kilmiyordu -> maliyet %20 eksik hesaplaniyordu.
+    Acikca birim verilirse o kullanilir (test/duyarlilik icin)."""
+    if birim is None:
+        birim = _birim_fiyat(olay.get("sehir"))
     legs = [int(olay[f"leg{i+1}"]) for i in range(6)]
     ayak_atlari, kaz = [], []
     for rk in legs:
@@ -256,7 +277,12 @@ def degerlendir(olay, puan_map, puan_map_full, kapsam_esik, max_kombo, banker_es
                 # tutan kombo sayisi = ilk (6-n) ayaktaki secim carpimi (o ayaklar "herhangi");
                 # son n ayakta kazanani tutan tek yol. 6'li'da onceki=1.
                 onceki = int(np.prod([len(sec[j]) for j in range(6 - n)])) if n < 6 else 1
-                getiri += onceki * birim * div
+                # K110: temettu, kazanan BIR birim kupon basina MUTLAK TL'dir -> birim ile
+                # CARPILMAZ. (Dogrulandi: altili_tam.t6_div ile nli_ganyan.tl 6.723 olayin
+                # %99,7'sinde birebir ayni deger.) Eskiden 'onceki * birim * div' yaziyordu;
+                # maliyet de birim ile carpildigi icin iki hata birbirini gizliyor ve birim
+                # degistirmek ROI'yi HIC degistirmiyordu.
+                getiri += onceki * div
                 if n == 6:
                     alti = 1
                 break                              # sondan en uzun tutan kademe -> dur
@@ -264,6 +290,14 @@ def degerlendir(olay, puan_map, puan_map_full, kapsam_esik, max_kombo, banker_es
 
 
 def main():
+    # K110: turetilmis veri bayatsa SESSIZ KALMASIN (19 Agu dersi: yigin 20-41 gun
+    # eskiydi, Agustos kosularinin sifiri olasilik dosyasindaydi ve hicbir uyari yoktu).
+    # Import main() ICINDE: canli yol bu modulu asla yuklemesin.
+    try:
+        from tazelik import uyar
+        uyar("altili_olasilik.csv", "altili_tam.csv")
+    except Exception:                                            # noqa: BLE001
+        pass
     puan = pd.read_csv(KOK / "veri" / "altili_olasilik.csv", low_memory=False)
     olay = pd.read_csv(KOK / "veri" / "altili_tam.csv", low_memory=False)
     olay["yil"] = pd.to_datetime(olay["tarih"], format="%d/%m/%Y", errors="coerce").dt.year

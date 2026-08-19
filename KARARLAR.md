@@ -3070,3 +3070,193 @@ etmez. Bu yüzden kullanıcının sorusu (ayak düzeyi) doğru sorudur ve bu kar
 
 **Dokunulmayanlar:** `kod/ayak_analiz.py` yeni ve salt-okunur. Canlı seçim/dağıtım/config
 koduna, defter/paper akışına **dokunulmadı**.
+
+---
+
+**K110 — TAM KOD İNCELEMESİ: üç ölçüm-etkileyen hata bulundu ve düzeltildi. Backtest ROI'leri
+21 PUANA kadar iyimsermiş; oran kaydı kapanışı HİÇ görmüyormuş; offline yığın 3-6 hafta
+bayatmış. Hepsi kapatıldı, canlı yola dokunulmadı.** 19 Ağu 2026.
+
+Kullanıcı *"tüm sistemin kodunu çok dikkatle kontrol et"* dedi, sonra *"yapalım dediğin her şeyi
+çok dikkatle yap, sisteme asla zarar gelmesin"*. Önce emniyet kaydı atıldı (`824e41e`, salt veri,
+mükerrer kontrolünden geçirilerek), sonra düzeltmeler yapıldı.
+
+## (a) BACKTEST KUPON BEDELİNİ 1,00 TL SAYIYORMUŞ — gerçek fiyat 1,25 TL
+
+`altili_backtest.degerlendir` iki yerde yanlıştı ve **iki hata birbirini gizliyordu**:
+
+| satır | eski | sorun |
+|---|---|---|
+| `maliyet = nkombo * birim` | `birim=1.0` varsayılan, `main()` hiç geçersiz kılmıyor | maliyet %20 eksik |
+| `getiri += onceki * birim * div` | temettü de `birim` ile çarpılıyor | **birim değiştirmek ROI'yi hiç değiştirmiyordu** |
+
+Temettü, kazanan bir birim kupon başına **mutlak TL**'dir — `birim` ile çarpılmaz. Doğrulandı:
+`altili_tam.t6_div` ile `nli_ganyan.tl` **6.723 olayın %99,7'sinde birebir aynı değer**.
+Canlı taraf zaten doğru yapıyordu (`bedel = kombo * ro.birim_fiyat(pist)`, ödül = temettü) —
+yani **backtest ile canlı sicil hiçbir zaman aynı ölçekte değildi.**
+
+**ÜÇ AŞAMALI DÜZELTMENİN ETKİSİ** (OOS senaryo B, `orta` ayarı 0,75/0,55/96):
+
+| aşama | ROI |
+|---|---|
+| eskiden basılan (birim=1,00 · Temmuz verisi) | **−%15,4** |
+| birim düzeltildi (Temmuz verisi) | −%32,3 |
+| birim düzeltildi + **taze veri** | **−%36,5** |
+
+Toplam **21 puan**. Bütün hücrelerde etki 10-17 puan. Kapsamdaki her pist 1,25 TL'dir
+(1,00 TL'li pistler tam olarak K4'te dışlananlar), yani istisna yok.
+
+**KAYITTAKİ NE DEĞİŞİYOR:** K52'nin *"backtest OOS −%32"*'si ve K93'ün *"kâğıt −%33,3 vs
+backtest −%32, yakınsadı"* cümlesi **iki farklı ölçekten sayı kıyaslamış**. Doğru kıyas
+şimdi kuruldu ve **sonucu güçlendiriyor**:
+
+| ölçü (hepsi gerçek tarifeyle) | değer |
+|---|---|
+| canlı kâğıt Altılı sicili (538 kupon, 10 tam isabet) | **−%50,8** |
+| ölçülmüş Altılı kesintisi (K94) | **−%48,6** |
+| düzeltilmiş backtest, 18 hücrenin **en iyisi** | −%36,5 |
+| düzeltilmiş backtest, tipik hücre | ~−%50 |
+
+**Canlı kâğıt ROI'si kesintinin tam üstüne oturuyor.** Ayrıca görüldü ki *"backtest −%32"*
+başlığı **18 hücrenin en iyisiydi** — tipik hücre değil. Kazananın laneti, kendi kaydımızda.
+
+## (b) ORAN KAYDI KAPANIŞ FİYATINI HİÇ GÖRMÜYORMUŞ — ve gerçeği zaten elimizdeymiş
+
+`altili_oran_log.csv`, 374 koşuda son gözlemini **medyan 14,9 dk kala** yapıyor ve
+**hiçbir koşuda ≤10 dk'ya inmiyor** (min 10,4). Sebep yapısal: takip 15 dk'da bir koşuyor,
+geçişler :01/:16/:31/:46'ya, koşular :00/:30'a düşüyor → son fotoğraf **sistematik olarak
+~15 dk erken**. Bu bir hata değil, tasarımın kaçınılmaz sonucu — ama fark edilmemişti.
+
+**Ne kadar fark ediyor** (son gözlem vs resmî kapanış, 3.205 at-koşu):
+
+| ölçü | değer |
+|---|---|
+| medyan sapma | **+%12,7** |
+| %10'dan fazla oynayan | **%85** |
+| %25'ten fazla oynayan | **%60** |
+| 5–95 persentil | −%51 … **+%151** |
+
+**GERÇEK KAPANIŞ ZATEN VARDI:** `defter.csv.ganyan_kapanis`, sonuç feed'inden gelir, **%99
+dolu**. Müşterek bahiste ödenen fiyat budur. `ayak_analiz.son_oran_ekle` artık birincil
+kaynak olarak onu kullanıyor; defter'de bulunmayan ayaklarda oran_log yedeğe düşüyor ve
+satır işaretleniyor (şu an 1.548 kapanış / 262 yedek).
+
+**K109'UN SAYISI DÜZELTİLDİ.** Dün *"bot1'in +%19,4'ü yanılsamaymış, gerçeği −%18"* yazmıştım.
+Yönü doğruydu ama **büyüklüğü hâlâ yanlış fiyatla** hesaplanmıştı. Gerçek kapanışla:
+
+| config | kupon-anı (muhtemel) | **RESMİ KAPANIŞ** | %95 GA | hüküm |
+|---|---|---|---|---|
+| `bot1_900` | +%18,7 | **−%24,8** | [−34,1 · −15,3] | negatif, kesin |
+| `bot1_1800` | +%3,8 | **−%29,6** | [−39,3 · −18,8] | negatif, kesin |
+| `acgozlu900` | −%26,6 | −%26,4 | [−34,5 · −17,7] | negatif, kesin |
+| `orta` | −%31,0 | −%20,2 | [−31,5 · −8,4] | negatif, kesin |
+
+Ölçülmüş ganyan kesintisi **%28,3** (K104). ROI'ler oraya oturuyor — seçim katmanı ne
+kazandırıyor ne kaybettiriyor, yalnızca kesinti ödeniyor. **5 config'te GA tamamen sıfırın
+altında**; K109'da fiyat proxy'si yüzünden bu kadar net değildi.
+
+**YAN SONUÇ:** BEKLEYENLER #4'ün *"5 dk kala kursak ne olurdu"* sorusu için veri **zaten var** —
+`defter.csv` postaya **medyan 0 dk kala** kaydediyor (%100'ü ≤6 dk) ve içinde bot1/bot2/kamu/oran
+dolu. Yeni veri toplamaya, takip sıklığını artırmaya **gerek yok**. Kol ölçülebilir durumda.
+
+## (c) OFFLINE YIĞIN SESSİZCE BAYATLAMIŞ — tazelendi + uyarı kuruldu
+
+| dosya | önce | şimdi |
+|---|---|---|
+| `ozellikli.csv` | 8 Tem (**41 gün**) | 18 Ağu · 118.800 → **121.810** satır |
+| `altili_tam.csv` | 19 Tem (30 gün) | 18 Ağu · 6.747 → **6.867** olay |
+| `altili_olasilik.csv` | 20 Tem | 230.820 → **235.006** satır |
+| `altili_olasilik_bot1.csv` | 30 Tem (20 gün) | **235.006** satır |
+| `nli_ganyan.csv` | 5 Ağu | 27.442 → **27.958** olay |
+
+**Somut zarar:** Ağustos'ta oynanan **272 ayak koşusunun SIFIRI** olasılık dosyalarındaydı →
+o gün çalıştırılan her backtest Temmuz dünyasında koşuyordu ve bunu söyleyen hiçbir şey yoktu.
+`gunluk.hesapla` K36'dan beri `katilim.csv` için bayatlık uyarıyor; **türetilmiş dosyalar için
+aynı koruma yoktu.**
+
+Kök nedenlerden biri: `altili_bot1_test.py` dosyayı **yalnız `--yenile` bayrağıyla** yeniden
+üretiyor, aksi halde eskisini okuyup devam ediyordu — sessiz önbellek.
+
+**`kod/tazelik.py` yazıldı.** Türetilmiş dosyanın yaşını basar, 7 günden eskiyse görünür uyarı
+verir ve **üretici komutu gösterir**. `altili_backtest` ve `nli_backtest`'in `main()`'lerine
+bağlandı. **Import `main()` İÇİNDE** — canlı yol bu modülü asla yüklemez, buradaki bir hata
+kupon kurmayı engelleyemez.
+
+Yeniden fit edilen harman katsayıları: İngiliz **α=+0,191 γ=+0,975** · Arap α=+0,217 γ=+0,909
+(önce 0,21/0,95 kayıtlıydı). Hikâye değişmiyor: γ baskın, bot2 pratikte kamu.
+
+## (d) K108 TAZE VERİYLE YENİDEN SINANDI — HÜKÜM AYAKTA
+
+4'lü/5'li reddi bayat veriyle verilmişti; taze veriyle tekrarlandı. Eşleşmiş üçlü 990 → **1.033**.
+Sonuç **birebir aynı desen**: 16 S1 testinin **1'i** geçiyor (α=0,05'te şansa beklenen 0,8),
+geçen hücre yine fiyat-güvenli 2026 alt kümesinde **tekrarlamıyor**. S2: 24 hücrenin hepsi
+negatif, en iyisi −%39,2. **BEKLEYENLER #2 kapalı kalıyor.**
+
+## (e) `nli_ganyan.csv`'NİN KAYIP ÜRETİCİSİ YAZILDI — K108 artık doğrulanabilir
+
+Dosyayı K94 üretmiş ama **üretici betik kaydedilmemiş** (geçici betikle üretilip atılmış).
+Okuyan vardı, yazan yoktu → ne tazelenebiliyor ne yeniden üretilebiliyordu. K108'in tamamı
+buna dayandığı için karar **doğrulanamaz durumdaydı**.
+
+**`kod/nli_ayikla.py` yazıldı ve K94'ün çıktısına karşı doğrulandı:**
+
+| ölçü | sonuç |
+|---|---|
+| ortak olay | **27.442** |
+| yalnız eski dosyada olan | **0** ← hepsi yeniden üretildi |
+| temettü aynı | 27.439 / 27.442 |
+| **4/5/6'lı üründe temettü farkı** | **0** |
+| 4/5/6'lı üründe ayak kodu farkı | 7 / 19.023 (%0,04) |
+
+Kalan farkların hepsi **3'lü**de — en kısa üründe kombo birden fazla pencereye uyabiliyor,
+iki sürüm de belirsizliği keyfî çözüyor. **K108'in kullandığı ürünlere etkisi sıfır.**
+
+## (f) VERİ BÜTÜNLÜĞÜ
+
+**32 mükerrer satır** bulundu `defter.csv`'de — 1 Tem 2026, iki koşu, 15:0x'te ve 18:31'de iki
+kez yazılmış. O iki koşu kalibrasyon/ROI özetinde **çift sayılıyordu**. 16 geç satır atıldı
+(5.676 → 5.660); **en erken kayıt tutuldu** çünkü yarış-öncesi tahmin odur.
+`defter._yaz`'a **tekillik koruması** eklendi — upsert deseni ("çözülmüşleri koru" + concat)
+yapısal olarak buna açık; artık son savunma hattı var. Test edildi.
+
+**Günlük rapor dosyası her çok-pistli günde ikiye bölünüyormuş.** `takip.py` dosya adını
+`'_'.join(pistler)` ile kuruyor, sıra feed'den geliyor ve sabit değil → `2026-08-18_ANKARA_
+KOCAELI.txt` **ve** `2026-08-18_KOCAELI_ANKARA.txt`. **20+ günde olmuş**, hiçbir dosyada günün
+tamamı yok. `sorted()` eklendi — **yalnız dosya adında**; `pistler` listesinin kendi sırası
+değiştirilmedi ki koşu işleme/kupon kurma sırası aynen kalsın. CSV'ler etkilenmemişti.
+
+## (g) KÜÇÜK SERTLEŞTİRMELER
+
+- **Emekli config koruması fonksiyonun içine alındı.** `kupon_hazirla`, `sadece_cfg` verilince
+  `KONFIG`'den seçiyordu (`aktif_konfig()`'den değil) → emekli bir ad geçse kupon kurardı.
+  Çağıran zaten filtreliyordu, pratik risk yoktu; ama K100'ün kuralı **fonksiyonun kendisine**
+  ait olmalı. Artık emekli istenirse uyarıp atlıyor.
+- **`ayak_analiz.py`'ye "9) VERİ KALİTESİ" bölümü** eklendi, iki şeyi her çalıştırmada basıyor:
+  - **C3:** `dk_grup` *niyeti* kaydeder, *gerçeği* değil. 88 kupon-anının 4'ü (%5) etiketinden
+    >5 dk sapmış (hepsi "30 dk" etiketli ama 14-15 dk'da kurulmuş). **Dördü de 15 dk kolu
+    açılmadan önce** (≤9 Ağu) → K105'in eşleşmiş verisi temiz (13 Altılı'da fark hep 14,4-15,5 dk),
+    ama etiket-gerçek ayrımı `dk_grup`'a göre gruplayan her analizde latent risk.
+  - **C4:** berabere durumunda `kazanan` sütunu **bizim tuttuğumuz atı** yazar → "kazanan bizim
+    kaçıncı tercihimizdi" tabloları o olaylarda kendine doğru yanlı. Ölçüldü: **586 koşunun
+    2'si (%0,34)** → etki ihmal edilebilir, ama artık görünür.
+
+## (h) SAĞLAM ÇIKANLAR (kontrol edildi, sorun yok)
+
+Çıplak `except:` yok · mutable default arg yok · `altili_kupon`/`kupon_ani`/`temettu` 0 mükerrer ·
+kamu+bot1+bot2 olasılıkları **527 koşunun hepsinde toplam 1,0000** (sıfır sapma) · berabere
+işleme (K64) doğru · sızıntı koruması (K36) çalışıyor · kupon hiç geç kurulmamış · üç zamanlanmış
+görev de Ready · A0 canlı veriyle çalışıyor, bayatlıktan etkilenmedi.
+
+## (i) CANLI SİSTEME ZARAR GELMEDİ — doğrulandı
+
+Her düzeltmeden sonra ve en sonda tam kontrol koşuldu:
+- **11 canlı modül** (gunluk, defter, paper, altili_canli, takip, bekci, oran_log…) hatasız import
+- **KONFIG bozulmamış**: 7 aktif, 4 emekli, dk grupları [30, 15]
+- **Dağıtıcılar bit-bit aynı**: 6.000 rastgele kartta kupon imzası `11a80724e9dccd9a`
+  (kupon_kur / açgözlü / kalibre) — *kupon mantığı hiç değişmedi*
+- **9 veri dosyasında 0 mükerrer**
+- **Bekçinin üç denetimi de çalışıyor** (nabız / config kapsaması / defter kapsaması)
+
+`altili_backtest.py`'ye eklenen `rapor_ortak` importu **korumalı** (try/except + yerel yedek
+tarife) çünkü canlı yol o modülü `kupon_kur` için import ediyor — orada bir import hatası
+**kupon kurulmamasına** yol açardı, ölçülen en pahalı hasar.

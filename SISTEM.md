@@ -2,8 +2,8 @@
 
 > **Bu dosya bir devir belgesidir.** Yeni bir Claude oturumuna sistemin tamamını
 > anlatmak için hazırlandı. Üretim tarihi: **16 Ağustos 2026** ·
-> **güncellendi 18 Ağustos 2026 (K107 sessiz gün kaybı · K108 4'lü/5'li KAPANDI · K109 ayak sicili + ORAN SÜRÜKLENMESİ tuzağı).**
-> Otorite sırası: `KARARLAR.md` (numaralı karar günlüğü, K1–K109) > `BEKLEYENLER.md`
+> **güncellendi 19 Ağustos 2026 (K110 TAM KOD İNCELEMESİ: backtest birim fiyatı · kapanış oranı · bayat yığın — üçü de düzeltildi).**
+> Otorite sırası: `KARARLAR.md` (numaralı karar günlüğü, K1–K110) > `BEKLEYENLER.md`
 > (ertelenmiş işler + tetikleri) > bu dosya. Çelişki olursa KARARLAR kazanır.
 
 ---
@@ -40,7 +40,7 @@ ebayi.tjk.org (JSON feed)
    ▼
 duzlestir.py             → veri/katilim.csv       (349.911 satır, 94 MB, gitignore)
    ▼
-ozellik.py               → veri/ozellikli.csv     (118.800 satır, 85 MB, gitignore)
+ozellik.py               → veri/ozellikli.csv     (121.810 satır, 88 MB, gitignore)
    │   17 nokta-anında özellik + yarış-içi z-skor
    ▼
 model.py                 → Bot1 (koşul logit) + Bot2 (harman) + α, γ
@@ -86,7 +86,8 @@ kulvar_skor_z  son_yarisdan_gun_z  yas_z  disi  ilk_kosu  jokey_degisim  taki_il
 bot2 = softmax( α · ln(bot1) + γ · ln(p_kamu) )
 p_kamu = de-vig(1/oran)
 ```
-**Ölçülen:** α ≈ **0,21**, γ ≈ **0,95** (defter'den geri çıkarma R²=0,9996). Walk-forward:
+**Ölçülen (K110, 18 Ağu'ya kadar taze veriyle):** İngiliz α ≈ **0,19**, γ ≈ **0,98**;
+Arap α ≈ 0,22, γ ≈ 0,91 (defter'den geri çıkarma R²=0,9996). Walk-forward:
 eğit ≤2023 · harman 2024 · **TEST 2025-26** (cross-fit, sızıntı yok).
 
 **Bunun anlamı:** Bot2'nin ağırlığının **~%82'si piyasadan** gelir. Bot2 pratikte kamunun
@@ -148,6 +149,14 @@ yalnız bilgi amaçlı gösterilir.
 |---|---|---|
 | **TJK Takip** | **15 dk**'da bir | `kod/takip.py` |
 | **TJK Bekçi** | 2 saatte bir | `kod/bekci.py` — üç denetim: **nabız** (K49) + **config kapsaması** (K106) + **defter kapsaması** (K107). Hepsi salt-okunur. |
+
+> ⚠️ **TÜRETİLMİŞ VERİ ELLE TAZELENİR — otomasyonda DEĞİL (K110).** `ozellikli.csv` ·
+> `altili_olasilik*.csv` · `altili_tam.csv` · `nli_ganyan.csv` hiçbir görevle yenilenmiyor.
+> 19 Ağu'da 20-41 gün bayat bulundular; Ağustos'un 272 ayak koşusunun **sıfırı** olasılık
+> dosyalarındaydı. `python kod/tazelik.py` yaşlarını basar; backtest'ler artık başlarken
+> uyarır. Tazeleme sırası: `ozellik.py` → `altili_olasilik.py` + `altili_bot1_test.py --yenile`
+> → `altili_tam.py` → `nli_ayikla.py`. **takip.py koşarken `ozellik.py` çalıştırma**
+> (katilim.csv yazma çakışması) — yarış günü akşamı 22:00 sonrası güvenli.
 | **TJK Veri Commit** | haftalık (Pzt 22:45) | `kod/veri_commit.py` |
 
 `takip.py` her geçişte: günün ilk geçişinde arşivi günceller → vadesi gelen koşuları işler
@@ -196,7 +205,7 @@ Bunların hepsi **ölçüldü**, varsayılmadı:
 
 | büyüklük | değer | kaynak |
 |---|---|---|
-| harman α / γ | **0,21 / 0,95** | K96 — R²=0,9996 *(katsayıların geri çıkarılabilirliği; modelin öngörü gücü DEĞİL)* |
+| harman α / γ | **0,19 / 0,98** (İngiliz) · 0,22 / 0,91 (Arap) | K96, **K110'da taze veriyle yeniden fit** (önce 0,21/0,95). R²=0,9996 *(katsayıların geri çıkarılabilirliği; modelin öngörü gücü DEĞİL)* |
 | Bot1'in net katkısı | **%0,75** | K96 |
 | uzak ayak λ | **0,650**, %90 GA **[0,465 – 0,875]** → 1'i İÇERMİYOR | K92, eşleşmiş n=87 koşu |
 | **ganyan kesintisi (İngiliz)** | **%28,3 ortalama**, medyan %25,6, %10-90: %25,3–%37,0 | **K104** |
@@ -364,8 +373,21 @@ TJK'da 4'lü/5'li/6'lı **aynı koşuda biter, ayakları iç içedir** (4.931 ü
 Araç: `kod/nli_backtest.py` (salt offline). Ürün kolu böylece hem kesinti tarafından (K94)
 hem kupon tarafından (K108) kapandı.
 
-### Kâğıt ROI teoriye yakınsadı (K93)
-Altılı −%33,3 (backtest −%32) · ganyan −%25,4 (o zamanki referans). **Kenar yok.**
+### Kâğıt ROI kesintiye oturdu — K93'ün rakamı DÜZELTİLDİ (K110)
+
+⚠️ K93 *"Altılı −%33,3 (backtest −%32), yakınsadı"* diyordu. **İki farklı ölçekten sayı
+kıyaslanmış:** kâğıt sicil gerçek tarifeyle (1,25 TL), backtest ise `birim=1,00` ile
+hesaplanıyordu (`altili_backtest.degerlendir` — K110'da düzeltildi). Aynı ölçeğe getirilince:
+
+| ölçü (hepsi gerçek tarifeyle) | değer |
+|---|---|
+| **canlı kâğıt Altılı sicili** (538 kupon, 10 tam isabet) | **−%50,8** |
+| **ölçülmüş Altılı kesintisi** (K94) | **−%48,6** |
+| düzeltilmiş backtest OOS — 18 hücrenin *en iyisi* | −%36,5 |
+| düzeltilmiş backtest OOS — tipik hücre | ~−%50 |
+
+**Kâğıt ROI'si kesintinin tam üstünde.** Sonuç değişmedi, DAHA NET oldu: kenar yok, ödenen
+şey kesinti. Ayrıca: eski *"backtest −%32"* başlığı 18 hücrenin **en iyisiydi**, tipik değil.
 
 ---
 
@@ -512,6 +534,12 @@ sıra ayrı (ayrışma).
   ≥2 fark → ekran uyarısı. Geriye dönük sınandı: **32 gün, 1 alarm, sıfır yanlış alarm.**
   **DERS:** bir kolun sessizce ölmesi, hata vermesinden pahalıdır. `except` bloğuna düşen her
   mesaj log'a da yazılır; `print` tek başına kayıt sayılmaz.
+- ⚠️ **ORAN KAYDI KAPANIŞI GÖRMÜYOR (K110).** `altili_oran_log.csv` son fotoğrafını
+  **medyan 14,9 dk kala** çekiyor ve 374 koşunun **hiçbirinde ≤10 dk'ya inmiyor** — takip
+  15 dk'da bir koştuğu, koşular :00/:30'a düştüğü için yapısal. O nokta ile gerçek kapanış
+  arasında **medyan +%12,7** fark var, atların **%60'ı >%25** oynuyor. **Değer/sürüklenme
+  hesabında oran_log KULLANILMAZ**; gerçek kapanış `defter.csv.ganyan_kapanis`'te (%99 dolu).
+  oran_log'un işi *yörünge*, *fiyat* değil.
 - **`kod/telegram_config.json` git'te değil** — bot yeniden kurulursa elle konmalı.
 - **Yabancı yarışlar sistemin dışında.** `gunluk.yerli_pistler()` feed'deki `GUN` alanına
   bakar; TR pistlerinde sayısal, yabancıda `None` → elenirler. Arşivde tek bir yabancı
@@ -543,6 +571,7 @@ sıra ayrı (ayrışma).
 `gunluk.py` (canlı puanlama) · `defter.py` (kâğıt defter) · `paper.py` (K42 testi) ·
 `oran_log.py` (gün-içi oran) · `rapor_ortak.py` (rapor zenginleştirme, salt-okunur) ·
 `telegram_at.py` · `bekci.py` (**nabız + config kapsaması + defter kapsaması**, K106/K107) · `veri_commit.py`
+`tazelik.py` (**türetilmiş veri bayatlık uyarısı**, K110 — canlı yol ASLA import etmez) · `nli_ayikla.py` (**nli_ganyan.csv üreticisi**, K110'da yazıldı; K94'ün 27.442 olayının tamamını yeniden üretiyor)
 
 **Boru hattı:** `kazi.py` → `duzlestir.py` → `ozellik.py` → `model.py` ·
 `altili_tam.py` · `altili_olasilik.py` · `guncelle.py`

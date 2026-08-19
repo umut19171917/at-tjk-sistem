@@ -113,18 +113,50 @@ def kamu_ayni_genislikte(k, ix):
 
 
 def son_oran_ekle(k):
-    """K109: kazananin KAPANISA EN YAKIN gorulen ganyan orani (altili_oran_log.csv).
-    Kupon anindaki MUHTEMEL oran deger hesabinda kullanilamaz — musterek bahiste
-    odenen fiyat kapanis fiyatidir."""
+    """Kazananin ODENEN fiyati. K110 DUZELTMESI — kaynak sirasi degisti.
+
+    K109'da bu fonksiyon altili_oran_log.csv'nin SON gozlemini "kapanisa en yakin" diye
+    kullaniyordu. OLCULDU, YANLISMIS: takip 15 dk'da bir kostugu ve kosular :00/:30'a
+    dustugu icin oran_log'un son fotografi SISTEMATIK olarak ~15 dk erken duruyor
+    (374 kosu: medyan 14,9 dk kala, HICBIRI <=10 dk degil). O nokta ile gercek kapanis
+    arasindaki fark kucuk degil: medyan +%12,7, atlarin %85'i >%10, %60'i >%25 oynuyor
+    (5-95 persentil -%51 .. +%151).
+
+    GERCEK KAPANIS ZATEN ELIMIZDE: defter.csv.ganyan_kapanis, sonuc feed'inden gelir ve
+    %99 dolu. Musterek bahiste odenen fiyat BUDUR. Artik birincil kaynak o; defter'de
+    olmayan (at,kosu) ciftlerinde oran_log'un son gozlemi YEDEK olarak kullanilir ve
+    satir 'oran_log' diye isaretlenir ki karisim gorunur olsun."""
+    k = k.copy()
+    # 1) BIRINCIL: resmi kapanis (defter.csv)
+    d = pd.read_csv(KOK / "veri" / "defter.csv", low_memory=False)
+    for s in ("ganyan_kapanis", "no", "race_kod"):
+        d[s] = pd.to_numeric(d[s], errors="coerce")
+    d = d[d["ganyan_kapanis"].notna() & d["ganyan_kapanis"].gt(0)]
+    kap = {(int(r.race_kod), int(r.no)): float(r.ganyan_kapanis)
+           for r in d.itertuples() if pd.notna(r.race_kod) and pd.notna(r.no)}
+    # 2) YEDEK: oran_log son gozlemi (kapanis DEGIL, ~15 dk erken)
     ol = pd.read_csv(KOK / "veri" / "altili_oran_log.csv", low_memory=False)
     for s in ("ganyan", "no", "dk_kala"):
         ol[s] = pd.to_numeric(ol[s], errors="coerce")
     ol = ol[ol["ganyan"].notna() & ol["ganyan"].gt(0) & ol["dk_kala"].notna()]
     son = ol.sort_values("dk_kala").groupby(["race_kod", "no"]).first()[["ganyan", "dk_kala"]]
-    m = {(rk, no): (g, d) for (rk, no), (g, d) in son.iterrows()}
-    k = k.copy()
-    k["son_oran"] = [m.get((r.race_kod, r.kazanan), (np.nan, np.nan))[0] for r in k.itertuples()]
-    k["son_dk"] = [m.get((r.race_kod, r.kazanan), (np.nan, np.nan))[1] for r in k.itertuples()]
+    yed = {(rk, no): (g, dk) for (rk, no), (g, dk) in son.iterrows()}
+
+    oran, dk_kala, kaynak = [], [], []
+    for r in k.itertuples():
+        rk, no = r.race_kod, r.kazanan
+        if pd.isna(rk) or pd.isna(no):
+            oran.append(np.nan); dk_kala.append(np.nan); kaynak.append("yok"); continue
+        v = kap.get((int(rk), int(no)))
+        if v is not None:
+            oran.append(v); dk_kala.append(0.0); kaynak.append("kapanis")
+            continue
+        g, dkk = yed.get((rk, no), (np.nan, np.nan))
+        oran.append(g); dk_kala.append(dkk)
+        kaynak.append("oran_log" if pd.notna(g) else "yok")
+    k["son_oran"] = oran
+    k["son_dk"] = dk_kala
+    k["oran_kaynak"] = kaynak
     return k
 
 
@@ -282,8 +314,8 @@ def main():
     kg = son_oran_ekle(kg)
     e = kg[kg["son_oran"].notna() & (kg["tuttu"] == 1)]
     if len(e):
-        print(f"\n  Kazanan atlarin orani, kupon anindan kapanisa dogru ({len(e)} ayak; "
-              f"son kayit ort. {e.son_dk.mean():.0f} dk kala):")
+        print(f"\n  Kazanan atlarin orani, kupon anindan RESMI KAPANISA ({len(e)} ayak; "
+              f"{int((e.oran_kaynak=='kapanis').sum())}'i resmi kapanis):")
         print(f"  {'kupon-ani orani':>17} {'n':>6} {'ortalama degisim':>18}")
         for lo, hi, ad in [(0, 4, "<4"), (4, 8, "4-8"), (8, 16, "8-16"), (16, 1e9, "16+")]:
             s = e[(e.kaz_oran >= lo) & (e.kaz_oran < hi)]
@@ -296,13 +328,13 @@ def main():
     b("8b) AYAK-GANYAN ROI — secimleri paraya cevir. IKI FIYATLA, farki gormek icin.")
     print("  Dusunce deneyi: yazdigin HER ATA, HER AYAKTA 1 TL ganyan oynasaydin?")
     print("  SOL sutun kupon-ani (muhtemel) fiyati -> YANILTICI, yalniz tuzagi gostermek icin.")
-    print("  SAG sutun son gorulen (~16 dk kala) fiyat -> GERCEGE YAKIN OLAN BUDUR.")
+    print("  SAG sutun RESMI KAPANIS (defter.ganyan_kapanis) -> ODENEN FIYAT BUDUR.")
     print("  Muserek bahiste oynadigin fiyat degil KAPANIS fiyati oder; muhtemel oranla")
     print("  hesaplanan kazanc TAHSIL EDILEMEZ.")
     print("  REFERANS: olculmus ganyan kesintisi %28,3 (K104).")
     ke = kg[kg["son_oran"].notna()]
     print(f"\n  {'config':>15} {'yazilan at':>11} {'tutan':>7} {'ROI (muhtemel)':>16} "
-          f"{'ROI (son gorulen)':>19} {'yanilsama':>11}")
+          f"{'ROI (KAPANIS)':>19} {'yanilsama':>11}")
     for c, g in sorted(ke.groupby("config"), key=lambda x: x[0]):
         yaz = g["nat"].sum()
         t = g[g["tuttu"] == 1]
@@ -311,7 +343,7 @@ def main():
         print(f"  {c:>15} {int(yaz):>11,} {len(t):>7} {r_m:>+15.1f}% {r_k:>+18.1f}% "
               f"{r_m-r_k:>+11.1f}")
 
-    print("\n  OLAY DUZEYINDE BOOTSTRAP (%95 GA; birim = ALTILI, ayak degil) — SON GORULEN fiyatla:")
+    print("\n  OLAY DUZEYINDE BOOTSTRAP (%95 GA; birim = ALTILI, ayak degil) — RESMI KAPANIS fiyatiyla:")
     print(f"  {'config':>15} {'Altili':>7} {'ROI':>9} {'%95 GA':>22} {'hüküm':>22}")
     rng = np.random.default_rng(11)
     for c, g in sorted(ke.groupby("config"), key=lambda x: x[0]):
@@ -330,9 +362,52 @@ def main():
         lo, hi = np.percentile(orn, 2.5), np.percentile(orn, 97.5)
         h = "POZITIF (incele!)" if lo > 0 else ("negatif, kesin" if hi < 0 else "ayirt edilemiyor")
         print(f"  {c:>15} {m:>7} {goz:>+8.1f}% [{lo:>+7.1f}, {hi:>+7.1f}] {h:>22}")
-    print("\n  UYARI: 'son gorulen' de KAPANIS DEGILDIR (~16 dk kala). Surukleme o noktadan")
-    print("  sonra da surer ve kazananin fiyatini genelde DAHA DA dusurur -> buradaki")
-    print("  ROI'ler hala IYIMSER taraftadir. Gercek deger daha dusuktur, daha yuksek degil.")
+    print("\n  K110: sayilar artik RESMI KAPANIS fiyatiyla (defter.csv.ganyan_kapanis).")
+    print("  K109'un 'bunlar hala iyimser' uyarisi DUSTU -- o uyari oran_log'un yaklasik")
+    print("  15 dk erken durmasindan kaynakliydi (olculdu: 374 kosu, medyan 14,9 dk kala,")
+    print("  hicbiri <=10 dk degil; kapanisla farki medyan +%12,7, atlarin %60'i >%25 oynuyor).")
+    print(f"  fiyat kaynagi: {kg['oran_kaynak'].value_counts().to_dict()}")
+    print("  REFERANS: olculmus ganyan kesintisi %28,3 (K104). ROI'ler oraya oturuyorsa")
+    print("  secim katmani ne kazandiriyor ne kaybettiriyor -- yalnizca kesinti odeniyor.")
+
+    # ---------------------------------------------------------------- 9
+    b("9) VERI KALITESI — bu sayfadaki sayilari okurken bilinmesi gerekenler (K110)")
+    # C3: 'dk_grup' NIYETI kaydeder, GERCEGI degil. takip 15 dk'da bir kostugu icin
+    # 30 dk grubu bazen 14-15 dk kala kurulabiliyor -> dk_grup'a gore gruplayan her
+    # analizde (bu dosya ve ayak_kalibrasyon dahil) etiket-gercek ayrimi vardir.
+    try:
+        a2 = a[a["ayak"] == 1].drop_duplicates(["tarih", "pist", "seq", "dk_grup"]).copy()
+        a2["dk_kala"] = pd.to_numeric(a2["dk_kala"], errors="coerce")
+        a2 = a2[a2["dk_kala"].notna()]
+        sap = (a2["dk_kala"] - a2["dk_grup"]).abs()
+        print(f"  C3 ETIKET vs GERCEK kurulma ani: {len(a2)} kupon-ani | "
+              f"medyan sapma {sap.median():.1f} dk | >5 dk sapan {int((sap > 5).sum())} "
+              f"(%{100*(sap > 5).mean():.0f})")
+        kotu = a2[sap > 5]
+        if len(kotu):
+            print("     sapanlar (etiket 'dk_grup' ama gercek 'dk_kala'):")
+            for r in kotu.itertuples():
+                print(f"       {r.tarih} {r.pist} {int(r.seq)}. -> etiket {int(r.dk_grup)} dk, "
+                      f"gercek {r.dk_kala:.1f} dk")
+        print("     ANLAMI: bu kuponlar dk_grup'una gore gruplanirken ETIKETIYLE sayilir;")
+        print("     zamanlama kolu (K105) kiyasi yalniz ETIKET=GERCEK olanlarda temizdir.")
+    except Exception as e:                                       # noqa: BLE001
+        print(f"  C3 kontrolu atlandi ({type(e).__name__})")
+
+    # C4: BASABAS'ta 'kazanan' sutunu BIZIM tuttugumuz ati yazar (altili_canli.sonucla_altili:
+    # kazanan = min(tuttugumuz kazanan) if tuttuysak else min(tum kazananlar)). Yani yukaridaki
+    # "kazanan bizim kacinci tercihimizdi" tablolari (2/4/7) o olaylarda KENDIMIZE dogru yanlidir.
+    try:
+        dd = pd.read_csv(KOK / "veri" / "defter.csv", low_memory=False)
+        dd["sonuc"] = pd.to_numeric(dd["sonuc"], errors="coerce")
+        kz = dd[dd["sonuc"].notna()].groupby("race_kod")["sonuc"].apply(lambda s: int((s == 1).sum()))
+        if len(kz):
+            print(f"\n  C4 BASABAS (dead heat): {len(kz):,} sonuclanmis kosunun "
+                  f"{int((kz > 1).sum())}'inde birden cok kazanan (%{100*(kz > 1).mean():.2f})")
+            print("     ANLAMI: o olaylarda 'kazanan' sutunu BIZIM tuttugumuz attir -> bolum 2/4/7")
+            print("     kendimize dogru hafif yanli. Sikliga bakilirsa etki ihmal edilebilir.")
+    except Exception as e:                                       # noqa: BLE001
+        print(f"  C4 kontrolu atlandi ({type(e).__name__})")
 
 
 if __name__ == "__main__":
