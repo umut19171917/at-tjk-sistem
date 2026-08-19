@@ -3260,3 +3260,123 @@ Her düzeltmeden sonra ve en sonda tam kontrol koşuldu:
 `altili_backtest.py`'ye eklenen `rapor_ortak` importu **korumalı** (try/except + yerel yedek
 tarife) çünkü canlı yol o modülü `kupon_kur` için import ediyor — orada bir import hatası
 **kupon kurulmamasına** yol açardı, ölçülen en pahalı hasar.
+
+---
+
+**K111 — ZAMANLAMA ÖLÇÜLDÜ (BEKLEYENLER #4): geç kurmak DAHA ÇOK TUTTURUYOR ama DAHA AZ
+KAZANDIRIYOR. K98-h'nin "tavan"ı zaman ekseninde de geçerli. Aksiyona dönük versiyonda
+(1. ayak) hiçbir işaret yok.** 19 Ağu 2026. Araç: `kod/zamanlama_test.py` (salt offline).
+
+Kullanıcı 19 Ağu ISTANBUL 2. Altılı'nın ekran görüntüsünü getirip *"kazanan atın kamusu son
+dakikalarda yükseldi, 5 dk kala kursaydık ne olurdu"* diye sordu. Önce **o tek koşu**, sonra
+**tüm sicil** ölçüldü.
+
+## (a) TEK KOŞU — okuma tersmiş, ve bu önemli
+
+Kullanıcı görselden *"at son sıralardan yükseldi"* okumuştu. Veri **tam tersini** söylüyor:
+
+| yarışa kala | oran | kamu sırası |
+|---|---|---|
+| 105 dk | **5,40** | **1. (favori)** |
+| 29 dk (kupon anı) | 8,70 | 2. |
+| 14 dk | 12,05 | 7. |
+| ~0 dk (kapanış) | **25,40** | **10.** |
+
+Görseldeki *"kamu 2."* etiketi **kupon anındaki** sıradır, yarış anındaki değil. At kupon
+kurulurken kamunun 2. tercihiydi ve oradan **10.'luğa çöktü** — oranı ~5 katına çıktı.
+Para bu attan **çekildi**, ona akmadı. Sistemin sırasının 8.→11. düşmesi de bunun sonucu
+(bot2'nin %82'si kamudan gelir).
+
+**Karşı-olgusal (aynı dağıtıcı, aynı bütçe, 5 dk verisi):**
+
+| config | gerçek | 5 dk kala | at 11 |
+|---|---|---|---|
+| `acgozlu900` · `acgozlu900_15` | **5/6** | 4/6 ↓ | hayır |
+| `acgozlu_v2` | 5/6 | 5/6 | hayır |
+| diğer dördü | 3-4/6 | değişmedi | hayır |
+
+**Yedi config'in hiçbiri at 11'i yazmıyor; ikisi kötüleşiyor, hiçbiri iyileşmiyor.**
+5 dk kala at kamuda 10./12, sistemde 11./12'ydi. Temettü 272.186,93 TL'ydi ama at 25,40'a
+kapandı — yani **kalabalık da bilmedi**; ödülün büyüklüğünün sebebi zaten bu.
+
+## (b) BİR TUZAK: "5 dk kala kupon" ÖLÇÜLEMEZ — ve neden
+
+Altılı kuponu 1. ayak başlamadan kurulmak zorundadır. "5 dk kala kursaydık" demek,
+**1. ayağa 5 dk kala altı ayağın da o andaki fotoğrafını** kullanmak demektir.
+- `defter.csv` her koşuyu **kendi** postasına ~0 dk kala kaydeder → 6. ayağın kaydı
+  1. ayaktan **~2,5 saat sonra** alınmıştır. Onu kupon senaryosuna sokmak **K97'de
+  düzeltilen sızıntının aynısıdır.** Yapılmadı.
+- `oran_log` 1. ayağa en yakın 10,4 dk (medyan 14,9) kala geçiyor; **82 Altılı'nın
+  sıfırında** ≤6 dk fotoğraf var (K110).
+
+Bu yüzden soru **ikiye ayrıldı** ve ayrı ayrı okundu.
+
+## (c) YÖNTEM — A0'ın iskeleti, değişen tek şey CETVEL değil ZAMAN
+
+Her (config, ayak) için: **k = o ayakta gerçekten yazdığımız at sayısı** (genişlik sabit).
+İki cetvel: kupon anı (`altili_kupon_ani`, config'in kendi dk grubundan) vs 5 dk kala
+(`defter`, o koşunun kendi postasına ~0 dk kala). Eşleşmiş McNemar + olay-bootstrap.
+
+**İÇ KONTROL — geçti.** `bot1` orana kördür, zamanla değişmemeli. `bot1_900` ve `bot1_1800`'de
+uyumsuz çift **tam sıfır** çıktı. Yöntem doğrulandı.
+
+## (d) SONUÇ
+
+**Z1 — AKSİYONA DÖNÜK (yalnız 1. ayak; "kuponu 25 dk geç kur" demek):**
+isabet **%55,9 → %58,2**, fark +2,3 puan, %95 GA **[−2,6, +7,4]**, McNemar **p=0,38**.
+Para: −%20,6 → −%20,9. **İŞARET YOK.**
+
+**Z2 — BİLGİ SORUSU (tüm ayaklar; kupon olarak kurulamaz, mekanizmayı ölçer):**
+
+| | kupon anı | 5 dk kala |
+|---|---|---|
+| ayak isabeti | %56,8 | **%60,3** |
+| tutan kazanan | 879 | **933** (+54) |
+| **ganyan ROI (resmî kapanış)** | **−%22,9** | **−%25,3** |
+
+Fark **+3,5 puan [+0,8, +5,9]**, McNemar **p=0,0003** — **gerçek bir sinyal.**
+Son ~30 dakikanın oran hareketi **gerçekten bilgi taşıyor.**
+
+**AMA PARA İYİLEŞMİYOR, KÖTÜLEŞİYOR.** 54 fazla kazanan tutuluyor ve toplam getiri
+**düşüyor** — geç cetvel **daha ucuz atları** tutuyor.
+
+> **Bu, K98-h "tavan"ının ZAMAN eksenindeki hâlidir.** K98-h'de kapsamı genişletmek isabeti
+> artırıyor ama temettüyü yarıya düşürüyordu ("kalabalığa katılmak"). Burada aynı şey
+> **beklemekle** yapıldı ve **aynı duvara** çarpıldı. Tavan bir kupon-şekli özelliği değil,
+> **piyasa özelliği**: kalabalığa yaklaşmanın bedeli, yaklaşma biçiminden bağımsız.
+
+## (e) KAPSAM — ön-kayıtlı eşik TUTMADI, dürüstçe kaydediliyor
+
+İki fotoğrafta da bulunan ayak oranı **%78** (ön-kayıt %90 istiyordu) → **hiçbir config'e
+tek tek hüküm verilmedi.** Ölçüt sonuca bakılıp değiştirilmedi.
+
+Kapsamı sıfır olan 6 gün: 20-24 Tem (`kupon_ani` henüz yoktu, K97) ve **16 Ağu** (sessiz gün
+kaybı, K107). Yani en büyük boşluklar **tarihsel/yapısal**, koşuya özgü değil.
+
+**Eşleşmiş tasarım eksiklikten etkilenir mi? Hayır** — karşılaştırma aynı ayağın içinde;
+bir ayak eksikse **her iki koldan birden** düşüyor. Eksiklik **farkı yanlılaştırmaz**,
+yalnızca hangi ayaklar hakkında konuştuğumuzu daraltır (genellenebilirlik, iç geçerlilik değil).
+
+Kayda geçen asimetri: ölçülebilen ayaklarda gerçek isabetimiz %56,4, **ölçülemeyenlerde %63,4**
+(+7 puan). Yani ölçemediklerimiz **daha kolay** ayaklar — zamanlamanın etkisinin zaten küçük
+olacağı yerler. Hüküm **ortalama zorluktaki** ayaklar için geçerlidir.
+
+## (f) BEKLEYENLER #4 İÇİN NE DEMEK
+
+1. **"Daha geç kur" fikrinin para tarafı ölçüldü ve olumsuz.** Bilgi geliyor (Z2 kesin),
+   ama o bilgi **fiyata çoktan girmiş** durumda — tuttuğun at ucuzlamış oluyor.
+2. **Aksiyona dönük versiyonda (Z1) hiçbir işaret yok.** Kuponu 25 dk geç kurmanın ölçülebilir
+   faydası görülmedi; ne isabette ne parada.
+3. **Canlı 15 dk kolu (K105) hakkında karar KULLANICININ.** Bu ölçüm kolun *beklentisini*
+   düşürüyor ama kol farklı bir şeyi test ediyor (tüm kupon 30 vs 15 dk, ayak-ayak değil) ve
+   kâğıt üzerinde Altılı başına 120 TL. K106'daki ilkeyi koruyorum: veri toplamaya başlamış
+   bir kolu teoriyle kapatmam; **karar kullanıcınındır.**
+4. **BEKLEYENLER #4'ün "5 dk verisi yok" ön koşulu ARTIK GEÇERSİZ ama "5 dk kupon" da
+   ölçülemez** — (b)'deki yapısal sebep. Kolun sorusu ancak canlı kolla veya Z1'in
+   büyümesiyle cevaplanır.
+
+## (g) DOKUNULMAYANLAR
+
+`kod/zamanlama_test.py` yeni ve salt-okunur; hiçbir dosyaya yazmaz. Canlı seçim/dağıtım/config
+koduna dokunulmadı. Fiyat kaynağı K110 kuralına uyuyor: **resmî kapanış** (`defter.ganyan_kapanis`),
+`oran_log` **kullanılmadı**.

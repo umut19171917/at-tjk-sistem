@@ -122,7 +122,29 @@ altili.html / paper.html K55 zengin formatına geçti (tahminler + sistem sıras
 kamu sırası + oran + bedel + ödül + toplam). defter.html hâlâ eski düzende. İstenirse aynı
 `rapor_ortak.py` yapıtaşlarıyla çevrilebilir; sistemin veri akışına dokunmaz.
 
-### 4. Kupon zamanı — 30 vs 15 dk · **CANLI KOL AÇIK (K105)** · **5 dk VERİSİ DE VARMIŞ (K110)**
+### 4. Kupon zamanı — 30 vs 15 dk · **CANLI KOL AÇIK (K105)** · **GERİYE DÖNÜK ÖLÇÜLDÜ (K111)**
+
+> **K111 SONUCU (19 Ağu 2026) — beklentiyi DÜŞÜRÜYOR, kolu kapatmıyor.**
+> Ayak düzeyinde eşleşmiş ölçüm (1.548 ayak, 78 Altılı, ölçüt önceden bağlandı):
+> - **Bilgi GERÇEK:** kupon anı → 5 dk kala ayak isabeti %56,8 → **%60,3**
+>   (+3,5 puan, %95 GA [+0,8, +5,9], McNemar **p=0,0003**).
+> - **Ama PARA KÖTÜLEŞİYOR:** ganyan ROI (resmî kapanışla) **−%22,9 → −%25,3**.
+>   54 fazla kazanan tutuluyor, toplam getiri düşüyor → geç cetvel **daha ucuz** atları tutuyor.
+>   Bu, **K98-h "tavan"ının zaman eksenindeki hâli**: kalabalığa yaklaşmak isabeti artırır,
+>   kazancı artırmaz.
+> - **Aksiyona dönük versiyonda (yalnız 1. ayak = kuponu 25 dk geç kurmak): İŞARET YOK**
+>   (+2,3 puan, GA sıfırı içeriyor, p=0,38).
+> - İç kontrol geçti: `bot1` (orana kör) config'lerinde uyumsuz çift **sıfır**.
+> - Kapsam %78 → ön-kayıtlı %90 eşiği tutmadı, **config düzeyinde hüküm verilmedi**.
+>
+> ⚠️ **"5 dk kala kupon" YAPISAL OLARAK ÖLÇÜLEMEZ:** kupon 1. ayak başlamadan kurulur;
+> 6. ayağın `defter` kaydı 1. ayaktan ~2,5 saat sonra alınmıştır → kullanmak K97 sızıntısı
+> olur. `oran_log` da 1. ayağa en yakın 10,4 dk kala geçiyor. Kolun sorusu ancak **canlı
+> kolla** veya Z1'in örneklemi büyüyerek cevaplanır.
+>
+> **KARAR KULLANICININ:** bu ölçüm kolun beklentisini düşürüyor ama kol farklı bir şeyi test
+> ediyor (tüm kupon 30 vs 15 dk) ve kâğıt üzerinde Altılı başına 120 TL. K106 ilkesi:
+> veri toplamaya başlamış bir kol teoriyle kapatılmaz.
 
 > **K110 EKLEDİ (19 Ağu 2026):** *"5 dk kala kursak ne olurdu"* sorusu için veri toplamaya
 > **gerek yok — zaten elimizde.** `defter.csv` her koşuyu postaya **medyan 0 dk kala**
