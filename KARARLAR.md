@@ -3380,3 +3380,106 @@ olacağı yerler. Hüküm **ortalama zorluktaki** ayaklar için geçerlidir.
 `kod/zamanlama_test.py` yeni ve salt-okunur; hiçbir dosyaya yazmaz. Canlı seçim/dağıtım/config
 koduna dokunulmadı. Fiyat kaynağı K110 kuralına uyuyor: **resmî kapanış** (`defter.ganyan_kapanis`),
 `oran_log` **kullanılmadı**.
+
+---
+
+**K112 — "KAMUYA DAHA ÇOK AĞIRLIK VERELİM Mİ?" ÖLÇÜLDÜ → HAYIR. Ayrıca uzak ayakta "kamu"nun
+ne kadar HAM olduğu ilk kez sayıldı ve K92'nin λ'sı gerekçesine kavuştu.** 19 Ağu 2026.
+Araç: `kod/kamu_test.py` (salt offline, hiçbir dosyaya yazmaz).
+
+## (a) ÇIKIŞ NOKTASI — kullanıcının somut sorusu
+
+19 Ağu ISTANBUL 2. Altılı'nın 1. ayağında kazanan AFRİKA ATEŞİ, kupon anında **kamuda 2.**
+sıradaydı; bot2 onu **8.**'ye koydu, `orta` (2 at yazar) yazmadı, at kazandı, temettü
+**272.186,93 TL**. Kullanıcı sordu: *"sistem kamuya yeterince ağırlık vermiyor olabilir mi?"*
+
+**Mekanizma çözüldü.** O koşuda kamu bir tek atı ayırıyordu (#2, oran 2,45); **2.'den 8.'ye
+kadar yedi at 8,70–10,80 bandında sıkışıktı** — yani kamu onları birbirinden neredeyse hiç
+ayırmıyordu. bot1 ise net konuşuyordu: #8 sahanın **en iyisi** (1.), #11 sahanın **en kötüsü**
+(12/12). Kamu ikisi arasında %24 fark görürken bot1 **7 kat** fark görüyordu.
+**Kural:** bot1, kamunun kararlı olduğu yerde hiçbir şeyi oynatamaz (#2'ye dokunamadı);
+kamunun kararsız olduğu yerde sıralamayı yeniden yazar. O koşuda tam bunu yaptı.
+
+## (b) ÖLÇÜM A — UZAK AYAKTA "KAMU" GERÇEK AMA HAM
+
+TJK, kupon anında uzak ayak için **gerçek bir piyasa** veriyor: para var, oranlar hareket
+ediyor (`oran_log` 6. ayağı 195 dk kaladan itibaren izliyor). Dondurulmuş da değil, koşu-anı
+verisi de değil. **Ama o piyasa ÖDEYEN piyasa değil.** Kupon anı sıralaması ile **resmî
+kapanış** sıralaması (407 ayak):
+
+| ayak | ort. uzaklık | Spearman ρ | **favori AYNI kaldı mı** |
+|---|---|---|---|
+| 1. | 28 dk | 0,758 | **%56** |
+| 2. | 56 dk | 0,647 | %51 |
+| 3. | 83 dk | 0,553 | %49 |
+| 4. | 109 dk | 0,612 | %58 |
+| 5. | 139 dk | 0,543 | %53 |
+| **6.** | **163 dk** | **0,575** | **%40** |
+
+**İki sonuç.** (1) 6. ayakta kupon anındaki favori, 10 koşunun 6'sında kapanışta favori
+değil. (2) **1. ayakta bile** — postaya sadece 28 dk varken — favori **%44 ihtimalle
+değişiyor.** Canlı örnek aynı Altılı'nın 6. ayağı: #2 ÖNDER kupon anında 5,70 ile favoriydi,
+**>57'ye çöktü**; kapanışın favorisi #8 KRAKEN (2,95) o an **7. sıradaydı**.
+
+> **K92 GEREKÇESİNE KAVUŞTU.** Uzak ayağın olasılığını λ=0,65 ile düzleştirmemiz gerektiğini
+> K92'de **ölçmüştük ama nedenini bilmiyorduk**. Cevap bu: uzak ayakta kamu olasılıkları
+> fazla kendinden emin, çünkü arkalarındaki piyasa henüz oluşmamış. λ o aşırı güveni kırıyor.
+> Ölçülmüş bir düzeltmenin altında artık **ölçülmüş bir mekanizma** var.
+
+## (c) ÖLÇÜM B — AĞIRLIĞI DEĞİŞTİRSEK NE OLURDU?
+
+`bot2 ~ bot1^α · kamu^γ`. Ölçülen (**K110**, taze veriyle, **elle seçilmedi**): İngiliz
+α=**0,19** γ=**0,98**. (K96 0,21/0,95 demişti; K110'da güncel veriyle yeniden ölçüldü.)
+α=0 saf kamu demek. 1.495 (config × ayak) çiftinde **genişlik sabit**, değişen tek şey cetvel:
+
+| α | | ayak isabeti | ganyan ROI | ort. kazanan oranı |
+|---|---|---|---|---|
+| 0,00 | **SAF KAMU** | %56,5 | −%29,9 | **4,90** |
+| **0,19** | **BUGÜNKÜ** | **%57,9** | **−%28,9** | 4,84 |
+| 0,35 | | %58,4 | −%30,1 | 4,72 |
+| 0,50 | | %58,7 | −%31,6 | 4,60 |
+| 1,00 | | %58,8 | −%33,6 | 4,46 |
+| ∞ | SAF BOT1 | %57,1 | −%33,3 | 4,59 |
+
+**ÖN-KAYITLI KARAR KIYASI (tarama değil — iki nokta):** saf kamu vs bugünkü.
+- **İSABET:** yalnız-bugünkü **44**, yalnız-saf-kamu **22**, uyumsuz çift 66,
+  McNemar **p=0,0092** → **FARK VAR, bugünkü daha iyi.**
+- **PARA:** −%28,9 vs −%29,9, fark **+1,01 puan**, %95 GA **[−0,86, +2,95]** →
+  **PARA FARKI KANITI YOK** (GA sıfırı içeriyor).
+
+**HÜKÜM: kamuya daha fazla ağırlık VERİLMEZ.** Ön-kayıt "hem isabette hem parada anlamlı iyi
+olmalı" diyordu; saf kamu **ikisinde de** iyi değil, isabette anlamlı **kötü**.
+
+## (d) İKİ YENİ BULGU
+
+**1. bot1'in katkısı ayak düzeyinde GERÇEK.** A0 (K106) "seçim katmanımız kalabalıktan
+ölçülebilir biçimde farklı değil" demişti. Bu ölçüm daha temiz bir izolasyon yapıyor (aynı
+ayak, aynı genişlik, **yalnız α değişiyor**) ve bot1'in isabete katkısını **p=0,022** ile
+yakalıyor (**p=0,0092**). A0 ile çelişmiyor — A0 config'in kendi dağıtıcısı ve genişliğiyle bakıyordu, bu
+ise cetveli tek başına izole ediyor.
+
+**2. Ama katkı PARAYA DÖNMÜYOR.** bot1'in sesi arttıkça isabet yükseliyor, **kazanan atların
+ortalama oranı düşüyor** (4,90 → 4,46). Daha çok tutturup daha ucuz tutturuyorsun.
+
+> **TAVAN DÖRDÜNCÜ KEZ ÇIKTI.** K98-h: kapsam genişletmek. K108: ayak sayısını azaltmak.
+> K111: daha geç kurmak. K112: bot1'in sesini kısmak. **Dördü de aynı sonucu veriyor** —
+> isabet artar, ödeme düşer, net değişmez. Tavan bir kupon-şekli özelliği değil, **piyasa
+> özelliğidir**: kalabalığa yaklaşmanın bedeli, ona nasıl yaklaştığından bağımsız.
+
+## (e) DİSİPLİN NOTU — neden "en iyi α"yı seçmiyoruz
+
+Taramada α=1,00 en yüksek isabeti (%58,8), α=0,19 en iyi ROI'yi (−%28,9) veriyor. **Hiçbiri
+seçilmedi.** 10 değer denendiğinde birinin en iyi çıkması kaçınılmazdır; onu almak
+K33/K52'nin yasakladığı hindsight'tır. Karar yalnızca **önceden belirlenmiş iki noktadan**
+verildi. Ayrıca α=0,19 zaten **ölçülmüş** bir değer (K110); taramanın ROI optimumunun ona
+denk düşmesi ayarın sağlamlığının küçük bir teyidi — **gerekçesi değil.**
+
+**Tek olay hükmü kurmaz da kayda geçer:** AFRİKA ATEŞİ vakası, bot1'in yanıldığı **22
+olaydan biriydi**; 44 olayda bot1 sayesinde tutturmuşuz. Tek olaydan gidilseydi sistem
+yanlış yöne çevrilecekti. Bu, "ölçmeden konuşma" ilkesinin somut faydasıdır.
+
+## (f) DOKUNULMAYANLAR
+
+`kod/kamu_test.py` yeni ve salt-okunur. **Hiçbir ağırlık, config, dağıtıcı DEĞİŞTİRİLMEDİ.**
+Kullanıcı zaten "sadece analiz, işlem yapma" demişti. Fiyat kaynağı K110 kuralına uyuyor:
+resmî kapanış (`defter.ganyan_kapanis`), `oran_log` kullanılmadı.

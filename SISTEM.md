@@ -2,8 +2,8 @@
 
 > **Bu dosya bir devir belgesidir.** Yeni bir Claude oturumuna sistemin tamamını
 > anlatmak için hazırlandı. Üretim tarihi: **16 Ağustos 2026** ·
-> **güncellendi 19 Ağustos 2026 (K110 TAM KOD İNCELEMESİ: backtest birim fiyatı · kapanış oranı · bayat yığın — üçü de düzeltildi).**
-> Otorite sırası: `KARARLAR.md` (numaralı karar günlüğü, K1–K110) > `BEKLEYENLER.md`
+> **güncellendi 19 Ağustos 2026 (K110 kod incelemesi · K111 zamanlama · **K112 kamu ağırlığı — değiştirilmedi**).**
+> Otorite sırası: `KARARLAR.md` (numaralı karar günlüğü, K1–K112) > `BEKLEYENLER.md`
 > (ertelenmiş işler + tetikleri) > bu dosya. Çelişki olursa KARARLAR kazanır.
 
 ---
@@ -220,6 +220,19 @@ Bunların hepsi **ölçüldü**, varsayılmadı:
 
 > **K93 DÜZELTMESİ (K104):** "ganyan −%25,4 = kesinti %25,5, birebir tuttu" ifadesi kısmen
 > tesadüftü. Doğru referans %25,5 değil, oynadığımız koşuların gerçek ortalaması **%28,3**.
+
+> ⚠️ **UZAK AYAKTA "KAMU" HAMDIR (K112).** Kupon anında gördüğümüz kamu **ödeyen kamu
+> değildir**. Kupon anı sırası ↔ resmî kapanış sırası (407 ayak): 1. ayak ρ=0,76 / favori
+> **%56** aynı · 6. ayak ρ=0,58 / favori **%40** aynı. Yani 6. ayakta kupon anındaki favori
+> 10 koşunun 6'sında kapanışta favori değil; **1. ayakta bile** favori %44 ihtimalle değişir.
+> TJK gerçek bir piyasa veriyor (para var, oranlar hareket ediyor) ama o piyasa henüz
+> olgunlaşmamıştır. **K92'nin λ=0,65'i bunun düzeltmesidir** — artık mekanizması ölçülü.
+
+> ⚠️ **AĞIRLIKLAR ÖLÇÜLDÜ, DEĞİŞTİRİLMEYECEK (K112).** "Kamuya daha çok ağırlık verelim mi?"
+> ölçüldü: saf kamu (α=0) bugünküden (α=0,19) isabette **anlamlı KÖTÜ** (44-22, p=0,0092),
+> parada **fark yok** (+1,01 puan, GA [−0,86, +2,95]). bot1'in katkısı ayak isabetinde
+> gerçek ama **paraya dönmüyor** — sesi arttıkça kazanan atların ortalama oranı düşüyor
+> (4,90 → 4,46). α taraması yapıldı ama **karar taramadan verilmez** (K33/K52).
 
 > ⚠️ **DAĞILIM KAYMASI — BACKTEST SAYILARI CANLIYA BİREBİR TAŞINMAZ (K107).**
 > `altili_backtest.py`'nin `prep()`'i yalnızca **muhtemel + kapanış oranı bulunan ve tek
