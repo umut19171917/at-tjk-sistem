@@ -3745,3 +3745,29 @@ Projenin ürettiği bütün kenar hipotezleri artık ölçüldü:
 | yapısal fırsat (devir) | K117 — gerçek ama ulaşılamıyor |
 **Açık kalan tek şey ölçüm değil, KARAR: 25 Eylül (BEKLEYENLER ZAMANLI #4).** O tarihe kadar
 `acgozlu_v2`'nin ileri ölçümü birikmeye devam ediyor.
+
+**K117 EK — "7'li yapmayacak mıyız?" sorusunun KESİN cevabı: hayır, ve gerekçe istatistik değil
+ARİTMETİK. 7'linin büyük temettüsü, TUTTURAMADIĞIMIZ olaylarda yaşıyor.**
+K117'de kriter geçilemedi ama GA'lar genişti ("belki örneklem küçüktür" itirazı açıktı).
+Kullanıcı sorunca kondisyonel temettü ölçüldü — itiraz kapandı.
+- **ÖLÇÜM (bütçe 1.125 TL/olay, aynı kartlar):**
+
+  | | TÜM olayların temettü medyanı | BİZİM TUTTUKLARIMIZIN medyanı | oran |
+  |---|---|---|---|
+  | Altılı (6) | 29.790 TL | **2.048 TL** | %7 |
+  | 7'li (7) | **75.513 TL** | **4.096 TL** | **%5** |
+
+  Yakaladığımız olayların ORTALAMA temettüsü: Altılı **5.859 TL**, 7'li **6.462 TL** —
+  neredeyse AYNI.
+- **SONUÇ:** 7'linin "12,7 kat büyük temettü" başlığı ürün için doğru, **bizim için değil.**
+  Biz her iki üründe de yalnızca ucuz kuyruğa erişiyoruz — favorilerin kazandığı, herkesin
+  bildiği, havuzun bölündüğü olaylar (K65 mekanizması). 7. ayak eklemek bize daha büyük
+  ödüllere erişim VERMİYOR; sadece daha çok olaydan bizi ELİYOR.
+- **ÜÇ ETKİ ÜST ÜSTE:** birim %60 pahalı (2,00 vs 1,25) · isabet 2,7 kat az (32→12) ·
+  tuttuğumuzda ödül aynı (5.859 → 6.462). Bu bir örneklem sorunu değil, çarpım.
+- **KARAR: 7'li kolu AÇILMIYOR** — ne canlı config, ne kâğıt gözlem akışı.
+  Gerekçe: bu sefer mekanizma anlaşıldı, "belki daha çok veriyle döner" durumu yok.
+  `veri/yedili_tam.csv` ve iki betik duruyor; ürün olgunlaşır veya soru değişirse zemin hazır.
+- **FİKRİ DEĞİŞTİRECEK ŞEY (önceden yazılıyor):** 7'liyi tekrar açmak için bizim tuttuğumuz
+  olayların temettüsünün Altılı'dakinden ANLAMLI yüksek çıkması gerekir — yani ucuz kuyruk
+  sorununun çözülmesi. Bugün oran %5 ile %7; yön 7'li ALEYHİNE.
