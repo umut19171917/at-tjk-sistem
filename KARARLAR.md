@@ -3853,3 +3853,53 @@ uygulandı). `bot1_1800` EMEKLİ EDİLMEDİ.** 24 Ağu 2026.
   BİREBİR aynı getiri, iki katı bedel; tutturduğu tek Altılı'yı — 18.08 ANKARA-1 — bot1_900 da
   1.080 TL eksiğine tutturmuştu). **Kullanıcı "şimdilik devam etsin" dedi → EMEKLİ EDİLMEDİ.**
   Ölçüm KARARLAR'da duruyor; karar ileride yeniden açılabilir.
+
+**K120 — "5'li/4'lü de oynasaydık ne olurdu?" (EK oyun, ikame değil) ÖLÇÜLDÜ: **94.293 TL DAHA
+KAYBEDERDİK.** Ayrıca K85'te bir OKUMA HATASI bulundu ve düzeltildi.** 24 Ağu 2026.
+Kullanıcı: *"kuponlarımızın birçoğu son 5 ve son 4 ayak tutturmuş... kupon yapsaydık kâr/zarar
+durumumuzu nasıl değiştirirdi"*. Gözlem yapısal olarak DOĞRU (program feed'i: *"1. 6'LI GANYAN
+bu koşudan başlar"* koşu 1, *"1. 5'Lİ GANYAN bu koşudan başlar"* koşu 2 → 5'li = Altılı'nın
+son 5 ayağı; 4'lü son 4, 3'lü son 3).
+- **K108'DEN FARKI:** K108 **İKAME** ölçtü ("Altılı yerine 4'lü/5'li oynasak", aynı bütçe
+  paylaştırılarak). Bu ise **EK** oyun: mevcut Altılı kuponlarımız aynen dursun, YANINA aynı
+  seçimlerle 5'li/4'lü de yatıralım. Farklı soru, ayrı hesap.
+- **SONUÇ (canlı sicil, 410/338 kupon-fırsatı, resmî temettülerle):**
+
+  | ürün | birim | fırsat | tutan | bedel | ödül | net | ROI |
+  |---|---|---|---|---|---|---|---|
+  | 5'li | 1,50 TL | 410 | 23 (%5,6) | 141.729 | 47.802 | **−93.927** | −66,3% |
+  | 4'lü | 1,75 TL | 338 | 28 (%8,3) | 41.503 | 41.137 | **−366** | **−0,9%** |
+  | 3'lü | 2,00 TL | 338 | 48 (%14,2) | 18.974 | 12.370 | −6.604 | −34,8% |
+
+- **4'LÜ'NÜN −%0,9'U TUZAK (K83/K113'ün aynısı):** ödülün **%35'i TEK olaydan**
+  (14.08 İSTANBUL-2, 14.574 TL — acgozlu900 ve acgozlu_v2 yakaladı), en büyük 3'ü **%73**.
+  O tek olay çıkarılınca ROI **−%36,0**. Başabaş değil, bir biletin gölgesi.
+- **GENEL ETKİ:** Altılı tek başına net **−297.179 TL** (ROI −%61,0). Üçü birlikte
+  **−391.472 TL** (ROI −%58,4). **ROI 2,6 puan "iyileşiyor" ama net kayıp 94.293 TL ARTIYOR** —
+  bu bir iyileşme değil, seyreltme: daha çok para harcayınca oran yumuşuyor, cep daha çok yanıyor.
+  **Karar ölçütü ROI değil NET'tir; net kötüleşiyor.**
+- **EN İYİ CONFIG EN ÇOK ZARAR GÖRÜRDÜ:** `bot1_900` Altılı'da −2.183 (başabaşa yakın) iken
+  eklemelerle **−19.355**'e inerdi. Kazandıran konfigin üstüne kaybeden akış eklemek onu bozuyor.
+- **AYNI KALIP YİNE ÇIKTI (K117 EK ile birebir):** tutturduklarımız, tipik olayın çok altını
+  ödüyor — 5'li: bizim isabetlerimizin medyanı **1.426 TL**, tüm fırsatların medyanı **5.492 TL**
+  (%26). 4'lü: 549 vs 828. 3'lü: 97 vs 219. **Her üründe yalnız ucuz kuyruğa erişiyoruz**
+  (K65 mekanizması: favorilerin kazandığı, herkesin bildiği, havuzun bölündüğü olaylar).
+
+**K85 DÜZELTMESİ — okuma hatası, kayda geçiyor.** K85'te *"`t5_div/t4_div/t3_div` sütunları
+Altılı katmanı DEĞİL, ayrı ürünlerin ödemeleridir"* yazmıştım ve kanıt olarak 15/07/2026 ELAZIG
+kartını göstermiştim. **Kanıt yanlış okunmuş:**
+- Altılı kombosu `12/8,10/8/6/4/12` → son 4 ayak = `8/6/4/12`; kartta `4'LÜ GANYAN(8/6/4/12)`
+  **BİREBİR AYNI**. Son 3 = `6/4/12`; `3'LÜ GANYAN(6/4/12)` **BİREBİR AYNI**.
+- Ben `SIRALI 5 Lİ BAHİS(6/13/1/2/11)`'e bakıp (o GERÇEKTEN ayrı bir ürün — tek koşuda ilk 5,
+  sıralı) sonucu 4'lü/3'lü'ye de genellemiştim. **Genelleme hatalıydı.**
+- **DOĞRUSU:** `t5_div/t4_div/t3_div` = **5'Lİ / 4'LÜ / 3'LÜ GANYAN**, yani Altılı'nın SON
+  ayaklarında koşan, kendi havuzu olan ürünler. Doğrulama (31/01/2026 İSTANBUL):
+  `t5_div=17.836,65` = `2. 5'Lİ GANYAN(11/3/4/8/2)`, `t4_div=1.687,17` = `4'LÜ GANYAN(3/4/8/2)`.
+  K108 zaten doğrusunu ölçmüştü (**4.931 üçlünün %100'ünde iç içelik doğrulandı**); K85'in
+  yanlış cümlesi kayıtta düzeltilmeden duruyordu.
+- **K85'in SONUCU yine de ayakta:** devir günlerindeki 201 kat "para akışı" değil **ortak
+  sürpriz**tir — ve düzeltilmiş okumayla gerekçe DAHA GÜÇLÜ: 5'li, Altılı'nın altı ayağından
+  **beşini paylaşıyor**; Altılı'yı kimsenin bilememesi ile 5'linin büyük ödemesi aynı koşuların
+  sürprizinden geliyor.
+- **KARAR: canlı sistem DEĞİŞMEDİ.** 5'li/4'lü/3'lü kolu açılmıyor (K108 ikame olarak reddetmişti,
+  K120 ek olarak reddediyor).
