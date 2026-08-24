@@ -3771,3 +3771,48 @@ Kullanıcı sorunca kondisyonel temettü ölçüldü — itiraz kapandı.
 - **FİKRİ DEĞİŞTİRECEK ŞEY (önceden yazılıyor):** 7'liyi tekrar açmak için bizim tuttuğumuz
   olayların temettüsünün Altılı'dakinden ANLAMLI yüksek çıkması gerekir — yani ucuz kuyruk
   sorununun çözülmesi. Bugün oran %5 ile %7; yön 7'li ALEYHİNE.
+
+**K118 — PORTFÖY GÖZDEN GEÇİRİLDİ: tek emeklilik adayı `bot1_1800`. Ayrıca K90'ın açgözlü
+emeklilik kriteri ARTIK HİÇ DOLAMAZ (kusur, kayda geçiyor).** 24 Ağu 2026, kullanıcı sordu:
+"bütün kupon türlerini incele, artık yapmayalım dediğin var mı".
+- **ÖNCE BİR HESAP HATASI YAKALANDI:** ilk taramada "benzersiz katkı" ve K90 kriteri
+  `dropna(how="any")` ile hesaplanmıştı → hiçbir ayakta 11 config'in hepsi birden olmadığı için
+  **0 satır** kaldı, kriter 0/0 üzerinden "sağlanıyor" göründü. Düzeltildi: her ayakta
+  **o an var olan** config'ler arasında hesaplanıyor.
+- **FİİLİ DURUM:** KONFIG'de 11 config var ama **dördü 10 Ağu'da durmuş** (K100 emeklileri:
+  dar, genis, genis900, ayrisma900). Koşan **7** config:
+
+  | config | kupon | 6/6 | 5/6 | ayak% | net | benzersiz ayak |
+  |---|---|---|---|---|---|---|
+  | orta | 110 | 1 | 8 | %46,7 | +5.383 | 5 / 660 |
+  | orta_15 | 28 | 0 | 3 | %52,4 | −3.210 | 0 / 168 |
+  | acgozlu900 | 92 | 3 | 23 | %64,5 | −65.391 | 13 / 552 |
+  | acgozlu900_15 | 27 | 1 | 13 | %71,6 | −14.742 | 0 / 162 |
+  | **bot1_900** | 80 | 3 | 17 | %62,1 | **−2.183** | **33 / 480** |
+  | bot1_1800 | 44 | 1 | 12 | %65,9 | −61.749 | **4 / 264** |
+  | acgozlu_v2 | 54 | 0 | 16 | %65,4 | −58.260 | 5 / 324 |
+- **K90 KRİTERİ ÇALIŞTIRILDI → "acgozlu900 KALIR".** Üç şartın üçü de tutmuyor: eşleşmiş kupon
+  36 (<40) · açgözlünün benzersiz katkısı 1 (≠0) · eşli skor 4/6 (iki yönlü).
+  **AMA KRİTER ARTIK ÖLÜ:** ayrisma900 10 Ağu'da durdu → 40 eşleşmiş kupon eşiği **hiçbir zaman
+  dolmayacak.** Kriter yazıldığında ayrışmanın duracağı bilinmiyordu. **Kayda geçiyor ki
+  ileride "kriter bekliyor" sanılmasın; açgözlünün rolü artık ayrışmanın kontrolü DEĞİL,
+  `acgozlu_v2`'nin kontrolüdür (K92) ve o rol 25 Eylül'e kadar açıktır.**
+- **TEK EMEKLİLİK ADAYI: `bot1_1800`.** Eşleşmiş kıyas (44 Altılı, ikisi de kurulmuş):
+
+  | | 6/6 | 5/6 | ayak% | bedel | ödül | ROI |
+  |---|---|---|---|---|---|---|
+  | bot1_900 | 1 | 7 | %61,0 | 47.591 | **33.451** | −29,7% |
+  | bot1_1800 | 1 | 12 | %65,9 | **95.200** | **33.451** | −64,9% |
+
+  **Getiri BİREBİR AYNI** (ikisi de aynı tek 6/6'yı tutturdu); 1800 tam iki katı ödeyip
+  tıpatıp aynı parayı geri aldı. Ayak isabeti anlamlı daha iyi (yalnız-1800 14, yalnız-900 1,
+  **p=0,0010**) — yani ek bütçe gerçekten ayak yakalıyor, ama 44 Altılı'da **hiçbirini 6/6'ya
+  çeviremedi**; onun yerine 5/6 sayısını 7'den 12'ye çıkardı. K91'in backtest bulgusunun
+  (bot1'in ikinci 900'ünün marjinal ROI'si −%40) canlı karşılığı.
+  **Sorusu iki bağımsız ölçümle cevaplandı; açık sorusu kalmadı.** Portföye benzersiz katkısı
+  da en düşük (4/264, bot1_900'de 33/480).
+- **DİĞER ALTISI KALMALI — hepsinin AÇIK ve DOLMAMIŞ bir tetiği var:** `orta` (temel + zamanlama
+  kontrolü) · `orta_15` ve `acgozlu900_15` (zamanlama kolu, tetik ~60 kupon, şu an 28/27) ·
+  `acgozlu900` (v2'nin kontrolü) · `bot1_900` (bot1 kolu, 33 benzersiz ayak, portföyün tek
+  gerçek çeşitlendiricisi) · `acgozlu_v2` (en yeni deney, 25 Eylül'e bağlı).
+- **KARAR KULLANICIYA BIRAKILDI; canlı sistem BU ADIMDA DEĞİŞMEDİ.**
