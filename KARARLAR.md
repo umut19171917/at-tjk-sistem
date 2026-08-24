@@ -3580,3 +3580,55 @@ Kullanıcı sordu: 5/6'ların kaçı banker ayaktan yattı, kaçında yarış an
   Etiket ("geri kurulan") tek başına yetmiyor; tarih eşiği de gerekiyor.
   Bu, K79'un "son ayakta 8. atı tek yazmış" anlatısının neden yanıltıcı olduğunun da
   ikinci bağımsız teyidi (K97 zaten uyarmıştı).
+
+**K115 — "BANKER HAK EDİLSİN" (acgozlu_v3) BACKTEST EDİLDİ → KRİTER GEÇİLEMEDİ, CANLIYA
+ALINMADI. Mekanizma çalışıyor ama yalnızca açgözlünün KENDİ kusurunu kapatıyor; kapsamın
+zaten olduğu yerin ötesine geçmiyor.** 24 Ağu 2026.
+Kullanıcı K114'ten sonra "deneyelim, bir engel var mı" dedi. Engeller söylendi (tek-değişken
+ilkesi: `acgozlu_v2` en yeni canlı deney, ikizi bile açılmamıştı; 25 Eyl karar noktası;
+K100'deki config kalabalığı) — **offline ölçüme engel yok** denip ölçüldü.
+- **TASARIM ÖNCEDEN SABİT:** `kupon_kur_acgozlu_v3(ayak, max_kombo, BANKER_ESIK)` —
+  bir ayak ancak `p_tepe >= BANKER_ESIK` ise 1 atta başlayabilir, geçemezse **taban 2**;
+  sonra aynı açgözlü dağıtım. **Yeni sabit YOK** (BANKER_ESIK zaten kapsam ailesinde kullanılıyor).
+  Varyant/parametre taraması YAPILMADI.
+- **KARAR KRİTERİ (sonuç görülmeden koda yazıldı):** v3 önerilir ⟺ **@900'de hem ayak isabeti
+  hem 6/6 sayısı `acgozlu900`'den düşük DEĞİL.**
+- **SONUÇ (1526 OOS olay, birim 1,25 TL, sadece 6/6 öder):**
+
+  | bütçe | dağıtım | ayak isabet | 6/6 | tek-at hak/haksız | ROI | ort.temettü |
+  |---|---|---|---|---|---|---|
+  | **900** | açgözlü | **%74,2** | **235** | 87 / **1254** | −63,4 | 2.561 |
+  | **900** | **v3** | %73,1 | 227 | 88 / **0** | −63,6 | 2.616 |
+  | 900 | kapsam | %70,3 | 192 | 88 / 0 | **−52,5** | 3.615 |
+  | 96 | açgözlü | %61,7 | 69 | 88 / **2759** | −68,1 | 831 |
+  | 96 | **v3** | %59,2 | 78 | 88 / **0** | **−41,5** | 1.373 |
+  | 96 | kapsam | %58,4 | 66 | 88 / 0 | **−39,4** | 1.656 |
+
+  **@900 KRİTER: ayak isabeti KALDI, 6/6 KALDI → GEÇİLEMEDİ, canlıya ALINMAZ.**
+  Eşli ayak kıyası @900: yalnız-v3 250, yalnız-açgözlü 353, p=0,0000 (v3 anlamlı KÖTÜ).
+- **MEKANİZMA ÇALIŞTI (teşhis sütunu):** v3 hak edilmemiş tek-at ayaklarını **tamamen** sıfırladı
+  (@900 1254→0, @96 2759→0), gerçek bankerlere dokunmadı (87-88 sabit). Yani kural amaçladığı
+  şeyi yapıyor; işe yaramaması uygulama hatası değil.
+- **POST-HOC BULGU (kriter DEĞİL, hipotez): sorun BÜTÇEYE ÖZGÜ.** Eşli bootstrap (4000):
+  | bütçe | ROI farkı (v3 − açgözlü) | %95 GA | 6/6 farkı |
+  |---|---|---|---|
+  | 96 | **+26,4 puan** | **[+9,8 , +45,2] ANLAMLI** | +9 [−7,+25] (sıfırı içerir) |
+  | 288 | −2,3 | [−14,1 , +8,7] | −2 (sıfırı içerir) |
+  | 900 | −0,2 | [−9,2 , +9,4] | −8 (sıfırı içerir) |
+  Hak edilmemiş tek-at, ayakların @96'da **%30'u**, @900'de yalnız **%14'ü** → sıkışık bütçede
+  ciddi bir kusur, bol bütçede önemsiz. K88 ile birebir tutarlı (genişlik = bütçenin 6. kökü).
+- **KAZANÇ İSABETTEN DEĞİL TEMETTÜDEN GELİYOR:** @96'da 6/6 farkı anlamsız (+9, GA sıfırı
+  içeriyor) ama ortalama temettü **831 → 1.373** (+%65). Sebep K65'te zaten yazılıydı: açgözlünün
+  tek attığı ayak neredeyse her zaman **kamu favorisi**dir → kalabalık havuz → düşük temettü.
+  İkinci atı zorunlu kılmak bunu kırıyor.
+- **AMA YENİ ZEMİN KAZANDIRMIYOR (belirleyici nokta):** @96'da doğru kıyas v3 ile açgözlü değil,
+  **v3 ile kapsam**tır — çünkü o bütçede canlıda zaten kapsam koşuyor (`orta`).
+  kapsam −39,4% vs v3 −41,5% → **v3 kapsamı GEÇMİYOR.** v3'ün @96 "zaferi", açgözlünün kendi
+  kendine açtığı çukuru kapatmaktan ibaret; kapsamın zaten durduğu yere geliyor, ötesine değil.
+- **KARAR: canlı sistem DEĞİŞMEDİ.** Hiçbir config eklenmedi/çıkarılmadı, hiçbir eşik oynatılmadı.
+  `kupon_kur_acgozlu_v3` kodda duruyor (salt backtest; canlıda ÇAĞRILMIYOR), `kod/altili_v3_test.py`
+  offline. BEKLEYENLER #9'un ÜÇÜNCÜ adayı KAPANDI.
+- **GERİYE KALAN AÇIK ADAY:** #9'un dördüncü adayı `saha900` (genişliği saha büyüklüğüne göre
+  dağıt) hâlâ denenmedi. K88'de ölçülen dayanağı duruyor: saha 4-7'den 12+'ya çıkarken kapsam
+  ailesi at sayısını değiştirmiyor (kor. −0,15..+0,17) ama isabet %65,4 → %36,4 düşüyor.
+  **Denenirse tek-değişken ilkesi gereği v3 gibi TEK BAŞINA ve önceden bağlanmış kriterle.**

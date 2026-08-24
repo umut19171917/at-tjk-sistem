@@ -117,6 +117,52 @@ def kupon_kur_acgozlu(ayak_atlari, max_kombo):
     return [set(no for no, _ in sr[j][:k[j]]) for j in range(6)]
 
 
+def kupon_kur_acgozlu_v3(ayak_atlari, max_kombo, banker_esik):
+    """K115: ACGOZLU + 'BANKER HAK EDILSIN' tabani. Tek fark: bir ayak ancak tepedeki atin
+    olasiligi banker_esik'i TEK BASINA gecerse 1 atta baslayabilir; gecemezse taban 2 attir.
+    Sonra ayni acgozlu dagitim kosar. Banker YASAK degil, HAK EDILMESI gerekiyor.
+
+    NEDEN (K114 olcumu, 546 canli tek-at ayagi): banker bayragi (p_tepe >= BANKER_ESIK) tasiyan
+    tek-at ayaklari %52,1 tutturuyor; bayrak TASIMAYAN tek-at ayaklari %30,4 (taban %33'un bile
+    ALTINDA), Fisher p=0,0001. Yani acgozlunun tek-at kararlarinin cogu bir GUVEN beyani degil,
+    K88'in sonucu: genislik butcenin 6. kokunden geliyor -> para yetmediginde bir ayak tek kaliyor.
+    Bu varyant yalnizca O ayaklari kapatir; gercek bankere dokunmaz.
+
+    Yeni sabit YOK: banker_esik zaten sistemde (kapsam ailesi kullaniyor, altili_canli.BANKER_ESIK).
+    2^6=64 << 900 oldugu icin taban butceyi tasirmaz; yine de guvenlik kontrolu var."""
+    sr = [sorted([(no, p) for no, p in a if pd.notna(p) and p > 0], key=lambda x: -x[1])
+          for a in ayak_atlari]
+    if len(sr) != 6 or any(len(s) == 0 for s in sr):
+        return [set() for _ in range(6)]
+    # TABAN: hak edilmemis ayak 2 atla baslar
+    k = [1 if s[0][1] >= banker_esik else min(2, len(s)) for s in sr]
+    while int(np.prod(k)) > max_kombo:             # taban butceyi asarsa (pratikte olmaz)
+        j = max(range(6), key=lambda x: k[x])
+        if k[j] <= 1:
+            break
+        k[j] -= 1
+    P = [sum(p for _, p in sr[j][:k[j]]) for j in range(6)]
+    while True:
+        kombo = int(np.prod(k))
+        en_iyi, en_oran = None, 0.0
+        for j in range(6):
+            if k[j] >= len(sr[j]):
+                continue
+            if kombo // k[j] * (k[j] + 1) > max_kombo:
+                continue
+            p = sr[j][k[j]][1]
+            bedel = math.log((k[j] + 1) / k[j])
+            oran = (math.log1p(p / P[j]) / bedel) if (P[j] > 0 and bedel > 0) else 0.0
+            if oran > en_oran:
+                en_oran, en_iyi = oran, j
+        if en_iyi is None:
+            break
+        j = en_iyi
+        P[j] += sr[j][k[j]][1]
+        k[j] += 1
+    return [set(no for no, _ in sr[j][:k[j]]) for j in range(6)]
+
+
 def ayrisma_skoru(bot1_p, kamu_p):
     """K68: bir ayakta Bot1 (oran-kor) ile KAMU ne kadar ayri dusuyor?
     Toplam degisim uzakligi: 0.5*sum|p1-pk|, [0,1]. 0 = ayni fikirdeler, 1 = tamamen ayri.

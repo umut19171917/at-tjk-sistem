@@ -489,6 +489,17 @@ tek-at ayağından **yalnızca 1'i** geçiyor. — Ayrı bulgu: dar'ın 60 tek-a
 banker değil, bütçe kıtlığı**; 24 kombo altı ayağa bölününce budayıcı zorla daraltıyor
 (ayak başına ort. 1,7 at). Dar'ın "bankerleri" büyük ölçüde açlık.
 
+**>>> ÜÇÜNCÜ ADAY KAPANDI — 24 Ağu 2026 (K115): ÖLÇÜLDÜ, KRİTER GEÇİLEMEDİ. <<<**
+Önceden bağlanan kriter (@900'de hem ayak isabeti hem 6/6 açgözlüden düşük olmayacak) **KALDI**:
+ayak %73,1 vs %74,2 · 6/6 227 vs 235 · eşli p=0,0000 (v3 anlamlı KÖTÜ). Canlıya ALINMADI.
+Mekanizma çalıştı (hak edilmemiş tek-at 1254→0, gerçek banker 87→88 dokunulmadı) — sorun
+uygulama değil, fikrin kendisi @900'de değer katmıyor.
+**Post-hoc bulgu (hipotez, kriter değil):** @96'da ROI farkı +26,4 puan [+9,8 , +45,2] ANLAMLI;
+kazanç isabetten değil temettüden (831→1.373, +%65) — açgözlünün tek attığı ayak kamu favorisi
+olduğu için havuz kalabalık (K65). AMA @96'da doğru kıyas kapsam'dır (canlıda `orta` orada
+koşuyor): kapsam −39,4% vs v3 −41,5% → **v3 kapsamı geçmiyor.** Yeni zemin yok.
+Araç: `kod/altili_v3_test.py` (offline). `kupon_kur_acgozlu_v3` kodda, canlıda ÇAĞRILMIYOR.
+
 **Aday `acgozlu_v3`:** aynı açgözlü dağıtım, tek fark — bir ayak ancak `p_tepe >= BANKER_ESIK`
 ise 1 atta bitebilir; geçemezse taban 2. Banker yasak değil, **hak edilmesi** gerekiyor
 (kullanıcının 31 Tem'deki şartı). Yeni sabit yok, sistemin kendi eşiği kullanılıyor.
