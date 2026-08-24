@@ -3816,3 +3816,40 @@ emeklilik kriteri ARTIK HİÇ DOLAMAZ (kusur, kayda geçiyor).** 24 Ağu 2026, k
   `acgozlu900` (v2'nin kontrolü) · `bot1_900` (bot1 kolu, 33 benzersiz ayak, portföyün tek
   gerçek çeşitlendiricisi) · `acgozlu_v2` (en yeni deney, 25 Eylül'e bağlı).
 - **KARAR KULLANICIYA BIRAKILDI; canlı sistem BU ADIMDA DEĞİŞMEDİ.**
+
+**K119 — ALTILI SAYFASI SADELEŞTİRİLDİ (kullanıcı istegi, örnek onaylandıktan sonra
+uygulandı). `bot1_1800` EMEKLİ EDİLMEDİ.** 24 Ağu 2026.
+- **Önce ÖRNEK üretildi, canlıya sonra dokunuldu.** Kullanıcı "değişiklik yapmadan önce örnek
+  sayfa göster" dedi → `kod/altili_sayfa_ornek.py` ayrı bir dosyaya yazdı
+  (`raporlar/altili_ORNEK.html`), `html_yaz` hiç değişmedi. Onay gelince değişiklikler taşındı,
+  örnek üretici ve çıktısı SİLİNDİ.
+- **BEŞ DEĞİŞİKLİK:**
+  1. **Üst bilgi bloğu (`class=not`) komple kaldırıldı.** İçerdiği her şey KARARLAR'da duruyor
+     (K48/K53 kâğıt uyarısı · K52 backtest · K78 tür listesi · K97 iki cetvel açıklaması);
+     her gün tekrar okunacak bilgi değildi ve tabloyu aşağı itiyordu. Yerine tek satır
+     güncelleme damgası.
+  2. **TOPLAM DURUM yeniden sıralandı:** aktifler önce (ACGOZLU_V2 artık ACGOZLU900_15'in
+     hemen ardında), **emekliler en sonda**. Yeni yardımcı `_gosterim_sirasi()`.
+     **KONFIG'in kendi sırası DEĞİŞMEDİ** — kupon kurma sırası, referans config seçimi ve
+     geçmiş sicil ona bağlı; bu yalnızca RAPOR sırasıdır.
+  3. **Uyarılar kaldırıldı:** "[DIKKAT: ödülün %X'i TEK biletten]" (K106) ve "Bu toplam bir
+     PORTFÖY TAVSİYESİ DEĞİLDİR" notu. Gerekçe kullanıcının: *"kaç kupon kaç tutan verisi var
+     nasıl olsa"* — yanındaki `(N kupon, M tam isabet)` sayacı aynı bilgiyi zaten veriyor.
+     Uyarıların gerekçeleri K106'da duruyor, silinmedi.
+  4. **Gün-gün kâr/zarar + işleyen bakiye SAYFANIN EN ALTINA** taşındı (kuponların üstünü
+     tıkıyordu). `_birlesik_blok` (Altılı+ganyan özeti) yerinde bırakıldı.
+  5. **Kazanan sırası sütunu SİMETRİK yapıldı.** Eskiden sistem iki anlıydı (`K → Y`) ama kamu
+     TEK sayıydı (`kamu 3.`) ve hangi ana ait olduğu yazmıyordu. Kullanıcı bugün tam bunu
+     sordu ("kamu sırası yarış anındaki mi?"). Artık:
+     `sistem  K → Y` / `kamu  K → Y` — ikisi de kupon anı → yarış anı.
+     Kaynaklar: sistem K/kamu K = `kupon_ani_bilgi`, sistem Y/kamu Y = `kazanan_bilgi` (defter).
+- **ÖLÜ KOD TEMİZLENDİ:** `_tur_ozeti()` (K78) tek çağrısı kalkınca çağrısız kaldı → 21 satır
+  silindi. Fonksiyon KONFIG'den tür listesi metni üretiyordu; o metin artık sayfada yok.
+- **DOĞRULAMA (üretilen sayfada sayıldı):** `class=not` 0 · "DIKKAT: odulun" 0 ·
+  "PORTFOY TAVSIYESI" 0 · sütun sırası ORTA→ORTA_15→ACGOZLU900→ACGOZLU900_15→**ACGOZLU_V2**→
+  BOT1_900→BOT1_1800 · TOPLAM DURUM'da dört emekli en sonda `[EMEKLI]` etiketiyle ·
+  gün-gün bloğu kuponlardan SONRA · kazanan hücresi `sistem 3. → -` / `kamu 3. → -`.
+- **`bot1_1800` KARARI:** K118'de emeklilik önerilmişti (44 eşleşmiş Altılı'da bot1_900 ile
+  BİREBİR aynı getiri, iki katı bedel; tutturduğu tek Altılı'yı — 18.08 ANKARA-1 — bot1_900 da
+  1.080 TL eksiğine tutturmuştu). **Kullanıcı "şimdilik devam etsin" dedi → EMEKLİ EDİLMEDİ.**
+  Ölçüm KARARLAR'da duruyor; karar ileride yeniden açılabilir.

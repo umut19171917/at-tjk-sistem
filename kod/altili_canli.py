@@ -703,26 +703,14 @@ def _kupon_ozet(g, tarih, pist, seq, cfg):
             "resmi": res, "bitti": all(t is not None for t in tut)}
 
 
-def _tur_ozeti():
-    """K78: sayfa girisindeki kupon-turu listesi KONFIG'den uretilir. Eskiden elle yazilmisti
-    ('dort boyda kurulur') ve 7 ture cikinca bayatladi -> artik bayatlayamaz.
-    K100: emekliler ayri satirda -- gecmis sicilleri tabloda DURUYOR, yalniz yeni kupon
-    kurulmuyor; sayfa bunu acikca soylesin ki 'kupon nerede?' diye aranmasin."""
-    sat = []
-    akt = aktif_konfig()
-    for aile, ad in AILE_AD.items():
-        cs = [c for c in akt if KONFIG[c]["aile"] == aile]
-        if not cs:
-            continue
-        sat.append(f"&nbsp;&nbsp;<b>{ad}</b> &rarr; " + ", ".join(
-            f"{c.upper()} <span class=mini>(~{KONFIG[c]['kombo']} kombo, "
-            f"{KONFIG[c]['dagitim']})</span>" for c in cs))
-    em = emekli_konfig()
-    if em:
-        sat.append("&nbsp;&nbsp;<span class=mini><b>EMEKLI</b> (10.08.2026, K100 &mdash; yeni "
-                   "kupon kurulmuyor; gecmis sicilleri asagida AYNEN duruyor): "
-                   + ", ".join(c.upper() for c in em) + "</span>")
-    return "<br>".join(sat)
+def _gosterim_sirasi():
+    """K119: RAPOR sirasi (KONFIG'in kendi sirasi DEGISMEZ -- kupon kurma ve referans config
+    ona bagli). Aktifler once; ACGOZLU_V2, ACGOZLU900_15'in hemen ardinda; EMEKLILER en sonda."""
+    akt = [c for c in KONFIG if KONFIG[c].get("aktif", True)]
+    if "acgozlu_v2" in akt and "acgozlu900_15" in akt:
+        akt.remove("acgozlu_v2")
+        akt.insert(akt.index("acgozlu900_15") + 1, "acgozlu_v2")
+    return akt + [c for c in KONFIG if not KONFIG[c].get("aktif", True)]
 
 
 def _resmi_satir(kupolar):
@@ -927,24 +915,13 @@ def html_yaz(df=None, ac=False):
         if c in df.columns:
             df[c] = pd.to_numeric(df[c], errors="coerce")
 
+    # K119: ust bilgi blogu KALDIRILDI (kullanici istegi 24 Agu). Icerdigi bilgilerin tamami
+    # KARARLAR.md'de duruyor (K48/K53 kagit, K52 backtest, K78 tur listesi, K97 iki cetvel);
+    # sayfada her gun tekrar okunmasi gereken bir sey degildi ve tabloyu asagi itiyordu.
     H = ["<meta charset='utf-8'><title>Altili Takip</title>", ro.ORTAK_CSS,
          "<h2>ALTILI GANYAN &mdash; kupon takibi</h2>",
-         f"<div class=not>guncelleme {datetime.now():%d.%m.%Y %H:%M} &mdash; "
-         "<b>GERCEK BAHIS DEGIL</b>, kagit uzerinde izleme/ogrenme (K48/K53). "
-         "Backtest OOS &minus;%32, +EV yok (K52).<br>"
-         f"Su an <b>{len(aktif_konfig())} kupon turu</b> paralel izleniyor "
-         "(K78: metin KONFIG'den uretilir, elle guncellenmez):<br>" + _tur_ozeti() +
-         "<br>Birim fiyat 2026 tarifesi: Ist/Ank/Izm/Ada/Bur/Koc/Ant 1,25 TL, "
-         "Elazig/Urfa/Diyarbakir 1,00 TL.<br>"
-         "<b>Odul yalniz 6/6 tam isabette</b> odenir; 5/4/3 ayak TJK'da AYRI bahistir "
-         "(teselli degil) &mdash; tabloda yalnizca bilgi amacli gosterilir.<br>"
-         "<b>K97 &mdash; IKI AYRI SIRALAMA:</b> her ayakta sistemin sirasi iki kez gosterilir. "
-         "<b>K</b> = <b>kupon ani</b> sirasi (kupon Altili'nin ilk ayagindan ~30 dk once TEK "
-         "seferde kurulur; son ayagin karari 2-3 SAAT onceden verilir, karari yargilarken "
-         "dogru cetvel budur). <b>Y</b> = <b>yaris ani</b> sirasi (postaya 5 dk kala, defter; "
-         "sonucu okurken dogru cetvel budur). Ikisi 3+ sira ayrilirsa "
-         "<span style='color:#b45309;font-weight:bold'>turuncu</span> yazilir &mdash; o ayakta "
-         "piyasa kupon kurulduktan sonra ciddi kaymis demektir (K76/K80/K92 surukleme).</div>"]
+         f"<div class=mini style='margin:-8px 0 14px'>guncelleme "
+         f"{datetime.now():%d.%m.%Y %H:%M}</div>"]
 
     if df.empty:
         H.append("<p>Henuz kupon yok.</p>")
@@ -957,10 +934,15 @@ def html_yaz(df=None, ac=False):
         kupolar.append({"tarih": tarih, "pist": pist, "seq": int(seq), "cfg": cfg,
                         **_kupon_ozet(g, tarih, pist, seq, cfg)})
 
+    # K119: GOSTERIM SIRASI (kullanici istegi) -- aktifler once, ACGOZLU_V2 ACGOZLU900_15'in
+    # hemen ardinda; EMEKLILER en sonda. KONFIG'in kendi sirasi DEGISMEZ (kupon kurma sirasi,
+    # referans config secimi ve gecmis sicil ona bagli) -- bu yalnizca RAPOR sirasidir.
+    SIRA = _gosterim_sirasi()
+
     def toplam_blok(baslik):
         H2 = ["<div class=toplam>", f"<b>{baslik}</b><br>"]
         gen_bedel = gen_odul = 0.0
-        for cfg in KONFIG:
+        for cfg in SIRA:
             kk = [k for k in kupolar if k["cfg"] == cfg and k["bitti"]]
             bedel = sum(k["bedel"] for k in kk)
             odul = sum(k["odul"] for k in kk)
@@ -971,18 +953,12 @@ def html_yaz(df=None, ac=False):
             cls = "poz" if net >= 0 else "neg"
             # K100: emekli config'ler burada KALIR (sicil ve genel toplam bozulmasin), etiketlenir
             em = "" if KONFIG[cfg].get("aktif", True) else \
-                 " <span class=mini style='color:#92400e'>[EMEKLI &mdash; K100]</span>"
-            # K106: TEK BILET UYARISI. Altili yalniz 6/6 oder; 1-2 isabetli bir config'in
-            # tum odulu bir-iki olaydan gelir. bot1_900 icin bu uyari K98-e'de vardi ama
-            # `orta` icin YOKTU -> +8.424'luk net "kanitlanmis" gibi okunuyordu (dis analiz 4.1a).
-            # Olculen: orta'nin odulunun %100'u TEK biletten (23.07 Ankara 2.).
-            tek = ""
-            if 0 < tam <= 2 and odul > 0:
-                pay = max(k["odul"] for k in kk) / odul * 100
-                tek = (f" <span class=mini style='color:#b45309'>[DIKKAT: odulun "
-                       f"%{pay:.0f}'i TEK biletten &mdash; {tam} isabet; kanit degil]</span>")
-            H2.append(f"<div style='margin:6px 0'><b>{cfg.upper()}</b>{em}{tek} "
-                      f"<span class=k>({len(kk)} tamamlanan kupon, {tam} tam isabet)</span> &nbsp; "
+                 " <span class=mini style='color:#92400e'>[EMEKLI]</span>"
+            # K119: "tek bilet" DIKKAT uyarisi kaldirildi (kullanici istegi): yanindaki
+            # "(N kupon, M tam isabet)" sayaci ayni bilgiyi zaten veriyor -- M kucukse net TL
+            # zaten tek-iki olaydan gelmis demektir. Uyarinin gerekcesi (K106) KARARLAR'da durur.
+            H2.append(f"<div style='margin:6px 0'><b>{cfg.upper()}</b>{em} "
+                      f"<span class=k>({len(kk)} kupon, {tam} tam isabet)</span> &nbsp; "
                       f"bedel <b>{ro.para(bedel)}</b> &nbsp; odul <b>{ro.para(odul)}</b> &nbsp; "
                       f"net <span class='{cls}'><b>{ro.para(net, isaret=True)}</b></span></div>")
         gnet = gen_odul - gen_bedel
@@ -991,21 +967,15 @@ def html_yaz(df=None, ac=False):
                   f"<b>GENEL TOPLAM</b> &nbsp; bedel {ro.para(gen_bedel)} &nbsp; "
                   f"odul {ro.para(gen_odul)} &nbsp; net "
                   f"<span class='{cls} buyuk'>{ro.para(gnet, isaret=True)}</span>")
-        # K106: bu toplam TAVSIYE EDILEN portfoyu TEMSIL ETMEZ. Harcamanin buyuk kismi
-        # 900+ kombinasyonlu gozlem akislarindan gelir (acgozlu900 ~1.077 TL/kupon,
-        # orta ~115 TL/kupon); K98-i'nin canli tavsiyesi ise YALNIZ `orta`dir.
-        # Sayfanin en gorunur sayisi, tavsiyeyle ilgisi olmayan bir portfoyun sicilidir.
-        H2.append("<div class=mini style='margin-top:8px;color:#92400e'>"
-                  "<b>Bu toplam bir PORTFOY TAVSIYESI DEGILDIR.</b> Harcamanin cogu 900-1800 "
-                  "kombinasyonlu <i>gozlem akislarindan</i> gelir. K98-i'nin canliya cikis "
-                  "tavsiyesi <b>yalniz ORTA</b>'dir (~118 TL/Altili). Toplam, paralel yuruyen "
-                  "deneylerin ortak faturasidir.</div>")
+        # K119: "PORTFOY TAVSIYESI DEGILDIR" notu kaldirildi (kullanici istegi). Gerekce
+        # K106'da duruyor; sayfada her gun tekrarlanmasi gerekmiyor.
         H2.append("</div>")
         return H2
 
     H += toplam_blok("TOPLAM DURUM")
 
-    H += _kumulatif_blok(kupolar)
+    # K119: gun-gun kar/zarar + isleyen bakiye SAYFANIN EN ALTINA tasindi (kullanici istegi);
+    # kuponlarin ustunu tikiyordu. _birlesik_blok yerinde kaldi (ozet nitelikte).
     H += _birlesik_blok(kupolar)
 
     # ---- K69: her Altili TEK tablo, kupon turleri YAN YANA ----
@@ -1013,7 +983,7 @@ def html_yaz(df=None, ac=False):
     H.append("<h3>Kuponlar (yeni tarih ustte) &mdash; kupon turleri yan yana</h3>")
     for tarih, pist, seq in gruplar:
         kk = {k["cfg"]: k for k in kupolar if (k["tarih"], k["pist"], k["seq"]) == (tarih, pist, seq)}
-        cfgler = [c for c in KONFIG if c in kk]
+        cfgler = [c for c in SIRA if c in kk]      # K119: rapor sirasi
         if not cfgler:
             continue
         ref = kk[cfgler[0]]["g"].sort_values("ayak")
@@ -1041,8 +1011,8 @@ def html_yaz(df=None, ac=False):
                  "kupon ani ile yaris ani 3+ sira kaymis</div>")
         H.append("<div style='overflow-x:auto'><table>")
         H.append("<tr><th>ayak</th><th class=l>KAZANAN AT</th>"
-                 "<th>kazananin sirasi<br><span class=mini>sistem: kupon ani &rarr; yaris ani"
-                 "<br>+ kamu sirasi</span></th>"
+                 "<th>kazananin sirasi<br><span class=mini>kupon ani &rarr; yaris ani"
+                 "</span></th>"
                  "<th>ganyan<br>orani</th>"
                  + "".join(
                      f"<th class=l>{c.upper()}"
@@ -1059,6 +1029,7 @@ def html_yaz(df=None, ac=False):
                 kz_oran = ro.oran_str(kz["oran"])
                 kzno = _as_int(kz["no"])
                 y_sira = ro.sira_str(kz["sis"])
+                y_kamu = ro.sira_str(kz["kamu"])      # K119: kamu da iki anli gosterilir
             elif pd.notna(r["kazanan"]):
                 # K97: defter kaydi VAR ama gun sonu 'sonucla' gecisi henuz yapilmadi
                 # (defter.sonucla gunde bir kez, son postadan 40 dk sonra calisir - takip.py).
@@ -1067,16 +1038,22 @@ def html_yaz(df=None, ac=False):
                            f"<span class=mini>(sistem sirasi gun sonu islenecek)</span>")
                 kz_oran = "-"
                 kzno = int(r["kazanan"])
-                y_sira = "-"
+                y_sira = y_kamu = "-"
             else:
-                kz_html, kz_oran, kzno, y_sira = "<span class=bek>bekleniyor</span>", "-", None, "-"
-            k_sira, p_sira = "-", "-"
+                kz_html, kz_oran, kzno = "<span class=bek>bekleniyor</span>", "-", None
+                y_sira = y_kamu = "-"
+            # K119: SIMETRIK GOSTERIM. Eskiden sistem iki anli (K->Y) ama kamu TEK sayiydi
+            # ("kamu 3.") ve hangi ana ait oldugu yazmiyordu -> kullanici 24 Agu'da tam bunu
+            # sordu. Artik ikisi de "kupon ani -> yaris ani".
+            #   sistem K = kupon_ani_bilgi.sis   · Y = kazanan_bilgi.sis   (defter, posta-5dk)
+            #   kamu   K = kupon_ani_bilgi.kamu  · Y = kazanan_bilgi.kamu  (defter kamu_sira)
             if kzno is not None:
                 _ka = ro.kupon_ani_bilgi(tarih, pist, seq, ai, kzno)
-                k_sira = ro.sira_str(_ka["sis"])
-                p_sira = ro.sira_str(_ka["kamu"])          # K103: kamu sirasi geri geldi
-            kz_sk = (f"<b>{k_sira}</b> &rarr; {y_sira}<br>"
-                     f"<span class=mini>kamu {p_sira}</span>" if kzno is not None else "-")
+                k_sira, p_sira = ro.sira_str(_ka["sis"]), ro.sira_str(_ka["kamu"])
+                kz_sk = (f"<span class=mini>sistem</span> <b>{k_sira}</b> &rarr; {y_sira}<br>"
+                         f"<span class=mini>kamu</span> &nbsp;&nbsp;<b>{p_sira}</b> &rarr; {y_kamu}")
+            else:
+                kz_sk = "-"
             H.append(f"<tr><td><b>{ai}</b><br><span class=mini>kosu {int(r['kosu_no'])}</span></td>"
                      f"<td class=l>{kz_html}</td><td>{kz_sk}</td><td>{kz_oran}</td>")
             tum_sec = set()
@@ -1159,6 +1136,7 @@ def html_yaz(df=None, ac=False):
         H.append("</table></div></div>")
 
     H += toplam_blok("TOPLAM DURUM (liste sonu)")
+    H += _kumulatif_blok(kupolar)          # K119: gun-gun kar/zarar EN ALT
 
     HTMLA.parent.mkdir(parents=True, exist_ok=True)
     HTMLA.write_text("\n".join(H), encoding="utf-8")
