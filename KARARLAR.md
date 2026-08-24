@@ -3483,3 +3483,100 @@ yanlış yöne çevrilecekti. Bu, "ölçmeden konuşma" ilkesinin somut faydası
 `kod/kamu_test.py` yeni ve salt-okunur. **Hiçbir ağırlık, config, dağıtıcı DEĞİŞTİRİLMEDİ.**
 Kullanıcı zaten "sadece analiz, işlem yapma" demişti. Fiyat kaynağı K110 kuralına uyuyor:
 resmî kapanış (`defter.ganyan_kapanis`), `oran_log` kullanılmadı.
+
+**K113 — 5/6'DA KALAN 112 KUPON TARANDI: "kurtarma bedeli" medyan 2.205 TL, ama aynı sonucu
+ÖNCEDEN almak 19.479 TL (9 kat). Hiçbir derinlik kârlı değil.**
+Kullanıcı sordu (24 Ağu): 24.08 Bursa 2. Altılı yüksek ödüllüydü ve `acgozlu900_15` 5'te kaldı;
+tüm kuponlar taransın, 5'te kalanların Altılı'yı tutturması için bedel ne olmalıydı.
+- **KAPSAM:** 11 aktif config, **643 tamamlanmış kupon, 110 Altılı**. İsabet dağılımı
+  {0:3, 1:36, 2:114, 3:188, 4:180, 5:112, 6:10} → **10 tane 6/6'ya karşılık 112 tane 5/6**
+  (5'te kalmak tutturmaktan 11 kat sık).
+- **SORULAN VAKA (24.08 BURSA-2, temettü 365.633 TL):** `acgozlu900_15` 3. ayakta yattı, o ayağa
+  **tek at** yazmıştı (banker bayrağı YOK — bütçe artığı). Kazanan #4, kupon anı cetvelinde
+  **4. sırada**, saha 10. Olan 900 kombo = 1.125 TL → gereken 3.600 kombo = **4.500 TL**.
+- **112 VAKANIN TAMAMI (kupon anı cetveliyle, `altili_kupon_ani.csv`):**
+  kaçan ayakta kazananın sırası → medyan **5.**, ortalama 5,3; dağılım
+  {1:2, 2:17, 3:14, 4:13, 5:15, 6:17, 7:13, 8:10, 9:4, 10:2, 12:5}. O ayaklara yazdığımız
+  medyan **2 at** → tipik olarak **2x derinlik** gerekiyordu.
+
+  | | medyan | ortalama | min | max |
+  |---|---|---|---|---|
+  | olan bedel | 1.080 TL | 1.026 TL | 20 TL | 2.250 TL |
+  | **gereken bedel** | **2.205 TL** | **3.005 TL** | 80 TL | 12.600 TL |
+
+  Yüzdelikler: %25→1.328 · %50→2.205 · %75→3.679 · %90→6.648 · %95→8.784 TL.
+  Config medyanları: `orta` 212 · `genis` 456 · `genis900` 1.519 · `bot1_900` 2.250 ·
+  `acgozlu900` 2.430 · `acgozlu_v2` 3.370 · `bot1_1800` 4.865 TL.
+- **ALDATICI SAYI (kayda geçsin ki bir daha yanlış okunmasın):** 112 vakanın **%84'ünde**
+  gereken bedel temettüden düşüktü; hepsi kurtarılsa 336.521 TL verip 4.201.252 TL alınırdı
+  (**+3,86 M**). **BU ULAŞILAMAZ** — kaçan ayak ancak yarıştan SONRA bilinir; o kuponlarda
+  diğer beş ayak zaten tutmuştu ve o tutma satın alınamaz.
+- **İLERİYE BAKAN GERÇEK HESAP** (75 Altılı, kupon anı cetveli tam kurulabilen; tüm ayaklar
+  eşit derinlik):
+
+  | derinlik | tutan | ort.kombo | bedel | ödül | ROI |
+  |---|---|---|---|---|---|
+  | 3 | 2/75 | 729 | 68.344 | 99.372 | +%45,4 |
+  | 4 | 5/75 | 4.096 | 384.000 | 123.332 | −%67,9 |
+  | **5** | 15/75 | 15.583 | 1.460.938 | 750.687 | **−%48,6** |
+  | 6 | 22/75 | 44.531 | 4.174.740 | 2.513.340 | −%39,8 |
+  | 8 | 55/75 | 194.292 | 18.214.880 | 11.634.824 | −%36,1 |
+  | 10 | 70/75 | 447.181 | 41.923.235 | 13.462.479 | −%67,9 |
+
+  Medyan gereken derinlik 5'ti; onu **önceden** almak Altılı başına **19.479 TL** =
+  geriye dönük 2.205 TL'nin **9 KATI**, ve 75 Altılı boyunca −%48,6.
+  D=3'teki +%45,4 **2/75'ten** geliyor → K83'teki tuzağın aynısı, sonuç değil gürültü.
+- **YAPISAL ENGEL:** gereken sıra dağılımı kuyruklu (medyan 5, kuyruk 12). "Derinlik N alırsam
+  kapatırım" diyebileceğin N yok; maliyet 6. kuvvetle, kapsama doğrusala yakın artıyor.
+- **SÜRDÜRÜLEBİLİRLİK OKUMASI (kullanıcının çerçevesi):** 5/6 bir "az kaldı" sinyali DEĞİL,
+  "beş ayakta şans güldü" demek. K91 aynı sonuca başka yoldan varmıştı (100bin+ ödeyen 77 büyük
+  5/6'dan çift bütçeyle yalnız 3'ü dönüşmüştü); bu tarama onu 112 vakada doğruluyor.
+- Canlı sistem DEĞİŞMEDİ.
+
+**K114 — 5/6'LARIN ANATOMİSİ: yakan şey BANKER DEĞİL, "banker olmadığı halde tek kalan"
+ayaklar. Banker bayrağı %52,1 tutturuyor, bütçe artığı tek-at %30,4.
+AYRICA: 31 Tem öncesi geri kurulmuş kupon-anı kayıtları GÜVENİLMEZ.**
+Kullanıcı sordu: 5/6'ların kaçı banker ayaktan yattı, kaçında yarış anında 2. seçilen at kazandı.
+- **YATAN AYAĞIN TİPİ (112 kupon):**
+
+  | tip | kupon | **farklı yarış** |
+  |---|---|---|
+  | tek at yazılmış | 45 (%40) | **29** |
+  | — gerçek banker (bot2 ≥ BANKER_ESIK) | 7 | **3** |
+  | — bütçe artığı (bayrak yok) | 38 | **26** |
+  | 2+ at yazılmış | 67 (%60) | — |
+
+  **7 "banker yatışı" aslında 3 ayrı yarıştır** (08.07 İST-2 ayak4 · 18.08 ANK-1 ayak3 ·
+  18.08 ANK-2 ayak1); aynı yarışı birden çok config oynadığı için tabloda çoğalıyor.
+  → "Banker bizi yakıyor" tezi bu veriyle KURULAMAZ.
+- **KAZANAN YARIŞ ANINDA 2. Mİ? — taban oranla birlikte okunmalı.** Defter'de 663 koşuda
+  kazananın sistem sırası: 1.:%33 · **2.:%20** · 3.:%14 · 4.:%11 · 5.:%9 · 6.:%6.
+  - tek-at ayakları (TEKRARSIZ, 24 yarış): **7 = %29** vs taban %20 → **Fisher p=0,299**,
+    şanstan ayırt EDİLEMİYOR. Dağılım {1:1, 2:7, 3:6, 4:4, 5:1, 6:2, 7:2, 11:1}.
+  - gerçek banker: **2/3** — n=3, HÜKÜM ÇIKMAZ (açıkça yazılıyor çünkü tablo ikna edici
+    görünüyor ve değil).
+  - kupon anı cetveliyle (31 Tem sonrası güvenilir 25 vaka): 6 = %24, yine tabana yakın.
+- **ASIL BULGU — tek-at ayakların TAM sicili (yatan+tutan, 546 ayak-kupon):**
+
+  | | ayak-kupon | farklı yarış | isabet |
+  |---|---|---|---|
+  | gerçek banker (bayrak=1) | 96 | 24 | **%52,1** |
+  | bütçe artığı (bayrak=0) | 450 | 272 | **%30,4** |
+  | çok-atlı ayak | 3312 | 651 | %59,8 |
+
+  Fisher p=0,0001. **Banker bayrağı gerçek bilgi taşıyor** (taban %33 iken tek atla %52,1);
+  bütçe artığı tek-atlar tabanın bile ALTINDA. Sorun mekanizma değil, K88'in sonucu:
+  genişlik bütçenin 6. kökünden geliyor, model güveninden değil → açgözlü parası yetmediği
+  için bir ayağı tek bırakıyor ve o ayak %30 tutuyor.
+- **VERİ KALİTESİ BULGUSU (tesadüfen değil, çelişki kovalanarak bulundu):**
+  `altili_kupon_ani.csv`'nin geri kurulmuş kayıtları **31 Tem 2026 ÖNCESİNDE GÜVENİLMEZ**:
+  beklenen dk_kala'ya göre medyan sapma **45 dk**, %41'i **>60 dk**. 31 Tem SONRASI sapma
+  **1 dk** (canlı kayıtlar da 1 dk). Sebep K76: o tarihten önce `oran_log` uzak ayakları hiç
+  kaydetmiyordu → "kupon anına en yakın anlık görüntü" saatler sonrasından geliyor.
+  **KANIT:** 28.07 KOCAELİ 2. Altılı ayak6 — geri kurulan kayıt sırayı `4 > 9 > 12 > 7` diyor;
+  oysa kuponların KENDİSİ `9 > 7 > 4` diyor (açgözlü tek #9, dar {7,9}, orta {4,7,9}).
+  Kuponlar doğrudan kanıt, geri kurma tahmindir → o dönemin K sütunu YANLIŞ.
+  **KURAL: K sütunu kullanan her analiz tarih >= 2026-07-31 filtresi uygulamalı.**
+  Etiket ("geri kurulan") tek başına yetmiyor; tarih eşiği de gerekiyor.
+  Bu, K79'un "son ayakta 8. atı tek yazmış" anlatısının neden yanıltıcı olduğunun da
+  ikinci bağımsız teyidi (K97 zaten uyarmıştı).

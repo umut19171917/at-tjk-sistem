@@ -17,6 +17,15 @@ GERI KURMA ZINCIRI (hepsi kayitli veri; yeniden fit YOK):
   alpha/gam <- raporlar/gunluk/*.txt basligi ("[Ingiliz: a=+0.24 g=+0.94 | Arap: ...]")
   bot2       = softmax(alpha*ln bot1 + gamma*ln p_kamu)   [gunluk.py ile ayni formul]
 
+!!! KRITIK SINIR (K114, 24 Agu 2026 olcumu) - 31 TEM 2026 ONCESI CIKTI GUVENILMEZ !!!
+  K76 duzeltmesi 31 Tem'de girdi; ONCESINDE oran_log UZAK AYAKLARI HIC KAYDETMIYORDU.
+  Dolayisiyla "kupon anina en yakin anlik goruntu" o donemde SAATLER SONRASINDAN gelir.
+  Olculdu: beklenen dk_kala'ya gore medyan sapma 31 Tem ONCESI 45 dk (%41'i >60 dk),
+  SONRASI 1 dk. Kanit: 28.07 KOCAELI 2. Altili ayak6 -> geri kurulan sira 4>9>12>7,
+  oysa kuponlarin KENDISI 9>7>4 diyor (acgozlu tek #9, dar 7+9, orta 4+7+9).
+  => K sutununu kullanan HER analiz `tarih >= 2026-07-31` filtresi uygulamali.
+     Etiket (geri_kurulan) tek basina YETMEZ; tarih esigi de gerekir.
+
 BILINEN SINIR: kadro degisikligi (kosmaz) sonrasi bot1 yeniden normalize edilmis olabilir;
 o ayaklarda geri kurulan siralama kucuk sapma tasir. 20-24 Tem'de oran_log yok -> geri
 kurulamaz, sayfada "kupon ani kaydi yok" yazar (UYDURULMAZ).
