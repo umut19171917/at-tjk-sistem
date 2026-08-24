@@ -117,6 +117,45 @@ def kupon_kur_acgozlu(ayak_atlari, max_kombo):
     return [set(no for no, _ in sr[j][:k[j]]) for j in range(6)]
 
 
+def kupon_kur_saha(ayak_atlari, max_kombo):
+    """K116: SAHA-ORANTILI dagitici (BEKLEYENLER #9, dorduncu aday).
+    Genislik SAHA BUYUKLUGUNE gore dagitilir: butce dolana dek, o an KAPSAMA ORANI (k_i/F_i)
+    EN DUSUK olan ayaga bir at eklenir. Sonuc: kalabalik sahaya cok, kucuk sahaya az at.
+    Secim sirasi degismez (puan-azalan ilk k_i at) -> tek degisen sey GENISLIGIN DAGILIMI.
+
+    NEDEN (K88 olcumu): kapsam ailesi sahayi HIC fiyatlamiyor. Saha 4-7'den 12+'ya cikarken
+    secilen at sayisi sabit (kor. -0,15..+0,17) cunku genislik = butcenin 6. koku (kombinasyon
+    tavani bagliyor, kapsam/banker esikleri degil). Oysa isabet %65,4 -> %36,4 dusuyor.
+    Altili alti ayagi birden istedigi icin zincir EN ZAYIF halkayla belirlenir; 5 atlik ayakta
+    zaten %65'teyken 14 atlik ayakta %36'da olmak, esit bolmenin israf oldugunu soyler.
+
+    ONCEDEN YAZILAN BEKLENTI (sonuca gore degistirilmeyecek): saha, olasilik dagiliminin
+    yayvanliginin KABA bir vekilidir; elimizde zaten gercek dagilim var (acgozlu onu kullaniyor).
+    Bu yuzden saha'nin acgozluyu gecmesi BEKLENMIYOR; asil sorulan, sahayi hic gormeyen
+    KAPSAM'i gecip gecmedigi."""
+    sr = [sorted([(no, p) for no, p in a if pd.notna(p) and p > 0], key=lambda x: -x[1])
+          for a in ayak_atlari]
+    if len(sr) != 6 or any(len(s) == 0 for s in sr):
+        return [set() for _ in range(6)]
+    F = [len(s) for s in sr]
+    k = [1] * 6
+    while True:
+        kombo = int(np.prod(k))
+        aday, en_dusuk = None, None
+        for j in range(6):
+            if k[j] >= F[j]:
+                continue
+            if kombo // k[j] * (k[j] + 1) > max_kombo:
+                continue
+            oran = k[j] / F[j]                       # o ayagin kapsama orani
+            if en_dusuk is None or oran < en_dusuk:
+                en_dusuk, aday = oran, j
+        if aday is None:
+            break
+        k[aday] += 1
+    return [set(no for no, _ in sr[j][:k[j]]) for j in range(6)]
+
+
 def kupon_kur_acgozlu_v3(ayak_atlari, max_kombo, banker_esik):
     """K115: ACGOZLU + 'BANKER HAK EDILSIN' tabani. Tek fark: bir ayak ancak tepedeki atin
     olasiligi banker_esik'i TEK BASINA gecerse 1 atta baslayabilir; gecemezse taban 2 attir.

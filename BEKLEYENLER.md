@@ -417,7 +417,28 @@ Not: depo kişisel bahis defteri içerir → **mutlaka private**. `kod/telegram_
 
 ---
 
-### 9 — Açgözlü uzak ayakta bankeri hak ediyor mu? (K79/K80)
+### 9 — ✅ KAPANDI (2026-08-24, K116) — dört adayın dördü de sonuçlandı
+
+**>>> BU MADDE KAPALI. Dört aday da ölçüldü; yalnız biri canlıya girdi. <<<**
+
+| aday | sonuç |
+|---|---|
+| 1. "en az 2 at" kaba kuralı | kullanıcı REDDETTİ (31 Tem) — semptomu bastırır, marifeti öldürür |
+| 2. λ kalibrasyonu (uzak ayak) | ÖLÇÜLDÜ, GEÇTİ → **`acgozlu_v2` canlıda** (K92) |
+| 3. `acgozlu_v3` "banker hak edilsin" | ÖLÇÜLDÜ, KRİTER KALDI (K115) — @900 anlamlı kötü |
+| 4. `saha900` saha-orantılı genişlik | ÖLÇÜLDÜ, ANLAMLI KÖTÜ (K116) — kapsamdan −11,8 puan |
+
+**ÜST DÜZEY DERS (K90 birleşim · K115 v3 · K116 saha — üç ardışık ret):** aynı bütçeyi yeniden
+dağıtmak kazandırmıyor. Üçünde de mekanizma amaçladığını yaptı, üçünde de sonuç nötr ya da kötü.
+Olasılık modeli elindeki bilgiyi zaten çıkarıyor; onu **yeniden düzenlemek** yeni bilgi üretmiyor.
+**Dağıtıcı kolu tükendi.** Kalan adresler dağıtımda değil BİLGİDE/ÜRÜNDE: 7'li ganyan (K85, yeni
+ürün) ve devir anları (K84/K85). İkisi de henüz ölçülmedi.
+
+**AÇIK KALAN TEK İŞ:** `acgozlu_v2`'nin İLERİ-YÖNLÜ ölçümü (canlıda birikiyor, 25 Eyl'e bağlı).
+
+<details><summary>Maddenin özgün metni (arşiv — tetikler artık geçersiz)</summary>
+
+### 9-eski — Açgözlü uzak ayakta bankeri hak ediyor mu? (K79/K80)
 
 **Sorun:** ACGOZLU900 olasılık vektörünün *sivriliğine* göre genişlik dağıtıyor. 6. ayak kupon
 anında ~180 dk uzakta; o yarışın havuzu neredeyse boş → çarpık oran → sahte favori. Açgözlü
@@ -630,3 +651,5 @@ ve v4 (saha genişliği) BEKLETİLDİ** — tek seferde tek değişken.
 - **Plase modeli (Plackett-Luce)** — ❌ backtest'te başarısız (K44): −%12,5 OOS.
 - **9 bağımsız edge testi** (ganyan/exacta/Altılı/chalk-exotic/özellik batch'leri) — ❌ hepsi
   negatif; yapısal engel etkin pazar + kesinti (K19-K33, K44, K46, K52).
+
+</details>

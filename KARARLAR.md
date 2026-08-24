@@ -3632,3 +3632,58 @@ K100'deki config kalabalığı) — **offline ölçüme engel yok** denip ölç�
   dağıt) hâlâ denenmedi. K88'de ölçülen dayanağı duruyor: saha 4-7'den 12+'ya çıkarken kapsam
   ailesi at sayısını değiştirmiyor (kor. −0,15..+0,17) ama isabet %65,4 → %36,4 düşüyor.
   **Denenirse tek-değişken ilkesi gereği v3 gibi TEK BAŞINA ve önceden bağlanmış kriterle.**
+
+**K116 — SAHA-ORANTILI genişlik (BEKLEYENLER #9, dördüncü aday) ÖLÇÜLDÜ → KRİTER GEÇİLEMEDİ,
+üstelik ANLAMLI KÖTÜ. K88'in gözlemi doğruydu, önerilen çare yanlış. BEKLEYENLER #9 KAPANIYOR.**
+24 Ağu 2026, kullanıcı "yap" dedi (K115'in hemen ardından).
+- **TASARIM ÖNCEDEN SABİT:** `kupon_kur_saha(ayak, max_kombo)` — bütçe dolana dek **kapsama
+  oranı (k_i/F_i) en düşük** ayağa bir at eklenir. Seçim sırası değişmez (puan-azalan ilk k_i);
+  tek değişen **genişliğin dağılımı**. Yeni sabit/parametre YOK, tarama YOK.
+  **Hedef doğru seçildi:** K88'de sahayı fiyatlamayan **kapsam** ailesiydi (açgözlü zaten kısmen
+  tepki veriyor) → varyant kapsam üzerine kuruldu, kıyas da kapsam ile yapıldı.
+- **KARAR KRİTERİ (sonuç görülmeden yazıldı):** @900'de hem ayak isabeti hem 6/6 sayısı
+  **KAPSAM@900'den** (yerini alacağı `genis900`) düşük DEĞİL.
+- **ÖNCEDEN YAZILAN BEKLENTİ (test dosyasında, sonuçtan önce):** *"saha, olasılık dağılımının
+  yayvanlığının KABA vekilidir; gerçek dağılım zaten elimizde. Açgözlüyü geçmesi BEKLENMİYOR."*
+  → **Bu beklenti doğrulandı, hatta fazlasıyla: kapsamı bile geçemedi.**
+- **SONUÇ @900 (1526 OOS olay):**
+
+  | dağıtım | ort.kombo | ayak isabet | 6/6 | küçük sahaya at | büyük sahaya at | ROI | ort.temettü |
+  |---|---|---|---|---|---|---|---|
+  | **kapsam** | 765 | **%70,3** | **192** | 2,82 | 3,22 | **−52,5** | 3.615 |
+  | **saha** | 834 | %69,4 | 174 | **2,34** | **4,00** | −64,3 | 3.265 |
+  | açgözlü | 861 | %74,2 | 235 | 2,84 | 4,57 | −63,4 | 2.561 |
+
+  **KRİTER: ayak isabeti KALDI, 6/6 KALDI → GEÇİLEMEDİ.**
+  saha vs kapsam eşli: ROI farkı **−11,8 puan [−24,1 , −0,6] ANLAMLI**;
+  6/6 farkı **−18 [−35 , −2] ANLAMLI**; eşli ayak p=0,0002.
+- **MEKANİZMA ÇALIŞTI (teşhis sütunları kanıtı):** saha genişliği gerçekten kaydırdı —
+  küçük sahaya 2,82→**2,34**, büyük sahaya 3,22→**4,00**. Yani kural amaçladığını yaptı;
+  başarısızlık uygulama değil, **fikrin kendisi**.
+- **NEDEN İŞE YARAMADI (ders):**
+  1. Saha büyüklüğü, olasılık dağılımının yayvanlığının **kaba vekili**. 14 atlık bir koşuda
+     ezici bir favori olabilir; saha bunu göremez, olasılık vektörü görür. Açgözlü aynı yönde
+     genişliyor (2,84 → 4,57) ama **gerçek bilgiyle** → 235 6/6, saha 174.
+  2. **Küçük sahadan at almak pahalıya patladı.** Orada zaten %65 isabetteydik; 2,82'den 2,34'e
+     inmek gerçek isabet kaybettirdi. "Zincir en zayıf halkasıyla belirlenir" doğru, ama
+     **güçlü halkayı zayıflatarak zayıf halka güçlendirilemez** — küçük sahadaki marjinal at,
+     büyük sahadaki marjinal attan hâlâ daha çok satın alıyormuş.
+- **K88'İN DURUMU:** gözlem AYAKTA (saha 4-7 → 12+ giderken kapsam ailesi at sayısını
+  değiştirmiyor, isabet %65,4 → %36,4 düşüyor). Çürüyen şey **gözlem değil, önerilen çare**.
+- **KARAR: canlı sistem DEĞİŞMEDİ.** `kupon_kur_saha` kodda ama canlıda ÇAĞRILMIYOR;
+  `kod/altili_saha_test.py` offline.
+
+**>>> BEKLEYENLER #9 KAPANDI (24 Ağu 2026). Dört adayın hepsi sonuçlandı: <<<**
+| aday | sonuç |
+|---|---|
+| 1. "en az 2 at" kaba kuralı | kullanıcı REDDETTİ (31 Tem) — semptomu bastırır |
+| 2. λ kalibrasyonu | ÖLÇÜLDÜ, GEÇTİ → `acgozlu_v2` canlıda (K92) |
+| 3. `acgozlu_v3` "banker hak edilsin" | ÖLÇÜLDÜ, KALDI (K115) |
+| 4. `saha900` saha-orantılı | ÖLÇÜLDÜ, ANLAMLI KÖTÜ (K116) |
+
+**ÜST DÜZEY DERS (üç ardışık dağıtıcı reddi: K90 birleşim · K115 v3 · K116 saha):**
+Aynı bütçeyi yeniden dağıtmak kazandırmıyor. Dördünde de mekanizma amaçladığını yaptı ve
+dördünde de sonuç ya nötr ya kötü çıktı. Olasılık modeli elindeki bilgiyi zaten çıkarıyor;
+o bilgiyi **yeniden düzenlemek** yeni bilgi üretmiyor. Sürdürülebilir kenar arayışı için bu
+bir yön kapanışıdır: **dağıtıcı kolu tükendi.** Kalan adresler dağıtımda değil, BİLGİDE veya
+ÜRÜNDE: yeni ürün (7'li, K85) ve devir anları (K84/K85) — ikisi de henüz ölçülmedi.
