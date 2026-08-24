@@ -3687,3 +3687,61 @@ dördünde de sonuç ya nötr ya kötü çıktı. Olasılık modeli elindeki bil
 o bilgiyi **yeniden düzenlemek** yeni bilgi üretmiyor. Sürdürülebilir kenar arayışı için bu
 bir yön kapanışıdır: **dağıtıcı kolu tükendi.** Kalan adresler dağıtımda değil, BİLGİDE veya
 ÜRÜNDE: yeni ürün (7'li, K85) ve devir anları (K84/K85) — ikisi de henüz ölçülmedi.
+
+**K117 — SON İKİ ADRES ÖLÇÜLDÜ: 7'Lİ GANYAN ve DEVİR. İKİSİ DE KRİTERİ GEÇEMEDİ.
+Devir avantajı GERÇEK ama ULAŞILAMIYOR.** 24 Ağu 2026. Kullanıcı "o ikisini ölçelim" dedi.
+- **ÖNCE VERİ ÜRETİLDİ:** `kod/yedili_tablo.py` → `veri/yedili_tam.csv` (YENİ dosya; mevcut
+  hiçbir dosya değiştirilmedi). Ham arşivden **395 olay** (30 Oca – 23 Ağu 2026).
+  Ayak eşlemesi uydurulmadı: program feed'i *"7'Lİ GANYAN bu koşudan başlar"* diyor.
+  **ÇAPRAZ DOĞRULAMA %100:** 385 olayın hepsinde 7'linin son 6 ayağı bilinen bir Altılı'yla
+  BİREBİR örtüşüyor → eşleme doğru.
+  Tablo: 272 ödeme / **123 devir (%31)**; temettü medyanı **70.807 TL** (Altılı'da 5.589),
+  devir medyanı 495.191 TL, en büyük devir 4,98 M.
+- **ADİL KIYAS KURULDU — EŞİT PARA, eşit kombo DEĞİL.** Birim: Altılı 1,25 TL, 7'li 2,00 TL
+  (K86). 900 kombo Altılı = 1.125 TL → aynı parayla 7'li 562 kombo. Eşit-kombo kıyası 7'liye
+  haksız avantaj verirdi. **En güçlü yan:** 7'linin son 6 ayağı zaten bir Altılı → aynı kart,
+  aynı koşular, aynı model ile **eşli** "6 mı 7 mi" sorusu.
+- **KRİTER A (önceden yazıldı): 7'li kolu ilerletmeye değer ⟺ eşit parada ROI'si aynı
+  kartların Altılı ROI'sinden ANLAMLI iyi.** Sonuç (277 olay, EXCL dışı):
+
+  | bütçe/olay | Altılı (6) tutan / ROI | 7'li (7) tutan / ROI | eşli fark %95 GA |
+  |---|---|---|---|
+  | 1.125 TL | **32** / −24,5% | **12** / −65,8% | −40,7 [−104,5 , +13,6] |
+  | 2.250 TL | 43 / −47,5% | 16 / −71,6% | −24,7 [−53,6 , +4,0] |
+  | 360 TL | 14 / −47,1% | 5 / −76,8% | −28,4 [−77,4 , +5,9] |
+
+  **GEÇİLEMEDİ.** Üç bütçede de nokta tahmini 25-40 puan KÖTÜ; GA'lar geniş (isabet az) ama
+  kriter "anlamlı İYİ" istiyordu, yön hiçbirinde lehte değil.
+  **Mekanizma:** 7. ayak isabeti üçte bire düşürüyor (32→12), temettünün 12,7 kat büyük olması
+  telafi etmiyor — aynı parayı 7 ayağa bölmek zorundasın. K85'teki "yeni ürün, kalabalık
+  kalibre olmamış" umudu, 7. ayağın yapısal maliyetini aşamıyor. Test dosyasındaki
+  önceden-yazılmış beklenti ("(A)'nın geçmesi BEKLENMİYOR") doğrulandı.
+- **KRİTER B (önceden yazıldı): "devir sonrası oyna" değer ⟺ devirden hemen sonraki olayların
+  ROI'si normalden ANLAMLI iyi.** Sonuç: @1.125 TL devir-sonrası −97,9% (73 olayda **1** isabet)
+  vs normal −53,4% → fark −41,8 [−98,3 , −10,8]; @2.250 TL +16,1 [−34,2 , +104,4] sıfırı içeriyor.
+  **GEÇİLEMEDİ.** İki bütçe zıt yön gösteriyor → isabet sayısı çok az, gürültü.
+- **AMA DEVİR AVANTAJI GERÇEK (ölçüldü):** devir-sonrası olayların temettü medyanı
+  **96.858 TL**, normal olaylarınki **70.802 TL** → **+%37**. Yani devreden para gerçekten
+  bir sonraki oyuna ekleniyor (K86'daki resmî kuralla tutarlı) ve havuz şişiyor.
+  **ULAŞILAMAMASININ SEBEBİ:** bizim kısıtımız ödülün büyüklüğü değil, **isabet**. Havuz %37
+  şişse de 7 ayağı tutturamıyorsak fark etmiyor. Devir, ödeme tarafını iyileştiriyor; bizim
+  darboğazımız giriş tarafında.
+- **DÜRÜSTLÜK NOTU (örneklem):** bu kesitte Altılı −24,5% görünüyor; bu sistemin GERÇEK Altılı
+  sicili DEĞİL (263 olay, yalnız 2026 ve yalnız 7'li koşulan kartlar; birkaç büyük isabet
+  taşıyor). Altılı'nın geniş OOS ölçümü −52,5% (K116). Buradaki Altılı sütunu yalnızca
+  **eşli kıyas referansı** olarak okunmalı.
+- **KARAR: canlı sistem DEĞİŞMEDİ.** Hiçbir yeni ürün/config açılmadı. `yedili_tam.csv` ve
+  iki betik offline duruyor; ileride 7'li verisi büyürse tekrar koşulabilir.
+
+**>>> BUNUN ANLAMI: K116'da kapanan DAĞITICI kolundan sonra, BİLGİ/ÜRÜN kolu da kapandı. <<<**
+Projenin ürettiği bütün kenar hipotezleri artık ölçüldü:
+| yön | sonuç |
+|---|---|
+| model/ağırlık (bot1, harman, kamu ağırlığı) | K67 · K96 · K112 — kenar yok |
+| dağıtıcı (birleşim · v3 · saha · λ) | K90 · K115 · K116 — yalnız λ geçti, o da 900'e özgü |
+| bütçe (900↔1800, derinlik taraması) | K91 · K113 — hiçbir derinlik kârlı değil |
+| zamanlama (30 vs 15 dk) | K111 — daha çok tutturuyor, daha az ödüyor |
+| başka ürün (4'lü/5'li · 7'li) | K108 · K117 — ikisi de reddedildi |
+| yapısal fırsat (devir) | K117 — gerçek ama ulaşılamıyor |
+**Açık kalan tek şey ölçüm değil, KARAR: 25 Eylül (BEKLEYENLER ZAMANLI #4).** O tarihe kadar
+`acgozlu_v2`'nin ileri ölçümü birikmeye devam ediyor.
