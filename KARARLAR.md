@@ -3903,3 +3903,35 @@ kartını göstermiştim. **Kanıt yanlış okunmuş:**
   sürprizinden geliyor.
 - **KARAR: canlı sistem DEĞİŞMEDİ.** 5'li/4'lü/3'lü kolu açılmıyor (K108 ikame olarak reddetmişti,
   K120 ek olarak reddediyor).
+
+**K121 — 25 Ağu uyarısı teşhis edildi: 15 dk kolunda YAPISAL TEK NOKTA ARIZASI. Kod hatası yok,
+geçici ağ hatası kritik ana denk geldi.** Bekçi uyarısı: *"KOCAELI 2. Altılı → orta_15 ve
+acgozlu900_15 kupon kurmadı"*.
+- **OLAY ZİNCİRİ (log + veriyle doğrulandı):**
+  1. KOCAELİ 2. Altılı 1. ayak postası **19:00**.
+  2. 30 dk penceresi `[18:30, 19:00)` → içine **18:33** geçişi düştü → 5 config kuruldu ✔
+  3. 15 dk penceresi `[18:45, 19:00)` → içine **yalnız 18:45** geçişi düşer.
+  4. `18:45:02` geçişi koştu ama **`program/index cekilemedi`** → gün mühürlenmedi, geçiş
+     TAMAMEN iptal oldu (o saatte `gecis bitti` satırı YOK).
+  5. Sonraki geçiş `19:00:34` — posta çoktan geçmiş (`now < ilk_post` şartı bozuk) → pencere kapandı.
+  6. → `orta_15` ve `acgozlu900_15` o Altılı'dan düştü.
+- **`takip_log.txt`'de `altili kupon hatasi` satırı YOK** → kupon kodu hata vermedi; sorun bir
+  üst katmanda, günün pist indeksinin çekilememesinde.
+- **YAPISAL SEBEP (asıl bulgu):** Altılı 1. ayak postaları **27/27 = %100 tam çeyrek saatte**
+  (:00 12 kez · :30 10 · :45 4 · :15 1). Takip de aynı çeyrek-saat ızgarasında koşuyor.
+  Sonuç: **15 dk penceresine her zaman TEK geçiş düşer** (post−15). O geçiş herhangi bir
+  sebeple başarısız olursa 15 dk kuponu kaybedilir. 30 dk penceresinde **İKİ** geçiş vardır,
+  bu yüzden aynı arızadan etkilenmez. **15 dk kolu tasarımı gereği tek nokta arızasıdır.**
+- **`getjson` YENİDEN DENEME YAPMIYOR** (`kod/gunluk.py:48`): tek deneme, 25 sn timeout, her
+  istisna `_hata` döner. Tek bir anlık ağ tıkanması kritik geçişi yakıyor.
+- **SIKLIK:** `orta_15` başladığından beri 34 Altılı. 31'inde ikisi de kuruldu.
+  3 kayıp var ama **ikisi sahte**: 15 Ağu ANKARA-1 (13:00) ve İZMİR-1 (16:15), config'in ilk
+  kuponundan (17:31) ÖNCE — yani config henüz yoktu (uyarının kendi metnindeki iyi huylu vaka).
+  **Gerçek kayıp: 32'de 1 (%3).**
+- **MALİYETİ:** o Altılı, o iki config için deneyden düşer. Zamanlama kolunun tetiği ~60 kupon;
+  şu an orta_15 28 → her kayıp tetiği geciktirir. Kâğıt sistem olduğu için para kaybı yok.
+- **ÖNERİLEN DÜZELTME (yapılmadı, onay bekliyor):** `getjson`'a **bir kez yeniden deneme**
+  (kısa bekleme ile). Deneyi HİÇ değiştirmez — kupon kuralları, zamanlama, konfigler aynı kalır;
+  yalnız anlık ağ hatası ölümcül olmaktan çıkar. Aynı düzeltme `oran_log`, `defter` ve sonuç
+  çekmeyi de sağlamlaştırır. Alternatif (takibi 5 dk'da bir koşturmak) sistem yükünü artırır ve
+  gereksizdir: sorun sıklık değil, tek denemenin kırılganlığı.
