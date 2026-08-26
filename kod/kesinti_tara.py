@@ -47,6 +47,48 @@ büyük kenar 3-4 puan.
    doğrulanır (kazananlar / plase alanlar). Doğrulamayan olay ATILIR ve sayısı raporlanır.
    K94'te bu oran %99,1-100'dü; belirgin düşük çıkarsa ayrıştırıcıdan şüphelenilir.
 =====================================================================================
+ÖN-KAYITLI ÖLÇÜT — EK / DEĞİŞİKLİK (K124-EK). YİNE SONUÇLAR GÖRÜLMEDEN YAZILDI.
+İLK KOŞU YAPILDI VE ÇAPA DÜŞTÜ (6'LI: ölçülen %99,6 / bilinen %48,6). ARIZA TEŞHİS EDİLDİ:
+tek kusurlu bileşen BİRİM FİYAT çıkarımıydı. Aşağıdaki değişiklik YALNIZ birim kaynağına
+dokunur; çapa testi, tolerans ve karar eşikleri (40/30) AYNEN durur ve YİNE DÜŞEBİLİR.
+-------------------------------------------------------------------------------------
+E1) NEDEN DÜŞTÜ: "asgari temettü = birim" varsayımı yalnız TABANI DÖVÜLEN bahislerde
+    geçerli. 6'LI'nın en ucuz olayı bile 141 TL ödüyor; taban hiç dövülmüyor.
+    AYIRT EDİCİ İŞARET (6 yıl, 2021-2026): taban dövülüyorsa asgari temettü ENFLASYONLA
+    SÜRÜKLENMEZ, sabit kalır. Ölçülen:
+       GANYAN      1,05 · 1,05 · 1,05 · 1,05 · 1,05 · 1,05   (SABİT -> taban)
+       PLASE       1,05 x6 yıl, yılda 515-1638 olay          (SABİT -> taban)
+       PLASE İKİLİ 2,10 x6 yıl, yılda 9-59 olay              (SABİT -> taban, birim 2,00)
+       İKİLİ       1,15·1,15·1,10·1,20·1,20·1,05             (SABİT -> taban)
+       SIRALI İKİLİ 1,45·1,45·1,25·1,30·1,05·1,25            (SABİT -> taban)
+       ÇİFTE       1,40·1,25·1,30·1,35·1,35·1,00             (SABİT -> taban)
+       6'LI        20,5 · 14,9 · 21,1 · 78,1 · 89,9 · 141,2  (SÜRÜKLENİYOR -> taban yok)
+       3'LÜ/TABELA/SIRALI 5'Lİ/7'Lİ PLASE/ÜÇLÜ: hepsi sürükleniyor -> taban yok.
+
+E2) BİRİM KAYNAĞI (öncelik sırasıyla, sonuçlara BAKILMADAN sabitlendi):
+    (a) ARŞİV TABANI (sabit asgari / 1,05): GANYAN 1,00 · PLASE 1,00 · İKİLİ 1,00 ·
+        SIRALI İKİLİ 1,00 · ÇİFTE 1,00 · PLASE İKİLİ 2,00
+    (b) K86 RESMÎ 2026 TARİFESİ: 3'lü 2,00 · 4'lü 1,75 · 5'li 1,50 · 6'lı 1,25 · 7'li 2,00
+    (c) TANIMLANAMAZ (ÜÇLÜ BAHİS, TABELA BAHİS, TABELA BAHİS SIRASIZ, SIRALI 5 Lİ,
+        7'Lİ PLASE): kesinti HESAPLANMAZ. Yalnız ALT SINIR verilir: TJK'da tanımlanmış
+        her birim >= 1,00 TL ve kesinti birimle ARTAR -> t >= 1 - M (M = medyan temettü x q).
+        Alt sınır bile >= %40 ise KOL KAPANIR; değilse BELİRSİZ, hüküm yok.
+
+E3) KALİBRASYON (çapa geçerse): makinenin yanlılığı çapadan okunur ve karara o değerden
+    bakılır. İki AİLE, iki ayrı çapa:
+      - ganyan ailesi (kazanan zinciri): düzeltme = ham(GANYAN) - 28,3
+      - plase ailesi (PLASE, PLASE İKİLİ, 7'Lİ PLASE): düzeltme = ham(PLASE) - 14,0
+        [bilinen plase kesintisi %10-14 bandının ÜST ucu alınır = en muhafazakâr]
+    Ganyan ailesinde yanlılığın ayak sayısıyla BÜYÜDÜĞÜ bu koşuda görülecektir; 1-ayaklık
+    düzeltmeyi çok-ayaklı bahse uygulamak kesintiyi OLDUĞUNDAN YÜKSEK bırakır = muhafazakâr.
+
+E4) GENİŞLETİLMİŞ ÇAPA (tolerans kapısına DAHİL DEĞİL, yalnız desen görünsün diye):
+    3'lü %45,4 · 4'lü %45,6 · 5'li %46,8 · 7'li %57,6 (K94) · SIRALI İKİLİ ~%26 (K21)
+
+E5) MADDE 6 GENİŞLETİLDİ: Harville yanlılığı yalnız plase bahislerinde değil, DERİN SIRALI
+    bahislerde de (ÜÇLÜ, TABELA, SIRALI 5'Lİ) derinlikle birikir ve o ailede ÇAPA YOKTUR.
+    O üçü için nokta hüküm verilemez; yalnız E2(c) alt sınırı geçerlidir.
+=====================================================================================
 
 DOKUNULMAYANLAR: hiçbir dosyaya yazmaz. Config, dağıtıcı, ağırlık, canlı akış — hiçbiri.
 KAYNAK: veri/ham/sonuclar/*.json (temettü) + veri/katilim.csv (kapanış oranı, sonuç).
@@ -336,12 +378,37 @@ def topla(T, KART):
     return kayit, tem, sayac
 
 
-def birim_cikar(temettuler):
-    """TJK asgari temettu ~ birim -> en dusuk temettuden oku, 0,25'e yuvarla."""
-    v = np.array([x for x in temettuler if x and x > 0])
-    if v.size < 30:
-        return np.nan
-    return max(0.25, round(float(v.min()) * 4) / 4)
+
+
+# --------------------------- BIRIM FIYAT (E2, on-kayitli) ------------------------
+# (a) ARSIV TABANI: 6 yil boyunca asgari temettu enflasyonla SURUKLENMIYOR -> taban dovuluyor
+BIRIM_TABAN = {
+    "GANYAN": 1.00, "PLASE": 1.00, "İKİLİ": 1.00, "SIRALI İKİLİ": 1.00,
+    "ÇİFTE": 1.00, "PLASE İKİLİ": 2.00,
+}
+# (b) K86 RESMI 2026 TARIFESI
+BIRIM_RESMI = {
+    "3'LÜ GANYAN": 2.00, "4'LÜ GANYAN": 1.75, "5'Lİ GANYAN": 1.50,
+    "6'LI GANYAN": 1.25, "7'Lİ GANYAN": 2.00,
+}
+# (c) TANIMLANAMAZ -> yalniz alt sinir
+BIRIM_YOK = {"ÜÇLÜ BAHİS", "TABELA BAHİS", "TABELA BAHİS SIRASIZ",
+             "SIRALI 5 Lİ BAHİS", "7'Lİ PLASE"}
+
+# E4: genisletilmis capa (tolerans kapisina DAHIL DEGIL, desen gorunsun diye)
+BILINEN = {"GANYAN": 28.3, "6'LI GANYAN": 48.6, "3'LÜ GANYAN": 45.4,
+           "4'LÜ GANYAN": 45.6, "5'Lİ GANYAN": 46.8, "7'Lİ GANYAN": 57.6,
+           "SIRALI İKİLİ": 26.0, "PLASE": 14.0}
+BAKILMAMIS = {"ÇİFTE", "PLASE İKİLİ", "TABELA BAHİS", "TABELA BAHİS SIRASIZ",
+              "SIRALI 5 Lİ BAHİS", "7'Lİ PLASE"}
+
+
+def birim_al(ad):
+    if ad in BIRIM_TABAN:
+        return BIRIM_TABAN[ad], "taban"
+    if ad in BIRIM_RESMI:
+        return BIRIM_RESMI[ad], "K86"
+    return 1.00, "ALT-SINIR"          # birim>=1 -> t>=1-M (E2c)
 
 
 def boot_ga(x):
@@ -354,87 +421,106 @@ def boot_ga(x):
 
 
 def main():
-    print("=" * 108)
-    print(f"K124 — BAHİS BAZINDA KESİNTİ ({YIL}, salt-okunur). Ölçüt betiğin başında ÖN-KAYITLI.")
-    print("=" * 108)
+    print("=" * 112)
+    print(f"K124 — BAHİS BAZINDA KESİNTİ ({YIL}). Ölçüt betiğin başında ÖN-KAYITLI (+EK). SALT-OKUNUR.")
+    print("=" * 112)
     T = kosu_tablosu()
     KART = kart_sirasi(T)
     print(f"  {YIL} koşu (devig edilebilen): {len(T):,} · kart: {len(KART):,}")
     kayit, tem, sayac = topla(T, KART)
 
+    ham = {}
     sira = sorted(kayit, key=lambda a: -sayac[a][2])
-    print("\n" + "-" * 108)
-    print(f"  {'bahis':>22} {'görülen':>8} {'doğru':>7} {'kul.':>7} {'birim':>7} "
-          f"{'KESİNTİ':>9} {'%90 GA':>17} {'x0,8':>7} {'x1,25':>7}")
-    print("-" * 108)
-    sonuc = {}
+    print("\n" + "-" * 112)
+    print(f"  {'bahis':>22} {'ayak':>4} {'görülen':>8} {'doğr.':>7} {'birim':>6} {'kayn.':>9} "
+          f"{'HAM KESİNTİ':>12} {'%90 GA':>16}")
+    print("-" * 112)
     for ad in sira:
         gor, dog, kul = sayac[ad]
-        b = birim_cikar(tem[ad])
         v = np.array(kayit[ad], float)
-        if not np.isfinite(b) or v.size < 20:
-            print(f"  {ad[:22]:>22} {gor:>8,} {dog:>7,} {kul:>7,} {'—':>7} {'YETERSİZ':>9}")
+        if v.size < 20:
+            print(f"  {ad[:22]:>22} {'':>4} {gor:>8,} {dog:>7,} {'—':>6} {'—':>9} {'YETERSİZ':>12}")
             continue
+        b, kaynak = birim_al(ad)
         iade = v / b
         kes = 100 * (1 - float(np.median(iade)))
         lo, hi = boot_ga(iade)
-        ga = f"[{100*(1-hi):>5.1f} .. {100*(1-lo):>5.1f}]"
-        k08 = 100 * (1 - float(np.median(v / (b * 0.8))))
-        k125 = 100 * (1 - float(np.median(v / (b * 1.25))))
-        sonuc[ad] = (kes, 100 * (1 - hi), 100 * (1 - lo), b, kul, gor, dog)
-        print(f"  {ad[:22]:>22} {gor:>8,} {dog:>7,} {kul:>7,} {b:>7.2f} "
-              f"{kes:>8.1f}% {ga:>17} {k08:>6.1f}% {k125:>6.1f}%")
+        ham[ad] = {"kes": kes, "lo": 100 * (1 - hi), "hi": 100 * (1 - lo), "b": b,
+                   "kaynak": kaynak, "n": kul, "gor": gor, "dog": dog,
+                   "M": float(np.median(v))}
+        ayak = ZINCIR.get(ad, 1)
+        print(f"  {ad[:22]:>22} {ayak:>4} {gor:>8,} {dog:>7,} {b:>6.2f} {kaynak:>9} "
+              f"{kes:>11.1f}% [{ham[ad]['lo']:>5.1f} ..{ham[ad]['hi']:>6.1f}]")
 
-    # ---------------- CAPA TESTI ----------------
-    print("\n" + "=" * 108)
-    print("ÇAPA TESTİ — makine, değeri bağımsız yöntemle bilinen iki bahsi üretebiliyor mu?")
-    print("=" * 108)
+    # ------------------------------ CAPA TESTI (madde 4) --------------------------
+    print("\n" + "=" * 112)
+    print("ÇAPA TESTİ (madde 4) — makine, bağımsız yöntemle bilinen değerleri üretiyor mu?")
+    print("=" * 112)
+    print(f"  {'bahis':>16} {'ayak':>4} {'bilinen':>9} {'ölçülen':>9} {'fark':>8}   kapı")
     gecti = True
-    for ad, bilinen in CAPA.items():
-        if ad not in sonuc:
-            print(f"  {ad:>14}: ölçülemedi -> ÇAPA DÜŞTÜ")
-            gecti = False
+    for ad, bil in sorted(BILINEN.items(), key=lambda x: ZINCIR.get(x[0], 1)):
+        if ad not in ham:
             continue
-        olculen = sonuc[ad][0]
-        fark = abs(olculen - bilinen)
-        ok = fark <= CAPA_TOLERANS
-        gecti &= ok
-        print(f"  {ad:>14}: bilinen %{bilinen:.1f} · ölçülen %{olculen:.1f} · "
-              f"fark {fark:.1f} puan -> {'GEÇTİ' if ok else 'DÜŞTÜ'}")
-    print(f"\n  BİRİM ÇIKARIMI DOĞRULAMASI (beklenen GANYAN 1,00 · 6'LI 1,25):")
-    for ad, bek in (("GANYAN", 1.00), ("6'LI GANYAN", 1.25)):
-        if ad in sonuc:
-            b = sonuc[ad][3]
-            print(f"     {ad:>14}: çıkarılan {b:.2f} · beklenen {bek:.2f} -> "
-                  f"{'TUTTU' if abs(b - bek) < 0.13 else 'TUTMADI'}")
+        o = ham[ad]["kes"]
+        f = o - bil
+        kapi = ad in CAPA
+        ok = abs(f) <= CAPA_TOLERANS
+        if kapi:
+            gecti &= ok
+        etiket = ("KAPI: " + ("GEÇTİ" if ok else "DÜŞTÜ")) if kapi else "(bilgi)"
+        print(f"  {ad[:16]:>16} {ZINCIR.get(ad,1):>4} {bil:>8.1f}% {o:>8.1f}% {f:>+7.1f}   {etiket}")
 
-    print("\n" + "=" * 108)
     if not gecti:
+        print("\n" + "=" * 112)
         print("HÜKÜM: ÇAPA DÜŞTÜ -> ÖLÇÜM GÜVENİLMEZ. HİÇBİR KOL KAPANMAZ, HİÇBİR KOL AÇILMAZ.")
-        print("Yukarıdaki sayılar yalnız 'yöntem tutmadı' kaydı olarak durur (ön-kayıtlı madde 4).")
-        print("=" * 108)
+        print("=" * 112)
         return
-    print("HÜKÜM (ön-kayıtlı madde 5 — %90 GA'nın TAMAMI eşiği geçmeli)")
-    print("=" * 108)
-    BAKILMAMIS = {"ÇİFTE", "PLASE İKİLİ", "TABELA BAHİS", "TABELA BAHİS SIRASIZ",
-                  "SIRALI 5 Lİ BAHİS", "7'Lİ PLASE"}
+
+    # ------------------------------ KALIBRASYON (E3) ------------------------------
+    duz_gan = ham["GANYAN"]["kes"] - 28.3 if "GANYAN" in ham else 0.0
+    duz_pla = ham["PLASE"]["kes"] - 14.0 if "PLASE" in ham else 0.0
+    print("\n" + "=" * 112)
+    print("KALİBRASYON (E3) — makinenin yanlılığı çapadan okundu")
+    print("=" * 112)
+    print(f"  ganyan ailesi düzeltmesi = ham(GANYAN) - 28,3 = {duz_gan:+.1f} puan")
+    print(f"  plase  ailesi düzeltmesi = ham(PLASE)  - 14,0 = {duz_pla:+.1f} puan")
+    print("  UYARI: ganyan ailesinde yanlılık ayak sayısıyla büyür (yukarıdaki çapa tablosuna")
+    print("  bak). 1-ayaklık düzeltmeyi çok-ayaklıya uygulamak kesintiyi OLDUĞUNDAN YÜKSEK")
+    print("  bırakır -> 'KAPANIR' hükmü muhafazakâr, 'AÇILIR' hükmü şüpheli.")
+
+    # ------------------------------ HUKUM (madde 5) -------------------------------
+    print("\n" + "=" * 112)
+    print("HÜKÜM — kesinti >= %40 KAPANIR · < %30 AÇILIR · arası BELİRSİZ (%90 GA'nın TAMAMI)")
+    print("=" * 112)
+    print(f"  {'bahis':>22} {'n':>6} {'KALİBRE KESİNTİ':>16} {'%90 GA':>16}  {'hüküm':<10} not")
     for ad in sira:
-        if ad not in sonuc:
+        if ad not in ham:
             continue
-        kes, lo, hi, b, kul, _, _ = sonuc[ad]
-        if lo >= KAPAT_ESIK:
-            h = "KAPANIR"
+        h = ham[ad]
+        aile_pl = ad in PLASE_AILE
+        duz = duz_pla if aile_pl else duz_gan
+        k, lo, hi = h["kes"] - duz, h["lo"] - duz, h["hi"] - duz
+        if ad in BIRIM_YOK:
+            hkm = "KAPANIR" if lo >= KAPAT_ESIK else "BELİRSİZ"
+            not_ = f"ALT SINIR (birim bilinmiyor, M={h['M']:.3f}); nokta hüküm YOK"
+        elif lo >= KAPAT_ESIK:
+            hkm, not_ = "KAPANIR", ""
         elif hi < AC_ESIK:
-            h = "AÇILIR"
+            hkm, not_ = "AÇILIR", ""
         else:
-            h = "BELİRSİZ"
-        etiket = "  <-- BAKILMAMIŞ" if ad in BAKILMAMIS else ""
-        uyari = ""
-        if ad in PLASE_AILE:
-            uyari = ("   [Harville yanlı: gerçek kesinti DAHA YÜKSEK -> 'KAPANIR' muhafazakâr, "
-                     "'AÇILIR' şüpheli]")
-        print(f"  {ad[:22]:>22} n={kul:>6,}  %{kes:>5.1f} GA[{lo:>5.1f}..{hi:>5.1f}]"
-              f"  -> {h:<9}{etiket}{uyari}")
+            hkm, not_ = "BELİRSİZ", ""
+        if aile_pl:
+            not_ = ("Harville yanlı -> gerçek kesinti DAHA YÜKSEK; KAPANIR muhafazakâr. " + not_).strip()
+        if ad in BAKILMAMIS:
+            not_ = "<<< BAKILMAMIŞ BAHİS >>> " + not_
+        print(f"  {ad[:22]:>22} {h['n']:>6,} {k:>15.1f}% [{lo:>5.1f} ..{hi:>6.1f}]  {hkm:<10} {not_}")
+
+    print("\n" + "-" * 112)
+    print("  DOĞRULAMA ORANI DÜŞÜK OLANLAR (kalite kapısı, madde 7):")
+    for ad in sira:
+        g, d, _ = sayac[ad]
+        if g >= 50 and d / g < 0.90:
+            print(f"     {ad[:22]:>22}: {d:,}/{g:,} = %{100*d/g:.0f} -> bu satır ŞÜPHELİ")
 
 
 if __name__ == "__main__":
