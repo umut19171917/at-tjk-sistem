@@ -139,6 +139,78 @@ kurmaz. Bu karardan SONRA biriken veriyle sınanacak.
 
 **Mevcut hız:** İstanbul'da ~792 ayak / 5 hafta → ~400 yeni ayak ≈ **2,5-3 hafta** (Ekim ortası).
 
+### 15. ÇİFTE KOLU — **AÇILDI** (K125). Kesinti kapısı geçildi, KENAR kapısı bekliyor
+**Eklendi:** 2026-08-27 (K125) · **TETİK: SIRASI GELİNCE** · **İlgili:** K13, K73, K74, K123, K124, K125
+
+**Neden açıldı:** ÇİFTE'nin kesintisi **%27,2 [26,4..28,0]** — projede ölçülen en düşük
+çok-ayaklı kesinti. İki bağımsız yöntem aynı bandı gösterdi (kalibre ölçer %27,2; modelden
+bağımsız temettü-oranı sınavı %22,6). Zincir bahislerin geri kalanı %43-57 bandında.
+
+**AÇILMASININ KESİNLİKLE ANLAMI OLMAYAN ŞEY:** kârlılık. K13 zaten **%25,5'lik ganyan
+duvarına çarpıp geri dönmüştü.** ÇİFTE'nin %27'si aynı duvar.
+
+**Kolu açan TEK yapısal gerekçe:** K73/K74 Altılı havuzunun kötü kalibre olduğunu ölçtü
+(seçimimiz havuz ortalamasını ~30 puan yeniyor) ama %48,6 vergi onu yutuyordu. ÇİFTE,
+projede karşılaşılan **tek** bahis ki *çok-ayaklı havuz verimsizliği* ile *ganyan seviyesinde
+vergi* aynı üründe buluşuyor.
+
+**ÖN-KAYITLI ÖLÇÜT (sonuç görülmeden yazıldı — ölçüme başlamadan ÖNCE bu blok mühürlenecek):**
+- **H1 (havuz kalibrasyonu):** ÇİFTE havuzu Altılı havuzu kadar kötü kalibre mi? Ölçüm:
+  K74'ün yanlılık haritası ÇİFTE'ye uygulanır (kazanan çiftlerin ima edilen payı vs gerçek
+  isabet). **Yanlılık yoksa kol KAPANIR** — model kurmaya girilmez.
+- **H2 (kenar):** Bot2'nin ÇİFTE olasılıkları, aynı olaylarda kamunun (ganyan-türevli çarpım)
+  olasılıklarını **log-loss'ta** yeniyor mu? Eşleşmiş olay, olay-bootstrap %95 GA.
+  **Yenmiyorsa kol KAPANIR.**
+- **H3 (para):** ancak H1 ve H2 geçilirse. Kupon/ROI ölçümü; eşik **ROI ≥ 0'ın %90 GA alt
+  sınırı > −%5**. Aksi halde KAPANIR.
+- **Güç eşiği:** K107, ≥6 uyumsuz çift. Kapsama eşiği: K106, %90.
+- **Fiyat kaynağı:** K110 kuralı — resmî kapanış (`defter.ganyan_kapanis`), `oran_log` DEĞİL.
+
+**KIRILMA NOKTASI — önce bu doğrulanmalı:** hükmün tamamı **ÇİFTE biriminin 1,00 TL** olmasına
+dayanıyor. Birim 1,25 olsaydı kesinti %40,7 çıkar ve **kol kapanırdı.** Dayanak arşivden
+çıkarım (asgari temettü 6 yıl boyunca enflasyonla sürüklenmiyor: 1,40·1,25·1,30·1,35·1,35·1,00),
+**TJK'nın resmî tarifesinden okunmuş değil.** K86 resmî tarifeyi bulamamıştı; ÇİFTE için
+tekrar aranmalı. Resmî değer 1,00 değilse **bu kol derhal kapanır.**
+
+### 16. TABELA BAHİS ve SIRALI 5'Lİ — **BELİRSİZ**, birim fiyat bulunursa karara bağlanır
+**Eklendi:** 2026-08-27 (K125) · **TETİK: KULLANICI / birim fiyat kaynağı bulunursa**
+
+K125 bu ikisi için yalnız **alt sınır** verebildi (birim ≥ 1,00 varsayımıyla): TABELA
+**≥%28,5** [24,1..32,0], SIRALI 5'Lİ **≥%33,0** [28,8..36,7]. Ne %40 eşiğini geçiyorlar
+(kapanmıyorlar) ne %30'un altında kalıyorlar (açılmıyorlar).
+
+**Neden nokta hüküm verilemedi — iki ayrı sebep:**
+1. **Birim tanımlanamıyor.** Asgari temettüleri 6 yıl boyunca enflasyonla sürükleniyor
+   (TABELA 6,29→3,37 dalgalı, SIRALI 5'Lİ 13,0→325,6) → taban hiç dövülmüyor → arşivden
+   okunamıyor. K86'da olduğu gibi TJK yayımlamıyor.
+2. **Ailede çapa yok.** Derin sıralı bahislerde (ilk 4 / ilk 5, sırayla) Harville yanlılığı
+   derinlikle birikir ve bu ailede değeri bağımsız yöntemle bilinen tek bir bahis bile yok.
+   ÜÇLÜ BAHİS de aynı sebeple ölçülemedi (yalnız birim ≥ 1,25 TL olduğu çıkarıldı).
+
+**Beklenti (önceden yazılıyor):** düşük. Birim 2,00 TL olsaydı ikisi de %64-67'ye çıkar ve
+kapanırdı; Harville yanlılığı da kesintiyi olduğundan DÜŞÜK gösteriyor. **İkisinin de gerçek
+kesintisinin egzotik bantta olması muhtemel** — ama bu bir tahmin, ölçüm değil.
+
+**Açılış şartı:** ya TJK'nın resmî tarifesi bulunmalı, ya da bu ailede kesintisi bağımsız
+yöntemle bilinen bir çapa üretilmeli.
+
+### 17. 7'Lİ PLASE — **ÖLÇÜLEMEDİ**, ayak eşleme teşhisi gerekiyor
+**Eklendi:** 2026-08-27 (K125) · **TETİK: SIRASI GELİNCE**
+
+K125'te 447 olayın yalnız **118'i (%26)** kalite kapısını geçti ve kesinti değeri saçma çıktı
+(−%50.000 mertebesinde). Diğer bütün bahislerde doğrulama oranı %90-100 olduğuna göre kusur
+verinin değil, **ayak eşlemesinin**: bahsin 7 ayağının "bittiği koşuda biten 7 ardışık koşu"
+olduğu varsayımı (K94 kuralı) bu bahiste tutmuyor olabilir — 7'Lİ PLASE muhtemelen günün
+SABİT 7 koşusunda oynanıyor, kayan pencerede değil.
+
+**Yapılacak:** kombinasyondaki at sayıları (ör. `2,4/2,9/1,7/2,6/3,6/2,4/7,12`) ile o günün
+koşularının plase kümeleri karşılaştırılıp doğru ayak penceresi bulunacak. Bulunmadan bu
+bahis hakkında **hiçbir şey söylenemez** — ne kapanır ne açılır.
+
+**Not:** 7'Lİ PLASE'nin temettüleri şaşırtıcı derecede DÜŞÜK (2026 medyanı 287 TL; aynı yılın
+7'Lİ GANYAN'ı 70.802 TL). Bu, bahsin çok daha sık tutturulduğunu gösteriyor — kesintisi
+ölçülmeye değer bir aday yapıyor onu. Ama ölçüm ancak eşleme düzeldikten sonra.
+
 ### 3. defter.html'i K55 görsel diline çevirme
 **Eklendi:** 2026-07-24 (teklif edildi, istenmedi) · **İlgili:** K55
 altili.html / paper.html K55 zengin formatına geçti (tahminler + sistem sırası + kazanan +

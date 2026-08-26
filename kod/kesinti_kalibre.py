@@ -170,14 +170,21 @@ def main():
             print(f"  {ad[:22]:>22} {n:>4} {h['n']:>6,} {'—':>6} {'—':>9} {'—':>16}  "
                   f"{'ÖLÇÜLEMEDİ':<10} kalite kapısı %{100*h['dog']/max(h['gor'],1):.0f} (ölçüt G)")
             return
-        if ad in KT.PLASE_AILE and ad != "PLASE":
-            k, lo, hi = h["kes"] + duz_pla, h["lo"] + duz_pla, h["hi"] + duz_pla
+        if ad == "PLASE":
+            print(f"  {ad[:22]:>22} {n:>4} {h['n']:>6,} {h['b']:>6.2f} {14.0:>8.1f}% "
+                  f"{'—':>16}  {'ÇAPA':<10} plase ailesinin kalibrasyon dayanağı "
+                  f"(ham %{h['kes']:.1f} -> yanlılık {duz_pla:+.1f}); DOĞRULAMA DEĞİL")
+            return
+        if ad in KT.PLASE_AILE:
+            # yanlilik = olculen - gercek = duz_pla (negatif) -> gercek = olculen - yanlilik
+            k, lo, hi = h["kes"] - duz_pla, h["lo"] - duz_pla, h["hi"] - duz_pla
             hkm = "KAPANIR" if lo >= KT.KAPAT_ESIK else "BELİRSİZ"
-            day = f"ALT SINIR (ölçüt E); gerçek kesinti bundan YÜKSEK"
+            day = "ALT SINIR (ölçüt E); Harville yanlılığı 2 seçimde birikir -> gerçek DAHA YÜKSEK"
         elif ad in KT.BIRIM_YOK:
             k, lo, hi = h["kes"], h["lo"], h["hi"]
             hkm = "KAPANIR" if lo >= KT.KAPAT_ESIK else "BELİRSİZ"
-            day = f"ALT SINIR (ölçüt F, birim>=1,00; M={h['M']:.3f})"
+            day = (f"ALT SINIR (ölçüt F; M={h['M']:.3f} -> birim>={max(1.0, h['M']):.2f})"
+                   if h["M"] > 1 else f"ALT SINIR (ölçüt F, birim>=1,00; M={h['M']:.3f})")
         else:
             d = a0 + b0 * n
             k, lo, hi = h["kes"] - d, h["lo"] - d, h["hi"] - d
@@ -201,7 +208,7 @@ def main():
             continue
         h = ham[ad]
         n = AYAK.get(ad, 1)
-        d = duz_pla * -1 if ad in KT.PLASE_AILE else (a0 + b0 * n)
+        d = duz_pla if ad in KT.PLASE_AILE else (a0 + b0 * n)
         satir, hkm = [], []
         for bb in (1.00, 1.25, 1.50, 2.00):
             k = 100 * (1 - (h["M"] / bb)) - d

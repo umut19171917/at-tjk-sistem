@@ -4080,3 +4080,243 @@ Yerine **BAŞABAŞ 6/6 eşiği** kondu — bu, pistleri gerçekten kıyaslanabil
 
 `kod/pist_analiz.py` yeni ve salt-okunur. Config, dağıtıcı, ağırlık, zamanlama — **hiçbiri
 değişmedi**. Fiyat kaynağı K110 kuralına uyuyor (resmî temettü + pistin kendi birim tarifesi).
+
+
+## 2026-08-26 — K123: TJK'nın oynattığı BÜTÜN bahislerin envanteri — beş bahse 123 karar boyunca hiç bakılmamış
+
+**K123 — Ham arşivde 16 bahis türü var; beşine bu projede hiç dokunulmadı ve HEPSİNİN 6 yıllık
+temettüsü + kazanan kombinasyonu kayıtlı. Yani hiçbir kol "veri yok" gerekçesiyle kapanamaz.**
+Araç: `kod/bahis_tara.py` (salt-okunur, 4.275 dosya, 0 bozuk). 26 Ağu 2026.
+
+Kullanıcı: *"5'li ve 4'lü ganyanın testini yaptık ama TJK'nın oynattığı kalan tüm bahislere
+bakmadık."* Doğruydu. K42 (ganyan/plase), K21-K25 (exacta), K94 (kesintiler), K108 (4'lü/5'li),
+K117 (7'li) hep tek tek bakmıştı; **bahis listesinin TAMAMI hiç çıkarılmamıştı.**
+
+**Kaynak yapısı:** `veri/ham/sonuclar/*.json` → `kosular[].emiParasalNeticeler_tr`, düz metin.
+`BAHISLER_TR` alanı bununla **birebir aynı** (ayrı bilgi yok). Ne birim fiyat ne havuz
+büyüklüğü yayımlanıyor — bu K124'ün başına dert olacak.
+
+| bahis | olay | tanım | önceki durum |
+|---|---|---|---|
+| PLASE İKİLİ | 40.996 | iki at da plase alacak | **hiç bakılmadı** |
+| PLASE | 39.245 | ilk m'de (m=2 saha≤7, m=3 saha≥8) | K42/K44 |
+| GANYAN | 36.113 | kazanan | K10/K13/K42 |
+| SIRALI İKİLİ | 36.097 | ilk 2, sırayla | K21/K22/K25 |
+| İKİLİ | 31.091 | ilk 2, sırasız | veri vardı, kupon testi yoktu |
+| **ÇİFTE** | **30.745** | **2 ardışık koşunun kazananı** | **hiç bakılmadı** |
+| ÜÇLÜ BAHİS | 18.996 | ilk 3, sırayla | veri vardı, kupon testi yoktu |
+| 3'LÜ GANYAN | 8.238 | 3 ardışık kazanan | K94 (yalnız kesinti) |
+| SIRALI 5 Lİ | 7.071 | tek koşuda ilk 5, sırayla | **hiç bakılmadı** |
+| 6'LI GANYAN | 6.933 | Altılı | ana kol |
+| 5'Lİ / 4'LÜ | 6.630 / 5.803 | — | K108 reddedildi |
+| TABELA BAHİS | 4.586 | tek koşuda ilk 4, sırayla | **hiç bakılmadı** |
+| TABELA SIRASIZ | 3.995 | tek koşuda ilk 4, sırasız | **hiç bakılmadı** |
+| 7'Lİ PLASE | 3.905 | 7 ayağın her birinde plase | **hiç bakılmadı** |
+| 7'Lİ GANYAN | 277 | — | K117 reddedildi |
+
+**DÜRÜSTLÜK NOTU — iki sayım tuzağı:**
+1. **PLASE İKİLİ'nin 40.996'sı olay değil SATIR.** Saha≥8'de plase yeri 3 olduğundan tek koşu
+   **C(3,2)=3** ayrı PLASE İKİLİ temettüsü yayımlar. Gerçek koşu sayısı ~3 katı az.
+2. Tablonun kuyruğundaki `Çıkan 1 Atla: X TL`, `İade N. ÇİFTE`, `Sıralı bilen çıkmamıştır`
+   satırları **ayrı bahis türü değil**; kendinden önceki bahsin iade/teselli durumu.
+   Ayrıştırıcı bunları ayrı isim sanıyor (~400 satır, gürültü seviyesi ama gerçek bir kol
+   kurulursa düzeltilmeli).
+
+**Dosya kodlaması:** 4.275 dosyanın **tamamı geçerli UTF-8**. İlk bakışta görülen bozuk Türkçe
+karakterler konsol çıktı kodlamasıydı, veride sorun yok.
+
+---
+
+## 2026-08-27 — K124: kesinti ölçeri kuruldu, ÇAPA İKİ KEZ DÜŞTÜ, ön-kayıtlı kural gereği HİÇBİR KOL KAPANMADI
+
+**K124 — Ölçüt sonuçlar görülmeden yazılıp git'e mühürlendi (`11c180b`), ölçüldü, kapı düştü,
+kural uygulandı. İki koşunun ikisi de hüküm üretmedi. Ama düşme NEDENİ tam olarak teşhis
+edildi ve bu teşhis K125'i mümkün kıldı.** Araç: `kod/kesinti_tara.py` (salt-okunur).
+
+**Neden kesinti ölçüldü, model değil:** K44'ün "kill-first" konvansiyonu. Kesinti duvarı
+%45-58 bandındaysa (K94) model kurmanın anlamı yok — bu projede ölçülmüş **en büyük kenar
+3-4 puan.** Kesinti, model kurmadan önce cevaplanacak ve beş kolu birden eleyebilecek soru.
+
+**Yöntem (K73 kimliği):** `temettü = birim × (1−kesinti) / q` → `iade = temettü × q / birim`.
+q = kazanan seçime gelen havuz payı; kapanış ganyanı devig edilip Harville ile ilgili bahse
+çevriliyor. **Çapa testi:** aynı makine, değeri BAĞIMSIZ yöntemle bilinen GANYAN (%28,3, K13)
+ve 6'LI (%48,6, K73) üzerinde koşturulur; ±6 puan tutturamazsa ölçüm güvenilmez ilan edilir.
+
+### (a) BİRİNCİ KOŞU — çapa düştü, arıza tek bir yerdeydi
+
+| | bilinen | ölçülen | fark |
+|---|---|---|---|
+| GANYAN | %28,3 | %33,0 | +4,7 GEÇTİ |
+| **6'LI** | %48,6 | **%99,6** | **+51,0 DÜŞTÜ** |
+
+Kusurlu bileşen **birim fiyat çıkarımıydı**. Ön-kayıt "TJK asgari temettüyü birimin altına
+düşürmez → birim = en düşük temettü" diyordu. GANYAN'da 1,00 verdi (doğru), 6'LI'da **141,25**
+verdi. Sebep: 6'LI'nın **en ucuz olayı bile 141 TL ödüyor — taban hiç dövülmüyor.**
+
+### (b) TEŞHİS: tabanın dövülüp dövülmediğinin AYIRT EDİCİ İŞARETİ
+
+Taban dövülüyorsa asgari temettü **enflasyonla sürüklenmez.** 6 yıl (2021→2026) asgari temettü:
+
+| bahis | 2021 | 2022 | 2023 | 2024 | 2025 | 2026 | okuma |
+|---|---|---|---|---|---|---|---|
+| GANYAN | 1,05 | 1,05 | 1,05 | 1,05 | 1,05 | 1,05 | **SABİT → taban** (yılda 29-101 olay) |
+| PLASE | 1,05 | 1,05 | 1,05 | 1,05 | 1,05 | 1,05 | **SABİT → taban** (yılda 515-1.638 olay) |
+| **PLASE İKİLİ** | 2,10 | 2,10 | 2,10 | 2,10 | 2,10 | 2,10 | **SABİT → birim 2,00 TL** |
+| İKİLİ | 1,15 | 1,15 | 1,10 | 1,20 | 1,20 | 1,05 | SABİT → birim 1,00 |
+| SIRALI İKİLİ | 1,45 | 1,45 | 1,25 | 1,30 | 1,05 | 1,25 | SABİT → birim 1,00 |
+| **ÇİFTE** | 1,40 | 1,25 | 1,30 | 1,35 | 1,35 | 1,00 | **SABİT → birim 1,00** |
+| 6'LI | 20,5 | 14,9 | 21,1 | 78,1 | 89,9 | 141,2 | **SÜRÜKLENİYOR → taban yok** |
+| 3'LÜ / TABELA / SIRALI 5'Lİ / 7'Lİ PLASE / ÜÇLÜ | ↗ | ↗ | ↗ | ↗ | ↗ | ↗ | hepsi sürükleniyor |
+
+**PLASE İKİLİ'nin 2,10'u = 2,00 × 1,05** (TJK'nın asgari getiri kuralı). Altı yıl üst üste,
+altında hiç değer yok. **Bu, projede ilk kez bir egzotik bahsin birim fiyatının arşivden
+okunması.**
+
+### (c) İKİNCİ KOŞU — birim kaynağı düzeltildi (`91e95d4`), çapa YİNE düştü
+
+Değişiklik yalnız birim kaynağına dokundu; **çapa, tolerans ve karar eşikleri (40/30) aynen
+kaldı ve düşebilecek durumdaydı.** Düştü:
+
+| ayak | bahis | bilinen | ölçülen | fark |
+|---|---|---|---|---|
+| 1 | GANYAN | %28,3 | %33,0 | +4,7 |
+| 1 | SIRALI İKİLİ | %26,0 (K21) | %31,1 | +5,1 |
+| 3 | 3'LÜ | %45,4 | %49,8 | +4,4 |
+| 4 | 4'LÜ | %45,6 | %54,5 | +8,9 |
+| 5 | 5'Lİ | %46,8 | %55,2 | +8,4 |
+| **6** | **6'LI** | **%48,6** | **%57,3** | **+8,7 → KAPI DÜŞTÜ (tolerans ±6)** |
+| 7 | 7'Lİ | %57,6 | %66,9 | +9,3 |
+| 1 | PLASE | %14,0 | %3,9 | **−10,1** |
+
+**HÜKÜM UYGULANDI: hiçbir kol kapanmadı, hiçbir kol açılmadı.** Ölçüt sonuca bakılarak
+gevşetilmedi — bu, K33/K52 yasağının tam da koruduğu şey.
+
+### (d) AMA DÜŞME BİÇİMİ BİLGİ TAŞIYOR
+
+Yanlılık **rastgele değil**: ganyan ailesinde ayak sayısıyla düzgün büyüyor (+4,4 → +9,3),
+plase ailesinde ters yönde sabit (−10,1, Harville'in plase olasılığını şişirmesi — bu
+K124'ün 6. maddesinde **önceden** yazılmıştı). Bir termometrenin 5 derece şaştığını bilmek
+onu kullanılamaz yapmaz; şaşmasının **öngörülebilir** olması gerekir. K125 tam da bunu sınadı.
+
+### (e) YAN BULGU: ÜÇLÜ BAHİS'in birimi ≥ 1,25 TL
+
+`M = medyan(temettü × q) = 1,249 > 1`. Kesinti negatif olamayacağına göre birim ≥ 1,25 TL.
+Arşivden okunabilen tek bilgi bu; tam değer hâlâ bilinmiyor.
+
+---
+
+## 2026-08-27 — K125: ölçer kalibre edildi, BİRİNİ-DIŞARIDA-BIRAK sınavını GEÇTİ → **ÇİFTE AÇILDI**, PLASE İKİLİ ve TABELA SIRASIZ KAPANDI
+
+**K125 — Kesinti duvarı tek bir duvar değilmiş: TJK'nın bahisleri iki ayrı banda ayrılıyor.
+BASİT BAHİSLER %24-28 · ZİNCİR/EGZOTİK BAHİSLER %43-57. Ve ÇİFTE — 123 karar boyunca hiç
+bakılmamış olan bahis — ucuz bantta: %27,2 [26,4..28,0]. Bu, projenin bugüne kadar
+karşılaştığı EN DÜŞÜK çok-ayaklı kesinti.** Araç: `kod/kesinti_kalibre.py` (salt-okunur).
+Ölçüt sonuçlar görülmeden yazılıp mühürlendi (`5da0dd1`).
+
+### (a) SINAV — birini-dışarıda-bırak, ve DÜŞEBİLİRDİ
+
+Yanlılık modeli: `yanlilik(N) = +3,95 + 0,82·N` (N = ayak sayısı), 7 bilinen nokta, en küçük
+kareler. **Başka hiçbir serbestlik yok** — ikinci derece terim, ağırlık, aykırı-atma yok.
+Sınav: her bilinen nokta için model **o nokta olmadan** yeniden fit edilip o bahsin kesintisi
+kestirildi. Ölçüt: **7 artığın hepsi ±6,0 puan içinde olmalı** (tolerans K124'ten aynen).
+
+| bahis | ayak | bilinen | LOO kestirim | artık |
+|---|---|---|---|---|
+| GANYAN | 1 | %28,3 | %28,2 | **−0,1** |
+| SIRALI İKİLİ | 1 | %26,0 | %26,6 | +0,6 |
+| 3'LÜ | 3 | %45,4 | %43,1 | −2,3 |
+| 4'LÜ | 4 | %45,6 | %47,6 | +2,0 |
+| 5'Lİ | 5 | %46,8 | %47,3 | +0,5 |
+| 6'LI | 6 | %48,6 | %48,3 | −0,3 |
+| 7'Lİ | 7 | %57,6 | %57,0 | −0,6 |
+
+**GEÇTİ. En kötü artık ±2,3 puan.** Kendisini kullanmadan yedi bilinen değeri de 2,3 puan
+içinde geri veren bir ölçer. K94'ün `k=0,978` çapası "kalibrasyon çapası, doğrulama değil"
+uyarısı taşıyordu; bu ölçer LOO ile o uyarıdan kurtuluyor.
+
+### (b) HÜKÜMLER
+
+| bahis | ayak | n | birim | **KALİBRE KESİNTİ** | %90 GA | **HÜKÜM** |
+|---|---|---|---|---|---|---|
+| **ÇİFTE** | 2 | 3.066 | 1,00 | **%27,2** | [26,4..28,0] | **AÇILIR** |
+| PLASE İKİLİ | 1 | 4.667 | 2,00 | %45,7 *(alt sınır)* | [44,8..46,6] | **KAPANIR** |
+| TABELA SIRASIZ | 1 | 530 | ≥1,00 | %68,3 *(alt sınır)* | [66,7..69,7] | **KAPANIR** |
+| TABELA BAHİS | 1 | 619 | ≥1,00 | %28,5 *(alt sınır)* | [24,1..32,0] | BELİRSİZ |
+| SIRALI 5 Lİ | 1 | 881 | ≥1,00 | %33,0 *(alt sınır)* | [28,8..36,7] | BELİRSİZ |
+| 7'Lİ PLASE | 7 | 118 | — | — | — | **ÖLÇÜLEMEDİ** |
+| GANYAN | 1 | 4.003 | 1,00 | %28,2 | [28,2..28,3] | (çapa) |
+| SIRALI İKİLİ | 1 | 4.006 | 1,00 | %26,4 | [25,6..27,2] | (çapa) |
+| İKİLİ | 1 | 1.846 | 1,00 | %24,5 | [23,6..26,0] | AÇILIR |
+| 3'LÜ / 4'LÜ / 5'Lİ / 6'LI / 7'Lİ | 3-7 | — | K86 | %43,5 / 47,3 / 47,2 / 48,4 / 57,3 | — | KAPANIR |
+
+**İKİ BANT NET:** basit bahisler **%24-28**, zincir/egzotikler **%43-57**. Arada **15 puanlık
+boşluk** var ve içine hiçbir bahis düşmüyor. **ÇİFTE, iki ayaklı olmasına rağmen ucuz bantta.**
+
+### (c) ÇİFTE — MODELDEN TAMAMEN BAĞIMSIZ İKİNCİ SINAV
+
+Baş bulgu tek yönteme dayanmasın diye Harville'siz, devig'siz bir sınav yapıldı:
+**oran = çifte temettüsü ÷ (ayak1 ganyanı × ayak2 ganyanı)**, 3.068 eşleşen olay
+(beraberlikli olaylar dışarıda, kombinasyon gerçek kazananlarla doğrulandı).
+
+| | oran |
+|---|---|
+| **gözlenen medyan** | **1,505** · %90 GA [1,482 .. 1,525] |
+| ÇİFTE ganyan bandındaysa (%27,2) beklenen | 1,416 |
+| ÇİFTE egzotik bandındaysa (%48,6) beklenen | 1,000 |
+
+Gözlenen değer ganyan bandı beklentisinin biraz **üstünde**, egzotik bandın **%50 üstünde**.
+Ters çevrilince ima edilen ÇİFTE kesintisi **%22,6**. İki bağımsız yöntem (%27,2 ve %22,6)
+aynı bandı gösteriyor; egzotik bandı **her ikisi tarafından da dışlanıyor.**
+
+### (d) HÜKMÜN TEK DAYANAĞI: ÇİFTE'nin birimi 1,00 TL
+
+Bu, sonucun **kırılma noktası** ve raporda saklanmıyor:
+
+| birim | 1,00 | 1,25 | 1,50 | 2,00 |
+|---|---|---|---|---|
+| ÇİFTE kalibre kesinti | **%27,2** | %40,7 | %49,6 | %60,8 |
+| hüküm | AÇILIR | KAPANIR | KAPANIR | KAPANIR |
+
+**Birim 1,25 olsaydı kol kapanırdı.** Dayanak (b)'deki taban testi: ÇİFTE'nin asgari temettüsü
+6 yıl boyunca 1,40·1,25·1,30·1,35·1,35·1,00 — **enflasyonla sürüklenmiyor**, yani taban
+dövülüyor. Aynı 6 yılda 6'lı'nın asgarisi 20,5 → 141,2 TL'ye çıktı. **Bu bir çıkarım, TJK
+tarifesinden okunmuş resmî değer değil.** Resmî tarife bulunursa ilk iş bu doğrulanmalı.
+
+### (e) NE AÇILDI, NE AÇILMADI — bu bir kâr iddiası DEĞİL
+
+**Ucuz kesinti gerekli şart, yeterli şart değil.** K13'ün kurucu negatif sonucu tam olarak
+şuydu: *"ganyan piyasası dövülemiyor, engel %25,5 kesinti"* — yani bu proje **zaten bir kez
+%28'lik bir duvara çarpıp geri döndü.** ÇİFTE'nin %27'si o duvarın aynısı.
+
+Kolu yine de açan **tek** gerekçe şu yapısal boşluk: K73/K74 Altılı havuzunun **kötü kalibre**
+olduğunu ölçtü (favori-uzunşanslı yanlılığı güçlü, seçimimiz havuz ortalamasını ~30 puan
+yeniyor) ama **%48,6 vergi** onu yutuyordu. ÇİFTE, projede karşılaşılan **tek** bahis ki
+*çok-ayaklı havuz verimsizliği* ile *ganyan seviyesinde vergi* aynı üründe buluşuyor.
+
+**Ölçülecek soru:** ÇİFTE havuzu Altılı havuzu kadar kötü kalibre mi? Değilse kol kapanır.
+BEKLEYENLER #15'e ön-kayıtlı ölçütle yazıldı.
+
+### (f) NEDEN PLASE İKİLİ KAPANDI — asimetri önceden yazılmıştı
+
+Ham ölçüm %35,5 idi; ama makine PLASE'nin kendi kesintisini **10,1 puan DÜŞÜK** ölçüyor
+(Harville plase olasılığını şişiriyor → q şişiyor → kesinti küçük görünüyor). Düzeltilince
+**%45,7**. Üstelik bu bir **alt sınır**: PLASE İKİLİ'de iki seçim var, Harville yanlılığı
+ikisinde birikir → gerçek kesinti bundan **daha yüksek**. Bu asimetri K124'ün 6. maddesinde
+**sonuçlar görülmeden** yazılmıştı; hükmü o madde yönlendirdi, sonuç değil.
+
+Kullanıcıya taramadan önce "**öncelik 1: PLASE İKİLİ**" demiştim (gerekçe: plase en ucuz
+kesintimiz). **O gerekçe yanlış çıktı** — plase ucuz ama PLASE İKİLİ ucuz değil; TJK bu
+bahsi hem 2,00 TL birimle hem egzotik oranla vergilendiriyor. Sıralamayı kesinti ölçümü
+belirledi, sezgi değil.
+
+### (g) KOD KUSURU — bulundu ve düzeltildi
+
+`kesinti_kalibre.py`'nin ilk koşusunda plase ailesi düzeltmesi **ters işaretle** uygulanmıştı
+(`kes + duz` yerine `kes − duz` olmalıydı). Bu, PLASE İKİLİ'yi %25,4/BELİRSİZ gösteriyordu.
+Ön-kayıtlı ölçüt E zaten "gerçek kesinti ≥ ham **+** 10,1" diyordu; kod yazıya aykırıydı.
+Düzeltildi → %45,7/KAPANIR. **Ölçüt değişmedi, kod ölçüte uyduruldu.**
+
+### (h) DOKUNULMAYANLAR
+
+`kesinti_tara.py` ve `kesinti_kalibre.py` yeni ve salt-okunur; hiçbir dosyaya yazmıyorlar.
+Config, dağıtıcı, ağırlık, zamanlama, canlı akış — **hiçbiri değişmedi.**
