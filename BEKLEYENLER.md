@@ -139,7 +139,32 @@ kurmaz. Bu karardan SONRA biriken veriyle sınanacak.
 
 **Mevcut hız:** İstanbul'da ~792 ayak / 5 hafta → ~400 yeni ayak ≈ **2,5-3 hafta** (Ekim ortası).
 
-### 15. ÇİFTE KOLU — **AÇILDI** (K125). Kesinti kapısı geçildi, KENAR kapısı bekliyor
+### 15. ✅ AÇILDI ve AYNI GÜN KAPANDI (2026-08-27, K125 → K126 → K127) — ÇİFTE REDDEDİLDİ
+
+> ## 🔒 KAPANIŞ ÖZETİ (K127, 27 Ağu 2026)
+>
+> **Üç kapıdan ikisi geçildi, üçüncüsü düştü.** Araçlar: `kod/kesinti_kalibre.py`,
+> `kod/cifte_h1.py`, `kod/cifte_h2.py` — hepsi salt-okunur, ölçütleri önceden mühürlü.
+>
+> | kapı | soru | sonuç |
+> |---|---|---|
+> | **kesinti** (K125) | vergi ödenebilir mi? | **GEÇTİ** — %27,2; projedeki en ucuz çok-ayaklı |
+> | **H1** (K126) | havuz kalibresiz mi? | **GEÇTİ** ama zayıf: favori havuz ortalamasını +3,9 puan yeniyor (Altılı'da +31,6) |
+> | **H2** (K127) | model kalabalığı yeniyor mu? | **DÜŞTÜ** — +0,98 puan, %90 GA [−5,07..+7,05] sıfırı içeriyor |
+>
+> **Güç sorunu YOKTU:** 319 uyumsuz çift (asgari 6). Ölçüm yapılabildi, cevap "hayır" çıktı.
+> Model ve kalabalık olayların **%85,2'sinde aynı çifti** seçiyor; ayrıştığı yerde de fark yok.
+>
+> **Yapısal ders:** ÇİFTE, projenin aradığı boşluğun tam adresiydi (ucuz vergi + çok ayak).
+> Boşluk gerçekten oradaydı; **içinde bizim kenarımız yoktu.** Vergiyi %48,6'dan %27,2'ye
+> indirmek işe yaramadı çünkü kenar sıfır — **sıfırın vergisi de sıfırdır.**
+>
+> **YENİDEN AÇILMASI İÇİN:** yeni bir mekanizma iddiası **ve** yeni veri gerekir
+> (Kural 6 / K33). "Bir daha bakalım" gerekçe değildir.
+
+**Aşağıdaki metin KAPANMADAN ÖNCEKİ hâliyle durur — gerekçe zinciri görünsün diye silinmedi.**
+
+### 15-özgün. ÇİFTE KOLU — **AÇILDI** (K125). Kesinti kapısı geçildi, KENAR kapısı bekliyor
 **Eklendi:** 2026-08-27 (K125) · **TETİK: SIRASI GELİNCE** · **İlgili:** K13, K73, K74, K123, K124, K125
 
 **Neden açıldı:** ÇİFTE'nin kesintisi **%27,2 [26,4..28,0]** — projede ölçülen en düşük
@@ -171,6 +196,32 @@ dayanıyor. Birim 1,25 olsaydı kesinti %40,7 çıkar ve **kol kapanırdı.** Da
 çıkarım (asgari temettü 6 yıl boyunca enflasyonla sürüklenmiyor: 1,40·1,25·1,30·1,35·1,35·1,00),
 **TJK'nın resmî tarifesinden okunmuş değil.** K86 resmî tarifeyi bulamamıştı; ÇİFTE için
 tekrar aranmalı. Resmî değer 1,00 değilse **bu kol derhal kapanır.**
+
+### 18. ÇİFTE'de bot1 deseni — POST-HOC, ön-kayıtlı ölçütle sınanacak (K127)
+**Eklendi:** 2026-08-27 (K127) · **TETİK: SAYISAL** — ≥1.000 yeni ÇİFTE fırsatı
+
+**Gözlenen (2.155 olay, 2026):** K127'nin ön-kayıtında **"yalnız bağlam"** diye işaretlenen
+`bot1` kolu (oran-kör), kalabalığın favorisini **+16,19 puan** geçti (ROI −%9,5 vs −%25,6).
+bot1 oran-kör olduğu için seçimi bahis kapanmadan bellidir — yani **sızıntısız**.
+
+**AMA HÜKÜM DEĞİL, üç sebeple:**
+1. **GA sıfırı içeriyor:** %90 GA [−2,36 .. +35,49], %95 GA [−5,54 .. +39,43].
+2. **Birkaç uç ödemeye dayanıyor:** en büyük TEK ödeme çıkarılınca ROI −%9,5 → −%13,6;
+   en büyük ÜÇ çıkarılınca **−%21,1** = kalabalığın seviyesi. (K57/K72'nin aynı tuzağı.)
+3. **Ön-kayıtta hükme dahil değildi.** Sonucu görüp ölçüt değiştirmek K33/K52 yasağıdır.
+
+**ÖN-KAYITLI ÖLÇÜT (sonuç görülmeden yazıldı):**
+- **H:** ÇİFTE'de bot1'in seçimi kalabalığın favorisini ROI'de geçer.
+- **Ölçüm:** ≥1.000 YENİ ÇİFTE fırsatı biriktikten sonra `kod/cifte_h2.py` yeniden koşulur;
+  bot1−kamu farkı olay-bootstrap ile.
+- **DOĞRULANDI** sayılır ancak (a) %95 GA tamamen sıfırın **üstünde** VE (b) **en büyük üç
+  ödeme çıkarıldığında da** fark pozitif kalırsa. İkisi birden gerekir.
+- **DÜŞER ve kol KAPANIR:** ikisinden biri tutmuyorsa.
+- **Karar sınırı:** doğrulansa BİLE bu "çifte oynayalım" demek değildir — −%9,5 hâlâ kayıptır.
+  Doğrulanırsa yapılacak iş, bot1'in oran-kör seçiminin nerede değer bulduğunu ölçmektir
+  (K122'nin bot1×pist deseniyle bağlantılı olabilir).
+
+**Mevcut hız:** 2026'da ~3.058 fırsat / ~8 ay → 1.000 yeni fırsat ≈ **2,5-3 ay** (Kasım sonu).
 
 ### 16. TABELA BAHİS ve SIRALI 5'Lİ — **BELİRSİZ**, birim fiyat bulunursa karara bağlanır
 **Eklendi:** 2026-08-27 (K125) · **TETİK: KULLANICI / birim fiyat kaynağı bulunursa**

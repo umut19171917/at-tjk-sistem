@@ -4320,3 +4320,117 @@ Düzeltildi → %45,7/KAPANIR. **Ölçüt değişmedi, kod ölçüte uyduruldu.*
 
 `kesinti_tara.py` ve `kesinti_kalibre.py` yeni ve salt-okunur; hiçbir dosyaya yazmıyorlar.
 Config, dağıtıcı, ağırlık, zamanlama, canlı akış — **hiçbiri değişmedi.**
+
+
+## 2026-08-27 — K126: ÇİFTE H1 kapısı GEÇİLDİ — havuz kalibresiz, ama Altılı'nınkinin çeyreği kadar
+
+**K126 — ÇİFTE havuzunda favori-uzunşanslı yanlılığı VAR ve ön-kayıtlı eşiği geçti
+(Ç2−Ç3 = +17,8 puan [+9,5..+26,1], eşik +15). Ama Altılı'daki aynı fark +42,2 puandı: bu
+havuz çok daha iyi kalibre.** Araç: `kod/cifte_h1.py` (salt-okunur). Ölçüt mühürlendi.
+
+**Tasarım — sızıntı ayrı tutuldu (K97/K111 tuzağı):** ÇİFTE kuponu ayak 1'den ÖNCE alınır;
+ayak 2'nin kapanış oranı o an henüz yoktur. Bu yüzden üç strateji ayrıldı:
+
+| strateji | isabet | iade | %90 GA |
+|---|---|---|---|
+| Ç1 kapanış fav × kapanış fav — **SIZINTILI ÜST SINIR** | 386 | %76,5 | [69,4..83,4] |
+| **Ç2 ayak1 kapanış fav + ayak2 MUHTEMEL fav — UYGULANABİLİR** | 387 | **%76,7** | [69,2..84,1] |
+| Ç3 her ayakta rastgele at — **HAVUZ ORTALAMASI** | — | %58,9 | [55,9..61,9] |
+
+3.058 fırsat (2026). Atılan: beraberlik 299, kazanan yok 20, oran eksik 14, diğer 2.
+
+**Ç1 ≈ Ç2 (%76,5 vs %76,7) — sızıntı burada hiç fark etmiyor.** Muhtemel oranın favorisi ile
+kapanış favorisi neredeyse hep aynı at. Bu, K111'in bulduğu şeyin ÇİFTE'deki karşılığı.
+
+### ÖLÇÜT GEÇTİ AMA SEÇTİĞİM KIYAS ZAYIFTI — dürüstlük notu
+
+Ön-kayıtta ölçüt olarak **Ç2 − Ç3** (favori eksi rastgele) seçilmişti, çünkü K72 Altılı'da
+bunu ölçmüştü. Sonuçları görünce daha bilgilendirici olanın **favori eksi HAVUZ ORTALAMASI**
+olduğu anlaşıldı — ve o kıyas çok daha karamsar:
+
+| | ÇİFTE | ALTILI (K72/K73) |
+|---|---|---|
+| favori iadesi | %76,7 | %82,6 |
+| havuz ortalaması (= 1−kesinti) | **%72,8** | ~%51 |
+| rastgele | %58,9 | %40,4 |
+| **favori − havuz ortalaması** | **+3,9 puan** | **+31,6 puan** |
+| favori − rastgele | +17,8 puan | +42,2 puan |
+
+**Yani ÇİFTE havuzunda favoriyi oynamak havuz ortalamasını yalnız 4 puan yeniyor; Altılı'da
+32 puan yeniyordu.** Vergi farkı için normalize edilse bile Altılı havuzunun yanlılığı
+~3,4 kat büyük. Ön-kayıtlı ölçüt geçti (kural uygulandı, gevşetilmedi) ama **bu geçiş
+sanıldığından çok daha zayıf bir sinyal.** Bunu K127'nin sonucunu görmeden yazıyorum.
+
+**Para okuması:** favori çifti oynamak −%23,3 getiriyor. Modelin başabaşa gelmesi için
+kalabalığın favorisini **23 puan** geçmesi gerekiyor.
+
+---
+
+## 2026-08-27 — K127: ÇİFTE H2 kapısı DÜŞTÜ → **ÇİFTE KOLU KAPANDI.** Sekizinci bağımsız negatif
+
+**K127 — Model, ÇİFTE'de kalabalığın favorisini yenmiyor: +0,98 puan, %90 GA [−5,07..+7,05]
+sıfırı içeriyor. 319 uyumsuz çift var, yani güç kapısı sorunu YOK — ölçüm yapılabildi ve
+cevap "hayır" çıktı. Ön-kayıtlı kural gereği KOL KAPANDI.** Araç: `kod/cifte_h2.py`.
+2.155 olay (her iki ayağı da model kapsamında olan 2026 ÇİFTE fırsatları).
+
+| kol | isabet | iade | ROI |
+|---|---|---|---|
+| M model (bot2) | 257 | %75,3 | −%24,7 |
+| K kalabalığın favorisi | 257 | %74,4 | −%25,6 |
+| *B1 bot1 (oran-kör) — ön-kayıtta "yalnız bağlam"* | *170* | *%90,5* | *−%9,5* |
+
+**BİRİNCİL ÖLÇÜT: M − K = +0,98 puan, %90 GA [−5,07 .. +7,05] → SIFIRI İÇERİYOR → DÜŞTÜ.**
+
+Model ve kalabalık olayların **%85,2'sinde aynı çifti seçiyor.** Ayrıştığı 319 olayda da
+fark çıkmıyor. Bu, K104'ün ganyandaki bulgusunun aynısı: model top-pick −%31,0 =
+kalabalık favorisi −%31,0, **birebir eşit.**
+
+**Log-loss (hüküm üretmez):** model 3,5401 · kamu 3,5528 · fark **−0,0126** [−0,0180..−0,0073].
+Model **istatistiksel olarak daha iyi kalibre** ama fark o kadar küçük ki paraya dönüşmüyor.
+Bu, defterdeki tablonun (Bot2 1,8289 vs kamu 1,8275) ÇİFTE'deki yankısı — orada kamu
+öndeydi, burada model önde, ikisi de sıfır mertebesinde.
+
+### ZİNCİRİN TAMAMI — ÇİFTE üç kapıdan ikisini geçti, üçüncüde düştü
+
+| kapı | soru | sonuç |
+|---|---|---|
+| **kesinti** (K125) | vergi ödenebilir mi? | **GEÇTİ** — %27,2, projedeki en ucuz çok-ayaklı |
+| **H1** (K126) | havuz kalibresiz mi? | **GEÇTİ** — ama zayıf (+3,9 puan, Altılı'da +31,6) |
+| **H2** (K127) | model kalabalığı yeniyor mu? | **DÜŞTÜ** — +0,98 puan, GA sıfırı içeriyor |
+
+**Yapısal okuma:** ÇİFTE, projenin aradığı boşluğun tam adresiydi — ucuz vergi + çok ayak.
+Boşluk gerçekten oradaydı. **İçinde bizim kenarımız yoktu.** Engel bu kez kesinti değil;
+K13'ün on üç karar önce söylediği şey: **kalabalığın favorisini yenemiyoruz.** ÇİFTE'de
+vergiyi %48,6'dan %27,2'ye indirmek işe yaramadı çünkü **kenar sıfır**; sıfırın vergisi de
+sıfırdır. Bu, "sistem havuzu yeniyor ama vergiyi yenemiyor" (K73) çerçevesinin **sınırını**
+gösteriyor: Altılı'da havuzu yeniyorduk çünkü Altılı havuzu kötüydü. ÇİFTE havuzu iyi.
+
+### POST-HOC DESEN — bot1, ve neden HÜKÜM DEĞİL
+
+Ön-kayıtta `bot1` satırı **"YALNIZ BAĞLAM"** diye işaretlenmişti; hüküm ölçütü M vs K idi ve
+düştü. Ama bot1'in −%9,5'i göz ardı edilemeyecek kadar dikkat çekici, o yüzden ölçüldü:
+
+| | fark | %90 GA | %95 GA |
+|---|---|---|---|
+| bot1 − kamu | **+16,19 puan** | [−2,36 .. +35,49] | [−5,54 .. +39,43] |
+| bot1 − bot2 | +15,21 puan | [−2,87 .. +34,15] | [−6,14 .. +38,35] |
+
+**İKİSİ DE SIFIRI İÇERİYOR.** Ve dayanıklılık testi acımasız:
+
+| | bot1 ROI |
+|---|---|
+| tüm ödemeler | −%9,5 |
+| **en büyük TEK ödeme çıkarılırsa** | **−%13,6** |
+| en büyük ÜÇ ödeme çıkarılırsa | **−%21,1** |
+
+170 isabetin en büyük beşi 90 / 84 / 75 / 71 / 43 TL. **Üç kupon çıkınca sinyal kalabalığın
+seviyesine iniyor.** Bu, K57'de (YURİBOYKA) ve K72'de görülen tuzağın aynısı: birkaç uç
+ödemeden strateji üretmek.
+
+**HÜKÜM: kol KAPALI kalır.** bot1 deseni BEKLEYENLER'e ön-kayıtlı ölçütle yazıldı; yeniden
+açılması için **yeni veri** gerekir, "bir daha bakalım" değil (Kural 6 / K33).
+
+### DOKUNULMAYANLAR
+
+`cifte_h1.py` ve `cifte_h2.py` yeni ve salt-okunur. Config, dağıtıcı, ağırlık, zamanlama,
+canlı akış — **hiçbiri değişmedi.** ÇİFTE için hiçbir canlı/kâğıt kol açılmadı.
