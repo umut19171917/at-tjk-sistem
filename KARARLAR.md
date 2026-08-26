@@ -3935,3 +3935,30 @@ acgozlu900_15 kupon kurmadı"*.
   yalnız anlık ağ hatası ölümcül olmaktan çıkar. Aynı düzeltme `oran_log`, `defter` ve sonuç
   çekmeyi de sağlamlaştırır. Alternatif (takibi 5 dk'da bir koşturmak) sistem yükünü artırır ve
   gereksizdir: sorun sıklık değil, tek denemenin kırılganlığı.
+
+**K121 EK — DÜZELTME UYGULANDI: `getjson` artık bir kez yeniden deniyor.** 26 Ağu 2026,
+kullanıcı onayı ("ekle"). Yalnız `kod/gunluk.py:getjson` değişti; kupon kuralları, zamanlama,
+config'ler, dağıtıcılar, hiçbir veri dosyası DEĞİŞMEDİ.
+- **DAVRANIŞ:** `getjson(url, deneme=2, bekle=3.0)`. Ağ istisnası veya **5xx** → 3 sn bekle,
+  bir kez daha dene. **4xx → TEK deneme** (404 "o gün o pist yok" demektir; `yerli_pistler`
+  bunu normal akışta kullanır, tekrar denemek geçişi boşuna yavaşlatırdı).
+  Dönüş sözleşmesi AYNI: başarıda JSON, başarısızlıkta `{"_hata": ...}`.
+- **DOĞRULAMA — davranış testi (sahte `urlopen` ile, 5 senaryo, hepsi GEÇTİ):**
+  | senaryo | deneme | sonuç |
+  |---|---|---|
+  | başarılı | 1 | JSON döndü (yol değişmedi) |
+  | ağ hatası | 2 | `{_hata: OSError}` |
+  | **HTTP 404** | **1** | `{_hata: HTTP 404}` — boşuna denemiyor |
+  | HTTP 503 | 2 | `{_hata: HTTP 503}` |
+  | **1. patlar, 2. düzelir** | 2 | **JSON döndü** — asıl vaka toparlanıyor |
+- **GERÇEK FEED DUMAN TESTİ:** `program/yarislar.json` OK (0,2 sn) · `yerli_pistler(20260825)`
+  → KOCAELİ + ANKARA (0,2 sn) · olmayan pist → `HTTP 404` **0,2 sn** (tek deneme teyit edildi,
+  gecikme yok).
+- **EN KÖTÜ DURUM SINIRI:** 2 × 25 sn timeout + 3 sn ≈ 53 sn/URL. Geçiş aralığı 15 dk, görev
+  `ExecutionTimeLimit` 30 dk → sığıyor.
+- **YEDEK:** değişiklik öncesi `gunluk.py` scratchpad'e kopyalandı; git geçmişinde de duruyor.
+- **ETKİ ALANI:** `getjson`'ı 6 dosya kullanıyor (`altili_canli`, `defter`, `gunluk`,
+  `oran_log`, `paper`, `takip`) → düzeltme kupon kurmayı, oran kaydını, defter yazımını ve
+  sonuç çekmeyi birlikte sağlamlaştırır.
+- **BUNUN ÖLÇTÜĞÜMÜZ ŞEYE ETKİSİ YOK:** hiçbir karar kuralı, eşik veya bütçe değişmedi;
+  yalnızca "veri çekilemedi" hali daha az sıklıkla oluşacak.

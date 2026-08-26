@@ -26,6 +26,7 @@ Kullanim:
 import argparse
 import json
 import sys
+import time
 import urllib.request
 import urllib.error
 from datetime import date, datetime
@@ -45,14 +46,35 @@ HEAD = {"User-Agent": "Mozilla/5.0 (gunluk.py kisisel arastirma)"}
 
 
 # ----------------------------- canli veri -----------------------------
-def getjson(url):
-    try:
-        with urllib.request.urlopen(urllib.request.Request(url, headers=HEAD), timeout=25) as r:
-            return json.loads(r.read().decode("utf-8", "replace"))
-    except urllib.error.HTTPError as e:
-        return {"_hata": f"HTTP {e.code}"}
-    except Exception as e:
-        return {"_hata": f"{type(e).__name__}"}
+def getjson(url, deneme=2, bekle=3.0):
+    """K121: TEK DENEME KIRILGANDI -> bir kez yeniden dener.
+
+    NEDEN: 25 Agu'da 18:45 gecisinde 'program/index cekilemedi' hatasi gecisi TAMAMEN
+    iptal etti; o gecis KOCAELI 2. Altili'nin 15 dk penceresine dusen TEK gecisti
+    (Altili 1. ayak postalari %100 tam ceyrek saatte, takip de ayni izgarada kosuyor ->
+    15 dk penceresine her zaman tek gecis duser; 30 dk penceresinde IKI gecis vardir).
+    Sonuc: orta_15 ve acgozlu900_15 o Altili'dan dustu. Tek anlik ag tikanmasi olumcul olmamali.
+
+    DENEYE ETKISI YOK: kupon kurallari, zamanlama, config'ler ayni; yalniz gecici ag hatasi
+    artik tek denemede kaybedilmiyor. oran_log / defter / sonuc cekme de ayni faydayi gorur.
+
+    HTTP 4xx'te YENIDEN DENENMEZ: 404 'o gun o pist yok' demektir (yerli_pistler bunu normal
+    akista kullanir) -> tekrar denemek bos yere gecisi yavaslatir. 5xx ve ag istisnalari denenir.
+    En kotu durum: 2 x 25 sn timeout + 3 sn = ~53 sn/URL; gecis araligi 15 dk, gorev siniri 30 dk."""
+    son = None
+    for i in range(max(1, deneme)):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=HEAD), timeout=25) as r:
+                return json.loads(r.read().decode("utf-8", "replace"))
+        except urllib.error.HTTPError as e:
+            son = {"_hata": f"HTTP {e.code}"}
+            if 400 <= e.code < 500:            # kalici: yeniden deneme
+                return son
+        except Exception as e:
+            son = {"_hata": f"{type(e).__name__}"}
+        if i + 1 < max(1, deneme):
+            time.sleep(bekle)
+    return son
 
 
 def yerli_pistler(ymd, hata_bildir=False):
