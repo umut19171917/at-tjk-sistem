@@ -18,43 +18,69 @@ Pari-mutuel + ganyan kesintisi **~%25,7** (veriden ölçüldü) → negatif topl
 ## Kapsam
 - **İçeride:** TR **İngiliz + Arap** düz koşuları (K46: iki ayrı model; Arap analiz katmanı,
   kesintisi ~%30,6 → ekonomisi İngiliz'den de sert). Ganyan + Plase ölçümü.
-- **İçeride (K53'ten beri): ALTILI GANYAN** — kâğıt gözlem akışı, 7 config (aşağıda).
+- **İçeride (K53'ten beri): ALTILI GANYAN** — kâğıt gözlem akışı, 7 aktif + 4 emekli config (aşağıda).
   *(Bu satır 2026-07-31'de düzeltildi: eski README Altılı'yı "dışarıda" gösteriyordu, artık
   sistemin ana faaliyeti odur.)*
-- **Dışarıda:** 4'lü/5'li ve diğer çok-koşulu bahisler (BEKLEYENLER #2), egzotikler, yabancı,
+- **Dışarıda:** 4'lü/5'li (K108 ikame · K120 ek — ikisi de ÖLÇÜLDÜ, reddedildi), 7'li (K117),
+  diğer egzotikler, yabancı,
   4 şüpheli pist (Elazığ, Diyarbakır, Urfa/Şanlıurfa, Adana — Arap'ta da hariç).
   Paper test (K42) İngiliz-kilitli.
 
-## ALTILI SİSTEMİ (güncel ana faaliyet, 2026-07-31)
-Kupon **tek anda**, 1. ayağa **30 dk kala** kurulur (`altili_canli.kupon_zamani_kur`).
-Telegram'a kurulum + sonuç bildirimi gider; sayfa: `raporlar/altili.html` (`altili_goster.bat`).
+## ALTILI SİSTEMİ (güncel ana faaliyet — 2026-08-26)
+Kupon **tek anda** kurulur: 30 dk grubu 1. ayağa 30 dk kala, 15 dk grubu 15 dk kala
+(`altili_canli.kupon_zamani_kur`). Telegram'a kurulum + sonuç bildirimi gider;
+sayfa: `raporlar/altili.html` (`altili_goster.bat`).
 
-| config | bütçe | dağıtım | puan | aile |
-|---|---|---|---|---|
-| dar | 24 | kapsam | bot2 | kamu |
-| orta | 96 | kapsam | bot2 | kamu |
-| genis | 288 | kapsam | bot2 | kamu |
-| genis900 | 900 | kapsam | bot2 | kamu |
-| acgozlu900 | 900 | açgözlü | bot2 | kamu |
-| **bot1_900** | 900 | açgözlü | **bot1** | temel |
-| **ayrisma900** | 900 | **ayrışma** | bot2 | ayrışma |
+**7 aktif + 4 emekli config.** Emekliler kupon KURMAZ, geçmiş sicilleri raporda AYNEN durur.
 
-**Hepsi −EV gözlem akışıdır, iyileştirme değil.** Gerekçeleri: K62 / K65 / K67 / K68 / K69.
+| config | bütçe | dağıtım | puan | dk | durum / rolü |
+|---|---|---|---|---|---|
+| `orta` | 96 | kapsam | bot2 | 30 | aktif — temel kupon, zamanlama kolunun kontrolü |
+| `orta_15` | 96 | kapsam | bot2 | **15** | aktif — zamanlama kolu (K105), tetik ~60 kupon |
+| `acgozlu900` | 900 | açgözlü | bot2 | 30 | aktif — `acgozlu_v2`'nin kontrolü |
+| `acgozlu900_15` | 900 | açgözlü | bot2 | **15** | aktif — zamanlama kolu, geniş bütçe |
+| `acgozlu_v2` | 900 | **kalibre** (λ=0,65 uzak ayak) | bot2 | 30 | aktif — en yeni deney (K92), 25 Eyl'e bağlı |
+| **`bot1_900`** | 900 | açgözlü | **bot1** | 30 | aktif — portföyün tek gerçek çeşitlendiricisi |
+| `bot1_1800` | 1800 | açgözlü | **bot1** | 30 | aktif — bütçe kolu (K118'de emeklilik önerildi, kullanıcı "devam etsin" dedi) |
+| `dar` · `genis` · `genis900` · `ayrisma900` | 24/288/900/900 | — | bot2 | 30 | **EMEKLİ** (10.08.2026, K100) |
 
-### Altılı'da ne öğrenildi (12 test, hepsi negatif)
-- **K72:** model **şansı eziyor** (+79 puan) ama **kalabalığı yenmiyor** (−1,2 puan, GA sıfırı
-  içeriyor). Seçimimiz kuponların %41,4'ünde saf-favori seçimiyle birebir aynı.
-- **K73:** Altılı kesintisi **~%49** (AGF'den tahmin). Favori oynamak havuz ortalamasını
-  **~30 puan yeniyor** → *"sistem havuzu yeniyor ama vergiyi yenemiyor."*
-- **K74:** havuzda **gerçek yanlılık var** — AGF payı <%2 olan atlar 2,73 kat fazla kazanıyor;
-  ganyan-AGF ayrışması yüksek olanlarda oran 3,40.
-- **K75:** ama bu **hasat edilemiyor** — 6 ayaklı çarpımda isabet çöküyor (λ=1'de 1318 koşuda
-  sıfır isabet) ve temettü havuzla sınırlı. → Kalan tek yapısal fikir: **daha az ayaklı bahisler**
-  (BEKLEYENLER #2).
-- **K70:** ayaklar birbirinden **bağımsız** → koşullu/alternatif kupon ek bilgi taşımıyor.
-- **K71:** 96 kombodan sonraki her katman **kanıtlı zararlı** (GA sıfırın dışında).
-- **K77:** sayfadaki sıralama, o koşuya ~4 dk kala alınır; kupon ise 30 dk önce kurulur
-  (ayak bazında 30→180 dk fark). "Sistem sıra atladı" görüntüsünün sebebi budur — atlama YOK.
+**Hepsi −EV gözlem akışıdır, iyileştirme değil.** Gerekçeler: K62 · K65 · K67 · K68 · K69 ·
+K92 · K100 · K105.
+
+### Altılı'da ne öğrenildi — bütün kenar hipotezleri ölçüldü, hepsi kapandı
+**Merkez bulgu (K72):** model **şansı eziyor** (+79 puan) ama **kalabalığı yenmiyor**
+(−1,2 puan, GA sıfırı içeriyor). Seçimimiz kuponların %41,4'ünde saf-favori seçimiyle aynı.
+**Ekonomi (K73/K94):** Altılı kesintisi **~%49**. Favori oynamak havuz ortalamasını ~30 puan
+yeniyor → *"sistem havuzu yeniyor ama vergiyi yenemiyor."*
+
+| aranan kenar | sonuç |
+|---|---|
+| model / ağırlıklar (bot1, harman, kamu ağırlığı) | K67 · K96 · K112 — kenar yok |
+| dağıtıcı (birleşim · v3 · saha · λ) | K90 · K115 · K116 — yalnız λ geçti, o da 900'e özgü (K98) |
+| bütçe (900↔1800, derinlik taraması) | K91 · K113 — hiçbir derinlik kârlı değil |
+| zamanlama (30 vs 15 dk) | K111 — daha çok tutturuyor, daha az ödüyor |
+| başka ürün: 4'lü/5'li (ikame) · 7'li | K108 · K117 — ikisi de reddedildi |
+| 4'lü/5'li **ek** oynamak | K120 — 94.293 TL DAHA kaybettirirdi |
+| yapısal fırsat: devir | K117 — gerçek (temettü +%37) ama ulaşılamıyor |
+
+**Neden hiçbiri tutmuyor — tek cümlelik mekanizma (K65 · K117 EK · K120):**
+hangi ürünü, hangi genişlikte oynarsak oynayalım **yalnız ucuz kuyruğa erişiyoruz.**
+Tutturduğumuz olaylar tipik olayın %5-7'sini ödüyor (Altılı %7 · 7'li %5 · 5'li %26).
+Büyük temettüler, tam da tutturamadığımız olaylarda yaşıyor.
+
+**Diğer sağlam bulgular:**
+- **K88:** kupon genişliği modelin güveninden değil, **bütçenin 6. kökünden** geliyor
+  (`24^(1/6)=1,70` … `900^(1/6)=3,11`); kapsam/banker eşikleri pratikte hiç bağlamıyor.
+- **K114:** banker bayrağı gerçek bilgi taşıyor — bayraklı tek-at ayakları **%52,1**,
+  bütçe artığı tek-atlar **%30,4** (taban %33; p=0,0001).
+- **K113:** 5/6 bir "az kaldı" sinyali DEĞİL. 10 tane 6/6'ya karşılık 112 tane 5/6;
+  kaçan ayakta kazananın sırası medyan 5. Aynı sonucu önceden almak 9 kat pahalı.
+- **K70/K71:** ayaklar bağımsız → koşullu kupon ek bilgi taşımıyor; 96 kombodan sonraki
+  her katman kanıtlı zararlı.
+- **K97/K77:** sayfadaki iki sıralama farklıdır — **K** kupon anı (karar bu cetvelle verildi),
+  **Y** yarış anı. "Sistem sıra atladı" görüntüsünün sebebi budur; atlama YOK.
+- **K121:** `getjson` artık bir kez yeniden dener — 15 dk kolu yapısal tek nokta arızasıydı
+  (Altılı 1. ayak postaları %100 tam çeyrek saatte; 15 dk penceresine tek geçiş düşer).
 
 ## Durum (temel altyapı — 2026-06-30; güncel durum için KARARLAR.md son 10 karar)
 - Faz 0 — Veri fizibilitesi: **TAMAM** (`raporlar/faz0-veri-fizibilite.md`).

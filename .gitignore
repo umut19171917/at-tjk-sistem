@@ -16,3 +16,9 @@ veri/takip.kilit
 veri/takip_son.txt
 veri/takip_gecis.txt
 veri/takip_log.txt
+
+# Claude Code kisisel ayarlar (paylasilmaz)
+.claude/settings.local.json
+
+# Obsidian ayar klasoru (kisisel, kod degil)
+.obsidian/

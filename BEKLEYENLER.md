@@ -642,6 +642,38 @@ ve v4 (saha genişliği) BEKLETİLDİ** — tek seferde tek değişken.
 
 ---
 
+### 11. ✅ ÖLÇÜLDÜ ve KAPANDI (2026-08-24/25, K117 · K120) — 7'Lİ ve 4'LÜ/5'Lİ "EK OYUN"
+**Eklendi ve kapandı:** 2026-08-24/25 · **İlgili:** K85, K86, K108, K117, K120
+- **7'li ganyan (K117):** 2026'da çıkmış yeni ürün; olay tablosu ham arşivden üretildi
+  (`veri/yedili_tam.csv`, 395 olay, ayak eşlemesi **%100 çapraz doğrulandı**).
+  Eşit parada, aynı kartların Altılısına karşı: 32 isabet / −%24,5 vs **12 isabet / −%65,8**.
+  Kriter geçilemedi. **K117 EK kesin kapattı:** tutturduklarımız tipik olayın %5'ini ödüyor
+  (Altılı %7) → 7. ayak daha büyük ödüle erişim VERMİYOR, sadece daha çok olaydan ELİYOR.
+- **4'lü/5'li EK oynamak (K120):** K108 ikameyi reddetmişti; bu ek oynamayı ölçtü.
+  5'li −93.927 · 4'lü −366 · 3'lü −6.604 TL. Genel: Altılı tek başına −297.179 →
+  üçü birlikte −391.472. **ROI 2,6 puan "iyileşiyor" ama net 94.293 TL kötüleşiyor** (seyreltme).
+  4'lünün −%0,9'u tuzak: ödülün %35'i tek olaydan; o çıkınca −%36,0.
+- **DEVİR (K117):** avantaj GERÇEK (devir sonrası temettü medyanı +%37) ama ulaşılamıyor —
+  darboğaz ödül değil **isabet**.
+- **YENİDEN AÇMA ŞARTI (önceden yazıldı):** 7'liyi tekrar açmak için **bizim tuttuğumuz
+  olayların** temettüsünün Altılı'dakinden anlamlı yüksek çıkması gerekir. Bugün %5 vs %7 —
+  yön 7'li aleyhine. Altyapı (`yedili_tam.csv` + iki betik) duruyor, sıfırdan başlanmaz.
+
+### 12. ✅ KAPANDI (2026-08-24, K118) — `bot1_1800` emeklilik önerisi · K90 kriteri ÖLÜ
+- **`bot1_1800`:** 44 eşleşmiş Altılı'da `bot1_900` ile **birebir aynı getiri** (33.451 TL),
+  **iki katı bedel** (95.200 vs 47.591). Tutturduğu tek Altılı'yı (18.08 ANKARA-1) bot1_900 da
+  **1.080 TL eksiğine** tutturmuştu. 1800'ün başladığı 11 Ağu'dan beri 900'ün yakalamadığı
+  hiçbir Altılı'yı yakalamadı; 14 fazladan ayak yakaladı (p=0,0010) ama hiçbiri 6/6'ya dönüşmedi.
+  **Emeklilik önerildi → KULLANICI "şimdilik devam etsin" DEDİ → EMEKLİ EDİLMEDİ.**
+  Karar ileride yeniden açılabilir; ölçüm K118'de duruyor.
+- **K90'ın açgözlü emeklilik kriteri ÖLÜ:** eşi olan `ayrisma900` 10 Ağu'da durdu →
+  "40 eşleşmiş kupon" eşiği **hiçbir zaman dolmayacak** (36'da dondu). Kriter yine de
+  çalıştırıldı, üç şartın üçü de tutmuyor → cevap zaten "açgözlü kalır".
+  **Açgözlünün rolü artık ayrışmanın kontrolü DEĞİL, `acgozlu_v2`'nin kontrolüdür**
+  ve o rol 25 Eylül'e kadar açıktır. Bu maddede "kriter bekliyor" sanılmasın diye yazıldı.
+
+---
+
 ## KAPALI / KARARA BAĞLANMIŞ — tekrar açma, gerekçesi var
 
 - **Gerçek bahis çerçevesi** — ❌ askıya alındı (K48): kullanıcı gerçek para oynamıyor.
