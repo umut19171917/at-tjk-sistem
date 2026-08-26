@@ -3962,3 +3962,121 @@ config'ler, dağıtıcılar, hiçbir veri dosyası DEĞİŞMEDİ.
   sonuç çekmeyi birlikte sağlamlaştırır.
 - **BUNUN ÖLÇTÜĞÜMÜZ ŞEYE ETKİSİ YOK:** hiçbir karar kuralı, eşik veya bütçe değişmedi;
   yalnızca "veri çekilemedi" hali daha az sıklıkla oluşacak.
+
+---
+
+**K122 — ŞEHİR BAZINDA İLK ÖLÇÜM: İSTANBUL'DA KALABALIĞIN GERİSİNDEYİZ, diğer dört pistte
+önündeyiz. Fark saha büyüklüğüyle AÇIKLANMIYOR. Post-hoc olduğu için HÜKÜM DEĞİL — ön-kayıtlı
+ölçüt yazıldı, yeni veriyle sınanacak.** 26 Ağu 2026. Araç: `kod/pist_analiz.py` (salt offline).
+
+Kullanıcı: *"bildiğimiz koşuları ve tutan altılıları şehir bazında hiç ölçmedik."* Doğruydu —
+bu eksen 122 karar boyunca hiç açılmamıştı.
+
+## (a) ÇERÇEVE — neden bu ölçüm karar üretemez
+
+5 pist × birkaç ölçüt bakılıyor; birinin şans eseri "iyi" çıkması **kaçınılmazdır** (K107'nin
+FDR notu). Araç baştan Bonferroni referansıyla yazıldı: 5 pist için α=0,05'in karşılığı
+**p<0,010**. Bu eşiği geçmeyen hiçbir fark bulgu sayılmaz.
+
+## (b) AYAK DÜZEYİ — aynı ayakta, aynı genişlikte, kamuya karşı (2.850 ayak)
+
+| pist | ayak | ort. saha | **bizim** | **kamu** | fark | p |
+|---|---|---|---|---|---|---|
+| BURSA | 498 | 10,9 | %59,0 | %56,8 | **+4,0** | 0,025 |
+| İZMİR | 396 | 9,7 | %59,3 | %55,6 | **+3,4** | 0,047 |
+| ANKARA | 672 | 9,0 | %66,8 | %63,3 | **+2,9** | 0,038 |
+| KOCAELİ | 492 | 10,2 | %55,9 | %56,0 | +0,9 | 0,704 |
+| **İSTANBUL** | **792** | 10,1 | %58,7 | %62,1 | **−3,2** | 0,020 |
+
+**Tek başına hiçbiri Bonferroni eşiğini geçmiyor.** Ama desen dikkat çekici: dört pistte
+kamudan öndeyiz, **İstanbul'da geridiyiz** — ve İstanbul en büyük örneklem.
+
+## (c) İSTANBUL AYKIRISI — POST-HOC, hipotez üretir, doğrulamaz
+
+Deseni gördükten SONRA yapılan kıyas (bu yüzden hüküm değil):
+
+| | ayak | bizim | kamu | fark | McNemar p |
+|---|---|---|---|---|---|
+| **İSTANBUL** | 741 | %58,8 | %62,1 | **−3,2** | 0,0197 |
+| **diğer 4 pist** | 1.939 | %61,2 | %58,5 | **+2,7** | 0,0005 |
+
+Olay-bootstrap: **İstanbul farkı eksi diğer farkı = −6,0 puan, %95 GA [−10,2, −1,7]** →
+**sıfırı dışlıyor.**
+
+**SAHA ETKİSİ DEĞİL.** K88 saha büyüdükçe isabetin düştüğünü ölçmüştü; karıştırıcı olabilirdi.
+Saha kovası İÇİNDE bakıldı — İstanbul **üç kovanın üçünde de** negatif:
+
+| kova | İSTANBUL | ANKARA | BURSA | İZMİR | KOCAELİ |
+|---|---|---|---|---|---|
+| saha ≤8 | **−3,8** | +2,3 | +4,4 | +4,9 | +1,2 |
+| saha 9-11 | **−2,1** | +1,5 | +0,0 | +3,3 | −1,3 |
+| saha ≥12 | **−4,1** | +6,6 | +6,0 | +1,2 | +2,5 |
+
+Yani pist etkisi saha etkisinden bağımsız.
+
+**MEKANİZMA HİPOTEZİ (K112'nin devamı):** İstanbul Türkiye'nin en derin bahis havuzu. K112
+"kamu ne kadar olgunsa o kadar zor yenilir" demişti; en kalabalık pistte en verimli piyasayla
+karşılaşmak bununla tutarlı. **Ama bu bir açıklama denemesidir, ölçülmüş değildir.**
+
+## (d) PARA — ve ANKARA TUZAĞI
+
+Altılı'da yalnız 6/6 öder → ham ROI **tek bir büyük temettüyle savrulur** ve pistleri
+kıyaslamaya elverişsizdir. Kıyaslanabilir ölçü **BAŞABAŞ 6/6 EŞİĞİ**: o pistin medyan
+temettüsüyle, harcanan parayı çıkarmak için kuponların yüzde kaçı 6/6 tutmalıydı.
+
+| pist | kupon | 6/6 | **gerçekleşen** | **başabaş için gereken** | medyan temettü | ham ROI |
+|---|---|---|---|---|---|---|
+| **ANKARA** | 112 | 12 | **%10,7** | %9,3 | 9.582 TL | +%6,8 |
+| **BURSA** | 83 | 3 | **%3,6** | %2,3 | 38.383 TL | −%34,2 |
+| İSTANBUL | 132 | 4 | %3,0 | %3,8 | 23.352 TL | −%43,0 |
+| İZMİR | 66 | 0 | %0,0 | %2,5 | 34.842 TL | −%100 |
+| KOCAELİ | 82 | 0 | %0,0 | %1,5 | 59.702 TL | −%100 |
+
+**ANKARA ARTIDA GÖRÜNÜYOR — ATLAMA.** Dört sebep:
+1. Ankara'nın sahası en küçük (ort. 9,0 at; %48'i ≤8 atlı) → 6/6 doğal olarak daha kolay
+2. Tam da bu yüzden temettüsü en düşük (medyan 9.582 TL) → başabaş eşiği en yüksek (%9,3)
+3. 12 isabetin birkaçı çıksa tablo tersine döner
+4. **5 pist × birkaç ölçüt bakıldı**; birinin artıda çıkması beklenirdi
+
+Adil kıyasta Ankara'nın kenarı yalnızca **+2,9 puan** ve p=0,038 — eşiği geçmiyor.
+
+**Yapısal okuma:** Ankara = sık ama küçük ödül · Kocaeli = nadir ama büyük ödül. İkisi de
+aynı kesinti duvarının arkasında; sadece varyansları farklı.
+
+## (e) BOT1 x PİST
+
+| pist | BOT1 | BOT2 | fark |
+|---|---|---|---|
+| BURSA | %66,7 | %56,1 | **+10,6** |
+| İZMİR | %65,8 | %56,7 | **+9,1** |
+| ANKARA | %71,4 | %65,0 | +6,4 |
+| KOCAELİ | %60,4 | %54,0 | +6,4 |
+| **İSTANBUL** | %57,5 | %59,2 | **−1,8** |
+
+bot1 dört pistte bot2'yi geçiyor, **yalnız İstanbul'da geçmiyor** — (c)'deki desenle aynı
+yönde. (Genişlikler farklı olduğu için bu sütunlar birbirinin adil kıyası DEĞİLDİR; yalnız
+pist içi desen gösterir.)
+
+## (f) ÖN-KAYITLI ÖLÇÜT — İstanbul kolu (BEKLEYENLER'e yazıldı)
+
+Bugünkü desen **hipotezdir**. Doğrulanması için, bu karardan SONRA biriken veriyle:
+
+> **H:** İstanbul'da kamu-fark'ımız diğer pistlerdekinden düşüktür.
+> **Ölçüt:** ≥400 yeni İstanbul ayağı biriktiğinde, olay-bootstrap ile
+> (İstanbul farkı − diğer farkı) hesaplanır. **%95 GA tamamen sıfırın altındaysa** desen
+> doğrulanmış sayılır; sıfırı içeriyorsa **hipotez düşer ve kol kapanır**.
+> **Karar:** doğrulansa bile bu "İstanbul oynamayalım" DEMEK DEĞİLDİR — kâğıt deneyinde
+> pist seçmek örneklemi daraltır. Doğrulanırsa yapılacak şey, mekanizmayı (havuz derinliği)
+> ölçmektir.
+
+## (g) ARAÇTA DÜZELTİLEN BİR KUSUR
+
+İlk sürümde "6/6suz ROI" diye bir sütun vardı ve hepsinde −%100 çıkıyordu. Hatalı değil ama
+**tanım gereği boş**: Altılı'da yalnız 6/6 ödediği için 6/6'sız getiri her zaman sıfırdır.
+Yerine **BAŞABAŞ 6/6 eşiği** kondu — bu, pistleri gerçekten kıyaslanabilir kılan tek para
+ölçüsüdür. Yanıltıcı bir sütunu raporda bırakmak, yokluğundan kötüdür.
+
+## (h) DOKUNULMAYANLAR
+
+`kod/pist_analiz.py` yeni ve salt-okunur. Config, dağıtıcı, ağırlık, zamanlama — **hiçbiri
+değişmedi**. Fiyat kaynağı K110 kuralına uyuyor (resmî temettü + pistin kendi birim tarifesi).

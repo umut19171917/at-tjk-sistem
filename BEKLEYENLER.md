@@ -116,6 +116,29 @@ da zayıf (4'lü %45,6 · 5'li %46,8 · 6'lı %48,6 → **yalnız 2-3 puan**).
 bahislerde de benzer. Ama ilk kez körlemesine değil, **ölçülmüş bir mekanizmayı takip ederek**
 bakıyor olacağız — o yüzden yapmaya değer.
 
+### 11. İSTANBUL AYKIRISI — post-hoc desen, ÖN-KAYITLI ölçütle sınanacak (K122)
+**Eklendi:** 2026-08-26 (K122) · **TETİK: SAYISAL** — ≥400 yeni İstanbul ayağı
+
+**Gözlenen (26 Ağu, 2.850 ayak):** aynı ayakta aynı genişlikte kamuyla kıyasta İstanbul
+**−3,2 puan**, diğer dört pist **+2,7 puan**. Olay-bootstrap farkı **−6,0 [−10,2, −1,7]**,
+sıfırı dışlıyor. Saha kovası içinde de İstanbul üç kovanın üçünde negatif → **saha etkisi
+değil**. bot1 de yalnız İstanbul'da bot2'yi geçemiyor (−1,8).
+
+**AMA POST-HOC.** Desen görüldükten sonra kurulan kıyas; K33/K52 gereği bu haliyle hüküm
+kurmaz. Bu karardan SONRA biriken veriyle sınanacak.
+
+**ÖN-KAYITLI ÖLÇÜT (sonuç görülmeden yazıldı):**
+- **H:** İstanbul'da kamu-fark'ımız diğer pistlerdekinden düşüktür.
+- **Ölçüm:** ≥400 YENİ İstanbul ayağı biriktiğinde `kod/pist_analiz.py` + olay-bootstrap ile
+  (İstanbul farkı − diğer farkı) hesaplanır.
+- **DOĞRULANDI** sayılır ancak %95 GA **tamamen sıfırın altındaysa**.
+- **DÜŞER** ve kol KAPANIR: GA sıfırı içeriyorsa.
+- **Karar sınırı:** doğrulansa BİLE "İstanbul oynamayalım" demek değildir — kâğıt deneyinde
+  pist elemek örneklemi daraltır ve öğrenmeyi yavaşlatır. Doğrulanırsa yapılacak iş
+  MEKANİZMAYI ölçmektir (hipotez: havuz derinliği ↑ → piyasa verimliliği ↑ → K112).
+
+**Mevcut hız:** İstanbul'da ~792 ayak / 5 hafta → ~400 yeni ayak ≈ **2,5-3 hafta** (Ekim ortası).
+
 ### 3. defter.html'i K55 görsel diline çevirme
 **Eklendi:** 2026-07-24 (teklif edildi, istenmedi) · **İlgili:** K55
 altili.html / paper.html K55 zengin formatına geçti (tahminler + sistem sırası + kazanan +
