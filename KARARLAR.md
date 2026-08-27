@@ -4434,3 +4434,106 @@ açılması için **yeni veri** gerekir, "bir daha bakalım" değil (Kural 6 / K
 
 `cifte_h1.py` ve `cifte_h2.py` yeni ve salt-okunur. Config, dağıtıcı, ağırlık, zamanlama,
 canlı akış — **hiçbiri değişmedi.** ÇİFTE için hiçbir canlı/kâğıt kol açılmadı.
+
+
+## 2026-08-27 — K128: Bot1'in BİÇİMİ/PENCERESİ/HEDEFİ sınandı — **darboğaz bot1 değil, α**
+
+**K128 — Dokuz varyantın hiçbiri ön-kayıtlı kapıdan geçemedi. Ama sonuç "hiçbir şey
+değişmiyor" değil: doğrusal-olmayan biçim bot1'i K33'ten beri görülen en büyük ölçüde
+iyileştirdi (−0,0046 log-loss, Batch 2'nin 46 katı) — ve o iyileşmenin yalnız ~%12'si Bot2'ye
+geçti. Çünkü α=0,19. Model iyileştirme kolunda asıl kısıt bot1'in kalitesi değil, harmanın
+ona verdiği ses.** Araç: `kod/model_deney.py` (salt-okunur). Ölçüt mühürlendi (`5e393a7`).
+
+**K33 DELİNMEDİ:** tek bir yeni özellik eklenmedi, FEAT 17'de kaldı. Değişen yalnız üç şey:
+eğitim penceresi, fonksiyon biçimi, eğitim hedefi. K33 *"bu malzemelerde daha fazla sinyal
+yok"* demişti; *"bu malzemelerdeki sinyali doğrusal bir modelle tam çıkardık"* dememişti.
+
+### (a) ÇAPA — dört değerin dördü de birebir tuttu
+
+| | beklenen | ölçülen |
+|---|---|---|
+| alpha | +0,1900 | **+0,1900** |
+| gamma | +0,9750 | **+0,9750** |
+| Bot1 OOS | 1,8594 | **1,8594** |
+| Bot2 OOS | 1,6987 | **1,6987** |
+
+Deney tezgâhı üretim modelini birebir yeniden üretiyor → varyant farkları gerçek.
+
+### (b) DOKUZ VARYANT (eğitim 7.259 koşu · val 2.592 · test 4.115)
+
+Hüküm için ÜÇÜ birden gerekliydi: α↑ **ve** Bot2 log-loss↓ **ve** Bonferroni GA (%99,44)
+tamamen sıfırın altında.
+
+| varyant | alpha | **Bot1 OOS** | Bot2 OOS | Δ Bot2 | Bonferroni GA | hüküm |
+|---|---|---|---|---|---|---|
+| **T taban** | +0,190 | 1,8594 | 1,6987 | — | (çapa) | — |
+| A1 üstel ağırlık, y.ömür 1 yıl | +0,194 | 1,8580 | 1,6986 | −0,0001 | [−0,0003, +0,0002] | düştü |
+| A2 üstel ağırlık, y.ömür 2 yıl | +0,192 | 1,8586 | 1,6986 | −0,0000 | [−0,0002, +0,0001] | düştü |
+| A3 üstel ağırlık, y.ömür 3 yıl | +0,191 | 1,8588 | 1,6986 | −0,0000 | [−0,0001, +0,0001] | düştü |
+| A4 kayan pencere 2022-23 | +0,190 | 1,8583 | 1,6986 | −0,0001 | [−0,0005, +0,0003] | düştü |
+| A5 kayan pencere yalnız 2023 | **+0,201** | 1,8578 | 1,6985 | −0,0002 | [−0,0007, +0,0004] | düştü |
+| **B1 + 5 etkileşim terimi** | +0,194 | **1,8548** | **1,6981** | **−0,0006** | [−0,0012, **+0,0000**] | **düştü (kıl payı)** |
+| **B2 spline (13×3 düğüm)** | +0,191 | **1,8546** | 1,6982 | −0,0005 | [−0,0017, +0,0007] | düştü |
+| **B3 gradient boosting** | **+0,110** | **1,9108** | 1,7013 | **+0,0026** | [+0,0000, +0,0052] | **düştü — DAHA KÖTÜ** |
+| **C1 sıra-patlatmalı eğitim** | **+0,220** | 1,8710 | 1,6989 | +0,0002 | [−0,0004, +0,0009] | düştü |
+
+**Dokuzunun dokuzu da düştü.** Yedisi iki temel şartı (α↑ ve log-loss↓) sağladı ama hiçbirinin
+güven aralığı sıfırdan ayrılmadı.
+
+### (c) ASIL BULGU — bot1 gerçekten iyileşti, ama Bot2'ye geçmedi
+
+| | Bot1 OOS iyileşmesi | Bot2 OOS iyileşmesi | geçiş oranı |
+|---|---|---|---|
+| **B1 (etkileşimler)** | **−0,0046** | −0,0006 | **%13** |
+| **B2 (spline)** | **−0,0048** | −0,0005 | **%10** |
+| *K33 Batch 2 (kıyas)* | *−0,0001* | *−0,00004* | — |
+
+**B1/B2'nin bot1'e katkısı, K33'ün son özellik denemesinin 46 KATI.** Yani doğrusal-olmayan
+biçim bu 17 özellikten gerçekten yeni sinyal çıkarıyor — K33'ün göremediği bir eksende.
+
+**Ama geçiş oranı ~%10-13 ve bu tam olarak α=0,19'un söylediği şey.** Harman, bot1'e sesin
+beşte birini veriyor; bot1 ne kadar iyileşirse iyileşsin, Bot2'ye ancak beşte biri ulaşıyor.
+
+**Sayıyla:** Bot2'nin piyasa üzerindeki TOPLAM katkısı 1,7053 − 1,6987 = **0,0066**. Bot1'i
+başabaş noktasına getirmek için (Bot2 ROI'yi kesintiyi aşacak seviyeye) gereken iyileşme
+mertebesi bunun kat kat üstünde. B1 o toplam katkının **%9'unu** ekledi.
+
+### (d) İKİ NET NEGATİF — ve ikisi de bilgi
+
+**B3 (gradient boosting) DAHA KÖTÜ, hem de belirgin:** Bot1 1,8594 → **1,9108**, α 0,190 →
+**0,110**, Bot2 +0,0026 kötüleşti. M=300 sabitti (seçim serbestliği bilerek kapatılmıştı) ve
+overfit etti. **Okuma: doğrusallık kısıt DEĞİL — veri ağaç için ince.** 7.259 eğitim koşusu,
+17 özellik. Modern "gradient boosting atarız" refleksi bu veri boyutunda çalışmıyor. Bu,
+B1/B2'nin (kontrollü, az serbestlikli doğrusal-olmayan terimler) neden işe yarayıp B3'ün
+neden yaramadığını da açıklıyor.
+
+**C1 (sıra-patlatmalı eğitim) α'yı EN ÇOK yükseltti (+0,220) ama Bot1'i KÖTÜLEŞTİRDİ (1,8710).**
+İlginç ve tutarlı bir çift: sıradan öğrenen model, kazanma olasılığında daha *kötü* ama
+piyasayla daha *az örtüşük* (α yüksek = bağımsız bilgi fazla). K44 bu eğitimi plase bahsi
+için yazmıştı ve bahis başarısız olmuştu; "kazanma olasılığını iyileştirir mi" sorusu ilk kez
+soruldu ve cevap **hayır**.
+
+### (e) TAZELİK KOLU (A1-A5) — pratikte sıfır
+
+En agresif varyant bile (A5, yalnız 2023 = eğitim verisinin üçte biri) Bot2'yi 0,0002
+oynattı. **Eğitim penceresinin bayatlığı bir sorun değilmiş.** Bu benim en yüksek öncelikli
+tahminimdi ve yanlış çıktı — açıkça yazıyorum. Yan bilgi: A5 üçte bir veriyle taban kadar
+iyi çalışıyor, yani model veri açlığı çekmiyor; bu da B3'ün overfit'iyle tutarlı.
+
+### (f) NE YAPILMADI
+
+- **Birleştirme yapılmadı** (madde 6). B1+B2 birlikte denenebilirdi ama 2^9 kombinasyonda
+  arama overfit kapısıdır; ayrı ön-kayıt ister.
+- **Canlıya hiçbir şey alınmadı** (madde 0). `model.py`, `ozellik.py`, `altili_olasilik.py`,
+  `gunluk.py`, config'ler, kuponlar — hiçbiri değişmedi. `ozellikli.csv` yalnız okundu.
+- Kullanıcı zaten "mevcut kuponlarımıza şimdilik dokunmasın" demişti; dokunulmadı.
+
+### (g) BUNUN AÇTIĞI ASIL SORU
+
+K128 model kolunu kapatmıyor ama **hedefi değiştiriyor**: "bot1'i iyileştir" yerine
+"**bot1'in sesini neden bu kadar kısık?**". α bir tercih değil, 2024'te fit edilen bir cevap:
+*fiyat verildiğinde bot1'in kattığı bağımsız bilgi kadar.* Onu yükseltmenin tek dürüst yolu
+bot1'i piyasadan daha **farklı** kılmak — daha *doğru* kılmak değil. C1'in α=0,220'si tam da
+bunun ilk işareti: daha kötü ama daha bağımsız.
+
+BEKLEYENLER #19'a ön-kayıtlı ölçütle yazıldı.

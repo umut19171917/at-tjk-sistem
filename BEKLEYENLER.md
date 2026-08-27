@@ -223,6 +223,42 @@ bot1 oran-kör olduğu için seçimi bahis kapanmadan bellidir — yani **sızı
 
 **Mevcut hız:** 2026'da ~3.058 fırsat / ~8 ay → 1.000 yeni fırsat ≈ **2,5-3 ay** (Kasım sonu).
 
+### 19. BİRLEŞTİRME + "bot1'i FARKLI kılmak" — K128'in açtığı kol
+**Eklendi:** 2026-08-27 (K128) · **TETİK: SIRASI GELİNCE** · **İlgili:** K33, K110, K112, K128
+
+**K128 ne buldu:** doğrusal-olmayan biçim (B1 etkileşimler, B2 spline) bot1'i **−0,0046 /
+−0,0048** log-loss iyileştirdi — K33'ün son özellik denemesinin **46 katı**. Ama Bot2'ye
+yalnız **%10-13'ü** geçti, çünkü α=0,19. Hiçbir varyant Bonferroni kapısını geçemedi.
+
+**İKİ AYRI İŞ — karıştırılmasın:**
+
+**19-A. Birleştirme (ucuz, dar).** B1+B2 birlikte denenmedi (K128 madde 6: 2^9 kombinasyonda
+arama overfit kapısıdır). Denenecekse **tek bir** birleşim, önceden bağlanmış:
+`B1 ∪ B2` (5 etkileşim + 13 spline tabanı), başka hiçbir kombinasyon taranmadan.
+- **Ölçüt:** K128'in aynısı — α↑ **ve** Bot2 OOS log-loss↓ **ve** GA sıfırın altında.
+  Tek varyant olduğu için Bonferroni gerekmez, %95 GA yeter.
+- **Beklenti (önceden yazılıyor):** düşük. B1 ve B2 aynı şeyi (doğrusal-olmayanlık) iki farklı
+  yoldan yakalıyor, bot1 iyileşmeleri neredeyse eşit (−0,0046 / −0,0048) → büyük olasılıkla
+  **eşdoğrusal**, toplamları toplamları kadar olmaz. Yine de bot1 −0,008'e inse bile Bot2'ye
+  ~0,001 geçer; **kâra dönüşmez.** Bu iş "kapatmak için" yapılır, umut için değil.
+
+**19-B. Asıl soru: bot1'in sesi neden kısık?** α bir tercih değil, 2024'te fit edilen cevap:
+*fiyat verildiğinde bot1'in kattığı BAĞIMSIZ bilgi kadar.* K128 gösterdi ki bot1'i daha
+**doğru** kılmak α'yı kıpırdatmıyor (B1/B2: α 0,190→0,194/0,191). Ama C1 (sıra-patlatmalı
+eğitim) bot1'i **kötüleştirdiği hâlde** α'yı **0,220**'ye çıkardı — yani daha kötü ama piyasayla
+daha az örtüşük.
+
+- **H:** α'yı yükselten şey doğruluk değil, piyasadan FARKLILIK'tır.
+- **Ölçüm:** bot1'i kasten piyasadan uzaklaştıran varyantlar (ör. piyasayla en örtüşük
+  özellikleri budamak; ya da bot1'i piyasa-artığı üzerine eğitmek) → α ve Bot2 OOS log-loss.
+- **GEÇER:** yalnızca Bot2 OOS log-loss'u %95 GA ile düşüren bir varyant çıkarsa.
+- **DÜŞER:** α yükselip Bot2 düzelmiyorsa — ki K128'in deseni bunu bekletiyor.
+- **KARAR SINIRI:** bu kol **kâr vaadi değildir.** Bot2'nin piyasa üzerindeki toplam katkısı
+  0,0066; kesintiyi aşmak için gereken mertebe bunun kat kat üstünde. Kol, "nereye
+  bakmayacağımızı" kesinleştirmek için açık.
+
+**KAPALI TUTULACAK:** yeni ÖZELLİK ekleme (K33). K128 o kapıya dokunmadı, bu kol da dokunmaz.
+
 ### 16. TABELA BAHİS ve SIRALI 5'Lİ — **BELİRSİZ**, birim fiyat bulunursa karara bağlanır
 **Eklendi:** 2026-08-27 (K125) · **TETİK: KULLANICI / birim fiyat kaynağı bulunursa**
 
