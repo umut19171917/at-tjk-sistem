@@ -4875,7 +4875,11 @@ Kullanıcının fikri **iki ayrı gerekçeyle** düşüyor, ve ikisi de bağıms
 2. **Başlangıç noktası zaten yarım ayak geride** ve bu, dağıtıcı adil kılınınca da geçerli.
 
 **Kullanıcının haklı olduğu kısım kayda geçti:** dağıtıcı bot1 için yanlış ayarlıydı ve bu
-K131'de görülmemişti. `bot1_900` / `bot1_1800` canlı kolları da `kapsam` değil kendi
-dağıtıcılarını kullanıyor — bu bulgu onlar için ayrıca değerlendirilebilir (BEKLEYENLER #22).
+K131'de görülmemişti.
+
+**CANLI KOLLAR ETKİLENMİYOR — kontrol edildi:** `altili_canli.KONFIG`'de `bot1_900` ve
+`bot1_1800`'in ikisi de zaten **`dagitim: "acgozlu"`** kullanıyor, `kapsam` değil. Yani K132'nin
+bulduğu handikap canlı bot1 kollarında YOK; onlar başından beri ölçek-bağımsız dağıtıcıyla
+çalışıyor. Yapılacak bir iş yok; bu satır "acaba onlar da mı bozuk" sorusunu kapatmak için.
 
 **Canlıya hiçbir şey alınmadı, kuponlara dokunulmadı.**
