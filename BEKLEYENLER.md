@@ -330,7 +330,17 @@ zamanlı okuyor. Etkilenen yalnız BACKTEST'in piyasa terimi (`model.py`, `altil
 alınmıştı; gerçek zemin daha kötüyse negatifler **daha da güçlenir.** Risk yalnız backtest'te
 ARTI görünen hücrelerde — ve onların hiçbiri zaten sıfırdan ayrılamıyordu.
 
-### 21. AGF — kupon kolu kapandı, ama kalibrasyon bulgusu duruyor (K129)
+### 21. ✅ YAPILDI (2026-08-27, K137) — AGF gözlem raporu AYRI SAYFA olarak üretildi
+
+> 🔒 **YAPILAN (K137):** `kod/agf_rapor.py` → `raporlar/agf_gozlem.html`.
+> **Sütun yerine ayrı sayfa, bilinçli:** sütunu mevcut rapora eklemek `altili_canli.py`
+> (65 KB, günlük kupon üreticisi) ya da `rapor_ortak.py` (üç raporun temeli) değiştirmeyi
+> gerektiriyordu; kart canlı akıyordu. **Aynı bilgi, sıfır riskle.**
+> **İlk sonuç (187 ayak, 41 Altılı, 14 gün):** ayrıştığımız 54 ayakta **AGF 9, BİZ 27**
+> kez haklı çıktık — K129'un "AGF kupona değer katmıyor" bulgusuyla tutarlı.
+> Sayfanın üstünde **"bu bir karar kuralı değildir"** uyarısı duruyor.
+
+### 21-özgün. AGF — kupon kolu kapandı, ama kalibrasyon bulgusu duruyor (K129)
 **Eklendi:** 2026-08-27 (K129) · **TETİK: KULLANICI**
 
 **Kapanan:** AGF'li üçlü olasılığı kupona vermek. Ön-kayıtlı para kapısı düştü
@@ -408,7 +418,18 @@ bahis hakkında **hiçbir şey söylenemez** — ne kapanır ne açılır.
 7'Lİ GANYAN'ı 70.802 TL). Bu, bahsin çok daha sık tutturulduğunu gösteriyor — kesintisi
 ölçülmeye değer bir aday yapıyor onu. Ama ölçüm ancak eşleme düzeldikten sonra.
 
-### 3. defter.html'i K55 görsel diline çevirme
+### 3. ✅ YAPILDI (2026-08-27, K137) — defter.html K55 ortak görsel diline geçti
+
+> 🔒 **YAPILAN (K137):** `defter.py`'nin `html_yaz`ında beş blok — `ro.ORTAK_CSS`
+> (altili.html/paper.html'in tek kaynağı), her koşu `.kart` kutusunda, tabloya
+> **`sis.sira` ve `kamu sira`** sütunları (değerler zaten hesaplanıyordu).
+> **VERİ BİREBİR AYNI, kanıtlandı:** div dengesi 2088/2088, tablo 700/700, `<tr>` 7.467,
+> at satırı 6.767, kazanan kaydı 687 — hepsi eskisiyle **özdeş**.
+> **Yöntem:** yama önce projenin içinde geçici kopyaya uygulandı, gerçek veriyle test
+> edildi, çıktı karşılaştırıldı; ancak ondan sonra gerçek dosyaya **atomik** yazıldı.
+> Yedi canlı modülün yedisi de import edildi. Kart canlı akarken yapıldı.
+
+### 3-özgün. defter.html'i K55 görsel diline çevirme
 **Eklendi:** 2026-07-24 (teklif edildi, istenmedi) · **İlgili:** K55
 altili.html / paper.html K55 zengin formatına geçti (tahminler + sistem sırası + kazanan +
 kamu sırası + oran + bedel + ödül + toplam). defter.html hâlâ eski düzende. İstenirse aynı

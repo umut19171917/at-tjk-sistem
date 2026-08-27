@@ -24,6 +24,7 @@ KOK = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(KOK / "kod"))
 from gunluk import hesapla, getjson, BASE, canli_seri  # noqa: E402
 from duzlestir import vir_float  # noqa: E402  (K39: GANYAN parse tek kaynak)
+import rapor_ortak as ro  # noqa: E402  (K137: defter.html K55 gorsel dili)
 
 DEFTER = KOK / "veri" / "defter.csv"
 KOL = ["kayit_ts", "tarih", "pist", "race_kod", "kosu_no", "saat", "irk",
@@ -498,15 +499,14 @@ def html_yaz(df=None, path=None, ac=False):
         df = _oku()
     path = path or HTML
     path.parent.mkdir(parents=True, exist_ok=True)
-    css = ("<meta charset='utf-8'><title>TJK Defter</title><style>"
-           "body{font-family:Segoe UI,Arial,sans-serif;margin:20px;color:#222;}"
-           "h2{margin:0 0 2px;} h3{margin:18px 0 3px;font-size:15px;}"
-           "table{border-collapse:collapse;margin-bottom:2px;}"
-           "td,th{border:1px solid #ccc;padding:3px 9px;text-align:right;font-size:13px;}"
-           "th{background:#eee;} td.l,th.l{text-align:left;}"
-           "tr.win{background:#d7f7d7;font-weight:bold;}"
+    # K137 (BEKLEYENLER #3): altili.html / paper.html ile AYNI gorsel dil.
+    # Tek kaynak rapor_ortak.ORTAK_CSS; asagisi yalniz deftere ozel ek siniflar.
+    css = ("<meta charset='utf-8'><title>TJK Defter</title>" + ro.ORTAK_CSS + "<style>"
+           "tr.win{background:#d9f7d9;font-weight:bold;}"
            ".canli{color:#b30000;font-weight:bold;}.fav{color:#0050c0;font-weight:bold;}"
-           ".kz{color:#0a0;}.not{color:#666;font-size:12px;margin:2px 0 12px;}</style>")
+           ".kz{color:#0a7d0a;font-weight:bold;}"
+           "td.num{text-align:right;font-variant-numeric:tabular-nums;}"
+           ".sira{color:#555;font-size:12px;}</style>")
     if df.empty:
         path.write_text(css + "<p>defter bos.</p>", encoding="utf-8")
         return path
@@ -560,9 +560,13 @@ def html_yaz(df=None, path=None, ac=False):
         favmax = g["kamu"].max()
         g = g.sort_values("sonuc", na_position="last") if cozuldu else g.sort_values("bot2", ascending=False)
         durum = "" if cozuldu else " <span class=not>[sonuc bekleniyor]</span>"
-        H.append(f"<h3>{tr} &nbsp; {pi} &nbsp; KOSU {int(ko) if pd.notna(ko) else '?'} &nbsp;({saat}){durum}</h3>")
-        H.append("<table><tr><th>varis</th><th>no</th><th class=l>at</th><th>Bot1%</th>"
-                 "<th>AGF%(sis)</th><th>kamu%</th><th>oran</th><th class=l>iz</th></tr>")
+        H.append("<div class=kart>")
+        H.append(f"<div class=baslik>{tr} &nbsp; {pi} &nbsp; "
+                 f"KOSU {int(ko) if pd.notna(ko) else '?'} &nbsp;({saat}){durum}</div>")
+        H.append("<table><tr><th>varis</th><th>no</th><th class=l>at</th>"
+                 "<th>sis.sira</th><th>kamu sira</th>"
+                 "<th>Bot1%</th><th>AGF%(sis)</th><th>kamu%</th><th>oran</th>"
+                 "<th class=l>iz</th></tr>")
         for _, a in g.iterrows():
             iz = []
             kazandi = pd.notna(a["sonuc"]) and a["sonuc"] == 1
@@ -575,9 +579,13 @@ def html_yaz(df=None, path=None, ac=False):
             varis = int(a["sonuc"]) if pd.notna(a["sonuc"]) else "-"
             no = int(a["no"]) if pd.notna(a["no"]) else "-"
             rc = " class=win" if kazandi else ""
+            mr = int(a["mr"]) if pd.notna(a["mr"]) else "-"
+            kr = int(a["kr"]) if pd.notna(a["kr"]) else "-"
             H.append(f"<tr{rc}><td>{varis}</td><td>{no}</td><td class=l>{str(a['at_ad'])[:26]}</td>"
-                     f"<td>{pc(a['bot1'])}</td><td>{pc(a['bot2'])}</td><td>{pc(a['kamu'])}</td>"
-                     f"<td>{fo(a['oran'])}</td><td class=l>{' '.join(iz)}</td></tr>")
+                     f"<td class=sira>{mr}</td><td class=sira>{kr}</td>"
+                     f"<td class=num>{pc(a['bot1'])}</td><td class=num>{pc(a['bot2'])}</td>"
+                     f"<td class=num>{pc(a['kamu'])}</td>"
+                     f"<td class=num>{fo(a['oran'])}</td><td class=l>{' '.join(iz)}</td></tr>")
         H.append("</table>")
         if cozuldu:
             w = g[g["sonuc"] == 1]
@@ -585,6 +593,7 @@ def html_yaz(df=None, path=None, ac=False):
                 wr = w.iloc[0]
                 H.append(f"<div class=not>kazanan: <b>{str(wr['at_ad'])[:26]}</b> "
                          f"(model {int(wr['mr'])}., kamu {int(wr['kr'])}., kapanis {fo(wr['ganyan_kapanis'])})</div>")
+        H.append("</div>")
     path.write_text("\n".join(H), encoding="utf-8")
     if ac:
         import webbrowser

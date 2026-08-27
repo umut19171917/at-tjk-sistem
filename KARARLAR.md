@@ -5161,3 +5161,72 @@ K108, K117, K120 — hiçbiri etkilenmiyor.
 +%25,7 ROI gösteriyordu. Bu sayılar zaten sıfırdan ayrılamıyordu (GA çok geniş) ve şimdi
 ayrıca ~%43 şişkin oldukları biliniyor. **Hiçbir pozitif iddia bu sayılara dayandırılmamıştı**
 — K122 zaten "ham ROI pistleri kıyaslamak için KULLANILAMAZ" demişti.
+
+
+## 2026-08-27 — K137: BEKLEYENLER #21 ve #3 yapıldı — AGF gözlem raporu + defter.html K55 diline geçti
+
+**K137 — İki rapor işi de tamamlandı, canlı kart akarken, sisteme hasar vermeden.
+#21: AGF "ikinci görüş" **ayrı bir sayfa** olarak üretildi (`raporlar/agf_gozlem.html`) —
+`altili_canli.py` ve `rapor_ortak.py`'ye **hiç dokunulmadı**. #3: `defter.py`'nin `html_yaz`'ı
+K55 ortak görsel diline geçirildi; verinin **birebir aynı kaldığı kanıtlandı.****
+
+### (a) #21 — AGF gözlem raporu: sütun yerine AYRI SAYFA, bilinçli
+
+Kullanıcı "raporlarda ikinci bir görüş sütunu" istemişti. Sütunu mevcut rapora eklemek
+`altili_canli.py`'yi (65 KB, günlük kupon üreticisi) ya da `rapor_ortak.py`'yi (üç raporun
+ortak temeli) değiştirmeyi gerektiriyordu. Kullanıcı **"sistemde asla hasar olmasın"** dedi ve
+kart o sırada canlı akıyordu. **Aynı bilgi, sıfır riskle:** `kod/agf_rapor.py` hiçbir mevcut
+dosyayı okumaz-yazmaz, yalnız YENİ bir çıktı üretir.
+
+**İlk sonuçlar (187 ayak · 41 Altılı · 14 gün):**
+
+| | değer |
+|---|---|
+| AGF'nin 1. atı kazandı | %28,9 |
+| bizim seçimimiz tuttu | %50,8 *(biz 2-3 at yazıyoruz, doğrudan kıyas değil)* |
+| **AYRIŞMA** (AGF'nin favorisi bizde yok) | **54 ayak** |
+| &nbsp;&nbsp;ayrışmada AGF haklı | **9** |
+| &nbsp;&nbsp;ayrışmada BİZ haklı | **27** |
+
+**Ayrıştığımız yerde biz 3 kat daha sık haklıyız.** Bu, K129'un "AGF'yi kupona katmak parayı
+değiştirmiyor" bulgusuyla tutarlı ve sayfanın uyarı kutusuna yazıldı: **bu bir karar kuralı
+değildir.** AGF'nin ilginç yanı doğruluğu değil, **kupon anında zaten belli olması**
+(ρ=0,9999; ganyan oranı aynı pencerede medyan %27,7 kayıyor).
+
+### (b) #3 — defter.html K55 görsel diline geçti
+
+`defter.py`'nin `html_yaz` fonksiyonunda **beş blok** değişti: (1) `rapor_ortak` import edildi,
+(2) kendi CSS'i yerine **`ro.ORTAK_CSS`** (altili.html ve paper.html'in kullandığı tek kaynak)
++ deftere özel ek sınıflar, (3) her koşu `.kart` kutusuna alındı, (4) tabloya **`sis.sira` ve
+`kamu sira`** sütunları eklendi (değerler zaten hesaplanıyordu, yalnız kazanan satırında
+gösteriliyordu), (5) kart kapatıldı.
+
+**GÜVENLİK YÖNTEMİ — kart canlı akarken uygulandı:**
+1. `rapor_ortak`'ın yalnız stdlib+pandas kullandığı doğrulandı → **döngüsel import riski yok.**
+2. Yama önce **projenin içinde geçici bir kopyaya** (`kod_sinav/`) uygulandı — orada `KOK`
+   doğru çözülüyor, yani gerçek veriyle test edildi.
+3. Çıktı **geçici bir yola** yazdırıldı ve eski defter.html ile karşılaştırıldı:
+
+| | eski | yeni |
+|---|---|---|
+| `<div>` dengesi | 688/688 | **2088/2088** ✓ |
+| tablo | 700/700 | **700/700** ✓ |
+| `<tr>` satırı | 7.467 | **7.467** ✓ |
+| at satırı | 6.767 | **6.767** ✓ |
+| kazanan kaydı | 687 | **687, birebir aynı liste** ✓ |
+
+**Veri birebir aynı; yalnız sunum değişti.** Ancak bundan sonra gerçek dosyaya uygulandı
+(atomik yazım), sözdizimi doğrulandı, yedi canlı modülün yedisi de import edildi, geçici
+klasör silindi ve `defter.html` yeniden üretilip tekrar doğrulandı.
+
+### (c) BU OTURUMDA CANLI SİSTEME NE YAPILDI — tam liste
+
+| dosya | değişiklik | kanıt |
+|---|---|---|
+| `model.py` · `altili_olasilik.py` · `altili_backtest.py` · `duzlestir.py` | **yalnız yorum** (K130 uyarısı, 88 satır) | AST önce/sonra **birebir aynı** |
+| `defter.py` | `html_yaz` sunumu (5 blok) | çıktı verisi **birebir aynı** (yukarıdaki tablo) |
+| **başka hiçbir dosya** | — | — |
+
+`altili_canli.py`, `gunluk.py`, `takip.py`, `bekci.py`, `rapor_ortak.py`, `ozellik.py`,
+config'ler, **kuponlar** — hiçbirine dokunulmadı. Bütün yazımlar atomik yapıldı, böylece
+çalışan süreç asla yarım dosya göremez.
