@@ -489,7 +489,20 @@ düştü). İki yön birden var → karar veriyle. (b) 15/10 dk bile final oran 
 (c) Etkin-pazar tezi (K1): geç kur = kalabalığı daha çok taklit = kesintiye yaslanmak → "az kayma"
 otomatik "daha çok kâr" değil.
 
-### 5. Altılı sonuçlamada favori-devri kuralı — BİLİNEN MODELLEME BOŞLUĞU
+### 5. ✅ ÖLÇÜLDÜ ve KAPANDI (2026-08-27, K135) — etkisi SIFIR, canlı koda dokunulmadı
+
+> 🔒 **KAPANIŞ (K135):** kural 4.090 kâğıt ayağında **6 ayağı** kurtarırdı (%0,147).
+> Ama **altısında da diğer ayaklar tutmamıştı** → en iyi ihtimalle 5/6, Altılı'da 5/6
+> ödemez → **para sonucuna etkisi TAM OLARAK SIFIR.**
+> **Canlı puanlayıcı (`sonucla_altili`) DEĞİŞTİRİLMEDİ** — sıfır faydası ölçülmüş bir
+> değişiklik için çalışan sisteme dokunmak kötü takas. Kuralın yokluğu zaten
+> **muhafazakâr**: sicili olduğundan kötü gösterir, asla yanlış-pozitif üretmez.
+> **Yerine ARAÇ yazıldı:** `kod/devir_kurali.py` (salt-okunur, istendiğinde koşulur).
+> **YENİDEN AÇMA TETİĞİ:** araç "*** 6/6 OLURDU ***" satırı üretirse #5 yeniden açılır.
+> **Etkisi büyüklüğü:** kupon başına 0,009 ayak — K122/K131/K132'nin ayak isabeti
+> kıyasları bu kusurdan etkilenmiyor.
+
+### 5-özgün. Altılı sonuçlamada favori-devri kuralı — BİLİNEN MODELLEME BOŞLUĞU
 **Eklendi:** 2026-07-24 · **İlgili:** K59 · **TETİK:** doğruluk kritikleşirse / kullanıcı isterse
 Kupona yazdığımız bir at kupon kurulduktan (30 dk) SONRA çıkarsa (KOSMAZ), TJK'da o ayaktaki pay
 **posta-favorisine devreder**. Kâğıt sistemimiz bunu uygulamıyor — çıkan seçim ölü seçim sayılıyor

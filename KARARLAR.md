@@ -5038,3 +5038,59 @@ PLASE İKİLİ 2,00 TL, K124).
 
 TJK'nın resmî 2026 tarifesi bulunursa #16 derhal ölçülebilir. #17 için ayrıca ödeme kuralının
 (beraberlik/özel durumlar) belgelenmesi gerekir. **"Bir daha bakalım" gerekçe değildir.**
+
+
+## 2026-08-27 — K135: BEKLEYENLER #5 (favori-devri kuralı) — ÖLÇÜLDÜ, etkisi SIFIR, canlı koda DOKUNULMADI
+
+**K135 — Kural 4.090 kâğıt ayağında 6 ayağı kurtarırdı (%0,147). Ama **altısında da diğer
+ayaklar tutmamıştı** → en iyi ihtimalle 5/6, Altılı'da 5/6 ödemez. **Para sonucuna etkisi TAM
+OLARAK SIFIR.** Canlı puanlayıcı değiştirilmedi; yerine kalıcı bir denetim aracı yazıldı:
+`kod/devir_kurali.py` (salt-okunur, istendiğinde koşulur).**
+
+### (a) KURAL VE NEDEN ÖNEMSENDİ
+
+Kupona yazdığımız bir at kupon kurulduktan SONRA çıkarsa (KOSMAZ), TJK'da o ayaktaki pay
+**posta-favorisine devreder** — bilet o ayakta favoriyi yazmış sayılır. Kâğıt sistemimiz
+bunu uygulamıyor: çıkan seçim "ölü seçim" oluyor. K59'dan beri bilinen bir modelleme boşluğu.
+
+### (b) ÖLÇÜM (4.090 sonuçlanmış kâğıt ayağı)
+
+| durum | ayak |
+|---|---|
+| toplam ayak | 4.090 |
+| seçimimizde ÇIKAN at vardı | 155 |
+| ...ama kazananı zaten yazmıştık | 91 |
+| ...posta-favorisi kazanmadı → fark yok | 58 |
+| **...kural ayağı KURTARIRDI** | **6 (%0,147)** |
+
+### (c) ASIL SORU — o 6 ayak para eder miydi?
+
+Bir ayak ancak diğer beşi de tuttuysa değerlidir. Altısı da tek tek bakıldı:
+
+| tarih | pist | config | kurtulan ayak | diğer 5'ten kaç tuttu | sonuç |
+|---|---|---|---|---|---|
+| 27.07 | BURSA | dar | 4 | 1/5 | 2/6 olurdu |
+| 27.07 | BURSA | orta | 4 | 2/5 | 3/6 olurdu |
+| 27.07 | BURSA | acgozlu900 | 4 | 2/5 | 3/6 olurdu |
+| 21.08 | BURSA | bot1_900 | 1 | 4/5 | 5/6 olurdu |
+| 26.08 | İSTANBUL | bot1_900 | 6 | 4/5 | 5/6 olurdu |
+| 26.08 | İSTANBUL | bot1_1800 | 6 | 4/5 | 5/6 olurdu |
+
+**Hiçbiri 6/6 olmuyor.** Altılı'da yalnız 6/6 ödediği için **para etkisi sıfır.**
+
+### (d) KARAR — canlı koda DOKUNULMADI, bilinçli
+
+Kullanıcı "sistemde asla hasar olmasın" dedi ve kart o sırada canlı akıyordu. Sıfır faydası
+ölçülmüş bir değişiklik için çalışan bir puanlayıcıya (`sonucla_altili`) dokunmak kötü takas.
+Ayrıca kuralın yokluğu **muhafazakâr**: sicili olduğundan kötü gösterir, asla yanlış-pozitif
+üretmez (K59'da da böyle yazılmıştı; şimdi sayıyla doğrulandı).
+
+**Yerine ARAÇ yazıldı.** `kod/devir_kurali.py` aynı hesabı istenildiğinde yapar ve şu satırı
+üretirse alarm verir: *"*** 6/6 OLURDU — CANLI KURALA EKLENMESİ TARTIŞILMALI ***"*.
+**Yeniden açma tetiği budur:** araç o satırı üretirse #5 yeniden açılır.
+
+### (e) NE ÖĞRENİLDİ
+
+Sicilimiz **ayak isabeti** sütununda kupon başına ~%0,15 karamsar. 6 ayaklık bir kuponda
+bu, kupon başına 0,009 ayak — ölçüm gürültüsünün çok altında. Yani K122/K131/K132'nin ayak
+isabeti kıyasları bu kusurdan etkilenmiyor.
