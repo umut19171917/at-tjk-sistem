@@ -4725,3 +4725,78 @@ temizlenemez. Seçenekler BEKLEYENLER #20'ye ön-kayıtlı ölçütle yazıldı.
 alınmıştı; zemin gerçekte daha kötüyse **negatifler daha da güçlenir.** Riskli olan yalnız
 POZİTİF görünen sayılardır (ör. backtest'te artı çıkan ROI hücreleri) — ve zaten hiçbiri
 istatistiksel olarak sıfırdan ayrılamamıştı.
+
+
+## 2026-08-27 — K131: "iyileştirilmiş bot1 ile yeni kupon kuralım" — ÖLÇÜLDÜ, DÜŞTÜ. Ama gerekçe doğruydu
+
+**K131 — Kullanıcının önerisi mantıken doğruydu: α darboğazı yalnız HARMANDA var, saf bot1
+kuponunda yok. Ölçüldü. İki cevap çıktı: (a) bot1'i iyileştirmek bot1 kuponunu iyileştirmiyor
+(+0,024 ayak/kupon, GA sıfırı içeriyor) — etki doğru yönde ama çok küçük; (b) **bot1 kuponu
+zaten bot2 kuponundan çok daha kötü** (−0,657 ayak/kupon, 9 vs 32 altı). Üstüne, beklenmedik
+bir yan bulgu: **AGF tek başına ganyan fiyatının yerini tutuyor.**** Araç: `kod/bot1_kupon.py`
+(salt-okunur). Ölçüt mühürlendi. 449 OOS olay (2025-26).
+
+**Kullanıcı (27 Ağu):** *"testte isabet artışı getiren şeyleri sadece bot1'e yeni parametrelerle
+yeni bir kupon türü için neden kullanmayalım?"* — Soru yerindeydi ve sorulmamıştı.
+
+### (a) ÇAPA — üretim birebir yeniden üretildi
+
+Betiğin sıfırdan kurduğu bot1/bot2, `altili_olasilik_bot1.csv` ile ortalama mutlak fark
+**0,00000**. İngiliz α=+0,191 γ=+0,975 · Arap α=+0,217 γ=+0,909 (üretimle aynı).
+
+### (b) SONUÇ TABLOSU (kapsam 0,75 · maxKombo 96, 449 olay, eşit bedel)
+
+| kupon puanı | ort. bedel | **ayak isabeti** | 6/6 | ROI |
+|---|---|---|---|---|
+| **bot2 (üretim)** | 118 TL | **3,624** | **32** | +%25,7 |
+| bot1 (mevcut) | 120 TL | **2,967** | 9 | −%64,7 |
+| **bot1+ (etkileşim+spline)** | 120 TL | **2,991** | 8 | −%88,0 |
+| bot1+ ⊕ AGF | 114 TL | 3,619 | 30 | −%37,0 |
+
+### (c) HÜKÜMLER (birincil ölçü AYAK İSABETİ; Bonferroni %98,33 GA)
+
+| kıyas | ayak farkı | GA | hüküm |
+|---|---|---|---|
+| **BİRİNCİL: bot1+ − bot1** | **+0,0245** | [−0,051, +0,102] | **DÜŞTÜ** |
+| bot1+⊕AGF − bot1 | +0,6526 | [+0,523, +0,777] | GEÇTİ |
+| bağlam: bot1 − bot2 | **−0,6570** | [−0,788, −0,529] | bot1 BELİRGİN KÖTÜ |
+
+K900 hücresinde de aynı: birincil +0,0089 [−0,074, +0,089] → düştü.
+
+### (d) NEDEN — ve mekanizma tam olarak tutuyor
+
+Kullanıcının mantığı doğruydu: **α=0,19 darboğazı harmana özgüdür**, saf bot1 kuponunda
+iyileşmenin %100'ü geçer. Ama geçen miktarın kendisi küçük:
+
+K128 bot1'i **−0,0046 log-loss** iyileştirmişti — bu, galip olasılığında ~%0,25'lik bir
+düzelme. Altı ayakta beklenen ayak kazancı ~0,02. **Ölçülen: +0,0245.** Yani mekanizma
+birebir tutuyor; sorun aktarımda değil, **dozda.**
+
+**K129'un dozu bunun 36 katıydı ve o da kuponda +0,020 vermişti.** İki bağımsız yoldan aynı
+duvar: olasılık kalitesindeki iyileşmeler kupona geçmiyor.
+
+### (e) ASIL SÜRPRİZ — AGF, ganyan fiyatının YERİNE geçiyor
+
+`bot1+ ⊕ AGF` harmanında ganyan fiyatı **hiç yok**; yalnız oran-kör model + havuz şekli.
+Sonuç: ayak isabeti **3,619** — üretim bot2'nin **3,624**'üyle neredeyse birebir aynı.
+
+Yani **AGF tek başına, devig edilmiş ganyan fiyatının yaptığı işi yapıyor.** (K129 bunu
+log-loss'ta göstermişti: AGF 1,7817 vs ganyan kapanış 1,8047; burada kupon düzeyinde de
+görünüyor.) Harman ağırlıkları da bunu söylüyor: w_bot1+ = +0,055, w_AGF = **+1,044** —
+bot1 yine sesini kaybediyor, sadece partneri değişti.
+
+**Pratik değeri sınırlı ama gerçek:** AGF 3,5 saat öncesinden bellidir ve değişmez (K129,
+ρ=0,9999); ganyan oranı ise kupon anıyla kapanış arasında medyan %12,7 kayar (K110).
+Yani **AGF, ganyan fiyatının kupon anında sahip OLMADIĞIMIZ hâlinin yerine geçebilecek,
+kupon anında sahip OLDUĞUMUZ bir vekil.** Bu, K130'un açtığı sorunun (backtest'in
+iyimser fiyat kullanması) olası bir çözümüdür — BEKLEYENLER #20 ile birleştirildi.
+
+### (f) NE OLMADI
+
+ROI sütunu okunmadı ve okunmamalı: aynı tabloda `kapsam0,9·K288` hücresinde bot1+ **+%28,1**,
+bot1 **−%81,8** görünüyor — 15 vs 13 isabetle. Bu, K122'nin uyardığı savrulmanın ta kendisi.
+Hüküm ayak isabetinden verildi.
+
+**Canlıya hiçbir şey alınmadı, kuponlara dokunulmadı.** `bot1_900`/`bot1_1800` kolları
+olduğu gibi duruyor; K131 onların emekliliği hakkında da bir şey söylemez (o karar K118'de
+kullanıcıya bırakılmıştı).

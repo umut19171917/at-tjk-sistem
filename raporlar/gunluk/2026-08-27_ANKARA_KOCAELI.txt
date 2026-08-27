@@ -133,3 +133,14 @@ KOSU  9  18:00  1400m  2 Yaşlı İngilizler  (9 at)
     2 DELICIAS TURCAS           8.3       8.2    8.6    -     7.45  
     5 LADY SOVEREIGN            6.0       6.3    7.0    -     9.20  
     8 QUEEN ELA                 2.1       2.2    3.0    -    21.15  
+
+[18:30 tetik]  KOCAELI  KOSU 3 (yaris 18:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  3  18:30  1200m  3 Yaşlı İngilizler  (6 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    3 RUZYM                    57.1      71.2   63.7   68.7   1.15  F
+    1 MY REBELLIOUS GIRL       18.7       9.6    9.9   10.8   7.40  >>CANLI
+    4 PANCHO                    9.0       6.4    7.7    8.7   9.50  
+    5 KHAN OF THE FOREST        2.0       4.9    8.6    0.7   8.50  
+    6 TM BATAILE                6.8       4.5    5.7    5.1  12.85  
+    2 DOUBLE WORLD              6.4       3.4    4.4    5.0  16.80  
