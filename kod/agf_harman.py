@@ -127,22 +127,22 @@ def main():
     t = te.copy()
     t["kova"] = pd.cut(t["agf_p"], [0, .02, .05, .15, .30, .45, 1.01],
                        labels=["≤%2", "%2-5", "%5-15", "%15-30", "%30-45", ">%45"])
-    g = t.groupby("kova", observed=True).agg(at=("kazandi", "size"), AGF=("agf_p", "mean"),
+    g = t.groupby("kova", observed=True).agg(nat=("kazandi", "size"), AGF=("agf_p", "mean"),
                                              GERCEK=("kazandi", "mean"))
     g["oran"] = g["GERCEK"] / g["AGF"]
     print(f"  {'AGF payı':>10} {'at':>8} {'AGF':>8} {'GERÇEK':>8} {'oran':>7}")
     for i, r in g.iterrows():
-        print(f"  {str(i):>10} {int(r.at):>8,} {100*r.AGF:>7.2f}% {100*r.GERCEK:>7.2f}% "
+        print(f"  {str(i):>10} {int(r.nat):>8,} {100*r.AGF:>7.2f}% {100*r.GERCEK:>7.2f}% "
               f"{r.oran:>7.2f}")
     t["fark"] = t["kamu"] - t["agf_p"]
     t["fk"] = pd.cut(t["fark"], [-1.01, -.10, -.05, .05, .10, 1.01],
                      labels=["<−0,10", "−0,10..−0,05", "~0", "+0,05..0,10", ">+0,10"])
-    g2 = t.groupby("fk", observed=True).agg(at=("kazandi", "size"), AGF=("agf_p", "mean"),
+    g2 = t.groupby("fk", observed=True).agg(nat=("kazandi", "size"), AGF=("agf_p", "mean"),
                                             kamu=("kamu", "mean"), GERCEK=("kazandi", "mean"))
     g2["AGF_orani"] = g2["GERCEK"] / g2["AGF"]
     print(f"\n  {'kamu − AGF':>14} {'at':>8} {'AGF':>8} {'kamu':>8} {'GERÇEK':>8} {'AGF oranı':>10}")
     for i, r in g2.iterrows():
-        print(f"  {str(i):>14} {int(r.at):>8,} {100*r.AGF:>7.2f}% {100*r.kamu:>7.2f}% "
+        print(f"  {str(i):>14} {int(r.nat):>8,} {100*r.AGF:>7.2f}% {100*r.kamu:>7.2f}% "
               f"{100*r.GERCEK:>7.2f}% {r.AGF_orani:>10.2f}")
 
     # ------------------------------ Y0: KALIBRASYON KAPISI ---------------------------
