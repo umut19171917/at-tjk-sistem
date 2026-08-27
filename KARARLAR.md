@@ -5230,3 +5230,101 @@ klasör silindi ve `defter.html` yeniden üretilip tekrar doğrulandı.
 `altili_canli.py`, `gunluk.py`, `takip.py`, `bekci.py`, `rapor_ortak.py`, `ozellik.py`,
 config'ler, **kuponlar** — hiçbirine dokunulmadı. Bütün yazımlar atomik yapıldı, böylece
 çalışan süreç asla yarım dosya göremez.
+
+
+## 2026-08-27 — K138: "bot1 kuponlarında düşüş var" DENETLENDİ — düşüş YOK, kusur da YOK
+
+**K138 — Kullanıcı son bir haftada bot1 kollarında düşüş gördüğünü söyledi ve git üzerinden
+denetim istedi. Üç eksende bakıldı: (a) kod, (b) veri, (c) bot1'in kendi çıktısı. **Üçünde de
+hiçbir sorun yok** ve düşüş de yok: son 7 gün aslında ortalamanın ÜSTÜNDE (bot1_900 3,78 vs
+3,71 · bot1_1800 4,06 vs 3,91). Algının kaynağı son ÜÇ kupon (4-3-2), ve öyle bir seri
+rastgele %19 olasılıkla zaten gelir.** Salt-okunur denetim.
+
+### (a) KOD — çekirdek fonksiyon fonksiyon karşılaştırıldı
+
+Bir hafta öncesi (`207eb99`, K112) ile bugün, **AST parmak iziyle** (yorum/docstring/boşluk
+farkları gözardı; yalnız çalışan kod):
+
+| dosya | sonuç |
+|---|---|
+| `model.py` | 10 blok, **hepsi aynı** ✓ |
+| `ozellik.py` | 8 blok, **hepsi aynı** ✓ |
+| `altili_olasilik.py` | 3 blok, **hepsi aynı** ✓ |
+| `duzlestir.py` | 10 blok, **hepsi aynı** ✓ |
+| `takip.py` | 11 blok, **hepsi aynı** ✓ |
+| `altili_canli.py` | 4 blok değişti — hepsi **rapor/görüntü** (`html_yaz`, `toplam_blok`, `_gosterim_sirasi`, `_tur_ozeti`; K119 sadeleştirmesi) |
+| `gunluk.py` | 1 blok — `getjson` (K121-EK: ağ hatasında bir kez yeniden dene) |
+| `altili_backtest.py` | 2 **YENİ** dağıtıcı (`kupon_kur_acgozlu_v3`, `kupon_kur_saha`) — K115/K116'da ölçüldü, **ikisi de reddedildi ve hiç aktifleşmedi** |
+
+Ayrıca doğrudan karşılaştırıldı: **`KONFIG` birebir aynı** (bot1_900 ve bot1_1800 dahil),
+`BANKER_ESIK`/`AYRISMA_W`/`EXCL` aynı, **`FEAT` (17 özellik) birebir aynı**.
+
+**Puanlama yolunda tek bir satır bile değişmemiş.** bot1'in kullandığı dağıtıcı
+(`kupon_kur_acgozlu`) da değişmemiş.
+
+*(Bugün K136'da dört dosyaya eklenen K130 uyarısı da bu denetime dahildi ve AST'yi
+değiştirmediği burada bir kez daha doğrulandı.)*
+
+### (b) VERİ — taze, hatasız
+
+`katilim.csv` **0 gün eski** (bugün güncellendi), `defter.csv` bugünü içeriyor.
+`takip_log.txt`'de son 7 günde **tek bir hata/uyarı satırı yok**. Bekçi üç kontrolü de
+geçiyor (nabız, config kapsaması, defter kapsaması).
+
+*(`nli_ganyan.csv` 7 gün eski ama o yalnız K94/K108'in offline ölçüm dosyası; canlı yolun
+kullandığı bir şey değil.)*
+
+### (c) BOT1'İN KENDİ ÇIKTISI — istatistiksel olarak aynı
+
+Sessiz bozulma (dejenerasyon) aranıyorsa bakılacak yer olasılık dağılımının kendisidir:
+
+| ölçü | 27 Ağu | tarihsel ort. (25 Tem→) |
+|---|---|---|
+| bot1 tepe olasılık | 0,247 | **0,247** |
+| bot1 entropi | 2,147 | **2,156** |
+| bot1–kamu uzaklığı | 0,323 | **0,304** |
+| bot1'in 1.'si = kamunun 1.'si | %22 | %33 *(günlük salınım %7-%50)* |
+
+**Hiçbir kayma yok.** bot1 her zamanki dağılımı üretiyor.
+
+### (d) DÜŞÜŞ VAR MI? — hayır, tersine
+
+**Ayak isabeti, son 7 gün vs öncesi:**
+
+| config | öncesi | son 7 gün | fark |
+|---|---|---|---|
+| bot1_900 | %61,8 (n414) | %61,7 (n115) | −0,1 |
+| bot1_1800 | %65,2 (n198) | %66,1 (n115) | +0,9 |
+
+**Kupon düzeyinde (6 ayaktan kaç tuttu), son 7 gün ORTALAMANIN ÜSTÜNDE:**
+
+| config | tüm sicil | son 7 gün |
+|---|---|---|
+| bot1_900 | 3,71 | **3,78** |
+| bot1_1800 | 3,91 | **4,06** |
+
+### (e) O HÂLDE ALGI NEREDEN GELİYOR — son üç kupon
+
+| tarih | bot1_900 | bot1_1800 |
+|---|---|---|
+| 25 Ağu ANKARA-1 | **6/6** | **6/6** |
+| 25 Ağu ANKARA-2 | 5 | **6/6** |
+| 26 Ağu İSTANBUL-1 | 3 | 3 |
+| 26 Ağu İSTANBUL-2 | 4 | 4 |
+| 27 Ağu ANKARA-1 | **2** | **2** |
+
+Son üç kupon: **4-3-2 (ort 3,00)**, öncesi 3,75. Ama dağılım geniş: bot1_900'ün 87 kuponunda
+std **1,12** ve ayak dağılımı 1:2 · 2:9 · 3:26 · 4:28 · 5:18 · 6:4.
+
+**Bootstrap: rastgele 3 kuponun bu kadar kötü çıkma olasılığı %19** (bot1_1800 için %7).
+Yani beş seride bir görülecek bir şey. **Üstelik iki gün önce arka arkaya iki 6/6 vardı** —
+aynı gürültünün öteki yüzü.
+
+### (f) HÜKÜM
+
+**Sistemde değişiklik gerektirecek hatalı bir durum YOK.** Kod, veri ve çıktı üçü de temiz;
+düşüş 7 günlük ölçekte yok, 3 kuponluk ölçekte var ve o ölçek karar vermeye elverişli değil.
+
+**Genel kural (kayda geçiyor):** bot1 kuponunun tek bir kuponluk standart sapması **1,12
+ayak**. Üç kupona bakarak yön okumak, gürültüyü sinyal sanmaktır — bu, K57 (tek YURİBOYKA),
+K72 ve K132'nin (tek 539.029 TL'lik bilet) aynı tuzağı, ters yönden.
