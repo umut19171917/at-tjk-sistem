@@ -223,7 +223,34 @@ bot1 oran-kör olduğu için seçimi bahis kapanmadan bellidir — yani **sızı
 
 **Mevcut hız:** 2026'da ~3.058 fırsat / ~8 ay → 1.000 yeni fırsat ≈ **2,5-3 ay** (Kasım sonu).
 
-### 19. BİRLEŞTİRME + "bot1'i FARKLI kılmak" — K128'in açtığı kol
+### 19. ✅ ÖLÇÜLDÜ ve KAPANDI (2026-08-27, K133) — birleşim kapıyı GEÇTİ, kupona GEÇMEDİ
+
+> ## 🔒 KAPANIŞ ÖZETİ (K133, 27 Ağu 2026)
+>
+> **19-A (birleştirme): kalibrasyon kapısı GEÇİLDİ.** B1 ∪ B2 — alpha 0,190→0,196,
+> Bot2 OOS 1,6987→1,6976, fark −0,0011 %95 GA [−0,0021, −0,0001]. Üç şartın üçü de tuttu.
+> Bu, oturumun model tarafında ön-kayıtlı kapıyı geçen ilk varyantı.
+>
+> **BEKLENTİM YANLIŞTI:** "eşdoğrusaldır" demiştim; toplanabilirlik **0,99** çıktı — B1 ve B2
+> **bağımsız** (biri değişkenler ARASI, öteki değişken İÇİ eğrilik yakalıyor).
+>
+> **AMA PARA KAPISI GEÇİLMEDİ — zaten ölçülmüştü.** `bot1_kupon.py`'nin "bot1+" varyantı
+> tam olarak bu birleşimdir; K132 kuponda **−0,019 ayak** ölçtü (GA sıfırı içeriyor).
+> **Canlıya alınması için gerekçe YOK.**
+>
+> **BÜYÜkLÜK — abartılmasın:** Bot2'nin piyasa üzerindeki toplam katkısı 0,0066; AB bunu
+> ~%17 büyütüyor. Kıyas: AGF (K129) bunun **19 katını** verdi ve kuponu yine oynatmadı.
+>
+> **19-B ("bot1'i farklı kılmak"): SORULAMADI, kol kapanıyor.** n=5 betimleyici tablo, iki
+> korelasyon birbirine çok yakın (0,871 vs 0,826) ve deseni tek nokta (C1) taşıyor.
+> Cevaplanması için doğruluğu SABİT tutup uzaklığı kasten değiştiren varyantlar gerekir —
+> ayrı ve pahalı bir iş, ve kol zaten kâr vaadi değildi.
+>
+> **YENİDEN AÇILMASI İÇİN:** yeni MEKANİZMA gerekir (Kural 6 / K33).
+
+**Aşağıdaki metin KAPANMADAN ÖNCEKİ hâliyle durur.**
+
+### 19-özgün. BİRLEŞTİRME + "bot1'i FARKLI kılmak" — K128'in açtığı kol
 **Eklendi:** 2026-08-27 (K128) · **TETİK: SIRASI GELİNCE** · **İlgili:** K33, K110, K112, K128
 
 **K128 ne buldu:** doğrusal-olmayan biçim (B1 etkileşimler, B2 spline) bot1'i **−0,0046 /

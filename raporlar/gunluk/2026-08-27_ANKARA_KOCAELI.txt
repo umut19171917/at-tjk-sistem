@@ -144,3 +144,21 @@ KOSU  3  18:30  1200m  3 Yaşlı İngilizler  (6 at)
     5 KHAN OF THE FOREST        2.0       4.9    8.6    0.7   8.50  
     6 TM BATAILE                6.8       4.5    5.7    5.1  12.85  
     2 DOUBLE WORLD              6.4       3.4    4.4    5.0  16.80  
+
+[19:00 tetik]  KOCAELI  KOSU 4 (yaris 19:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  4  19:00  1400m  4 ve Yukarı Araplar  (13 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+   12 ZEMBEREK                 13.5      24.7   23.7   22.8   3.15  F
+    2 SAMET EFENDİ             19.7      17.6   15.6   17.3   4.80  
+    4 SALAHİYET                22.1      14.2   12.3   14.7   6.10  >>CANLI
+   10 ODABAŞI                   7.2       7.1    7.4    6.4  10.15  
+    6 BERTUĞHAN                 6.6       7.0    7.3    6.6  10.20  
+    9 AKYEL ABİ                 5.2       6.1    6.6   10.0  11.35  
+    8 TOPRAK BEYİ               3.4       5.4    6.3    5.1  11.90  
+    5 AFŞINTAY                  2.8       3.8    4.6    2.6  16.25  
+    3 ARSLAN OĞLU               7.0       3.6    3.6    5.2  20.65  
+   11 NUMANIM                   3.0       3.2    3.8    3.4  19.85  
+    1 DIRAXTER                  5.9       2.7    2.8    2.9  26.50  
+   13 COŞDUR                    0.7       2.3    3.5    1.0  21.40  
+    7 KIRMÜJDE                  3.0       2.2    2.5    2.0  29.85  

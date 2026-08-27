@@ -4883,3 +4883,87 @@ bulduğu handikap canlı bot1 kollarında YOK; onlar başından beri ölçek-ba�
 çalışıyor. Yapılacak bir iş yok; bu satır "acaba onlar da mı bozuk" sorusunu kapatmak için.
 
 **Canlıya hiçbir şey alınmadı, kuponlara dokunulmadı.**
+
+
+## 2026-08-27 — K133: BEKLEYENLER #19 — birleşim KAPIYI GEÇTİ (oturumun ilk geçişi), ama kupona yine geçmiyor
+
+**K133 — B1 ∪ B2 birleşimi ön-kayıtlı kapının üçünü de sağladı: α 0,190→0,196, Bot2 OOS
+1,6987→1,6976, fark −0,0011 %95 GA [−0,0021, −0,0001] sıfırın altında. **GEÇTİ.** Ve
+toplanabilirlik 0,99 çıktı — B1 ile B2 **bağımsız**, benim "eşdoğrusaldır" beklentim YANLIŞ.
+Ama kupon sorusu K132'de zaten cevaplanmıştı: aynı birleşim kuponda −0,019 ayak (GA sıfırı
+içeriyor). Yani **kalibrasyon kapısı geçildi, para kapısı geçilmedi** → #19-A KAPANDI.**
+Araç: `kod/model_deney2.py` (salt-okunur). Ölçüt mühürlendi. Çapa 4/4 birebir tuttu.
+
+### (a) #19-A — SONUÇ
+
+| varyant | alpha | Bot1 OOS | Bot2 OOS | Δ Bot2 | %95 GA | hüküm |
+|---|---|---|---|---|---|---|
+| T taban | +0,190 | 1,8594 | 1,6987 | — | — | — |
+| B1 etkileşim | +0,194 | 1,8548 | 1,6981 | −0,0006 | [−0,0010, −0,0002] | GEÇTİ |
+| B2 spline | +0,191 | 1,8546 | 1,6982 | −0,0005 | [−0,0013, +0,0004] | düştü |
+| **AB = B1 ∪ B2** | **+0,196** | **1,8500** | **1,6976** | **−0,0011** | **[−0,0021, −0,0001]** | **GEÇTİ** |
+| C1 sıra-patlatmalı | +0,220 | 1,8710 | 1,6989 | +0,0002 | [−0,0002, +0,0007] | düştü |
+
+*(B1 tek başına da geçiyor; K128'de düşmesinin sebebi 9 varyantlık Bonferroni'ydi. Tutarlı.)*
+
+### (b) BEKLENTİM YANLIŞ ÇIKTI — ve bu iyi haber
+
+BEKLEYENLER #19-A'ya şunu yazmıştım: *"Beklenti: düşük. B1 ve B2 aynı şeyi iki farklı yoldan
+yakalıyor → büyük olasılıkla eşdoğrusal."*
+
+**Ölçüm:** B1 tek başına bot1'i −0,0046, B2 −0,0048 iyileştiriyor; **birlikte −0,0094.**
+Toplanabilirlik oranı **0,99** → **tam bağımsız.** Etkileşimler ve spline'lar doğrusal-olmayanlığın
+iki AYRI yüzünü yakalıyormuş: biri değişkenler ARASI, öteki değişken İÇİ eğrilik.
+
+### (c) AMA BÜYÜKLÜK — abartmamak için
+
+Bot2'nin piyasa üzerindeki **toplam** katkısı 1,7053 − 1,6987 = **0,0066**. AB bunun üstüne
+0,0011 ekliyor, yani modelin piyasaya karşı kenarını **~%17 büyütüyor**. Göreli olarak
+kayda değer; **mutlak olarak hâlâ mikroskobik.**
+
+Kıyas: K129'da AGF **−0,0214** vermişti (bunun **19 katı**) ve kuponda hiçbir şey değişmemişti.
+
+### (d) KUPON SORUSU ZATEN CEVAPLANMIŞTI
+
+`bot1_kupon.py`'nin `tasarim()`'i **tam olarak** B1 ∪ B2'dir (17 FEAT + 5 etkileşim +
+13×3 spline). Yani K131/K132'nin "S2 = bot1+" varyantı bu birleşimin ta kendisiydi:
+
+| | ayak farkı | %98,33 GA |
+|---|---|---|
+| K132, açgözlü K96 | **−0,019** | [−0,063, +0,026] |
+| K132, açgözlü K900 | −0,016 | [−0,058, +0,027] |
+
+**Sıfırdan ayrılamıyor.** → **#19-A KAPANDI:** kalibrasyon kapısı geçildi, para kapısı geçilmedi.
+Canlıya alınması için bir gerekçe YOK.
+
+### (e) #19-B — SORULAMADI, kol kapanıyor
+
+"α'yı yükselten şey doğruluk değil, piyasadan FARKLILIK" hipotezi. Beş varyantın betimleyici
+tablosu:
+
+| varyant | Bot1 OOS | piyasadan uzaklık | alpha |
+|---|---|---|---|
+| taban | 1,8594 | 0,2293 | +0,190 |
+| B1 | 1,8548 | 0,2287 | +0,194 |
+| B2 | 1,8546 | 0,2282 | +0,191 |
+| AB | 1,8500 | 0,2275 | +0,196 |
+| **C1** | **1,8710** | **0,2323** | **+0,220** |
+
+α~uzaklık korelasyonu +0,871 · α~log-loss +0,826. Ön-kayıtlı ölçüt biçimsel olarak
+"destekliyor" diyor **ama bu okuma dürüst değil:**
+1. **n=5** ve ölçüt zaten "hüküm üretmez" diye yazılmıştı (madde 5).
+2. İki korelasyon **birbirine çok yakın** (0,871 vs 0,826) → ayırt etmiyor.
+3. **Desenin tamamını tek nokta (C1) taşıyor.** Diğer dördü uzaklıkta 0,2275-0,2293,
+   α'da 0,190-0,196 aralığında sıkışık; C1 çıkarılırsa desen kalmıyor.
+
+**Bu tasarımla soru cevaplanamaz.** Cevaplanabilmesi için doğruluğu SABİT tutup uzaklığı
+kasten değiştiren varyantlar üretmek gerekir — ayrı ve pahalı bir iş.
+
+**KARAR: #19-B kapanıyor.** Gerekçe K128'den aynen: bu kol kâr vaadi değildi; AGF 19 kat
+büyük bir kazançla bile kuponu oynatmadı, dolayısıyla α'yı birkaç puan yükseltmenin para
+karşılığı ölçülemeyecek kadar küçüktür. Yeniden açmak için yeni MEKANİZMA gerekir.
+
+### (f) DOKUNULMAYANLAR
+
+Ölçüm sırasında canlı ANKARA/KOCAELİ kartı akıyordu. `model_deney2.py` yalnız okur; hiçbir
+dosyaya yazılmadı, canlı yola/kuponlara dokunulmadı.
