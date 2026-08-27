@@ -5094,3 +5094,70 @@ Ayrıca kuralın yokluğu **muhafazakâr**: sicili olduğundan kötü gösterir,
 Sicilimiz **ayak isabeti** sütununda kupon başına ~%0,15 karamsar. 6 ayaklık bir kuponda
 bu, kupon başına 0,009 ayak — ölçüm gürültüsünün çok altında. Yani K122/K131/K132'nin ayak
 isabeti kıyasları bu kusurdan etkilenmiyor.
+
+
+## 2026-08-27 — K136: BEKLEYENLER #20 yapıldı — uyarı koda yazıldı, iyimserliğin BÜYÜKLÜĞÜ ölçüldü
+
+**K136 — K130'un bulduğu kusur için önerilen "1 + 2" uygulandı. (1) Dört dosyaya uyarı
+eklendi — **yalnız yorum**, AST eşitliği kanıtlanarak, atomik yazımla, canlı kart akarken.
+(2) İyimserliğin büyüklüğü ölçüldü: **backtest'in 6/6 sayısı, kupon anında ulaşılabilecek
+olanın ~%43 üstünde.** Canlı akışa ve kuponlara dokunulmadı.**
+
+### (a) PARÇA 1 — uyarı koda yazıldı (davranış DEĞİŞMEDİ, kanıtlandı)
+
+`model.py` · `altili_olasilik.py` · `altili_backtest.py` · `duzlestir.py` — dördüne de aynı
+22 satırlık uyarı bloğu eklendi.
+
+**GÜVENLİK YÖNTEMİ (canlı kart akıyordu, ANKARA/KOCAELİ, 4 koşu bekliyordu):**
+1. Her dosyanın **AST'si önce ve sonra karşılaştırıldı**; eşit değilse yazılmayacaktı.
+   Dördünde de **birebir aynı** çıktı → davranış değişmediği kanıtlandı, tahmin edilmedi.
+2. Yazım **atomik** yapıldı (`os.replace`) → çalışan bir süreç asla yarım dosya göremez.
+3. Doğrulama: 88 satır eklendi, **hepsi yorum**, **0 satır silindi**, canlı yolun kullandığı
+   on modülün onu da (`takip`, `gunluk`, `altili_canli`, `bekci`, `rapor_ortak` dahil)
+   sorunsuz import edildi.
+
+### (b) PARÇA 2 — iyimserlik NE KADAR? Ölçüldü.
+
+**Ganyan oranı kupon anıyla kapanış arasında çok kayıyor** (canlı `oran_log`, 486 koşu):
+
+| dk_kala | at | Spearman ρ (o an ↔ son) | medyan mutlak değişim | %10'dan fazla oynayan |
+|---|---|---|---|---|
+| 20-40 dk | 4.295 | **0,832** | **%27,7** | **%79,3** |
+| 40-70 dk | 7.684 | 0,780 | %33,3 | %84,9 |
+| 70-120 dk | 11.790 | 0,712 | %38,2 | %86,9 |
+| 120+ dk | 8.845 | 0,647 | %43,7 | %88,0 |
+
+**Kıyas (K129):** AGF aynı pencerede ρ=**0,9999**, ortalama fark **0,05 puan**.
+İki fiyat aynı yarışa bakıyor ama biri fırtına, öteki kaya.
+
+**BÜYÜKLÜK KESTİRİMİ.** K111 aynı ekseni ayak düzeyinde ölçmüştü: kupon anı oranıyla ayak
+isabeti **%56,8**, geç oranla **%60,3** (+3,5 puan, %95 GA [+0,8, +5,9], McNemar p=0,0003).
+Backtest altı ayağın altısında da geç (kapanış) oranı kullandığına göre:
+
+> (0,603 / 0,568)^6 = **1,43**
+> → **backtest'in 6/6 sayısı, kupon anında ulaşılabilecek olanın ~%43 üstünde.**
+
+**Bu bir kestirimdir, ölçüm değil:** K111 "5 dk kala" ile kıyaslamıştı, kapanış onun biraz
+ötesi; ayrıca ayaklar bağımsız varsayıldı. Mertebe sağlam, nokta değeri değil.
+
+### (c) NE YAPILMADI — ve neden
+
+**Backtest'in fiyat kaynağı DEĞİŞTİRİLMEDİ.** `altili_backtest.py` canlı yolun da kullandığı
+tek kaynak; oradaki bir hata günlük kupon üretimini bozar. Kullanıcı "sistemde asla hasar
+olmasın" dedi ve kart akıyordu. Ayrıca geçmiş geriye dönük temizlenemez: gerçek erken oran
+arşivde **yok**, yalnız Temmuz 2026'dan beri `oran_log`'ta var.
+
+**Yerine kalıcı DÜZELTME NOTU:** bundan sonra backtest'ten çıkan her 6/6 sayısı ve ROI,
+*"kupon anında bu kadarına ulaşılamazdı"* kaydıyla okunmalıdır. Kaba düzeltme çarpanı
+**6/6 için ~1/1,43**. Bu not `altili_backtest.py`'nin başındaki uyarı bloğunda duruyor.
+
+### (d) GEÇMİŞ KARARLAR İÇİN NE DEĞİŞİR
+
+**Negatif sonuçlar GÜÇLENİR.** Hepsi iyimser bir zeminde alınmıştı; gerçek zemin daha
+kötüyse "işe yaramıyor" hükümleri daha da sağlamlaşır. K52, K57, K65, K68, K92, K98, K101,
+K108, K117, K120 — hiçbiri etkilenmiyor.
+
+**Risk yalnız ARTI görünen hücrelerde.** Örnek: K131/K132'de `orta` hücresi bazı kesitlerde
++%25,7 ROI gösteriyordu. Bu sayılar zaten sıfırdan ayrılamıyordu (GA çok geniş) ve şimdi
+ayrıca ~%43 şişkin oldukları biliniyor. **Hiçbir pozitif iddia bu sayılara dayandırılmamıştı**
+— K122 zaten "ham ROI pistleri kıyaslamak için KULLANILAMAZ" demişti.

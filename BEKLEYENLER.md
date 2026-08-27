@@ -286,7 +286,22 @@ daha az örtüşük.
 
 **KAPALI TUTULACAK:** yeni ÖZELLİK ekleme (K33). K128 o kapıya dokunmadı, bu kol da dokunmaz.
 
-### 20. `ganyan_muhtemel` KUSURU — ne yapacağımıza karar verilecek (K130)
+### 20. ✅ YAPILDI (2026-08-27, K136) — uyarı koda yazıldı, iyimserliğin büyüklüğü ölçüldü
+
+> 🔒 **YAPILAN (K136) — önerilen "1 + 2" uygulandı:**
+> **(1)** `model.py` · `altili_olasilik.py` · `altili_backtest.py` · `duzlestir.py` — dördüne
+> de 22 satırlık uyarı bloğu eklendi. **Yalnız yorum**; her dosyanın **AST'si önce/sonra
+> karşılaştırıldı ve birebir aynı çıktı** (davranış değişmediği KANITLANDI, tahmin edilmedi);
+> yazım **atomik** yapıldı. 88 satır eklendi, 0 silindi, 10 canlı modülün 10'u da import oldu.
+> **(2)** İyimserliğin büyüklüğü ölçüldü: ganyan oranı 20-40 dk kala ρ=**0,832**, medyan
+> **%27,7** kayıyor, atların **%79'u** >%10 oynuyor. K111'in +3,5 puanlık ayak farkıyla
+> birleştirilince: **backtest'in 6/6 sayısı kupon anında ulaşılabilecek olanın ~%43 üstünde.**
+> **Seçenek 3 (sütunu sil/yeniden adlandır) YAPILMADI** — riskli ve gereksiz.
+> **Backtest'in fiyat kaynağı DEĞİŞTİRİLMEDİ** — `altili_backtest.py` canlı yolun da tek
+> kaynağı; ayrıca geçmiş geriye dönük temizlenemez (gerçek erken oran arşivde YOK).
+> **Kalıcı düzeltme notu:** backtest'ten çıkan 6/6 sayıları kabaca **1/1,43** ile okunmalı.
+
+### 20-özgün. `ganyan_muhtemel` KUSURU — ne yapacağımıza karar verilecek (K130)
 **Eklendi:** 2026-08-27 (K130) · **TETİK: KULLANICI** · **İlgili:** K1, K3, K97, K109, K111, K129
 
 **Bulgu:** `katilim.csv`'de `ganyan_muhtemel` == `ganyan_kapanis`, 6 yılın %100'ünde

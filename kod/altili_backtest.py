@@ -40,6 +40,28 @@ except Exception:                                              # noqa: BLE001
         return 1.00 if str(pist).strip().upper() in _BIRIM_1TL else 1.25
 
 
+# =============================================================================
+# UYARI (K130, 27 Agu 2026) — `ganyan_muhtemel` BIR "MUHTEMEL ORAN" DEGILDIR
+# -----------------------------------------------------------------------------
+# Olculdu: katilim.csv'de ganyan_muhtemel == ganyan_kapanis, 6 yilin %100'unde
+# (342.986 at-satiri, ort. mutlak fark 0,0007). Sebep: arsivdeki PROGRAM sayfalari
+# kosudan SONRA cekilmis; duzlestir.py'nin program'dan okudugu GANYAN alani da
+# kapanis oranini tasiyor. Ayni gun kontrolu: program GANYAN == sonuc GANYAN %99,1.
+#
+# BUNUN ANLAMI:
+#   * CANLI AKIS ETKILENMIYOR — altili_canli.py / gunluk.py oranlari oran_log'tan
+#     GERCEK ZAMANLI okur (dk_kala damgali). Canli kupon dogru fiyatla kurulur.
+#   * BACKTEST'IN PIYASA TERIMI IYIMSER — kupon ayak 1'den once kurulur ama bu
+#     sutun ayak 2-6'nin KAPANIS fiyatini tasir; o bilgi kupon aninda YOKTUR.
+#   * alpha = 0,19'un anlami degisir: "bot1, KAPANIS fiyatinin ustune %19 katiyor".
+#     Erken bir oranin ustune katmaktan cok daha zor bir sinav.
+#
+# GECMIS KARARLARI GECERSIZ KILMAZ: negatif sonuclar IYIMSER bir zeminde alinmisti;
+# gercek zemin daha kotuyse negatifler DAHA DA guclenir. Risk yalnizca backtest'te
+# ARTI gorunen hucrelerdedir — ve hicbiri zaten sifirdan ayrilamiyordu.
+#
+# Ayrinti: KARARLAR.md K130 · Secenekler: BEKLEYENLER.md #20
+# =============================================================================
 def kupon_kur(ayak_atlari, kapsam_esik, max_kombo, banker_esik):
     """ayak_atlari: 6 elemanli liste; her eleman [(no, bot2), ...] Bot2-azalan sirali.
     Her ayakta: en olasi at banker_esik'i asiyorsa TEK at (banker); yoksa kumulatif kapsam
