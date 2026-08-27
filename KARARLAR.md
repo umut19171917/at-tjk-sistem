@@ -4537,3 +4537,191 @@ bot1'i piyasadan daha **farklı** kılmak — daha *doğru* kılmak değil. C1'i
 bunun ilk işareti: daha kötü ama daha bağımsız.
 
 BEKLEYENLER #19'a ön-kayıtlı ölçütle yazıldı.
+
+
+## 2026-08-27 — K129: AGF üçüncü kaynak olarak — **kalibrasyonda BÜYÜK kazanç, kuponda SIFIR.** K74'ün rakamı da tutmadı
+
+**K129 — K74'ün 55 karardır bekleyen "somut adımı" atıldı. Sonuç iki katmanlı: (a) AGF,
+kalibrasyonda projenin bugüne kadar gördüğü EN BÜYÜK kazancı veriyor — OOS log-loss
+1,7510 → 1,7296, yani K128'in en iyi varyantının **36 KATI**; (b) bu kazanç kupona
+çevrilince **yok oluyor** ve ön-kayıtlı para kapısı düştü → **AGF kupon kolu KAPANDI.**
+Ayrıca K74'ün başlık rakamı (dip kovada 2,73 kat) 2025-26'da **tutmuyor.****
+Araçlar: `kod/agf_harman.py` + `kod/agf_kupon.py` (ikisi de salt-okunur). Ölçütler mühürlendi.
+
+### (a) K74'ÜN TABLOSU 2025-26'DA TUTMUYOR — düzeltme
+
+K74 (tüm yıllar, ham feed) Altılı havuzunun **kötü kalibre** olduğunu bulmuştu: AGF payı
+%2'nin altındaki atlar havuzun dediğinin **2,73 katı** kazanıyor. 2025-26'da, AGF'si TAM ve
+toplamı ~100 olan 6.695 koşuda aynı tablo:
+
+| AGF payı | at | AGF | GERÇEK | oran |
+|---|---|---|---|---|
+| ≤%2 | 13.719 | %1,08 | %0,94 | **0,87** *(K74: 2,73)* |
+| %2-5 | 13.601 | %3,35 | %3,74 | 1,11 |
+| %5-15 | 21.679 | %9,37 | %9,04 | 0,97 |
+| %15-30 | 10.986 | %20,61 | %21,74 | 1,05 |
+| >%30 | 4.122 | %43,53 | %41,44 | 0,95 |
+
+**AGF DÜZGÜN KALİBRE — sapma yok.** K74'ün 2,73'ü replike olmuyor. K74 normalize ediyordu
+(`pay = pay/pay.sum()`, doğrulandı), yani fark oradan değil; büyük olasılıkla **AGF'si eksik
+koşuların** dahil edilmesinden (arşivde koşuların %2,5'inde AGF her ata yazılmamış; bir koşu
+iki Altılı'nın ayağıysa toplam 200 çıkıyor). Bu betik yalnız TAM ve toplamı ~100 olan
+koşuları alıyor. **K74'ün (1) numaralı tablosu şüpheli sayılmalıdır.**
+
+K74'ün (4) numaralı tablosu ise **yönüyle** duruyor ama şiddeti çok daha düşük:
+
+| kamu − AGF | at | AGF | kamu | GERÇEK | AGF oranı |
+|---|---|---|---|---|---|
+| > +0,10 | 808 | %12,52 | %28,49 | %17,33 | **1,38** *(K74: 3,40)* |
+| +0,05..0,10 | 1.763 | %17,11 | %24,02 | %22,12 | 1,29 |
+| ~0 | 42.853 | %8,89 | %8,87 | %8,93 | 1,01 |
+| < −0,10 | 730 | %52,02 | %37,07 | %43,70 | 0,84 |
+
+Gerçek yine **araya** düşüyor — ama K74'ün aksine **AGF'ye daha yakın.**
+
+### (b) ASIL BULGU — AGF, ganyan kapanışından DAHA İYİ kalibre
+
+Tek başlarına, aynı 6.695 koşuda OOS log-loss (düşük iyi):
+
+| kaynak | log-loss |
+|---|---|
+| **AGF (Altılı havuzunun kendi fiyatı)** | **1,7817** |
+| ganyan kapanış (devig) | 1,8047 |
+
+**AGF, ganyan piyasasını 0,023 yeniyor.** Bu, projenin "ganyan pazarı etkin, Altılı pazarı
+değil" (K74/K73) çerçevesinin **tersi**. Mantıklı da: Altılı havuzuna para yatıran oyuncu tam
+da bu altı koşuyu çalışmıştır.
+
+### (c) Y0 KALİBRASYON KAPISI — GEÇTİ, hem de çok net
+
+`softmax(α·ln bot1 + γ·ln kamu + δ·ln AGF)`, katsayılar 2024'te fit, test 2025-26:
+
+| | alpha | gamma | **delta (AGF)** |
+|---|---|---|---|
+| ikili harman (mevcut) | +0,194 | +0,943 | — |
+| **üçlü harman** | **+0,048** | +0,474 | **+0,586** |
+
+- δ %95 GA **[+0,483 .. +0,720]** → sıfırı dışlıyor ✓
+- OOS log-loss **1,7510 → 1,7296**, fark **−0,0214**, %95 GA [−0,0258 .. −0,0171] ✓
+
+**KIYAS: K128'in dokuz varyantının EN İYİSİ Bot2'yi −0,0006 oynatmıştı. Bu −0,0214.
+36 kat.** Bu, projede model tarafında ölçülmüş açık ara en büyük kalibrasyon kazancı.
+
+**Ve α çöküyor: 0,194 → 0,048.** AGF, bot1'in kattığı bilginin neredeyse tamamını içeriyor.
+K128'in "bot1'i iyileştir" hedefine ters bir cevap: **bot1'i iyileştirmek değil, AGF'yi
+eklemek gerekiyormuş — ama o da bot1'i gereksiz kılıyor.**
+
+### (d) SIZINTI ENDİŞESİ ÖLÇÜLDÜ — neredeyse yok
+
+Ön-kayıtta "arşivdeki AGF SON hâli → iyimser üst sınır" uyarısı vardı. Canlı
+`altili_oran_log`'ta (345 koşu, 34 gün) ölçüldü:
+
+| dk_kala | at | Spearman ρ (o an ↔ son) | ort. mutlak fark |
+|---|---|---|---|
+| 20-40 dk | 2.883 | **0,9999** | 0,05 puan |
+| 40-70 dk | 4.968 | 0,9996 | 0,12 puan |
+| 70-120 dk | 7.055 | 0,9993 | 0,19 puan |
+| 120+ dk | 4.561 | 0,9983 | 0,39 puan |
+
+**AGF pratikte hiç kıpırdamıyor — 3,5 saat önceden bellidir.** Kıyas: ganyan oranı aynı
+pencerede medyan **+%12,7** kayıyor, atların %85'i >%10 oynuyor (K110). Yani AGF, ganyan
+fiyatının aksine **kupon anında zaten elimizdedir ve sonradan değişmez.** Sızıntı yok.
+
+### (e) Y1 PARA KAPISI — DÜŞTÜ. Kol kapandı.
+
+Aynı olaylar, aynı dağıtıcı (K52 kapsam), aynı bütçe, gerçek temettüler. Tek fark ayak puanı.
+Baş hücre üretimin `orta` config'i (kapsam 0,75 · maxKombo 96 · banker 0,70), 449 oynanan olay:
+
+| | ROI | 6/6 | ort. ayak isabeti |
+|---|---|---|---|
+| ESKİ (bot2) | +%25,7 | 32 | 3,624 |
+| YENİ (bot1+kamu+AGF) | −%32,8 | 29 | 3,644 |
+| **fark** | **−58,6 puan** %95 GA [−131,2 .. −5,5] | −3 | **+0,020** GA [−0,031, +0,071] |
+
+**Ön-kayıtlı ölçüt: GA'nın tamamı sıfırın üstünde olmalıydı. Değil → DÜŞTÜ → KOL KAPANDI.**
+
+**Ama ROI farkına inanmayın, ikisine de:** ±131 puanlık güven aralığı, 449 olayda 29-32 isabet
+demek olan uç varyansın ta kendisi. ESKİ'nin +%25,7'si de gerçek bir kâr değil (K57'nin dersi:
+"13 olayda +%1028 ROI ama tamamı tek bir 6/6'dan"). **Okunabilir tek sayı ayak isabeti:
++0,020 ayak/kupon, GA sıfırı içeriyor.**
+
+### (f) YAPISAL DERS — tavan, beşinci kez
+
+Kalibrasyonda **−0,0214** (36 kat) kazanç, kuponda **+0,020 ayak/kupon** (sıfırdan
+ayrılamıyor). K98-h'nin tavanı bir kez daha, bu sefer **olasılık kalitesi** ekseninde:
+
+> kapsamı genişlet (K98-h) · ayak azalt (K108) · geç kur (K111) · bot1'in sesini kıs (K112)
+> · **olasılığı belirgin biçimde iyileştir (K129)** — beşinde de isabet artıyor, para
+> değişmiyor.
+
+**Tavan bir kupon-şekli özelliği değil, hatta bir olasılık-kalitesi özelliği de değil.
+Piyasa özelliği.** Altı ayaklı bir çarpımda %2'lik bir olasılık iyileşmesi, kesinti duvarının
+yanında ölçülemez kalıyor.
+
+### (g) DOKUNULMAYANLAR
+
+`agf_harman.py` ve `agf_kupon.py` yeni ve salt-okunur; `altili_backtest.py` yalnız import
+edildi, **değiştirilmedi.** Config, dağıtıcı, ağırlık, canlı akış, **kuponlar** — hiçbiri
+değişmedi. Kullanıcı "mevcut kuponlarımıza şimdilik dokunmasın" demişti; dokunulmadı.
+
+---
+
+## 2026-08-27 — K130: VERİ KUSURU — `ganyan_muhtemel` bir "muhtemel oran" DEĞİL, kapanış fiyatının kopyası
+
+**K130 — `katilim.csv`'de `ganyan_muhtemel` ile `ganyan_kapanis` 6 yılın **%100'ünde** birebir
+aynı. Yani modelin "kupon anındaki piyasa" sandığı sütun, aslında **kapanış fiyatı**. Canlı
+sistem etkilenmiyor (o `oran_log`'tan gerçek zamanlı oran okuyor) ama **BACKTEST'lerin piyasa
+terimi iyimser** ve α'nın anlamı sanıldığından farklı.** K129 çalışırken tesadüfen bulundu.
+
+### (a) ÖLÇÜM
+
+| yıl | 2021 | 2022 | 2023 | 2024 | 2025 | 2026 |
+|---|---|---|---|---|---|---|
+| `muhtemel == kapanis` | %100 | %100 | %100 | %100 | %99,97 | %100 |
+
+n = 342.986 at-satırı. Ortalama mutlak fark **0,0007**.
+
+### (b) SEBEP BULUNDU
+
+`duzlestir.py` iki sütunu iki AYRI kaynaktan okuyor ve ikisi de `GANYAN` alanı:
+- satır 107: `ganyan_muhtemel` ← **program** feed'inin `GANYAN`'ı
+- satır 159: `ganyan_kapanis` ← **sonuç** feed'inin `GANYAN`'ı
+
+Doğrudan kontrol (26 Ağu 2026 İSTANBUL, 115 ortak at-satırı): program GANYAN = sonuç GANYAN
+**%99,1**. Yani **arşivdeki program sayfaları koşudan SONRA çekilmiş** (ya da TJK program
+sayfasını kapanış oranıyla günceller) → "program oranı" aslında kapanış oranıdır.
+
+K3'te (satır 176) *"`GANYAN` = canlı muhtemel"* yazılmış ve o günden beri öyle sanılmış.
+K1 döneminde (satır 54) *"ganyan muhtemel mi kapanış mı teyit"* diye bir yapılacak vardı —
+**hiç yapılmamış.** Şimdi yapıldı.
+
+### (c) NE ETKİLENİYOR, NE ETKİLENMİYOR
+
+**ETKİLENMİYOR — canlı akış.** `altili_canli.py` / `gunluk.py` kuponu kurarken oranları
+`oran_log`'tan (gerçek zamanlı, `dk_kala` damgalı) okuyor. Canlı kupon üretimi doğru fiyatla
+çalışıyor. K109/K110'un sürüklenme ölçümleri de `oran_log` tabanlıydı → **geçerli.**
+
+**ETKİLENİYOR — backtest'in piyasa terimi.** `model.py` ve `altili_olasilik.py`
+`ganyan_muhtemel` kullanıyor; o da kapanış olduğuna göre:
+1. **α = 0,19'un anlamı değişiyor:** "bot1, KAPANIŞ fiyatının üstüne %19 katıyor". Bu,
+   erken bir muhtemel oranın üstüne katmaktan **çok daha zor** bir sınav. Yani bot1
+   sanıldığından *daha* değerli, α'nın küçüklüğü de daha anlaşılır.
+2. **Backtest ROI'leri iyimser:** kupon ayak 1'den önce kurulur; ayak 2-6'nın kapanış
+   fiyatı o an YOKTUR. K52/K57/K92/K122'nin backtest sayıları bu bilgiyi kullanıyor.
+   Bu, K97'nin sızıntısının bir başka yüzü ve **K111'in "tam kupon simülasyonu imkânsız"
+   tespitiyle aynı ailedendir** — ama şimdiye kadar `ganyan_muhtemel`'in temiz olduğu
+   sanılıyordu.
+3. **K3'ün fizibilite gerekçesi çürüdü:** *"muhtemel oran ilk koşudan saatler önce dolu →
+   kupon baştan kurulabilir"* (satır 652). O sütun saatler önce dolu değil; sonradan dolmuş.
+
+### (d) HİÇBİR ŞEY DÜZELTİLMEDİ — bilerek
+
+Kullanıcı "mevcut kuponlarımıza şimdilik dokunmasın" dedi ve bu, veri hattına dokunmayı da
+kapsar. Ayrıca düzeltmenin doğru yolu belli değil: gerçek bir erken oran **arşivde yok**
+(yalnız 2026 Temmuz'dan beri `oran_log`'ta var). Yani geçmiş backtest'ler geriye dönük
+temizlenemez. Seçenekler BEKLEYENLER #20'ye ön-kayıtlı ölçütle yazıldı.
+
+**ÖNEMLİ — bu, geçmiş kararları geçersiz KILMAZ:** negatif sonuçlar iyimser bir zeminde
+alınmıştı; zemin gerçekte daha kötüyse **negatifler daha da güçlenir.** Riskli olan yalnız
+POZİTİF görünen sayılardır (ör. backtest'te artı çıkan ROI hücreleri) — ve zaten hiçbiri
+istatistiksel olarak sıfırdan ayrılamamıştı.

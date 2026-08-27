@@ -259,6 +259,55 @@ daha az örtüşük.
 
 **KAPALI TUTULACAK:** yeni ÖZELLİK ekleme (K33). K128 o kapıya dokunmadı, bu kol da dokunmaz.
 
+### 20. `ganyan_muhtemel` KUSURU — ne yapacağımıza karar verilecek (K130)
+**Eklendi:** 2026-08-27 (K130) · **TETİK: KULLANICI** · **İlgili:** K1, K3, K97, K109, K111, K129
+
+**Bulgu:** `katilim.csv`'de `ganyan_muhtemel` == `ganyan_kapanis`, 6 yılın %100'ünde
+(342.986 at-satırı, ort. mutlak fark 0,0007). Sebep: arşivdeki **program** sayfaları koşudan
+SONRA çekilmiş, `GANYAN` alanı kapanış oranını taşıyor. K1'de *"ganyan muhtemel mi kapanış mı
+teyit"* diye bir yapılacak vardı, hiç yapılmamış.
+
+**CANLI AKIŞ ETKİLENMİYOR** — `altili_canli.py`/`gunluk.py` oranları `oran_log`'tan gerçek
+zamanlı okuyor. Etkilenen yalnız BACKTEST'in piyasa terimi (`model.py`, `altili_olasilik.py`).
+
+**ÜÇ SEÇENEK — karar KULLANICININ:**
+1. **Hiçbir şey yapma, yalnız BELİRT.** `model.py`/`altili_olasilik.py`'nin başına uyarı yaz,
+   Kİ satırlarına atıf koy. Maliyet ~0. Gerekçe: geçmiş backtest'ler geriye dönük
+   temizlenemez (arşivde gerçek erken oran YOK; `oran_log` yalnız Tem 2026'dan beri var).
+2. **İleri-yönlü temiz kol.** Bugünden itibaren `oran_log`'un **kupon anı** oranını ayrı bir
+   sütuna biriktir; yeterli veri olunca (≈400 olay) "temiz zemin" backtest'i kur ve mevcut
+   iyimser zeminle KIYASLA. Böylece iyimserliğin BÜYÜKLÜĞÜ ölçülür.
+3. **Sütunu sil/yeniden adlandır.** `ganyan_muhtemel` → `ganyan_resmi` yap, ikinci kopyayı
+   kaldır. **RİSKLİ:** üretim hattının çok yerinde geçiyor; kullanıcı "kuponlara dokunma"
+   dedi. Bu seçenek ancak açık izinle ve ayrı bir oturumda yapılır.
+
+**ÖNERİM: 1 + 2.** Uyarıyı hemen yaz (bedava), temiz kolu ileri-yönlü aç (risksiz).
+3'e dokunma.
+
+**ÖNEMLİ — geçmiş kararlar geçersiz DEĞİL:** negatif sonuçlar **iyimser** bir zeminde
+alınmıştı; gerçek zemin daha kötüyse negatifler **daha da güçlenir.** Risk yalnız backtest'te
+ARTI görünen hücrelerde — ve onların hiçbiri zaten sıfırdan ayrılamıyordu.
+
+### 21. AGF — kupon kolu kapandı, ama kalibrasyon bulgusu duruyor (K129)
+**Eklendi:** 2026-08-27 (K129) · **TETİK: KULLANICI**
+
+**Kapanan:** AGF'li üçlü olasılığı kupona vermek. Ön-kayıtlı para kapısı düştü
+(ROI farkı −58,6 puan, %95 GA [−131,2..−5,5]; ayak isabeti +0,020, GA sıfırı içeriyor).
+
+**Kapanmayan — ve ilginç olan:** AGF, **ganyan kapanışından daha iyi kalibre**
+(OOS log-loss 1,7817 vs 1,8047) ve üçlü harmanda δ=+0,586 ile Bot2'yi **−0,0214** iyileştiriyor
+— K128'in en iyisinin **36 katı**. Ayrıca AGF 3,5 saat önceden bellidir ve değişmez
+(ρ=0,9999) — ganyan oranının aksine.
+
+**AÇIK KALAN SORU:** kupon dışında AGF'nin işe yarayacağı bir yer var mı? Somut aday:
+**raporlarda ikinci bir görüş sütunu.** Kupon seçimini DEĞİŞTİRMEDEN, günlük raporda her
+ayağın AGF sırası gösterilirse, sistemin ve kalabalığın ayrıştığı yerler GÖRÜNÜR olur.
+Bu bir strateji değişikliği değil, **gözlem** eklemesidir — kuponlara dokunmaz.
+- **Karar KULLANICININ.** Yapılacaksa `rapor_ortak.py` düzeyinde, kupon üretimine
+  dokunmadan. Yapılmayacaksa bu madde kapanır.
+- **UYARI:** görünce oynamak isteme eğilimi gerçektir. K129 ölçtü ki AGF'yi kupona katmak
+  **para kazandırmıyor.** Sütun eklenirse "bilgi" olarak kalır, karar kuralı olmaz.
+
 ### 16. TABELA BAHİS ve SIRALI 5'Lİ — **BELİRSİZ**, birim fiyat bulunursa karara bağlanır
 **Eklendi:** 2026-08-27 (K125) · **TETİK: KULLANICI / birim fiyat kaynağı bulunursa**
 
