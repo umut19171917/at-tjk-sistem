@@ -4800,3 +4800,82 @@ Hüküm ayak isabetinden verildi.
 **Canlıya hiçbir şey alınmadı, kuponlara dokunulmadı.** `bot1_900`/`bot1_1800` kolları
 olduğu gibi duruyor; K131 onların emekliliği hakkında da bir şey söylemez (o karar K118'de
 kullanıcıya bırakılmıştı).
+
+
+## 2026-08-27 — K132: kullanıcı K131'in kusurunu yakaladı — düzeltildi, sonuç değişmedi
+
+**K132 — Kullanıcı sordu: *"sadece bot1 için ölçmedin mi fikrimi, yani kamudan asla sızıntı
+olmadan"*. Denetlendi: PUANDA sızıntı yoktu ama **DAĞITICI AYARLARINDA vardı** — K131 bot1'i
+bot2'nin eşikleriyle yarıştırmıştı. Ölçek-bağımsız açgözlü dağıtıcıyla ve 3,4 kat daha çok
+olayla (1.526) yeniden ölçüldü. **Kusur gerçekti (−0,27 ayak) ama sonucu değiştirmedi.**
+Araç: `kod/bot1_kupon2.py` (salt-okunur).**
+
+### (a) DENETİM — iki yerde sızıntı arandı
+
+1. **Puanda: YOK.** `select_scope` yalnız ırk/pist/tek-galip/saha filtreler. FEAT'teki 17
+   özelliğin hiçbiri orandan türemiyor. bot1 gerçekten oran-kör. ✓
+2. **Dağıtıcıda: VARDI.** `kupon_kur` MUTLAK eşikler kullanıyor (banker ≥0,70 · kapsam ≥0,75)
+   ve bunlar **bot2'nin olasılık ölçeğine göre** seçilmiş. bot1'in olasılıkları daha düz →
+   banker neredeyse hiç tetiklenmiyor, kupon hep bütçe tavanına çarpıp budanıyor.
+   **K131 bot1'i bot2'nin elbisesiyle yarıştırdı.** Kullanıcı "yeni parametrelerle" demişti.
+
+### (b) DÜZELTME — açgözlü (K65) ölçek-bağımsızdır
+
+`kupon_kur_acgozlu` hiçbir mutlak eşik kullanmaz; yalnız bütçe dolana dek kazanç/bedel
+oranına göre at ekler. Bu yüzden bot1'i de bot2'yi de aynı biçimde ele alır. Sistemde
+zaten vardı (K65), bu ölçüm için uydurulmadı.
+
+| bütçe | puan | ort. bedel | **ayak isabeti** | 6/6 | ROI |
+|---|---|---|---|---|---|
+| K96 | bot2 | 118 TL | **3,700** | **69** | −%68,1 |
+| K96 | bot1 | 118 TL | 3,223 | 23 | −%64,8 |
+| K96 | bot1+ | 118 TL | 3,204 | 16 | −%48,5 |
+| K900 | bot2 | 1.077 TL | **4,455** | **235** | −%63,4 |
+| K900 | bot1 | 1.077 TL | 4,065 | 130 | −%17,1 |
+| K900 | bot1+ | 1.078 TL | 4,049 | 131 | −%55,0 |
+
+### (c) HÜKÜMLER (ayak isabeti, Bonferroni %98,33 GA, 1.526 olay)
+
+| | K96 | K900 |
+|---|---|---|
+| **H1 BİRİNCİL: bot1+ − bot1** | **−0,019** [−0,063, +0,026] **düştü** | **−0,016** [−0,058, +0,027] **düştü** |
+| H2: bot1 − bot2 (adil dağıtıcı) | **−0,477** [−0,545, −0,411] | **−0,390** [−0,451, −0,328] |
+| H3: kapsam − açgözlü (bot1) | **−0,273** [−0,324, −0,219] | — |
+
+**H3 kullanıcıyı doğruluyor:** kapsam dağıtıcısı bot1'i gerçekten cezalandırıyormuş
+(−0,27 ayak). Ama bu handikap kaldırılınca bile **bot1 hâlâ bot2'nin 0,48 ayak gerisinde.**
+
+**H1 iki bütçede de düştü ve işaret K131'dekinin TERSİNE döndü** (+0,024 → −0,019). İkisi de
+sıfırdan ayrılamıyor → **bot1'i iyileştirmenin kupona etkisi yok.** 3,4 kat daha büyük
+örneklemde de yok.
+
+### (d) TEK UMUT VERİCİ SAYI — ve tek bir bilete dayanıyor
+
+K900'de bot1 **−%17,1**, bot2 **−%63,4**. 46 puanlık fark, GA [−7,7, +150,6] (sıfırı içeriyor).
+Dayanıklılık testi (K127'nin yöntemi):
+
+| | bot1 K900 | bot2 K900 |
+|---|---|---|
+| tüm ödemeler | **−%17,1** | −%63,4 |
+| en büyük 1 ödeme çıkarılırsa | **−%49,9** | −%64,7 |
+| en büyük 3 çıkarılırsa | **−%65,7** | −%67,0 |
+| en büyük 5 çıkarılırsa | −%69,7 | −%68,6 |
+
+bot1'in en büyük ödemesi **539.029 TL** — tek bilet. Çıkarılınca 33 puan buharlaşıyor; üç
+çıkarılınca bot2'nin **ALTINA** düşüyor. bot2'nin ROI'si ise oynamıyor (−63,4 → −68,6).
+
+**Hüküm: bot1'in para üstünlüğü bir piyango biletidir.** K57 (YURİBOYKA), K72, K127'nin
+aynı deseni — dördüncü kez.
+
+### (e) SONUÇ
+
+Kullanıcının fikri **iki ayrı gerekçeyle** düşüyor, ve ikisi de bağımsız:
+1. bot1'i iyileştirmenin kupona etkisi ölçülemiyor (doz çok küçük — K128'in −0,0046
+   log-loss'u ~0,02 ayak eder; ölçülen ±0,02, sıfırdan ayrılamıyor).
+2. **Başlangıç noktası zaten yarım ayak geride** ve bu, dağıtıcı adil kılınınca da geçerli.
+
+**Kullanıcının haklı olduğu kısım kayda geçti:** dağıtıcı bot1 için yanlış ayarlıydı ve bu
+K131'de görülmemişti. `bot1_900` / `bot1_1800` canlı kolları da `kapsam` değil kendi
+dağıtıcılarını kullanıyor — bu bulgu onlar için ayrıca değerlendirilebilir (BEKLEYENLER #22).
+
+**Canlıya hiçbir şey alınmadı, kuponlara dokunulmadı.**
