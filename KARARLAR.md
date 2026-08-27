@@ -4967,3 +4967,74 @@ karşılığı ölçülemeyecek kadar küçüktür. Yeniden açmak için yeni ME
 
 Ölçüm sırasında canlı ANKARA/KOCAELİ kartı akıyordu. `model_deney2.py` yalnız okur; hiçbir
 dosyaya yazılmadı, canlı yola/kuponlara dokunulmadı.
+
+
+## 2026-08-27 — K134: BEKLEYENLER #17 ve #16 — teşhis ilerledi, ikisi de ÖLÇÜLEMEZ olarak kapandı
+
+**K134 — #17 (7'Lİ PLASE): K125'in varsayımı YANLIŞMIŞ, düzeltildi. Ayaklar "plase alanlar"
+değil **İLK 2**'dir; buna çıkanlar ve ekürie ortakları eklenir. Doğrulama %26 → **%51,4**.
+Pencere (K94 kuralı) DOĞRU çıktı. Ama kalan %48,6 çözülemedi → kalite kapısı (%90) hâlâ
+geçilemiyor. #16 (TABELA, SIRALI 5'Lİ): birim fiyatın neden bulunamadığı kesinleşti —
+**bu bahisler küçük sahalı koşularda hiç oynatılmıyor**, dolayısıyla taban hiç dövülmüyor.
+İkisi de KAPANDI.** Salt-okunur teşhis; canlı kart akarken yapıldı, hiçbir dosyaya yazılmadı.
+
+### (a) #17 — 7'Lİ PLASE ayak tanımı ÇÖZÜLDÜ (kısmen)
+
+K125'te olayların yalnız %26'sı doğrulanıyordu ve ben sebebi "pencere yanlış olabilir" diye
+tahmin etmiştim. **Tahminim yanlıştı.** Adaylar tek tek sınandı (3.891 olay, 6 yıl):
+
+| ayak kümesi varsayımı | 7/7 doğrulanan |
+|---|---|
+| plase alanlar (K125'in varsayımı) | **%0,0** |
+| ilk 1 (kazanan) | %0,0 |
+| ilk 3 | %0,0 |
+| **ilk 2** | **%28,5** |
+| ilk 2 + çıkanlar (kosmaz) | %29,7 |
+| **ilk 2 + ekürie ortakları** | **%49,0** |
+| **ilk 2 + çıkanlar + ekürie** | **%51,4** |
+
+**PENCERE DOĞRUYMUŞ:** kartın bütün 7'li dilimleri tarandı; eşleşen olayların **%100'ü**
+varsayılan pencerede (temettünün yayımlandığı koşuda biten 7 ardışık koşu). Başka hiçbir
+dilim hiç eşleşmedi. K94'ün kuralı bu bahiste de geçerli.
+
+**Nasıl bulundu:** eşleşmeyen ayaklardaki "fazladan" atların bitiş dereceleri incelendi —
+3.:358, 4.:333, 5.:358, 6.:323, 7.:235... **düz dağılım.** Sonuçla ilgisi olmayan bir şey
+demek bu; ekürie (birlikte oynanan atlar) imzası. `katilim.csv`'de `ekuri` sütunu vardı ve
+doğruladı. Ayrıca "eksik at" (ilk 2'de olup komboda olmayan) sayısı **3.889 olayda yalnız 2**
+— yani ilk 2 her zaman kombonun içinde.
+
+**KALAN %48,6 ÇÖZÜLEMEDİ.** Muhtemelen beraberlik ve TJK'nın yayımlamadığı başka ödeme
+kuralları. **Kalite kapısı (%90, K124 madde 7) geçilemiyor → kesinti ölçülemez → #17 KAPANDI.**
+
+### (b) #16 — TABELA ve SIRALI 5'Lİ: birim neden bulunamıyor, kesinleşti
+
+Birim fiyatı arşivden okumanın tek yolu tabanın dövülmesi (K124-EK E1). ÇİFTE'de işe yaramıştı.
+Burada işe yaramamasının sebebi bulundu — **bu bahisler küçük sahalı koşularda HİÇ oynatılmıyor:**
+
+| bahis | saha ≤6 koşularda olay | saha >6'da asgari temettü (2021→2026) |
+|---|---|---|
+| GANYAN (kontrol) | var, yılda 23-66 olay, **1,05 sabit** | 1,05 sabit ✓ |
+| TABELA BAHİS | **hiç yok** | 6,29 → 3,37 (dalgalı, taban yok) |
+| TABELA SIRASIZ | **hiç yok** | 0,21 → 3,15 (sürükleniyor) |
+| SIRALI 5 Lİ | **hiç yok** | 13,0 → 325,6 (sürükleniyor) |
+
+Küçük saha yok → temettü hiçbir zaman tabana inmiyor → birim okunamıyor. **Yapısal, geçici
+değil.** TJK resmî tarifeyi yayımlamadıkça (K86) bu üç bahsin kesintisi ölçülemez → **#16 KAPANDI.**
+
+*(TABELA SIRASIZ'ın 2021 asgarisi 0,21 TL — hiçbir birim fiyatın altında. O satır ayrıca
+iade/teselli kirlenmesi taşıyor; taban yöntemi orada iki ayrı sebeple çalışmıyor.)*
+
+### (c) YAN BULGU — ÜÇLÜ BAHİS'in 2021-22 birimi 1,25 TL
+
+Küçük sahalı koşularda ÜÇLÜ BAHİS'in asgarisi **2021'de 1,31 (8 olay), 2022'de 1,31 (7 olay)**
+— yığılma var, yani taban. **1,31 = 1,25 × 1,05.** Bu, K124'ün bağımsız yoldan çıkardığı
+"birim ≥ 1,25" alt sınırıyla **birebir tutuyor.** 2023'ten sonra sürüklenmeye başlıyor
+(2,36 → 10,50) → tarife yükselmiş, 2026 değeri hâlâ bilinmiyor.
+
+Küçük ama gerçek: **arşivden ikinci kez bir egzotik bahsin birim fiyatı okundu** (birincisi
+PLASE İKİLİ 2,00 TL, K124).
+
+### (d) İKİSİNİN DE YENİDEN AÇILMA ŞARTI
+
+TJK'nın resmî 2026 tarifesi bulunursa #16 derhal ölçülebilir. #17 için ayrıca ödeme kuralının
+(beraberlik/özel durumlar) belgelenmesi gerekir. **"Bir daha bakalım" gerekçe değildir.**

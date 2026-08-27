@@ -335,7 +335,16 @@ Bu bir strateji değişikliği değil, **gözlem** eklemesidir — kuponlara dok
 - **UYARI:** görünce oynamak isteme eğilimi gerçektir. K129 ölçtü ki AGF'yi kupona katmak
   **para kazandırmıyor.** Sütun eklenirse "bilgi" olarak kalır, karar kuralı olmaz.
 
-### 16. TABELA BAHİS ve SIRALI 5'Lİ — **BELİRSİZ**, birim fiyat bulunursa karara bağlanır
+### 16. ✅ KAPANDI (2026-08-27, K134) — ÖLÇÜLEMEZ: bu bahisler küçük sahada hiç oynatılmıyor
+
+> 🔒 **KAPANIŞ (K134):** birim fiyatı arşivden okumanın tek yolu tabanın dövülmesidir.
+> TABELA, TABELA SIRASIZ ve SIRALI 5'Lİ **saha ≤6 koşularda HİÇ oynatılmıyor** (0 olay)
+> → temettü hiçbir zaman tabana inmiyor → birim okunamaz. **Yapısal, geçici değil.**
+> **Açılma şartı:** TJK'nın resmî 2026 tarifesi bulunursa derhal ölçülebilir.
+> **Yan bulgu:** ÜÇLÜ BAHİS'in 2021-22 birimi **1,25 TL** okundu (asgari 1,31 = 1,25×1,05;
+> 8 ve 7 olaylık yığılma) — K124'ün bağımsız "birim ≥ 1,25" alt sınırıyla birebir tutuyor.
+
+### 16-özgün. TABELA BAHİS ve SIRALI 5'Lİ — **BELİRSİZ**, birim fiyat bulunursa karara bağlanır
 **Eklendi:** 2026-08-27 (K125) · **TETİK: KULLANICI / birim fiyat kaynağı bulunursa**
 
 K125 bu ikisi için yalnız **alt sınır** verebildi (birim ≥ 1,00 varsayımıyla): TABELA
@@ -357,7 +366,17 @@ kesintisinin egzotik bantta olması muhtemel** — ama bu bir tahmin, ölçüm d
 **Açılış şartı:** ya TJK'nın resmî tarifesi bulunmalı, ya da bu ailede kesintisi bağımsız
 yöntemle bilinen bir çapa üretilmeli.
 
-### 17. 7'Lİ PLASE — **ÖLÇÜLEMEDİ**, ayak eşleme teşhisi gerekiyor
+### 17. ✅ KAPANDI (2026-08-27, K134) — teşhis ilerledi (%26 → %51,4) ama kalite kapısı geçilemedi
+
+> 🔒 **KAPANIŞ (K134):** K125'in varsayımı yanlışmış — ayaklar **plase değil, İLK 2**'dir;
+> buna **çıkanlar (kosmaz)** ve **ekürie ortakları** eklenir. Doğrulama %26 → **%51,4**.
+> **Pencere DOĞRUYMUŞ:** kartın bütün 7'li dilimleri taranınca eşleşenlerin %100'ü
+> varsayılan pencerede çıktı (K94 kuralı). Benim "pencere yanlış olabilir" tahminim YANLIŞTI.
+> Kalan **%48,6** çözülemedi (muhtemelen beraberlik + yayımlanmayan ödeme kuralları)
+> → kalite kapısı (%90) geçilemiyor → kesinti ölçülemez.
+> **Açılma şartı:** TJK'nın ödeme kuralı belgelenirse.
+
+### 17-özgün. 7'Lİ PLASE — **ÖLÇÜLEMEDİ**, ayak eşleme teşhisi gerekiyor
 **Eklendi:** 2026-08-27 (K125) · **TETİK: SIRASI GELİNCE**
 
 K125'te 447 olayın yalnız **118'i (%26)** kalite kapısını geçti ve kesinti değeri saçma çıktı
