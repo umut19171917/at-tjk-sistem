@@ -5328,3 +5328,79 @@ düşüş 7 günlük ölçekte yok, 3 kuponluk ölçekte var ve o ölçek karar 
 **Genel kural (kayda geçiyor):** bot1 kuponunun tek bir kuponluk standart sapması **1,12
 ayak**. Üç kupona bakarak yön okumak, gürültüyü sinyal sanmaktır — bu, K57 (tek YURİBOYKA),
 K72 ve K132'nin (tek 539.029 TL'lik bilet) aynı tuzağı, ters yönden.
+
+
+## 2026-08-28 — K139: "Telegram bildirimi gelmedi" — boru SAĞLAM çıktı, asıl kusur GÖRÜNÜRLÜK yokluğuydu
+
+**K139 — Kullanıcı "altılı kuruldu bildirimi gelmedi" dedi. Denetlendi: bildirim yolunun her
+bileşeni çalışıyor ve test gönderimi başarılı. Asıl kusur başkaydı — **`gonder()` bütün
+hataları sessizce yutuyor, dönüş değerini kimse okumuyordu**, dolayısıyla "gitti mi gitmedi
+mi" sorusu **geriye dönük cevaplanamıyordu.** Görünürlük eklendi ve canlı akışta doğrulandı.**
+
+### (a) DENETİM — her bileşen tek tek sınandı (mesaj göndermeden)
+
+| kontrol | sonuç |
+|---|---|
+| 27 Ağu'da kupon kuruldu mu | ✓ 4 Altılı × 7 config = 28 kupon, 8 log satırı |
+| `bildir_kupon` çağrıldı mı | ✓ 8 kez (her log satırı = bir çağrı) |
+| mesaj kurulabiliyor mu | ✓ kuru çalıştırıldı: 2.547 karakter, sınır 3.900, hata yok |
+| bot token (`getMe`, salt-okunur) | ✓ geçerli — `Bygr_bot` |
+| hedef sohbet (`getChat`, salt-okunur) | ✓ geçerli |
+| at isimlerinde HTML kıran karakter | ✓ **arşivin tamamında sıfır** (`<`, `>`, `&`) |
+| canlı gönderim | ✓ **başarılı** (message_id 254) |
+
+**Yani boru sağlamdı.** Ve K136/K137'nin bugünkü değişiklikleri 19:43 sonrasıydı;
+bildirimler 13:31-18:46 arasındaydı → sebep onlar değil.
+
+### (b) ASIL KUSUR — iki sessiz yol
+
+```python
+    except Exception:
+        return False          # telegram_at.gonder: HER hatayi yutuyor
+```
+Dönüş değerini de hiçbir çağıran okumuyordu. **Ve** `bildir_kupon` patlarsa hata
+`print(...)`'e gidiyordu — zamanlanmış görev `pythonw` ile koştuğu için print **hiçbir yere**
+gitmiyor.
+
+Sonuç: 27 Ağu'nun 8 bildiriminin gönderilip gönderilmediği **tespit edilemez** durumdaydı.
+
+**Bu, K107'nin `takip.py`'de kapattığı hata sınıfının ta kendisi** — o taramada üç sessiz
+hata bulunup `_gorunur_log`'a bağlanmıştı; **telegram yolu atlanmış.**
+
+### (c) YAPILAN
+
+1. **`telegram_at.gonder()`** — her sonuç `veri/takip_log.txt`'ye (takip.py ile AYNI dosya,
+   kullanıcı tek yere bakıyor) yazılıyor: başarıda karakter sayısı, başarısızlıkta HTTP kodu
+   ve gövdesi. **Sözleşme değişmedi:** bool döner, asla hata fırlatmaz. Log yazımı kendi
+   `try`'ı içinde — log patlarsa gönderim etkilenmez. Config yoksa süreçte **bir kez** uyarır
+   (botu kurmamış biri için log şişmesin).
+2. **`altili_canli.py`** — `_tg_log` yardımcısı + iki `print` log'a çevrildi
+   (`kupon_zamani_kur` ve `sonucla_altili`'nin except blokları).
+
+### (d) GÜVENLİK — canlı kart akarken yapıldı (28 Ağu, 15 koşu bekliyordu)
+
+- Hata yolları **projenin içinde geçici kopyada** sınandı: config yok → bir kez loglandı,
+  ikinci çağrı tekrarlamadı; bozuk token → detayıyla loglandı; ikisinde de `False` döndü.
+- **AST denetimi:** `altili_canli.py`'de yalnız **3 blok** değişti — `_tg_log` (yeni),
+  `kupon_zamani_kur`, `sonucla_altili`. Başka hiçbir fonksiyona dokunulmadı.
+- 7 canlı modülün 7'si de import oldu. Yazımlar **atomik** (`os.replace`).
+
+### (e) CANLI DOĞRULAMA
+
+```
+15:15:56  telegram: gonderildi (128 karakter)     <- test
+15:16:07  telegram: gonderildi (1157 karakter)    <- GERCEK kupon bildirimi
+15:16:55  altili: 2 kupon kuruldu (raporlar/altili.html)
+```
+
+Üretimdeki tarama 2 kupon kurdu, bildirimi gönderdi ve **artık log'da görünüyor**.
+
+### (f) AÇIK KALAN — ve dürüstçe söylenmeli
+
+`telegram: gonderildi` **Telegram API'sinin 200 döndüğü** anlamına gelir; cihaza ulaştığı
+anlamına gelmez. 27 Ağu'nun 8 bildirimi için hâlâ kayıt yok — o gün için soru **cevapsız
+kalacak.** Bundan sonrası için cevaplanabilir; asıl kazanç bu.
+
+**Ders (kayda geçiyor):** "sessizce False dön" bir kolaylık değil, bir kör nokta. K107 bunu
+takip yolunda kapatmıştı; yan yollarda (bildirim, rapor) taranmamıştı. Benzer `except: pass`
+kalıpları için ayrı bir tarama yapılabilir.
