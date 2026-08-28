@@ -10,12 +10,26 @@ Kurulum:
   3) python telegram_at.py --kur <TOKEN>   -> chat_id'yi bulup config'i yazar, test mesaji atar.
 """
 import json
+import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime
 from pathlib import Path
 
 CFG = Path(__file__).resolve().parent / "telegram_config.json"
 API = "https://api.telegram.org/bot"
+# K139: gonderim sonucu GORUNUR olsun. takip.py ile AYNI dosya -> kullanici tek yere bakar.
+LOG = Path(__file__).resolve().parent.parent / "veri" / "takip_log.txt"
+_CFG_UYARISI_VERILDI = False
+
+
+def _log(msg):
+    """K139: tek satir log. KENDISI ASLA PATLAMAZ — gonderimi etkilemesi yasak."""
+    try:
+        with open(LOG, "a", encoding="utf-8") as f:
+            f.write(f"{datetime.now():%Y-%m-%d %H:%M:%S}  {msg}\n")
+    except Exception:                                        # noqa: BLE001
+        pass
 
 
 def _cfg():
@@ -29,9 +43,18 @@ def _cfg():
 
 
 def gonder(mesaj):
-    """Mesaji AT botundan chat_id'ye yollar. Config yoksa/hata olursa SESSIZCE False."""
+    """Mesaji AT botundan chat_id'ye yollar. Doner: True/False. ASLA hata firlatmaz.
+
+    K139: eskiden butun hatalar SESSIZCE yutuluyordu ve donus degerini kimse okumuyordu;
+    "bildirim gitti mi" sorusu geriye donuk cevaplanamiyordu. Artik her sonuc
+    veri/takip_log.txt'ye yazilir. Sozlesme DEGISMEDI (bool doner, hata firlatmaz)."""
+    global _CFG_UYARISI_VERILDI
     c = _cfg()
     if not c:
+        if not _CFG_UYARISI_VERILDI:                  # her cagride degil, surecte BIR kez
+            _CFG_UYARISI_VERILDI = True
+            _log("telegram: config yok/eksik -> bildirim GONDERILMIYOR "
+                 "(kurulum: python kod/telegram_at.py --kur <TOKEN>)")
         return False
     try:
         data = urllib.parse.urlencode({
@@ -40,8 +63,20 @@ def gonder(mesaj):
         }).encode()
         req = urllib.request.Request(f"{API}{c['token']}/sendMessage", data=data)
         with urllib.request.urlopen(req, timeout=15) as r:
-            return r.status == 200
-    except Exception:
+            ok = r.status == 200
+        _log(f"telegram: gonderildi ({len(mesaj)} karakter)" if ok
+             else f"telegram: GONDERILEMEDI (HTTP {r.status})")
+        return ok
+    except urllib.error.HTTPError as e:
+        detay = ""
+        try:
+            detay = e.read().decode("utf-8", "replace")[:200]
+        except Exception:                                    # noqa: BLE001
+            pass
+        _log(f"telegram: GONDERILEMEDI -> HTTP {e.code} {detay}")
+        return False
+    except Exception as e:                                   # noqa: BLE001
+        _log(f"telegram: GONDERILEMEDI -> {type(e).__name__}: {e}")
         return False
 
 

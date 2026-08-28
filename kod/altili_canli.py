@@ -388,6 +388,17 @@ def _at_ad_map(o):
     return m
 
 
+def _tg_log(msg):
+    """K139: telegram hatalari print'e degil TAKIP LOGUNA gitsin.
+    Zamanlanmis gorev pythonw ile kosuyor -> print HICBIR YERE gitmiyordu, hatalar goRUNMEZ
+    kaliyordu ("bildirim gelmedi" sorusu geriye donuk cevaplanamiyordu). Kendisi ASLA patlamaz."""
+    try:
+        import telegram_at
+        telegram_at._log(msg)
+    except Exception:                                        # noqa: BLE001
+        pass
+
+
 def bildir_kupon(pist, tarih, seq, o, sadece_cfg=None, dk_grup=30):
     """Kurulan (pist,seq) Altili kuponunu Telegram'dan NUMARA + ISIMLE bildir.
     K105: sadece_cfg verilirse YALNIZ o gecise ait config'ler bildirilir (iki zamanli
@@ -555,7 +566,7 @@ def kupon_zamani_kur(pistler, ymd, tarih, dk_kala=None):
                         try:
                             bildir_kupon(pist, tarih, seq, o, sadece_cfg=cfgler, dk_grup=gdk)
                         except Exception as e:
-                            print(f"  altili telegram bildirim hatasi: {type(e).__name__}")
+                            _tg_log(f"altili telegram BILDIRIM HATASI: {type(e).__name__}: {e}")
         except Exception as e:
             print(f"  altili kupon hatasi ({pist}): {type(e).__name__} - takip devam ediyor")
     if kurulan:
@@ -665,7 +676,7 @@ def sonucla_altili():
             try:
                 bildir_sonuc(t_, p_, s_)
             except Exception as e:
-                print(f"  altili sonuc telegram hatasi: {type(e).__name__}")
+                _tg_log(f"altili SONUC telegram hatasi: {type(e).__name__}: {e}")
     html_yaz(df)
     print(f"altili: {dolan} ayak sonuclandi (acik {int(df['sonuclandi'].isna().sum())}).")
     return dolan
