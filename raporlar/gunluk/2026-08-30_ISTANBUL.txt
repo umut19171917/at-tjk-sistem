@@ -1,0 +1,102 @@
+
+[14:00 tetik]  ISTANBUL  KOSU 1 (yaris 14:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  1  14:00  1300m  3 ve Yukarı İngilizler  (9 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    8 MASSAVA                  18.8      23.3   21.9   20.9   3.40  F
+    5 BAHAMA MAMA              24.5      22.4   19.6   24.2   3.80  
+    6 DEJAVU                   12.2      15.4   15.7   14.7   4.75  
+    2 ARNAVUT KIZ               6.4      12.6   14.9   12.6   5.00  
+    3 KYLIE VOM ELBE           12.9       8.3    8.0    9.4   9.35  >>CANLI
+    4 ONE PAGE                 10.6       6.1    6.1    6.5  12.25  >>CANLI
+    1 BODE A WINNER             8.9       5.6    5.8    6.5  12.90  
+    7 HERKHAN STAR              5.0       5.5    6.6    4.8  11.30  
+    9 POWERFULL LADY            0.8       0.8    1.4    0.6  52.70  
+
+[14:30 tetik]  ISTANBUL  KOSU 2 (yaris 14:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  2  14:30  1600m  3 Yaşlı İngilizler  (9 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    1 MAKİNİST                 19.0      28.2   27.2   21.8   2.00  F
+    6 SÜPER HAN                13.9      26.2   27.2   14.2   2.00  F
+    5 DOĞANHAN                 19.1      17.9   16.7   24.0   3.25  
+    7 CASH FOR YOU             14.8      10.4   10.0   12.1   5.45  
+    3 ANGEL OF TIME             9.9       5.9    6.0   10.6   9.05  
+    2 SHINING LIFE              6.7       4.3    4.8    7.4  11.30  
+    4 LADY BEGÜM                6.1       3.9    4.4    7.5  12.25  
+    8 HILDA                     9.5       2.0    1.9    1.7  28.80  
+    9 BRILLIANCE                1.1       1.1    1.7    0.6  31.35  
+
+[15:00 tetik]  ISTANBUL  KOSU 3 (yaris 15:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  3  15:00  1200m  2 Yaşlı İngilizler  (6 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    2 COSE DELLA VITA          40.9      54.2   49.8   51.8   1.50  F
+    1 MAYBACK                  28.2      20.0   18.9   20.8   3.95  
+    6 MEYDAN OKU                6.3       8.5   11.1   11.7   6.70  
+    4 VICTORY MARIA            12.1       7.5    8.3    4.6   9.05  
+    5 LA MUNECA                 8.7       7.5    8.9   10.0   8.40  
+    3 RAZENOID                  3.8       2.2    3.0    1.1  24.80  
+
+[15:30 tetik]  ISTANBUL  KOSU 4 (yaris 15:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  4  15:30  1200m  3 Yaşlı Araplar  (10 at)
+   [DUSUK GUVEN: ilk-kosu pay 100%, ort.gecmis 0.0 kosu -> Bot1 zayif, kamuya yaslan]
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    5 CANOZANIM                10.8      19.0   19.4   15.8   3.85  F
+    7 FAROZ                    13.0      17.7   17.4   17.5   4.30  
+    9 SARAYBURNU               16.3      14.9   14.0   16.8   5.35  
+    3 BALKIBEY                 14.4      10.9   10.3   14.1   7.25  
+    2 BABA EMİRHAN              8.0      10.4   11.0   12.0   6.80  
+   10 TUGUNTAY                 10.4       9.0    8.9    8.8   8.35  
+   11 DOĞANGİR                 10.6       6.1    6.0    5.5  12.45  >>CANLI
+    4 BİRTUGAN                  6.2       5.6    6.1    4.7  12.35  
+    1 AHİADAM                   5.6       3.5    3.7    2.3  19.95  
+    8 KOCA YÜREKLİ              4.8       2.9    3.2    1.7  23.40  
+
+[17:00 tetik]  ISTANBUL  KOSU 7 (yaris 17:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  7  17:00  2000m  4 Yaşlı Araplar  (5 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    1 SAÇANŞAH                 33.8      35.0   33.2    -     2.25  F
+    6 SÜPER SONİK              28.5      25.4   24.5    -     3.05  
+    5 KRAL SULTAN              25.8      25.3   24.9    -     3.00  
+    4 GRİNGO                    8.3      10.1   11.9    -     6.30  
+    3 ÇELİKGİLLER               3.6       4.2    5.5    -    13.55  
+
+[17:30 tetik]  ISTANBUL  KOSU 8 (yaris 17:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  8  17:30  1200m  3 Yaşlı Araplar  (10 at)
+   [DUSUK GUVEN: ilk-kosu pay 100%, ort.gecmis 0.0 kosu -> Bot1 zayif, kamuya yaslan]
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    1 DELİ MERCAN              14.8      34.7   34.4    -     2.15  F
+    4 HIZLI YASİN              13.9      33.6   33.6    -     2.20  
+    8 ŞAFAKBERK                15.2       9.7    9.1    -     8.10  >>CANLI
+    9 TEKTAY                    6.8       6.5    7.0    -    10.55  
+    2 EDESSA KRALI              6.9       4.6    4.9    -    15.25  
+    6 KAHRAMAN FATİH            4.9       3.0    3.3    -    22.15  
+    5 KADERİ GÜZEL              9.3       2.9    2.9    -    25.70  
+   10 SÜPER NİL                14.8       2.0    1.8    -    41.25  >>CANLI
+    7 SENAN                     6.3       1.4    1.5    -    49.75  
+    3 EYMEN EFE                 7.1       1.4    1.4    -    51.65  
+
+[18:00 tetik]  ISTANBUL  KOSU 9 (yaris 18:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  9  18:00  1500m  4 ve Yukarı Araplar  (16 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    1 FISTIK ÇAMI              24.3      20.1   16.6    -     4.20  F
+   10 SAKIZ ADASI               9.9      10.3    9.7    -     7.15  
+    6 SEÇİLKIZ                  7.6       9.5    9.5    -     7.35  
+    8 IĞDIR KIZI                6.6       8.7    8.7    -     7.95  
+    7 SEMRAKAYA                 8.3       7.3    7.0    -     9.90  
+    4 GÜLALP KIZI               5.0       6.8    7.2    -     9.65  
+   14 MENDERES KIZI             3.9       6.6    7.2    -     9.60  
+    2 KOŞAN NUR                 2.8       6.0    7.0    -     9.90  
+   13 PELİTSIRTI                4.4       5.8    6.2    -    11.15  
+    9 MAVİŞİN KIZI              6.6       5.1    5.1    -    13.75  
+   15 TUSEM KIZ                 2.5       3.3    3.9    -    18.05  
+    5 GÜL AYALI                 5.1       3.1    3.2    -    21.65  
+   11 HADEHANIM                 4.9       2.1    2.2    -    31.95  
+   12 DİLHUN                    1.1       2.0    2.6    -    26.95  
+   16 CÜDA                      0.8       1.7    2.4    -    28.50  
+    3 PAKELİF                   6.0       1.5    1.4    -    48.45  
