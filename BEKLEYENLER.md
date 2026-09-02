@@ -137,7 +137,8 @@ kurmaz. Bu karardan SONRA biriken veriyle sınanacak.
   pist elemek örneklemi daraltır ve öğrenmeyi yavaşlatır. Doğrulanırsa yapılacak iş
   MEKANİZMAYI ölçmektir (hipotez: havuz derinliği ↑ → piyasa verimliliği ↑ → K112).
 
-**Mevcut hız:** İstanbul'da ~792 ayak / 5 hafta → ~400 yeni ayak ≈ **2,5-3 hafta** (Ekim ortası).
+**Mevcut hız (K144, 2 Eyl ÖLÇÜLDÜ):** 252/400 ayak birikti (%63) → **~7 Eylül'de dolar.**
+*(Önceki not "Ekim ortası" diyordu — aritmetik hatalıydı: 26 Ağu + 3 hafta = 16 Eylül. Bkz. K144.)*
 
 ### 15. ✅ AÇILDI ve AYNI GÜN KAPANDI (2026-08-27, K125 → K126 → K127) — ÇİFTE REDDEDİLDİ
 
@@ -406,7 +407,10 @@ Yıllık büyüme hızı → ne zaman sıkışır. **Neden:** bilinmezse sürpri
 `kod/karar_ara.py`: K numarası / anahtar kelime / tarih ile KARARLAR.md'de hızlı arama.
 **Neden:** 376 KB, 146 karar; "bot1'in kârına dair hangi kararlar var" sorusu dakikalar sürüyor.
 
-**22-G · Karar düzeltme grafiği** — *~1 saat · TETİK: SIRASI GELİNCE*
+**22-G · ✅ YAPILDI (2026-09-02, K145)** — `kod/duzeltme_haritasi.py` → `raporlar/duzeltme_haritasi.html`.
+16 kayıtlı düzeltme: ölçüm 5 · kapsam 4 · varsayım 4 · aşırı 2 · veri 1.
+
+**22-G-özgün · Karar düzeltme grafiği** — *~1 saat*
 Hangi K hangi K'yı düzeltti haritası (K93→K104, K19→K33, K74→K129, K125→K134, K118→K132…).
 **Neden:** projenin epistemik omurgası görünür olsun; hangi bulgunun üstü çizilmiş, tek bakışta.
 
@@ -415,7 +419,11 @@ Hangi K hangi K'yı düzeltti haritası (K93→K104, K19→K33, K74→K129, K125
 "davranış değişmedi" kanıtı için standart araç hâline getirilsin (CLI + kısa kullanım notu).
 **Neden:** zaten üç kez lazım oldu; %80'i hazır.
 
-**22-I · Açık deney durum sayfası** — *~2 saat · TETİK: SIRASI GELİNCE*
+**22-I · ✅ YAPILDI (2026-09-02, K144)** — `kod/deney_durum.py` → `raporlar/deney_durum.html`.
+**İlk çalıştırmada kayıp yakaladı:** #11'in kendi notu "Ekim ortası" diyordu, ölçülen doluş **~7 Eylül**.
+25 Eylül'den ÖNCE üç tetik doluyor: #4 (iki config, ~5 Eyl) ve #11 (~7 Eyl).
+
+**22-I-özgün · Açık deney durum sayfası** — *~2 saat*
 BEKLEYENLER'deki açık maddelerin tetikleri ve "ne kadar doldu" durumu tek sayfada
 (#11 İstanbul ≥400 ayak · #18 ÇİFTE ≥1.000 fırsat · #4 zamanlama ~60 kupon…).
 **Neden:** 7+ açık madde var, sayısal tetiklerin dolduğu unutulabiliyor.

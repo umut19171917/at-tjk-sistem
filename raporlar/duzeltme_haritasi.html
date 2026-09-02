@@ -1,0 +1,48 @@
+<title>Düzeltme Haritası</title>
+<style>
+body{font:15px/1.65 system-ui,Segoe UI,Arial;margin:0;background:#f7f8fa;color:#151b23}
+.w{max-width:920px;margin:0 auto;padding:34px 24px 64px}
+h1{font-size:24px;margin:0 0 4px}
+.alt{color:#5a6673;font-size:13.5px;margin:0 0 8px}
+.not{background:#fff8e1;border-left:3px solid #d9a520;padding:14px 18px;margin:22px 0;
+border-radius:0 3px 3px 0;font-size:13.5px;color:#4a4130}
+.k{display:flex;gap:14px;background:#fff;border:1px solid #dde2e8;border-radius:4px;
+padding:16px 18px;margin-bottom:10px;align-items:flex-start}
+.ok{font-family:ui-monospace,Consolas,monospace;font-size:13px;white-space:nowrap;
+padding-top:2px;min-width:150px}
+.ok b{color:#151b23} .ok span{color:#8a94a0}
+.rz{display:inline-block;padding:2px 9px;border-radius:11px;font-size:11px;font-weight:600;
+color:#fff;margin-bottom:6px}
+.mt{font-size:14px;color:#3c4753}
+.oz{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 26px}
+.oz div{background:#fff;border:1px solid #dde2e8;border-radius:4px;padding:10px 16px;font-size:13px}
+.oz b{font-size:19px;display:block;font-variant-numeric:tabular-nums}
+</style>
+<div class=w><h1>Karar düzeltme haritası</h1>
+<p class=alt>Hangi karar hangisini düzeltti veya çürüttü · 16 kayıt · 02.09.2026</p>
+<div class=oz>
+<div><b style='color:#0b6b62'>5</b>ölçüm</div>
+<div><b style='color:#5a6673'>4</b>kapsam</div>
+<div><b style='color:#a63a2b'>4</b>varsayım</div>
+<div><b style='color:#7a5c10'>2</b>aşırı</div>
+<div><b style='color:#3b5bA9'>1</b>veri</div>
+</div>
+<div class=not><b>Bu liste elle küre edildi.</b> Serbest metinden otomatik çıkarım kırılgandır ve sessizce yanlış cevap verir — bedeli aynı gün ödendi: <code>deney_durum.py</code>'nin ilk sürümü #18 için '216 gün' dedi, doğrusu ~93'tü. Kırılgan otomasyon yerine açık kayıt tercih edildi.</div>
+<div class=k><div class=ok><b>K130</b> <span>düzeltti</span> <b>K3</b></div><div><span class=rz style='background:#3b5bA9'>veri</span><div class=mt>K3 &#x27;program feed&#x27;inin GANYAN&#x27;ı canlı muhtemel orandır&#x27; demişti. Ölçüldü: 6 yılın %100&#x27;ünde KAPANIŞ fiyatının kopyası. Backtest&#x27;in piyasa terimi iyimser.</div></div></div>
+<div class=k><div class=ok><b>K33</b> <span>düzeltti</span> <b>K19</b></div><div><span class=rz style='background:#5a6673'>kapsam</span><div class=mt>K19 özellik mühendisliğini açmıştı. 8 test sonunda ön-taahhütle KAPATILDI: hiçbir kamuya-açık-veri özelliği Bot2&#x27;yi oynatmıyor.</div></div></div>
+<div class=k><div class=ok><b>K38</b> <span>kendi içinde</span></div><div><span class=rz style='background:#0b6b62'>ölçüm</span><div class=mt>`par` tablosunda look-ahead bulundu (eğitim dönemi galip zamanları hız özelliklerine sızıyordu). Kendi içinde düzeltildi ve etkisi ölçüldü.</div></div></div>
+<div class=k><div class=ok><b>K104</b> <span>düzeltti</span> <b>K93</b></div><div><span class=rz style='background:#a63a2b'>varsayım</span><div class=mt>K93 &#x27;ganyan −%25,4, kesinti %25,5 — birebir tuttu&#x27; demişti. K104 gerçek ganyan kesintisini %28,3 ölçtü; eşleşme kısmen tesadüfmüş.</div></div></div>
+<div class=k><div class=ok><b>K107</b> <span>düzeltti</span> <b>K106</b></div><div><span class=rz style='background:#7a5c10'>aşırı</span><div class=mt>K106&#x27;daki A0 ifadesi fazla güçlüydü. Güç kapısı eklendi: n=4&#x27;te sonuç 4-0 çıksa bile p=0,125 — test hiçbir sonuçla anlamlı olamaz.</div></div></div>
+<div class=k><div class=ok><b>K110</b> <span>düzeltti</span> <b>K52/K57/K92</b></div><div><span class=rz style='background:#0b6b62'>ölçüm</span><div class=mt>Tam kod incelemesinde ÜÇ ölçüm-etkileyen hata bulundu (birim fiyat, temettü çarpımı, bayat veri). Backtest ROI&#x27;leri yeniden hesaplandı: −%32,3 → −%36,5.</div></div></div>
+<div class=k><div class=ok><b>K120</b> <span>düzeltti</span> <b>K85</b></div><div><span class=rz style='background:#0b6b62'>ölçüm</span><div class=mt>K85&#x27;in &#x27;5&#x27;li/4&#x27;lü de oynasaydık&#x27; hesabı düzeltildi: 94.293 TL DAHA kaybedilirdi.</div></div></div>
+<div class=k><div class=ok><b>K121</b> <span>düzeltti</span> <b>—</b></div><div><span class=rz style='background:#5a6673'>kapsam</span><div class=mt>25 Ağu uyarısı &#x27;kod hatası&#x27; sanılabilirdi. Teşhis: kod doğru, 15 dk kolu YAPISAL tek nokta arızası — Altılı postaları %100 çeyrek saatte, pencereye tek geçiş düşüyor.</div></div></div>
+<div class=k><div class=ok><b>K125</b> <span>düzeltti</span> <b>K124</b></div><div><span class=rz style='background:#0b6b62'>ölçüm</span><div class=mt>K124&#x27;ün çapası iki kez düştü (+51, +8,7 puan). Yanlılığın rastgele değil ayak sayısıyla doğrusal olduğu görüldü → kalibre ölçer kuruldu, LOO ile doğrulandı.</div></div></div>
+<div class=k><div class=ok><b>K129</b> <span>düzeltti</span> <b>K74</b></div><div><span class=rz style='background:#a63a2b'>varsayım</span><div class=mt>K74&#x27;ün başlık rakamı (AGF payı ≤%2 olan atlar 2,73 kat kazanıyor) 2025-26&#x27;da REPLİKE OLMADI: oran 0,87. K74&#x27;ün (1) numaralı tablosu şüpheli işaretlendi.</div></div></div>
+<div class=k><div class=ok><b>K132</b> <span>düzeltti</span> <b>K131</b></div><div><span class=rz style='background:#5a6673'>kapsam</span><div class=mt>K131 bot1&#x27;i bot2&#x27;nin dağıtıcı eşikleriyle yarıştırmıştı (kullanıcı yakaladı). Ölçek-bağımsız açgözlüyle tekrarlandı: handikap gerçekti (−0,27 ayak) ama hüküm değişmedi.</div></div></div>
+<div class=k><div class=ok><b>K132</b> <span>düzeltti</span> <b>K118</b></div><div><span class=rz style='background:#5a6673'>kapsam</span><div class=mt>K118 bot1_1800&#x27;ü emeklilik adayı ilan etmişti. K132 adil kıyasta bot1 puanının bot2&#x27;den anlamlı KÖTÜ olduğunu gösterdi; para üstünlüğü tek 539.029 TL&#x27;lik bilete dayanıyor.</div></div></div>
+<div class=k><div class=ok><b>K134</b> <span>düzeltti</span> <b>K125</b></div><div><span class=rz style='background:#a63a2b'>varsayım</span><div class=mt>K125 7&#x27;Lİ PLASE ayaklarını &#x27;plase alanlar&#x27; saymıştı → %0 doğrulama. Doğrusu İLK 2 + çıkanlar + ekürie ortakları: doğrulama %26 → %51,4. Pencere (K94) doğruymuş.</div></div></div>
+<div class=k><div class=ok><b>K102</b> <span>kendi içinde</span></div><div><span class=rz style='background:#a63a2b'>varsayım</span><div class=mt>&#x27;Ata özel kulvar tercihi kariyer_galip_oran ile eşdoğrusaldır&#x27; tahmini YANLIŞ çıktı — eşdoğrusal değilmiş, ama yine de eklenmedi (katkı yok).</div></div></div>
+<div class=k><div class=ok><b>K143</b> <span>düzeltti</span> <b>2 Eyl değerlendirmesi</b></div><div><span class=rz style='background:#7a5c10'>aşırı</span><div class=mt>Değerlendirme &#x27;çokluluk hesaplanmadı, birikmiş güven şişkin&#x27; demişti. Ölçüldü: düzeltmeden düşen bulgulara proje ZATEN dayanmamıştı. İddia GERİ ALINDI.</div></div></div>
+<div class=k><div class=ok><b>K144</b> <span>düzeltti</span> <b>K122</b></div><div><span class=rz style='background:#0b6b62'>ölçüm</span><div class=mt>#11&#x27;in kendi notu tetiği &#x27;Ekim ortası&#x27; diyordu; ölçüm ~7 Eylül gösterdi. Madde sırası geldiği hâlde kenarda bekliyordu.</div></div></div>
+<p class=alt style='margin-top:24px'><code>kod/duzeltme_haritasi.py</code> — salt-okunur. Yeni bir düzeltme olduğunda <code>D</code> listesine eklenir.</p>
+</div>

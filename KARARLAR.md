@@ -5690,3 +5690,62 @@ duruyor — biri de bugün K142 ile kapatıldı.
 
 **"bot1'in isabete katkısı" (p=0,022) BH'den düşüyor.** Bu bulgu K112'de α tartışmasında
 kullanılmıştı. Hüküm değişmiyor (α zaten değiştirilmedi) ama **bulgu zayıf işaretlenmeli.**
+
+
+## 2026-09-02 — K144/K145: 22-I ve 22-G yapıldı — ve #11'in "Ekim ortası" notu YANLIŞMIŞ
+
+**K144 (22-I) — Açık deneylerin tetik doluluk tablosu kuruldu ve ilk çalıştırmada bir kayıp
+yakaladı: **#11 İSTANBUL maddesi kendi notunda "Ekim ortası" diyordu; gerçek doluş ~7 Eylül.**
+Yani madde, sırası geldiği hâlde kenarda bekliyordu. K145 (22-G) — 16 kayıtlı karar
+düzeltmesinin haritası çıkarıldı.** Araçlar: `kod/deney_durum.py`, `kod/duzeltme_haritasi.py`
+(ikisi de salt-okunur, yeni HTML çıktısı üretir, mevcut hiçbir rapora dokunmaz).
+
+### (a) K144 — TETİK DURUMU (2 Eylül)
+
+| madde | tetik | durum | doluluk | tahmini doluş |
+|---|---|---|---|---|
+| **#4** zamanlama (`orta_15`) | sayısal | 53/60 kupon | **%88** | **~5 Eylül** |
+| **#4** zamanlama (`acgozlu900_15`) | sayısal | 52/60 kupon | **%87** | **~5 Eylül** |
+| **#11** İSTANBUL aykırısı | sayısal | 252/400 ayak | **%63** | **~7 Eylül** |
+| #18 ÇİFTE bot1 deseni | sayısal | ~61/1.000 fırsat | %6 | ~4 Aralık |
+| ZAMANLI-4 karar noktası | tarih | 25 Eyl 2026 | — | 23 gün |
+| #6 ağırlık yeniden fit | tarih | 25 Eyl 2026 | — | 23 gün |
+| ZAMANLI-6 dış yedek | tarih | 27 Eki 2026 | — | 55 gün |
+
+**BULGU: 25 Eylül'den önce ÜÇ tetik doluyor** (#4 iki config + #11). Kararın önüne bunların
+sonucu gelecek — yani 25 Eylül'de S1 (kenar dirildi mi?) sorusu **boş elle** sorulmayacak.
+
+**#11'İN NOTU YANLIŞTI.** Madde *"~400 yeni ayak ≈ 2,5-3 hafta (Ekim ortası)"* diyordu; ama
+26 Ağustos + 3 hafta = **16 Eylül**, Ekim ortası değil. Aritmetik ile sonuç birbirini
+tutmuyordu ve madde bu yüzden "sırası gelmedi" diye kenarda duruyordu. Ölçülen hızla doluş
+**~7 Eylül**. Bu, aracın var oluş gerekçesinin ilk çalıştırmada kanıtlanmasıdır.
+
+**ARACIN KENDİ HATASI DA AYNI GÜN YAKALANDI:** ilk sürüm hızı her tetiğin kendi başlangıcı
+yerine kupon dosyasının TAMAMININ aralığından hesaplıyordu → #18 için "216 gün (Nisan 2027)"
+dedi. Doğrusu ~93 gün (4 Aralık) ve bu, BEKLEYENLER'in kendi "Kasım sonu" tahminiyle uyumlu.
+Düzeltildi, gerekçe `tahmin_gun` docstring'ine yazıldı.
+
+### (b) K145 — DÜZELTME HARİTASI (16 kayıt)
+
+| tür | n | anlamı |
+|---|---|---|
+| **ölçüm** | 5 | sayı yanlıştı, araç/kod hatası düzeltildi |
+| **kapsam** | 4 | bulgu doğru ama iddia edilen alandan dar çıktı |
+| **varsayım** | 4 | inanılan bir şey ölçülünce çürüdü |
+| **aşırı** | 2 | ifade fazla güçlüydü, geri çekildi |
+| **veri** | 1 | veri hattında kusur bulundu |
+
+Öne çıkanlar: **K130→K3** (ganyan_muhtemel aslında kapanış) · **K129→K74** (2,73 replike
+olmadı) · **K134→K125** (7'Lİ PLASE ayak tanımı) · **K104→K93** (kesinti eşleşmesi kısmen
+tesadüf) · **K143→2 Eyl değerlendirmesi** (çokluluk iddiam geri alındı) ·
+**K144→K122** (#11'in tetik tahmini).
+
+**Neden elle küre edildi:** serbest metinden otomatik çıkarım kırılgandır ve sessizce yanlış
+cevap verir — bedeli aynı gün `deney_durum.py`'de ödendi. Kırılgan otomasyon yerine açık
+kayıt tercih edildi; yeni düzeltme olduğunda `D` listesine eklenir.
+
+### (c) 25 EYLÜL KARAR PAKETİNİN DURUMU
+
+K142'de ölçüt yazıldı · K143'te çokluluk kapatıldı · K144'te tetik tablosu · K145'te düzeltme
+haritası. **Kalan:** #4 ve #11 sonuçları (Eylül başı, kendiliğinden), #6 ağırlık fit (25 Eyl),
+ve isteğe bağlı 22-C/22-E (arşiv sigortası).
