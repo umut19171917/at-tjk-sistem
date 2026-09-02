@@ -5490,3 +5490,84 @@ K122'nin uyardığı gibi ham ROI'ye bakılmadı çünkü 6/6 varyansıyla savru
 **isabet** — ve isabette düşüş yok.
 
 Salt-okunur; canlıya/kuponlara hiçbir dokunuş yok.
+
+
+## 2026-09-02 — K141: Dış teknik öneri listesi denetlendi — 9 madde alındı, ~50 madde ertelendi
+
+**K141 — Kullanıcı `BEKLEYENLER_ÖNERİ_TEKNİK` başlıklı ~60 maddelik bir teknik yol haritası
+getirdi ve analiz istedi. Denetim üç eksende yapıldı: (a) olgu doğruluğu — atıflar test
+edilebilir olduğu için tek tek sınandı, **10 maddede yanlış** çıktı; (b) kapsam — dünkü K141-öncesi
+değerlendirmenin yedi bulgusundan **yalnız birini** ele alıyor ve **25 Eylül karar noktasını hiç
+anmıyor**; (c) ölçek — ~45 iş günü öneriyor, proje ise **2 aylık**. Buna karşılık belgenin
+"yapılmaması gerekenler" bölümü gerçekten iyi ve projenin bulgularıyla tutarlı.
+**9 madde alındı (~5 gün), gerisi gerekçeli ertelendi.**
+
+### (a) OLGU DENETİMİ — 10 yanlış
+
+| iddia | gerçek |
+|---|---|
+| "5,5 yıl birikim" · "5 yılda 140 karar" · "token 5 yıldır aynı" · "5 yıl sonra geri dönerse" | Proje **2 aylık** (ilk karar 29 Haz 2026, ilk commit 2 Tem 2026). 5,5 yıl olan **yarış verisinin** kapsamı. Hata 4+ yerde, birkaç öneriyi (D6 token rotasyonu, F3 "gelecekteki geliştirici") doğrudan doğuruyor |
+| "K39'da KOCAELİ 2. Altılı 15 dk penceresi" | O olay **K121**; K39 dayanıklılık/parse kararı |
+| "K82 hasar raporundaki 'PC kapalı' sorunları" | K82 **kesintinin sessiz maliyeti** hakkında; PC arızasıyla ilgisi yok |
+| "K73/K75 havuz yanlılığı ölçüldü, **mekanizması ölçülmedi**" | K75 zaten mekanizma araştırması ve **K112 mekanizmayı teslim etti**: *"ölçülmüş bir düzeltmenin altında artık ölçülmüş bir mekanizma var"* |
+| "5 aktif config" (C5) | **7** aktif config |
+| "12+ test yapıldı" (B4) | Yalnız hüküm kelimeleri: 19 GEÇTİ · 12 DÜŞTÜ · 22 KAPANDI |
+| "`model.predict` vektörize edilsin" (G3) | **Böyle bir fonksiyon yok** |
+| "`takip.ayristir_dk_grup` test edilsin" (E1) | **Yok.** Gerçekleri `dk_gruplari` / `grup_konfig`, hem de `altili_canli.py`'de |
+| "altili_tam.csv 6,7 MB · defter.csv 5,4 MB" (D3) | Gerçek **608 KB** ve **1,0 MB** — 11 ve 5 kat sapma |
+| "Open-Meteo ile going/hava özelliği ekle" (A7-D1) | Projede **zaten** going/hava/sıcaklık/nem var; **K33 `going_uygunluk`'u test edip eşdoğrusal diye reddetti**. Üstelik belgenin **kendi !5 kuralına** aykırı |
+
+**Doğru çıkanlar:** K17=DBAKIR↔DIYARBAKIR · K107=sessiz gün kaybı · K130 · K86/K134 ·
+KARARLAR ~376 KB · ozellikli.csv 121k satır · K96'nın α/γ sayıları. Yani belge projeyi
+**okumuş** ama yer yer örüntü tamamlamış.
+
+### (b) KAPSAM — asıl kusur
+
+**~60 maddede "25 Eylül" bir kez bile geçmiyor.** Projenin 23 gün sonraki en önemli kararı
+(devam / talep-üzerine / arşivle) belgenin dışında; liste **devam edileceğini aksiyom** sayıyor.
+
+Aynı gün yapılan bağımsız değerlendirmenin yedi bulgusundan kaçını ele alıyor:
+
+| bulgu | belgede |
+|---|---|
+| sistem piyasanın %96 kopyası (769 canlı koşu) | — |
+| −427.655 ₺ · ROI −%64,7 · vergiden ayırt edilemiyor | — |
+| deney ~20 kat yetersiz güçte (±5 puan için ~15.000 kupon / 13,6M ₺ / ~3 yıl) | — |
+| ölçü kayması (ROI → ayak isabeti) | — |
+| **25 Eylül'ün ölçütü yazılmamış** | — |
+| çokluluk hesaplanmamış | **B4** ✓ |
+| tek bilet sorunu yapısal | — |
+
+**Yedide bir.**
+
+### (c) ÖLÇEK — 45 iş günü, 2 aylık projeye
+
+Tahminlerin toplamı **~45 iş günü ≈ 9 hafta.** Proje 2 aylık. Yani öneri, projeyi
+sağlamlaştırmak için **projenin var olduğu süreden fazla** zaman harcamayı öneriyor —
+kâğıt parayla çalışan, ölçülmüş kenarı sıfır olan, arşivlenmesi masada olan bir sistem için.
+
+**Kategori hatası:** mypy strict · pre-commit · GitHub Actions CI · sürüm etiketleme ·
+feature flag · PR şablonu — bunlar **çok kişili, üretimde, SLA'lı bir ürün** için doğru
+pratikler. Burada olan şey tek kişilik bir araştırma defteri. Belge hiçbir yerde *"bir hata
+gerçekte neye mal oluyor?"* diye sormuyor; cevap K135'te ölçülmüştü: favori-devri kusurunun
+para etkisi **tam olarak sıfır**.
+
+### (d) BELGENİN İYİ YANI — Bölüm K
+
+**"Yapılmaması gerekenler" bölümü belgenin en değerli parçası** ve bir yapılacaklar listesinde
+en nadir şey: yapılmayacaklar listesi. Beş maddesi de projenin kendi bulgularıyla tutarlı —
+!1 (yeni model mimarisi: K33/K96/K102/K128 ile uyumlu) · !2 (sentiment) · !3 (yabancı veri
+harmanı) · !4 (geçmişe veri toplama) · !5 ("belki" gerekçeli config: K33/K52/K100/K105 ruhu).
+**Bu bölüm aynen kabul ediliyor ve projenin kendi kuralları arasına yazılıyor.**
+
+### (e) HÜKÜM
+
+**9 madde alındı** (~5 gün, hepsi ucuz ve yüksek değer/maliyet): B4 · A3 · A6 · D4 · D3 ·
+C3 · C4 · E5 · I3 → BEKLEYENLER **#22**'ye ön-kayıtlı tetikleriyle yazıldı.
+
+**~50 madde ertelendi** — hiçbiri kötü fikir değil; bu projenin bu aşamasında yanlış maliyet.
+Erteleme gerekçesi #22'nin sonunda kayıtlı, böylece belge kaybolmuyor ama liste de şişmiyor.
+
+**Ders (kayda geçiyor):** dışarıdan gelen bir yol haritası, projenin **vokabülerini** kullanıyor
+diye projenin **tarihini** doğru bildiği varsayılmamalı. Atıflar test edilebilirdi ve
+test edilince onda biri yanlış çıktı. Aynı disiplin (çapa testi) belgelere de uygulanmalı.

@@ -360,6 +360,85 @@ Bu bir strateji değişikliği değil, **gözlem** eklemesidir — kuponlara dok
 - **UYARI:** görünce oynamak isteme eğilimi gerçektir. K129 ölçtü ki AGF'yi kupona katmak
   **para kazandırmıyor.** Sütun eklenirse "bilgi" olarak kalır, karar kuralı olmaz.
 
+### 22. TEKNİK YOL HARİTASI — dış öneriden 9 madde alındı, ~50 madde ertelendi (K141)
+**Eklendi:** 2026-09-02 (K141) · **Kaynak:** kullanıcının getirdiği `BEKLEYENLER_ÖNERİ_TEKNİK`
+
+Belge denetlendi (K141): 10 olgu hatası bulundu, 25 Eylül karar noktasını hiç anmıyor,
+~45 iş günü öneriyor (proje 2 aylık). **Aşağıdaki 9 madde alındı — hepsi ucuz, hepsi
+projenin kendi bulgularına bağlı.** Toplam ~5 gün.
+
+**22-A · Proje seviyesinde çokluluk düzeltmesi (FDR)** — *~yarım gün · TETİK: SIRASI GELİNCE*
+Tüm K hipotezleri (açık + kapalı) için Benjamini-Hochberg; "hangileri proje ölçeğinde
+ayakta kalır" hesabı. **Neden birinci sırada:** bağımsız değerlendirmede de aynı boşluk
+tespit edildi — Bonferroni test yığını içinde uygulanıyor ama proje ölçeğinde hiç uygulanmadı.
+*Ön-kayıt: düzeltme sonrası ayakta kalmayan bulgular KARARLAR'da işaretlenir, silinmez.*
+
+**22-B · Sessiz veri bozulma tarayıcısı** — *~2-3 gün · TETİK: SIRASI GELİNCE*
+Günlük: beklenen satır sayısı, NA oranı, kritik sütun değer aralıkları, çapraz-tablo
+tutarlılığı. Sapma küçükse rapor, büyükse alarm (Telegram — K139'da boru sağlamlaştırıldı).
+**Neden:** K130 (ganyan_muhtemel = kapanış) altı yıl fark edilmedi; K107 sessiz gün kaybıydı.
+*Ön-kayıt: eşikler tarayıcı yazılmadan ÖNCE sabitlenir, ilk çıktı görülüp ayarlanmaz.*
+
+**22-C · Yeniden üretilebilirlik kontrolü** — *~yarım gün + kazı süresi · TETİK: SIRASI GELİNCE*
+Boş makinede `git clone` → `pip install -r requirements.txt` → boru hattı → aynı dosyalar.
+**Neden:** `veri/ham` (1,1 GB) git dışında ve tek diskte; TJK arşivi kapanırsa yeniden inmiyor.
+Bu risk ZAMANLI #6'da zaten kayıtlı, bu madde onu **test edilebilir** hale getiriyor.
+
+**22-D · Idempotency kontrolü** — *~1-2 saat · TETİK: SIRASI GELİNCE*
+`takip.py` arka arkaya iki kez koşarsa CSV'lere yinelenen satır yazar mı? 30 dk grubu kurulmuşken
+15 dk grubu aynı Altılı'yı yeniden kurmaya kalkar mı? **Neden:** saat kayması, çift tetik,
+uyanma senaryoları gerçek. Ucuz kontrol.
+
+**22-E · Disk büyüme projeksiyonu** — *~1 saat · TETİK: SIRASI GELİNCE*
+Mevcut: `veri/` 1,3 GB (`ham` 1,1 GB), `katilim.csv` 92 MB, `ozellikli.csv` 84 MB, `.git` 46 MB.
+Yıllık büyüme hızı → ne zaman sıkışır. **Neden:** bilinmezse sürpriz kesinti.
+*(Not: dış belge bu dosyaların boyutlarını 5-11 kat yanlış vermişti; gerçek sayılar yukarıda.)*
+
+**22-F · Karar arama aracı** — *~2 saat · TETİK: SIRASI GELİNCE*
+`kod/karar_ara.py`: K numarası / anahtar kelime / tarih ile KARARLAR.md'de hızlı arama.
+**Neden:** 376 KB, 146 karar; "bot1'in kârına dair hangi kararlar var" sorusu dakikalar sürüyor.
+
+**22-G · Karar düzeltme grafiği** — *~1 saat · TETİK: SIRASI GELİNCE*
+Hangi K hangi K'yı düzeltti haritası (K93→K104, K19→K33, K74→K129, K125→K134, K118→K132…).
+**Neden:** projenin epistemik omurgası görünür olsun; hangi bulgunun üstü çizilmiş, tek bakışta.
+
+**22-H · AST diff aracını genelleştir** — *~yarım gün · TETİK: SIRASI GELİNCE*
+`kod/ast_diff.py` K138'de yazıldı ve K136/K139'da kullanıldı. Her kod değişikliğinde
+"davranış değişmedi" kanıtı için standart araç hâline getirilsin (CLI + kısa kullanım notu).
+**Neden:** zaten üç kez lazım oldu; %80'i hazır.
+
+**22-I · Açık deney durum sayfası** — *~2 saat · TETİK: SIRASI GELİNCE*
+BEKLEYENLER'deki açık maddelerin tetikleri ve "ne kadar doldu" durumu tek sayfada
+(#11 İstanbul ≥400 ayak · #18 ÇİFTE ≥1.000 fırsat · #4 zamanlama ~60 kupon…).
+**Neden:** 7+ açık madde var, sayısal tetiklerin dolduğu unutulabiliyor.
+
+---
+
+**ERTELENEN ~50 MADDE — gerekçe (silinmedi, kayıtta):**
+Ertelenenler: A1, A2, A4, A5, A7 · B1, B2, B3, B5, B6 · C1, C2, C5 · D1, D2, D5, D6, D7 ·
+E1, E2, E3, E4 · F1-F5 · G1-G4 · H1-H3 · I1, I2.
+
+**Hiçbiri kötü fikir değil.** Erteleme gerekçesi ölçek ve tür:
+1. **Ölçek:** toplamı ~40 iş günü. Proje 2 aylık, kâğıt parayla çalışıyor, ölçülmüş kenarı
+   sıfır, 25 Eylül'de arşivlenmesi masada.
+2. **Tür:** mypy strict, pre-commit, CI, sürüm etiketleme, feature flag, PR şablonu —
+   çok kişili üretim ürünü pratikleri. Burada tek kişilik araştırma defteri var.
+   Bir hatanın gerçek maliyeti K135'te ölçüldü: **sıfır**.
+3. **Bazıları zaten cevaplanmış:** A7-D1 (hava özelliği) K33'te test edilip reddedildi;
+   D1 (5 dk penceresi) K111'de ölçüldü — geç kurmak parayı **kötüleştiriyor**;
+   A4 (saat dilimi) yalnız sunucuya taşınırsa kritik, yerelde sorun değil.
+
+**YENİDEN AÇMA ŞARTI:** 25 Eylül'de "devam" kararı çıkarsa ve sistem canlı paraya geçerse,
+E1/E2/F4 (test + CI) grubu yeniden değerlendirilmeli — o zaman bir hatanın maliyeti sıfır olmaz.
+
+**BELGEDEN AYNEN KABUL EDİLEN — "yapılmayacaklar" (Bölüm K):**
+Bu liste projenin kendi kuralları arasına yazılıyor:
+- **yeni model mimarisi yok** (transformer/XGBoost/NN/RL) — K33, K96, K102, K128 kanıtladı
+- **sentiment / sosyal medya yok** — pari-mutuel'de bilgi fiyata hızla giriyor
+- **yabancı yarış verisi harmanı yok** — farklı pazar yapısı, bilgi transferi yok
+- **geçmişe doğru veri toplama yok** — mevcut 5,5 yıl temiz, K130/K17 düzeltildi
+- **"belki işe yarar" gerekçeli yeni config yok** — mekanizma + ön-kayıt şart (K33/K52)
+
 ### 16. ✅ KAPANDI (2026-08-27, K134) — ÖLÇÜLEMEZ: bu bahisler küçük sahada hiç oynatılmıyor
 
 > 🔒 **KAPANIŞ (K134):** birim fiyatı arşivden okumanın tek yolu tabanın dövülmesidir.
