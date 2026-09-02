@@ -5404,3 +5404,89 @@ kalacak.** Bundan sonrası için cevaplanabilir; asıl kazanç bu.
 **Ders (kayda geçiyor):** "sessizce False dön" bir kolaylık değil, bir kör nokta. K107 bunu
 takip yolunda kapatmıştı; yan yollarda (bildirim, rapor) taranmamıştı. Benzer `except: pass`
 kalıpları için ayrı bir tarama yapılabilir.
+
+
+## 2026-09-02 — K140: TÜM aktif kupon türlerinin tam istatistiği + son 14 gün kıyası — DÜŞÜŞ YOK, hafif ARTIŞ var
+
+**K140 — Kullanıcı "son iki haftada başarı oranında düşüş var gibi geliyor" dedi ve tüm aktif
+kupon türlerinin ayak + kupon istatistiğini istedi. Yedi aktif config'in TAMAMI incelendi
+(4.938 kâğıt ayak, 2020-07-20 → 2026-09-02). **Hiçbir config'te düşüş yok.** Havuzlanmış ayak
+isabeti öncesi %57,9 → son14 %63,1 (+5,2pp, %95 GA [+2,0,+8,4]pp — sıfırı DIŞLIYOR, yani
+istatistiksel olarak ANLAMLI bir ARTIŞ). Kompozisyon etkisi ayrıştırıldığında (config-eşitlikli
+ortalama) artış küçülüyor ama yine POZİTİF: +2,26pp, cluster-GA [−0,71,+4,88]pp.**
+Araç: `kod/kupon_istatistik.py` (salt-okunur, `altili_canli.KONFIG`'den aktif listeyi okur).
+
+### (a) AKTİF 7 CONFIG — AYAK İSABETİ, tüm sicil
+
+| config | aile | ayak(n) | isabet | oran | öncesi | son14 | fark |
+|---|---|---|---|---|---|---|---|
+| orta | kamu | 816 | 390 | %47,8 | %46,0 (n570) | %52,0 (n246) | +5,9pp |
+| orta_15 | zaman | 318 | 167 | %52,5 | %55,1 (n78) | %51,7 (n240) | −3,3pp |
+| acgozlu900 | kamu | 708 | 462 | %65,3 | %63,4 (n462) | %68,7 (n246) | +5,1pp |
+| acgozlu900_15 | zaman | 312 | 221 | %70,8 | %73,6 (n72) | %70,0 (n240) | −3,5pp |
+| bot1_900 | temel | 636 | 392 | %61,6 | %60,8 (n390) | %63,0 (n246) | +2,2pp |
+| bot1_1800 | temel | 420 | 277 | %66,0 | %63,2 (n174) | %67,9 (n246) | +4,6pp |
+| acgozlu_v2 | kalibre | 480 | 317 | %66,0 | %63,7 (n234) | %68,3 (n246) | +4,7pp |
+
+**Yedi config'in %95 GA'sının HİÇBİRİ sıfırı dışlamıyor** (tek tek anlamlı değil, n küçük) —
+ama işaretler 5/7'de pozitif, 2/7'de (yalnız `_15` zaman-kolu ailesi) hafif negatif.
+
+### (b) KUPON DÜZEYİ — 6 ayaktan kaçı tuttu (tam sicil)
+
+| config | kupon | ort.ayak/kupon | 6/6 sayı | 6/6 oran |
+|---|---|---|---|---|
+| orta | 136 | 2,868 | 2 | %1,5 |
+| orta_15 | 53 | 3,151 | 1 | %1,9 |
+| acgozlu900 | 118 | 3,915 | 5 | %4,2 |
+| acgozlu900_15 | 52 | 4,250 | 2 | %3,8 |
+| bot1_900 | 106 | 3,698 | 4 | %3,8 |
+| bot1_1800 | 70 | 3,957 | 4 | %5,7 |
+| acgozlu_v2 | 80 | 3,962 | 2 | %2,5 |
+
+Kupon-düzeyi son14/öncesi kıyası (madde C tablosu): **7 config'in 7'sinde de "fark yok" ya da
+hafif pozitif** — hiçbirinde GA'nın tamamı sıfırın ALTINDA değil, yani **hiçbir config'te
+istatistiksel düşüş yok.**
+
+### (c) HAVUZLANMIŞ (D) — asıl sürpriz: düşüş değil, ANLAMLI ARTIŞ
+
+| | öncesi | son14 | fark | %95 GA |
+|---|---|---|---|---|
+| ayak isabeti | %57,9 (n=1.980) | %63,1 (n=1.710) | **+5,2pp** | **[+2,0,+8,4]pp** |
+| kupon ort.ayak | 3,476 (n=330) | 3,786 (n=285) | **+0,309** | **[+0,126,+0,495]** |
+| 6/6 oranı | %2,7 | %3,9 | +1,2pp | — |
+
+**İkisi de GA'sı tamamen sıfırın üstünde — istatistiksel olarak anlamlı ARTIŞ.**
+
+### (d) GÜNLÜK KIRILIM — tek günün şişirmesi değil, 3 haftalık istikrarlı trend
+
+7-günlük yürüyen ortalama: 22 Tem %53,3 → 6 Ağu %52,2 → 16 Ağu %60,2 → 20 Ağu %65,1 →
+2 Eyl %60,5. **Yumuşak, sürekli bir yükseliş** — tek bir günün (ör. bir 6/6 patlaması)
+ortalamayı çektiği bir sıçrama değil, haftalar süren kademeli bir iyileşme.
+
+### (e) DÜRÜSTLÜK KONTROLÜ — kompozisyon etkisi ayrıştırıldı
+
+Havuzlanmış +5,2pp'nin bir kısmının **kompozisyon kayması**ndan gelebileceği kontrol edildi:
+`acgozlu_v2` (08-08), `bot1_1800` (08-11), `orta_15`/`acgozlu900_15` (08-15/16) zamanla
+eklendi; "öncesi" döneminde bu yüksek-isabetli config'lerin ağırlığı azdı, "son14"te 7'si de
+eşit temsil ediliyor. Bunu ayrıştırmak için **config-eşitlikli** (her config'in kendi farkının
+ağırlıksız ortalaması) ve **cluster-bootstrap** (config'leri yeniden örnekleyen) kontrol yapıldı:
+
+> config-eşitlikli ortalama fark: **+2,26pp**, cluster-GA [−0,71, +4,88]pp
+
+**Kompozisyon etkisi gerçek ve büyüklüğün bir kısmını açıklıyor** (5,2pp → 2,26pp) ama
+**yön değişmiyor: hâlâ pozitif, sıfıra çok yakın olsa da negatife hiç yaklaşmıyor.**
+Yedi config'in tek tek farkları: +6,1 · −3,5 · +5,3 · −3,6 · +2,2 · +4,7 · +4,6 (pp) — beşi
+pozitif, ikisi (yalnız `_15` zaman-kolu ailesi) hafif negatif, hiçbiri büyük negatif değil.
+
+### (f) HÜKÜM
+
+**Kullanıcının "düşüş var" izlenimi veriyle doğrulanmadı — tam tersi yönde bir sinyal var.**
+Hiçbir aktif config'te istatistiksel düşüş yok; havuzlanmış ölçüde anlamlı, config-eşitlikli
+ölçüde sınırda-pozitif bir artış var. Bu, K138'in "son 3 kupona bakıp yön okumak gürültüyü
+sinyal sanmaktır" dersiyle aynı ailede bir bulgu — bu kez ters yönde bir izlenim düzeltildi.
+
+**Not — bu bir "kâr artıyor" iddiası DEĞİL.** Ayak/kupon isabeti kesintiyi (%48,6) aşmıyor;
+K122'nin uyardığı gibi ham ROI'ye bakılmadı çünkü 6/6 varyansıyla savrulur. Ölçülen yalnız
+**isabet** — ve isabette düşüş yok.
+
+Salt-okunur; canlıya/kuponlara hiçbir dokunuş yok.
