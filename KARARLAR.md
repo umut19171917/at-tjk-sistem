@@ -5851,3 +5851,94 @@ kayıt tercih edildi; yeni düzeltme olduğunda `D` listesine eklenir.
 K142'de ölçüt yazıldı · K143'te çokluluk kapatıldı · K144'te tetik tablosu · K145'te düzeltme
 haritası. **Kalan:** #4 ve #11 sonuçları (Eylül başı, kendiliğinden), #6 ağırlık fit (25 Eyl),
 ve isteğe bağlı 22-C/22-E (arşiv sigortası).
+
+
+## 2026-09-02 — K146-K151: BEKLEYENLER #22'nin kalan altı maddesi yapıldı
+
+**25 Eylül'e kadar beklemesi gerekmeyen her şey bitirildi. Altı yeni salt-okunur araç;
+hepsi ilk çalıştırmada temiz çıktı, ikisi bilgi üretti, biri kendi kusurunu yakaladı.**
+
+### K146 (22-E) — Disk projeksiyonu · `kod/disk_projeksiyon.py`
+
+Geçmiş ortalamayla ileri hız AYRI ölçüldü (günlük yazan dosyalar yalnız 2 aylık, toplam
+ortalama onları hafife alır):
+
+| bileşen | boyut | hız |
+|---|---|---|
+| veri/ham (arşiv) | 1.106 MB | 195 MB/yıl |
+| türetilen CSV | 183 MB | 32 MB/yıl |
+| **günlük yazanlar** | 56 MB | **326 MB/yıl** (1,7× arşiv) |
+| TOPLAM | **1.404 MB** | **554 MB/yıl** |
+
+**40 GB disk ~70 yıl yeter.** Disk sorun DEĞİL; ertelenen listedeki "sıkıştırma/arşivleme"
+(G2) böylece **gereksizleşti**. Asıl risk boyut değil, tek kopya.
+
+### K147 (22-D) — İdempotans denetimi · `kod/idempotans_denetim.py`
+
+**takip.py iki kez çalıştırılmadı** — canlıya kasten çift yazma denemesi kabul edilemez.
+Yerine iki bağımsız kanıt: (a) 45 günlük sicilde 5 tabloda **tek yinelenen satır yok**
+(44.402 satırlık oran_log dahil), (b) **7 korumanın 7'si de kodda mevcut** (tek-instans
+kilidi, gün mührü, sonuçla mührü, kupon mührü, boş-satır doldurma ×2, posta koruması).
+
+**Açık kalan:** iki FARKLI makinede eşzamanlı çalışma. Tek-instans kilidi yalnız aynı
+makinede korur — göç senaryosunda ayrıca ele alınmalı.
+
+### K148 (22-F) — Karar arama aracı · `kod/karar_ara.py`
+
+`karar_ara.py K129` (tam metin) · `karar_ara.py bot1 kâr` (VE mantığı, bağlam satırıyla) ·
+`--liste` (dizin) · `--tam`. Türkçe-duyarsız (İ/ı/ş/ğ normalize).
+*Yan bulgu:* katı ayrıştırıcı **142** karar sayıyor; daha önce kullanılan kaba grep 146
+diyordu. Doğru sayı 142.
+
+### K149 (22-H) — AST diff genelleştirildi · `kod/ast_diff.py`
+
+Varsayılanlar eklendi: argümansız çağrı **çekirdek 12 dosyayı** HEAD ile çalışma ağacı
+arasında kıyaslar. `--hepsi`, iki-commit kıyası, dosya seçimi, çıkış kodu (0/1).
+Rapor/görüntü dosyaları çekirdek dışında — değişmeleri beklenen, gürültü yapar.
+**Bugün çalıştırıldı: 12 dosyanın 150 bloğunda davranış değişikliği YOK.**
+
+### K150 (22-C) — Yeniden üretilebilirlik · `kod/yeniden_uretim.py`
+
+Tam klon testi yapılmadı (2 saatlik kazı + TJK'ya gereksiz yük); zincirin her halkası ayrı
+doğrulandı. Bağımlılıklar: `kod/*.py`'nin dış bağımlılığı yalnız **numpy/pandas/scipy**,
+üçü de `requirements.txt`'de ve **sürümler sabitlenmiş** — eksik yok.
+
+**ASIL ÇIKTI — telafi edilebilirlik haritası:**
+
+| telafi | dosyalar |
+|---|---|
+| ✓ EVET | kod, KARARLAR/BEKLEYENLER (GitHub), katilim, ozellikli, olasılık, altili_tam, temettü — **hepsi ham'dan yeniden üretilir** |
+| ! ŞARTLI | `veri/ham/` — TJK açık kaldığı sürece ~2 saatte iner; **kapanırsa telafisi yok** |
+| ✗ **HAYIR** | **defter.csv · altili_kupon.csv · altili_kupon_ani.csv · altili_oran_log.csv** |
+
+Telafisi olmayan dördü **kupon ANINDAKİ** tahmin/seçim/oran fotoğrafıdır; arşivde yalnız
+kapanış oranı var, kupon anı hiçbir yerde yeniden bulunamaz. **K92 (uzak-ayak λ), K111
+(zamanlama) ve K129 (AGF kararlılığı) tamamen bunlara dayanıyor.**
+
+> **İYİ HABER — kontrol edildi: dördü de git'te izleniyor ve GitHub'a itilmiş durumda.**
+> Yani telafisi olmayan veri (birkaç MB) **zaten makine dışında güvende**. ZAMANLI #6'nın
+> acil kısmı çözülmüş; kalan risk yalnız `veri/ham` (1,1 GB, şartlı telafi edilebilir).
+
+### K151 (22-B) — Sessiz veri bozulma tarayıcısı · `kod/veri_kalite.py`
+
+**Eşikler çıktı görülmeden yazılıp git'e mühürlendi** (22-B'nin şartıydı, `f0a…` commit).
+Sekiz kontrol; hiçbiri "makul görünen sayı" değil, hepsi tanım ya da matematik:
+olasılık toplamı · oran>1 · varış tanımı · çapraz-tablo · sessiz gün · kritik NA ·
+yinelenen · **sütun ikizi** (K130'un tam karşılığı; bilinen ikiz kayıtlı, yenisi alarm).
+
+**Sekiz kontrolün sekizi de TEMİZ.**
+
+**İLK ÇALIŞTIRMADA KENDİ KUSURUNU YAKALADI — ve ayrım önemli:** D4 önce 84 "kusur" buldu.
+Teşhis: hepsi **bugünün** kuponlarıydı, `katilim.csv` ise dünde bitiyordu (arşiv güncellemesi
+ertesi sabah koşar). Veri bozuk değil, **kontrol yanlış tanımlanmıştı.**
+
+> **Eşik DEĞİŞMEDİ** (hâlâ %100 eşleşme şart). Değişen **kapsam**: yalnız arşivin görme
+> fırsatı bulduğu günler denetleniyor. Bu bir eşik gevşetmesi değil, **popülasyon tanımının
+> düzeltilmesi**. Ayrım bilerek kayda geçiriliyor — ön-kayıtlı bir eşiği "sonuca bakıp"
+> gevşetmek ile mis-spesifiye bir kontrolü düzeltmek aynı şey değildir.
+
+### TOPLU DURUM
+
+BEKLEYENLER **#22'nin dokuz maddesinin dokuzu da tamam** (22-A K143 · 22-G K145 · 22-I K144 ·
+22-B/C/D/E/F/H bugün). **25 Eylül'e kadar yapılabilecek iş kalmadı.**
+Kalanlar tetiğe bağlı: #4 (~5 Eyl) · #11 (~7 Eyl) · #6 + ZAMANLI-4 (25 Eyl) · #18 (~4 Ara).

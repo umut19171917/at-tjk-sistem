@@ -108,17 +108,32 @@ def d2_d3_d6(r):
 
 
 def d4_capraz(r):
+    """D4 — KAPSAM DÜZELTMESİ (ilk çalıştırma, 2 Eyl 2026; K151-EK'te kayıtlı).
+
+    İlk sürüm 84 "kusur" buldu; teşhis: hepsi BUGÜNÜN kuponlarıydı ve `katilim.csv` dün
+    bitiyordu — arşiv güncellemesi (`guncelle`) ertesi sabah koşuyor. Yani veri bozuk değil,
+    KONTROL yanlış tanımlanmıştı: iki tabloyu tazelik farkını hesaba katmadan kıyaslıyordu.
+
+    EŞİK DEĞİŞMEDİ (hâlâ %100 eşleşme şart). Değişen KAPSAM: yalnız arşivin görme fırsatı
+    bulduğu günler (katilim.csv'nin son tarihine kadar) denetlenir. Bu bir eşik gevşetmesi
+    DEĞİL, popülasyon tanımının düzeltilmesidir — ayrım K151-EK'te açıkça kayıtlı."""
     kp = KOK / "veri" / "altili_kupon.csv"
     ka = KOK / "veri" / "katilim.csv"
     if not (kp.exists() and ka.exists()):
         return r.u("D4 çapraz-tablo", "dosya yok")
-    k = set(pd.to_numeric(pd.read_csv(ka, usecols=["race_kod"], low_memory=False)["race_kod"],
-                          errors="coerce").dropna().astype(int))
-    kup = pd.to_numeric(pd.read_csv(kp, usecols=["race_kod"], low_memory=False)["race_kod"],
-                        errors="coerce").dropna().astype(int)
-    yok = int((~kup.isin(k)).sum())
+    kat = pd.read_csv(ka, usecols=["race_kod", "tarih"], low_memory=False)
+    son_arsiv = pd.to_datetime(kat["tarih"], format="%d/%m/%Y", errors="coerce").max()
+    k = set(pd.to_numeric(kat["race_kod"], errors="coerce").dropna().astype(int))
+
+    kup = pd.read_csv(kp, usecols=["race_kod", "tarih"], low_memory=False)
+    kup["dt"] = pd.to_datetime(kup["tarih"], format="%Y-%m-%d", errors="coerce")
+    kapsam = kup[kup["dt"] <= son_arsiv]
+    bekleyen = len(kup) - len(kapsam)
+    rk = pd.to_numeric(kapsam["race_kod"], errors="coerce").dropna().astype(int)
+    yok = int((~rk.isin(k)).sum())
+    ek = f" · arşive girmemiş {bekleyen} satır kapsam dışı (son arşiv {son_arsiv:%d.%m})"
     (r.ok if yok == 0 else r.k)("D4 çapraz-tablo",
-                                f"katilim'da bulunmayan kupon race_kod: {yok} / {len(kup):,}")
+                                f"eşleşmeyen: {yok} / {len(rk):,}{ek}")
 
 
 def d5_sessiz_gun(r):

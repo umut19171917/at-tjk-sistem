@@ -382,28 +382,43 @@ ayakta kalır" hesabı. **Neden birinci sırada:** bağımsız değerlendirmede 
 tespit edildi — Bonferroni test yığını içinde uygulanıyor ama proje ölçeğinde hiç uygulanmadı.
 *Ön-kayıt: düzeltme sonrası ayakta kalmayan bulgular KARARLAR'da işaretlenir, silinmez.*
 
-**22-B · Sessiz veri bozulma tarayıcısı** — *~2-3 gün · TETİK: SIRASI GELİNCE*
+**22-B · ✅ YAPILDI (2026-09-02, K151)** — `kod/veri_kalite.py`. Eşikler çıktı görülmeden mühürlendi.
+8 kontrolün 8'i temiz. D4 ilk koşuda kendi mis-spesifikasyonunu yakaladı (eşik değil KAPSAM düzeltildi).
+
+**22-B-özgün** — *~2-3 gün*
 Günlük: beklenen satır sayısı, NA oranı, kritik sütun değer aralıkları, çapraz-tablo
 tutarlılığı. Sapma küçükse rapor, büyükse alarm (Telegram — K139'da boru sağlamlaştırıldı).
 **Neden:** K130 (ganyan_muhtemel = kapanış) altı yıl fark edilmedi; K107 sessiz gün kaybıydı.
 *Ön-kayıt: eşikler tarayıcı yazılmadan ÖNCE sabitlenir, ilk çıktı görülüp ayarlanmaz.*
 
-**22-C · Yeniden üretilebilirlik kontrolü** — *~yarım gün + kazı süresi · TETİK: SIRASI GELİNCE*
+**22-C · ✅ YAPILDI (2026-09-02, K150)** — `kod/yeniden_uretim.py`. Bağımlılıklar tam+sabit.
+**Telafisi olmayan 4 dosya** (defter, kupon, kupon_ani, oran_log) belirlendi — **dördü de git'te, güvende**.
+
+**22-C-özgün** — *~yarım gün*
 Boş makinede `git clone` → `pip install -r requirements.txt` → boru hattı → aynı dosyalar.
 **Neden:** `veri/ham` (1,1 GB) git dışında ve tek diskte; TJK arşivi kapanırsa yeniden inmiyor.
 Bu risk ZAMANLI #6'da zaten kayıtlı, bu madde onu **test edilebilir** hale getiriyor.
 
-**22-D · Idempotency kontrolü** — *~1-2 saat · TETİK: SIRASI GELİNCE*
+**22-D · ✅ YAPILDI (2026-09-02, K147)** — `kod/idempotans_denetim.py`. 5 tabloda yinelenen yok,
+7 korumanın 7'si kodda. Açık: iki FARKLI makinede eşzamanlılık (göç senaryosu).
+
+**22-D-özgün** — *~1-2 saat*
 `takip.py` arka arkaya iki kez koşarsa CSV'lere yinelenen satır yazar mı? 30 dk grubu kurulmuşken
 15 dk grubu aynı Altılı'yı yeniden kurmaya kalkar mı? **Neden:** saat kayması, çift tetik,
 uyanma senaryoları gerçek. Ucuz kontrol.
 
-**22-E · Disk büyüme projeksiyonu** — *~1 saat · TETİK: SIRASI GELİNCE*
+**22-E · ✅ YAPILDI (2026-09-02, K146)** — `kod/disk_projeksiyon.py`. 1,4 GB · 554 MB/yıl ·
+**40 GB ~70 yıl yeter.** Disk sorun değil; ertelenen G2 (sıkıştırma) gereksizleşti.
+
+**22-E-özgün** — *~1 saat*
 Mevcut: `veri/` 1,3 GB (`ham` 1,1 GB), `katilim.csv` 92 MB, `ozellikli.csv` 84 MB, `.git` 46 MB.
 Yıllık büyüme hızı → ne zaman sıkışır. **Neden:** bilinmezse sürpriz kesinti.
 *(Not: dış belge bu dosyaların boyutlarını 5-11 kat yanlış vermişti; gerçek sayılar yukarıda.)*
 
-**22-F · Karar arama aracı** — *~2 saat · TETİK: SIRASI GELİNCE*
+**22-F · ✅ YAPILDI (2026-09-02, K148)** — `kod/karar_ara.py`. Türkçe-duyarsız, VE mantığı, --tam/--liste.
+Yan bulgu: doğru karar sayısı **142** (kaba grep 146 diyordu).
+
+**22-F-özgün** — *~2 saat*
 `kod/karar_ara.py`: K numarası / anahtar kelime / tarih ile KARARLAR.md'de hızlı arama.
 **Neden:** 376 KB, 146 karar; "bot1'in kârına dair hangi kararlar var" sorusu dakikalar sürüyor.
 
@@ -414,7 +429,10 @@ Yıllık büyüme hızı → ne zaman sıkışır. **Neden:** bilinmezse sürpri
 Hangi K hangi K'yı düzeltti haritası (K93→K104, K19→K33, K74→K129, K125→K134, K118→K132…).
 **Neden:** projenin epistemik omurgası görünür olsun; hangi bulgunun üstü çizilmiş, tek bakışta.
 
-**22-H · AST diff aracını genelleştir** — *~yarım gün · TETİK: SIRASI GELİNCE*
+**22-H · ✅ YAPILDI (2026-09-02, K149)** — `kod/ast_diff.py` varsayılanlarla genelleştirildi
+(argümansız = çekirdek 12 dosya, HEAD vs çalışma ağacı). Bugün: 150 blokta değişiklik YOK.
+
+**22-H-özgün** — *~yarım gün*
 `kod/ast_diff.py` K138'de yazıldı ve K136/K139'da kullanıldı. Her kod değişikliğinde
 "davranış değişmedi" kanıtı için standart araç hâline getirilsin (CLI + kısa kullanım notu).
 **Neden:** zaten üç kez lazım oldu; %80'i hazır.
