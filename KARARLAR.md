@@ -5492,6 +5492,108 @@ K122'nin uyardığı gibi ham ROI'ye bakılmadı çünkü 6/6 varyansıyla savru
 Salt-okunur; canlıya/kuponlara hiçbir dokunuş yok.
 
 
+## 2026-09-02 — K140-EK: SİSTEMİN BAĞIMSIZ DEĞERLENDİRMESİ ("Kesinti Duvarı")
+
+**KAYIT NOTU:** Bu değerlendirme 2 Eylül'de üretildi ve önce yalnız bir Artifact sayfası
+olarak yayımlandı (`claude.ai/code/artifact/b5aa3074-…`). **K141, K142, K143 ve K145 ona atıf
+yapıyordu ama KARARLAR'da kaydı yoktu** — dört sarkan atıf oluşmuştu. Aynı gün, geriye dönük
+olarak buraya işlendi. *(Ders: bir çıktı KARARLAR'a girmeden başka kararlar ona atıf yapamaz;
+proje hafızası tek kaynak olmalı.)*
+
+**Tez: yöntem örnek alınacak kadar sağlam, öncül büyük olasılıkla imkânsız. Proje kendi
+ölçümleriyle kendi tezini çürüttü ve bunu henüz yüksek sesle söylemedi.**
+
+### (1) YAPISAL — sistem piyasanın %96 kopyası
+
+Canlı defterde **769 gerçek koşu** (1 Tem – 2 Eyl), tek kazananlı:
+
+| ölçüm | değer |
+|---|---|
+| sistem ve piyasa **aynı** atı seçti | **735 (%96)** |
+| sistemin haklı çıktığı koşu | 16 |
+| piyasanın haklı çıktığı koşu | 18 |
+| sistem − piyasa isabet farkı | **−0,26 puan** %95 GA [−1,69, +1,17] |
+
+Mimarinin doğrudan sonucu: Bot2 = `softmax(α·ln bot1 + γ·ln kamu)`, **α=0,19 · γ=0,98** —
+harman kendi modeline beşte bir söz hakkı veriyor ve bu fit edilmiş bir cevap.
+
+### (2) YAPISAL — para hükmü zaten verilmiş
+
+| | kupon | bedel | ödül | net | ROI |
+|---|---|---|---|---|---|
+| aktif 7 kol | 615 | 557.188 | 226.559 | **−330.628** | **−%59,3** |
+| emekliler dahil (11) | 823 | 660.936 | 233.281 | **−427.655** | **−%64,7** |
+
+Kesinti duvarı **−%48,6** (K73). %95 GA **[−81,3 , −33,3]** → duvar aralığın **içinde**,
+yani "vergiden de kötüyüz" savunulamaz. Savunulabilir olan: **615 kupon sonra sistem vergiyi
+ödemekten ayırt edilemiyor** (bootstrap örneklemlerinin %82'si vergiden kötü).
+En büyük 3 ödül çıkarılınca ROI −%59,3 → **−%77,0**.
+
+### (3) YÖNTEM — deney kendi sorusunu cevaplayamaz
+
+6/6 nadir (~%3,3) → ROI olağanüstü gürültülü. Gözlenen dağılımdan simülasyon:
+
+| kupon | %95 GA genişliği | gereken bahis |
+|---|---|---|
+| 615 (bugün) | ±38 puan | 557 bin ₺ |
+| 5.000 | ±14 puan | 4,5 milyon ₺ |
+| **15.000** | **±7,6 puan** | **13,6 milyon ₺** |
+
+**±5 puanlık kenarı ayırt etmek ~15.000 kupon ≈ 13,6M ₺ ≈ ~3 yıl.** Yani "para kazandırıyor
+mu?" sorusu mevcut tasarımla **cevaplanamaz**; deney bir-iki mertebe yetersiz güçte.
+
+### (4) YÖNTEM — ölçü kayması
+
+Proje cevaplanamayan sorudan (ROI) cevaplanabilir soruya (ayak isabeti) kaydı. Her adım tek
+tek doğruydu, ama toplamda beş bağımsız eksende aynı sonuç: **kapsamı genişlet (K98-h) ·
+ayak azalt (K108) · geç kur (K111) · modelin sesini kıs (K112) · olasılığı gerçekten
+iyileştir (K129)** → beşinde de isabet arttı, para değişmedi (K111'de kötüleşti).
+Proje buna "tavan" dedi ama **tavanın kendisinden bir sonuç çıkarmadı.**
+
+### (5) YÖNTEM — en önemli kararın ölçütü yazılmamış → **K142'de KAPATILDI**
+
+25 Eylül *"karar için sicil o güne kadar birikecek"* diye yazılmıştı; eşik yok, kural yok.
+Projenin en önemli kararı ön-kayıt disiplininin dışındaydı ve pencere kapanmıştı.
+**K142 bunu kapattı** (post-hoc olduğu beyan edilerek, çıkar çatışması notuyla).
+
+### (6) YÖNTEM — çokluluk hesaplanmadı → **K143'te ÖLÇÜLDÜ, İDDİA GERİ ALINDI**
+
+*"Birikmiş güveni olduğundan yüksek gösterir"* denmişti. K143 ölçtü: düzeltmeden düşen
+bulgulara proje **zaten dayanmamıştı**. Bu madde **çürüdü ve geri alındı.**
+
+### (7) VERİ — tek bilet sorunu yapısal
+
+**539.029 ₺'lik tek temettü, beş ayrı kararda** (K57, K98, K132, K138 ve türevleri) aynı rolü
+oynuyor: bot1'i kârlı gösteren şeyin tamamı o bilet. Beş kez tekrarlanan bir gözlem artık
+uyarı değil, **ölçüm imkânsızlığı kanıtı**: ödül dağılımı bu örneklemde ROI'yi tanımsız kılıyor.
+
+### (8) NE ÇOK İYİ YAPILMIŞ — dengeli olmak için zorunlu
+
+- **Ön-kayıt fiilen uygulanıyor** — K124'te çapa iki kez düştü, iki kez de hüküm verilmedi
+- **Kill-first kapısı işliyor** — kesinti %40 üstündeyse model kurulmuyor; aylarca emek kurtardı
+- **Hatalar örtülmüyor** — bu oturumda üçü bulunup yazıldı (işaret hatası, yanlış kıyas ölçütü,
+  K74'ün replike olmayan rakamı)
+- **Canlıya asla bozuk kod gitmedi** — AST denklik ya da çıktı denkliği kanıtlanarak, atomik
+  yazımla, hem de kart canlı akarken
+- **Gerçek veri kusurları bulundu** — K130: `ganyan_muhtemel` altı yılın %100'ünde kapanışın
+  kopyasıymış; backtest 6/6 sayılarını ~%43 şişiriyor
+
+> **Sorun yöntemde değil — yöntemin uygulandığı sorunun kendisinde.**
+
+### (9) 25 EYLÜL İÇİN ÖNERİ (o gün karar KULLANICININ)
+
+1. Ölçütü yaz, ön-kayıt olmadığını kabul ederek → **yapıldı (K142)**
+2. Kâğıt deneyini "kanıt toplama" olmaktan çıkar; **gözlemevi** olarak sürdür
+3. **Canlı paraya geçme** — %96 örtüşmenin vergisini ödemek için sebep yok (K93/K98 ile aynı yön)
+4. "Modeli iyileştirelim" kolunu yeni bir **mekanizma iddiası** olmadan açma
+5. Asıl çıktının ne olduğunu kabul et: **6 yıllık temiz TJK arşivi · 16 bahsin ölçülmüş
+   kesintisi · 146 kararlık araştırma günlüğü** — üçü de gerçek, üçü de bahis kazanmaya bağlı değil
+
+### (10) DEĞERLENDİRMENİN KENDİ SİCİLİ
+
+Yedi bulgudan **ikisi aynı gün kapandı**: (5) K142 ile, (6) K143 ile — ve (6) **yanlış çıktı**.
+Kalan beşi (96% örtüşme · −%64,7 ROI · güç yetersizliği · ölçü kayması · tek bilet) duruyor.
+
 ## 2026-09-02 — K141: Dış teknik öneri listesi denetlendi — 9 madde alındı, ~50 madde ertelendi
 
 **K141 — Kullanıcı `BEKLEYENLER_ÖNERİ_TEKNİK` başlıklı ~60 maddelik bir teknik yol haritası
