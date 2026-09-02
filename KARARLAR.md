@@ -1407,6 +1407,11 @@ Kullanıcı 28.07 KOCAELİ 2. Altılı'da fark etti: ACGOZLU900 son ayakta siste
   mevcut akışı bozmadan YENİ config olarak eklenir (K69 kalıbı) — çalışan ölçüm akışı
   ortasında değiştirilmez.
 
+**K80 — NUMARA KULLANILMADI (boşluk, 2 Eyl 2026'da tespit edildi).** K76/K80/K92 ve
+K79/K80 diye üç yerde atıf var ama K80 hiç yazılmamış; numara atlanmış. Atıflar bağlamdan
+K79 (açgözlü uzak-ayak banker sorusu) ve K92'yi (uzak-ayak λ) kastediyor. Kayıt bütünlüğü
+için not düşüldü; geriye dönük karar uydurulmadı.
+
 **K81 — İlk uzak-ayak ölçümü: K76 doğrulandı, bot1 kontrolü beni yanlış sonuçtan kurtardı.**
 
 **(a) Sayfadaki "defter kaydı yok" uyarısı.** Kullanıcı 31 Tem 21:55'te üretilen `altili.html`'de
@@ -5796,7 +5801,7 @@ kullanılmıştı. Hüküm değişmiyor (α zaten değiştirilmedi) ama **bulgu 
 
 ## 2026-09-02 — K144/K145: 22-I ve 22-G yapıldı — ve #11'in "Ekim ortası" notu YANLIŞMIŞ
 
-**K144 (22-I) — Açık deneylerin tetik doluluk tablosu kuruldu ve ilk çalıştırmada bir kayıp
+**K144 — Açık deneylerin tetik doluluk tablosu kuruldu (BEKLEYENLER 22-I) ve ilk çalıştırmada bir kayıp
 yakaladı: **#11 İSTANBUL maddesi kendi notunda "Ekim ortası" diyordu; gerçek doluş ~7 Eylül.**
 Yani madde, sırası geldiği hâlde kenarda bekliyordu. K145 (22-G) — 16 kayıtlı karar
 düzeltmesinin haritası çıkarıldı.** Araçlar: `kod/deney_durum.py`, `kod/duzeltme_haritasi.py`
@@ -5827,7 +5832,7 @@ yerine kupon dosyasının TAMAMININ aralığından hesaplıyordu → #18 için "
 dedi. Doğrusu ~93 gün (4 Aralık) ve bu, BEKLEYENLER'in kendi "Kasım sonu" tahminiyle uyumlu.
 Düzeltildi, gerekçe `tahmin_gun` docstring'ine yazıldı.
 
-### (b) K145 — DÜZELTME HARİTASI (16 kayıt)
+**K145 — DÜZELTME HARİTASI: hangi karar hangisini düzeltti (BEKLEYENLER 22-G).**
 
 | tür | n | anlamı |
 |---|---|---|
@@ -5858,7 +5863,7 @@ ve isteğe bağlı 22-C/22-E (arşiv sigortası).
 **25 Eylül'e kadar beklemesi gerekmeyen her şey bitirildi. Altı yeni salt-okunur araç;
 hepsi ilk çalıştırmada temiz çıktı, ikisi bilgi üretti, biri kendi kusurunu yakaladı.**
 
-### K146 (22-E) — Disk projeksiyonu · `kod/disk_projeksiyon.py`
+**K146 — Disk projeksiyonu · `kod/disk_projeksiyon.py` (BEKLEYENLER 22-E)**
 
 Geçmiş ortalamayla ileri hız AYRI ölçüldü (günlük yazan dosyalar yalnız 2 aylık, toplam
 ortalama onları hafife alır):
@@ -5873,7 +5878,7 @@ ortalama onları hafife alır):
 **40 GB disk ~70 yıl yeter.** Disk sorun DEĞİL; ertelenen listedeki "sıkıştırma/arşivleme"
 (G2) böylece **gereksizleşti**. Asıl risk boyut değil, tek kopya.
 
-### K147 (22-D) — İdempotans denetimi · `kod/idempotans_denetim.py`
+**K147 — İdempotans denetimi · `kod/idempotans_denetim.py` (BEKLEYENLER 22-D)**
 
 **takip.py iki kez çalıştırılmadı** — canlıya kasten çift yazma denemesi kabul edilemez.
 Yerine iki bağımsız kanıt: (a) 45 günlük sicilde 5 tabloda **tek yinelenen satır yok**
@@ -5883,21 +5888,21 @@ kilidi, gün mührü, sonuçla mührü, kupon mührü, boş-satır doldurma ×2,
 **Açık kalan:** iki FARKLI makinede eşzamanlı çalışma. Tek-instans kilidi yalnız aynı
 makinede korur — göç senaryosunda ayrıca ele alınmalı.
 
-### K148 (22-F) — Karar arama aracı · `kod/karar_ara.py`
+**K148 — Karar arama aracı · `kod/karar_ara.py` (BEKLEYENLER 22-F)**
 
 `karar_ara.py K129` (tam metin) · `karar_ara.py bot1 kâr` (VE mantığı, bağlam satırıyla) ·
 `--liste` (dizin) · `--tam`. Türkçe-duyarsız (İ/ı/ş/ğ normalize).
 *Yan bulgu:* katı ayrıştırıcı **142** karar sayıyor; daha önce kullanılan kaba grep 146
 diyordu. Doğru sayı 142.
 
-### K149 (22-H) — AST diff genelleştirildi · `kod/ast_diff.py`
+**K149 — AST diff genelleştirildi · `kod/ast_diff.py` (BEKLEYENLER 22-H)**
 
 Varsayılanlar eklendi: argümansız çağrı **çekirdek 12 dosyayı** HEAD ile çalışma ağacı
 arasında kıyaslar. `--hepsi`, iki-commit kıyası, dosya seçimi, çıkış kodu (0/1).
 Rapor/görüntü dosyaları çekirdek dışında — değişmeleri beklenen, gürültü yapar.
 **Bugün çalıştırıldı: 12 dosyanın 150 bloğunda davranış değişikliği YOK.**
 
-### K150 (22-C) — Yeniden üretilebilirlik · `kod/yeniden_uretim.py`
+**K150 — Yeniden üretilebilirlik · `kod/yeniden_uretim.py` (BEKLEYENLER 22-C)**
 
 Tam klon testi yapılmadı (2 saatlik kazı + TJK'ya gereksiz yük); zincirin her halkası ayrı
 doğrulandı. Bağımlılıklar: `kod/*.py`'nin dış bağımlılığı yalnız **numpy/pandas/scipy**,
@@ -5919,7 +5924,7 @@ kapanış oranı var, kupon anı hiçbir yerde yeniden bulunamaz. **K92 (uzak-ay
 > Yani telafisi olmayan veri (birkaç MB) **zaten makine dışında güvende**. ZAMANLI #6'nın
 > acil kısmı çözülmüş; kalan risk yalnız `veri/ham` (1,1 GB, şartlı telafi edilebilir).
 
-### K151 (22-B) — Sessiz veri bozulma tarayıcısı · `kod/veri_kalite.py`
+**K151 — Sessiz veri bozulma tarayıcısı · `kod/veri_kalite.py` (BEKLEYENLER 22-B)**
 
 **Eşikler çıktı görülmeden yazılıp git'e mühürlendi** (22-B'nin şartıydı, `f0a…` commit).
 Sekiz kontrol; hiçbiri "makul görünen sayı" değil, hepsi tanım ya da matematik:
