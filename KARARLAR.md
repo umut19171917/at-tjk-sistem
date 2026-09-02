@@ -5571,3 +5571,122 @@ Erteleme gerekçesi #22'nin sonunda kayıtlı, böylece belge kaybolmuyor ama li
 **Ders (kayda geçiyor):** dışarıdan gelen bir yol haritası, projenin **vokabülerini** kullanıyor
 diye projenin **tarihini** doğru bildiği varsayılmamalı. Atıflar test edilebilirdi ve
 test edilince onda biri yanlış çıktı. Aynı disiplin (çapa testi) belgelere de uygulanmalı.
+
+
+## 2026-09-02 — K142: 25 Eylül karar ölçütü YAZILDI (post-hoc olduğu açıkça beyan edilerek)
+
+**K142 — Projenin en önemli kararının ölçütü yoktu; yazıldı ve BEKLEYENLER ZAMANLI-4'e
+mühürlendi. Tam bir ön-kayıt DEĞİL — sicilin bugüne kadarki kısmı bilinerek yazıldı ve bu
+açıkça beyan edildi. Kısmen ön-kayıtlı: kalan 23 günün verisi ve üç testin (#4, #11, #6)
+sonucu bilinmiyor, kural onlara bağlı.**
+
+### (a) NEDEN ŞİMDİ
+
+2 Eylül değerlendirmesi projenin kendi standardına göre en ağır çelişkisini buldu: her şey
+ön-kayıtla yapılıyor ama *"bu proje devam etsin mi"* kararı **"karar için sicil o güne kadar
+birikecek"** diye yazılmıştı — eşik yok, kural yok. 23 gün kalmıştı.
+
+Ön-kayıt penceresi kapanmıştı (sicil biliniyordu). İki kötü seçenek vardı: (a) hiç ölçüt
+yazmayıp o gün duruma bakmak, (b) sahte bir ön-kayıt yazmak. **Üçüncü yol seçildi:** ölçütü
+şimdi yaz, **neyin bilindiğini açıkça listele**, ve kuralı **henüz bilinmeyene** bağla.
+
+### (b) ÇIKAR ÇATIŞMASI KAYDA GEÇTİ
+
+Ölçütü öneren taraf (Claude) aynı gün "arşiv modu" yönünde görüş bildirmişti. Bu yüzden
+kuralın ilk basamağı (**S1 — kenar dirildi mi?**) kasten **geniş** tutuldu: üç ayrı yoldan
+biri bile sağlanırsa kural "GÜNLÜK DEVAM" der. Kenar gerçekten varsa kural onu yakalar.
+
+### (c) KURALIN YAPISI
+
+| basamak | soru | sonuç |
+|---|---|---|
+| **S1** | Kenar iddiası dirildi mi? (3 alternatif ölçüden biri %95 GA ile pozitif, ya da #4/#11 DOĞRULANDI çıktı) | **GÜNLÜK DEVAM** + yeni ön-kayıtlı kol |
+| **S2** | Yakın vadede (≤30 gün) dolacak açık ön-kayıtlı tetik var mı? | **GÜNLÜK DEVAM**, o tetiğe kadar; dolunca ölçüt yeniden koşar |
+| **S3** | Aksi hâlde | **ARŞİV MODU**: `kazi.py` + `katilim.csv` DEVAM, **kupon simülasyonu DURUR** |
+
+**Kuralın dişi:** hiçbir dalda "süresiz günlük kupon" yok. Her uzatmanın tetiği ve son
+tarihi var.
+
+**Getirilen ayrım (üçlemede yoktu):** veri toplama ile kupon simülasyonu **ayrılabilir**
+işlerdir. Arşiv ucuz ve yeri doldurulamaz (TJK arşivi kapanırsa geri gelmez); kupon
+simülasyonu yalnız kâğıt deneyine hizmet eder. "Arşivle" kararı ikisini birden durdurmak
+zorunda değil.
+
+**Kullanıcı muafiyeti açıkça yazıldı:** ölçüt araştırma gerekçesini yönetir, kullanıcının
+tercihini değil. "Hoşuma gidiyor, çalışsın" meşrudur — ama o zaman sistem **hobi olarak**
+çalışır ve yeni K kararı üretmez.
+
+---
+
+## 2026-09-02 — K143: Proje seviyesinde çokluluk düzeltmesi (22-A) — **endişem doğrulanmadı**
+
+**K143 — 2 Eylül değerlendirmesi "146 karar boyunca çokluluk hiç hesaplanmadı, birikmiş
+güven olduğundan yüksek görünüyor" demişti. Ölçüldü. **Sonuç beklediğimin tersi: projenin
+hiçbir hükmü düzeltmeden düşmüyor**, çünkü proje zaten marjinal p-değerlerine dayanarak
+hiçbir şey benimsememiş. Kendi eleştirimin bu maddesini geri alıyorum.**
+Araç: `kod/coklu_test.py` (salt-okunur).
+
+### (a) YÖNTEM — körlemesine düzeltme YAPILMADI
+
+KARARLAR.md'de raporlanmış 36 p-değeri elle sınıflandırıldı; körlemesine BH uygulamak
+yanıltıcı olurdu çünkü hepsi aynı aileden değil:
+
+| aile | n | düzeltme uygulanır mı |
+|---|---|---|
+| **1 · kenar iddiası** ("şu varyant tabanı yeniyor mu") | 22 | **EVET** |
+| 2 · çapa/kontrol (anlamSIZlık isteniyor) | 1 | hayır — düzeltme null'u korumayı kolaylaştırır, testi zayıflatmaz |
+| 3 · mekanizma/veri tespiti | 2 | hayır — kenar iddiası değil |
+| 4 · eşik/güç örneği (sonuç değil) | 2 | hayır |
+
+### (b) AİLE 1 SONUCU (22 test)
+
+11'i nominal anlamlı. Düzeltmesiz beklenen sahte-pozitif: **1,1**.
+Bonferroni eşiği p<0,00227 · BH (q=0,05) eşiği p≤0,014 → **8 test ayakta**.
+
+### (c) ASIL SORU — "iyileşme bulduk" iddiaları sağ çıkıyor mu?
+
+7 test iyileşme iddiası taşıyor, 7'si de nominal anlamlıydı:
+
+| p | bulgu | BH | Bonf |
+|---|---|---|---|
+| 0,0003 | K111: geç kurmak daha çok tutturuyor | ✓ | ✓ |
+| 0,0010 | bot1_1800 daha çok ayak yakalıyor | ✓ | ✓ |
+| 0,0092 | α kıyası: bugünkü ağırlık daha iyi | ✓ | · |
+| 0,014 | açgözlü ipucu (n=12) | ✓ | · |
+| 0,022 | bot1'in isabete katkısı | **düştü** | · |
+| 0,031 | kapsam merdiveni geniş→geniş900 | **düştü** | · |
+| 0,038 | Ankara kenarı (+2,9 puan) | **düştü** | · |
+
+**BH sonrası 4/7, Bonferroni sonrası 2/7 ayakta.**
+
+### (d) VE İŞTE ASIL BULGU — hiçbir hüküm değişmiyor
+
+Düşen üçüne tek tek bakıldığında:
+- **Ankara kenarı (p=0,038):** proje bunu **zaten reddetmişti** — K122 kendi eşiğini
+  p<0,010 diye önceden koymuştu ve 0,038 onu geçmiyordu.
+- **açgözlü ipucu (p=0,014):** proje bunu **"ipucu, kanıt değil"** diye işaretlemiş ve
+  kod değiştirmemişti (K80: *"Karar: ŞİMDİLİK KOD DEĞİŞMİYOR"*).
+- **kapsam merdiveni / bot1 katkısı:** ikisi de bir kolu **benimsemek** için kullanılmadı.
+
+Ayakta kalan dördü de projenin **zaten üzerine bir şey inşa etmediği** bulgular:
+K111 (geç kurmak parayı kötüleştiriyor → kol kapandı), bot1_1800 (K118'de emeklilik
+adayı ilan edildi), α kıyası (mevcut durumu koruyor).
+
+> **Proje, marjinal anlamlılığa dayanarak hiçbir şey benimsememiş.** Çokluluk boşluğu
+> *yöntemsel olarak* gerçekti ama *pratikte* hiçbir yanlış sonuca yol açmamış.
+
+### (e) KENDİ ELEŞTİRİMİ DÜZELTİYORUM
+
+2 Eylül değerlendirmesinde şöyle yazmıştım: *"geçmişte 'geçti' damgası almış herhangi bir
+bulgu — özellikle sınırda olanlar — proje ölçeğinde düzeltilse muhtemelen ayakta kalmazdı…
+birikmiş güveni olduğundan yüksek gösterir."*
+
+**Bu iddia ölçüldü ve tutmadı.** Sınırda bulgular gerçekten düşüyor — ama proje onlara zaten
+güvenmemişti. Değerlendirmenin 7 bulgusundan biri (çokluluk) böylece **kapandı**; kalan altısı
+(96% örtüşme, −%64,7 ROI, güç yetersizliği, ölçü kayması, yazılmamış ölçüt, tek bilet)
+duruyor — biri de bugün K142 ile kapatıldı.
+
+### (f) TEK GERÇEK KAYIP
+
+**"bot1'in isabete katkısı" (p=0,022) BH'den düşüyor.** Bu bulgu K112'de α tartışmasında
+kullanılmıştı. Hüküm değişmiyor (α zaten değiştirilmedi) ama **bulgu zayıf işaretlenmeli.**

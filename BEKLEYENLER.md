@@ -367,7 +367,15 @@ Belge denetlendi (K141): 10 olgu hatası bulundu, 25 Eylül karar noktasını hi
 ~45 iş günü öneriyor (proje 2 aylık). **Aşağıdaki 9 madde alındı — hepsi ucuz, hepsi
 projenin kendi bulgularına bağlı.** Toplam ~5 gün.
 
-**22-A · Proje seviyesinde çokluluk düzeltmesi (FDR)** — *~yarım gün · TETİK: SIRASI GELİNCE*
+**22-A · ✅ YAPILDI (2026-09-02, K143) — çokluluk düzeltmesi uygulandı, hüküm DEĞİŞMEDİ**
+> 22 kenar-iddiası testine BH + Bonferroni uygulandı. 7 "iyileşme" iddiasından BH sonrası 4,
+> Bonferroni sonrası 2 ayakta. **Ama düşenlerin hiçbirine proje zaten dayanmamıştı** (Ankara
+> kendi p<0,010 eşiğinde reddedilmişti; açgözlü ipucu "kanıt değil" diye işaretlenmişti).
+> Değerlendirmenin "birikmiş güven şişkin" iddiası **ölçüldü ve tutmadı** — geri alındı.
+> Tek işaret: "bot1'in isabete katkısı" (p=0,022) BH'den düşüyor, **zayıf** işaretlenmeli.
+> Araç: `kod/coklu_test.py`
+
+**22-A-özgün · Proje seviyesinde çokluluk düzeltmesi (FDR)** — *~yarım gün*
 Tüm K hipotezleri (açık + kapalı) için Benjamini-Hochberg; "hangileri proje ölçeğinde
 ayakta kalır" hesabı. **Neden birinci sırada:** bağımsız değerlendirmede de aynı boşluk
 tespit edildi — Bonferroni test yığını içinde uygulanıyor ama proje ölçeğinde hiç uygulanmadı.
@@ -773,7 +781,84 @@ düşük DEĞİLSE. Düşükse "ayrıştırma değer katmıyor" yazılır ve kap
 
 ## ZAMANLI — takvime bağlı
 
-### 4. Paper test karar noktası — 25 Eylül 2026
+### 4. Paper test karar noktası — 25 Eylül 2026 · **ÖLÇÜT YAZILDI (K142, 2 Eylül)**
+
+> ## ⚖️ 25 EYLÜL KARAR ÖLÇÜTÜ — bağlayıcı
+>
+> **DÜRÜSTLÜK BEYANI — bu TAM bir ön-kayıt DEĞİLDİR.** Ölçüt 2 Eylül 2026'da, sicilin
+> bugüne kadarki kısmı **bilinerek** yazıldı (aşağıda ne bilindiği açıkça listeli).
+> Ön-kayıt penceresi kapanmıştı; bu, "o gün duruma bakarız"dan iyi olan en dürüst kurtarma.
+> Kalan **23 günün verisi ve üç testin sonucu bilinmiyor** — kural onlara bağlı olduğu için
+> kısmen ön-kayıtlıdır.
+>
+> **ÇIKAR ÇATIŞMASI NOTU:** bu ölçütü öneren taraf (Claude) aynı gün yayımlanan
+> değerlendirmede **"arşiv modu"** yönünde görüş bildirdi. Bu yüzden **S1 kasten geniş
+> tutuldu**: kenar gerçekten varsa kural onu yakalar ve "devam" der.
+>
+> ### 2 EYLÜL İTİBARIYLA BİLİNENLER (kirlilik açıkça beyan)
+> - 823 kâğıt kupon · net **−427.655 ₺** · ROI **−%64,7**; aktif 7 kol −%59,3, %95 GA
+>   [−81,3 , −33,3] → kesinti duvarı (−%48,6) aralığın **içinde**
+> - 769 canlı koşuda sistem ile piyasa **%96 aynı** atı seçiyor; ayrıştıkları 34 koşuda 16-18
+> - ±5 puanlık kenarı ölçmek ~15.000 kupon ≈ 13,6M ₺ ≈ ~3 yıl gerektiriyor
+> - Beş ayrı eksende "isabet arttı, para değişmedi" (K98-h, K108, K111, K112, K129)
+>
+> ### 25 EYLÜL'DE BİLİNECEK, ŞU AN BİLİNMEYENLER
+> - ~23 günlük yeni sicil (~300 kupon)
+> - **#4** zamanlama kolu sonucu (tetik ~9 Eylül'de doluyor)
+> - **#11** İstanbul aykırısı sonucu (tetik ~8-16 Eylül'de doluyor)
+> - **#6** ağırlık yeniden fit sonucu
+>
+> ---
+>
+> ### KARAR ÜÇ SORUYA SIRAYLA BAKAR
+>
+> **S1 — KENAR İDDİASI DİRİLDİ Mİ?** *(kaçış kapısı; kasten geniş)*
+> 25 Eylül'e kadar biriken TÜM sicille, aşağıdakilerden **herhangi biri** sağlanırsa:
+> - `pist_analiz.py`'nin kamu-fark ölçüsü, aktif configlerin **havuzunda** %95 GA ile
+>   **sıfırın üstünde**, VEYA
+> - `defter.csv`'de sistem top-pick isabeti kamu top-pick isabetini %95 GA ile **geçiyor**, VEYA
+> - #4 veya #11'in ön-kayıtlı ölçütü **DOĞRULANDI** çıkıp bir mekanizma iddiası doğuruyor
+>
+> → **GÜNLÜK DEVAM.** Kenar sorusu yeniden açılır; yeni bir ön-kayıtlı kol kurulur.
+> *(Beklenti: sağlanmayacak. Ama sağlanırsa kural bağlayıcıdır ve "devam" der.)*
+>
+> **S2 — YAKIN VADEDE DOLACAK AÇIK ÖN-KAYITLI TEST VAR MI?**
+> 25 Eylül'de açık, **sayısal tetikli** her madde için "kaç gün sonra dolacak" hesaplanır.
+> - En az biri **≤30 gün** içinde doluyorsa → **GÜNLÜK DEVAM**, o tetik dolana kadar.
+>   Dolduğunda ölçüt yeniden uygulanır.
+> - Hepsi >30 gün ise → S3.
+>
+> **S3 — ARŞİV DEĞERİ SÜRÜYOR MU?**
+> → Her iki durumda da **ARŞİV MODU**: `kazi.py` + `katilim.csv` birikimi **DEVAM EDER**,
+> **kupon simülasyonu (7 config) DURUR.**
+> Gerekçe: veri toplama ile kupon simülasyonu **ayrılabilir** işlerdir. Arşiv birikimi
+> ucuz ve yeri doldurulamaz (TJK arşivi kapanırsa geri gelmez); kupon simülasyonu ise
+> yalnız kâğıt deneyine hizmet eder ve deney cevaplanamaz olduğu ölçüde gereksizdir.
+>
+> ---
+>
+> ### KURALIN DİŞİ
+> **Hiçbir dalda "süresiz günlük kupon" yok.** S1 dirilme, S2 sınırlı uzatma, S3 durdurma
+> der. Her uzatmanın bir **tetiği ve son tarihi** vardır ve dolduğunda ölçüt yeniden koşar.
+>
+> ### KULLANICI MUAFİYETİ (açıkça yazılıyor)
+> Bu ölçüt **araştırma gerekçesini** yönetir, kullanıcının tercihini değil. Kullanıcı
+> "hoşuma gidiyor, çalışsın" derse sistem çalışır ve bu meşrudur — ama o zaman **araştırma
+> deneyi olarak değil, hobi olarak** çalıştığı kayda geçer ve yeni K kararları üretmez.
+>
+> ### BU ÖLÇÜTÜ NE ÇÜRÜTÜR
+> - 25 Eylül'e kadar biriken veride ROI'nin %95 GA'sı **kesinti duvarının üstüne** çıkarsa
+>   → ölçüt yanlış kurulmuştur, kenar sorusu ölçülebilirmiş demektir
+> - #4 veya #11 doğrulanır ve mekanizma ölçülebilir çıkarsa → S1 zaten yakalar
+> - TJK arşivi 25 Eylül'den önce kapanırsa → S3'ün "arşiv ucuz ve yeri doldurulamaz"
+>   gerekçesi güçlenir, kupon simülasyonu daha da gereksizleşir
+>
+> **CANLI PARA:** bu ölçütün kapsamı dışında. O karar K98'de verildi (hayır) ve
+> 2 Eylül değerlendirmesinde güçlendi (%96 örtüşme). Bu ölçüt yalnız **sistem modunu** belirler.
+
+**Aşağıdaki metin ÖLÇÜT YAZILMADAN ÖNCEKİ hâliyle durur.**
+
+### 4-özgün. Paper test karar noktası — 25 Eylül 2026
 **İlgili:** K42, K48
 K42 kâğıt testi 25 Eylül 2026'ya kadar koşuyor. O tarihte sistem modu kararı: günlük devam /
 talep-üzerine / arşivle. Karar için sicil o güne kadar birikecek.
