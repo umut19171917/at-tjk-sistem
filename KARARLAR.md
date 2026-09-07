@@ -5947,3 +5947,74 @@ ertesi sabah koşar). Veri bozuk değil, **kontrol yanlış tanımlanmıştı.**
 BEKLEYENLER **#22'nin dokuz maddesinin dokuzu da tamam** (22-A K143 · 22-G K145 · 22-I K144 ·
 22-B/C/D/E/F/H bugün). **25 Eylül'e kadar yapılabilecek iş kalmadı.**
 Kalanlar tetiğe bağlı: #4 (~5 Eyl) · #11 (~7 Eyl) · #6 + ZAMANLI-4 (25 Eyl) · #18 (~4 Ara).
+
+---
+
+**K152 — İSTANBUL AYKIRISI ÖN-KAYITLI SINAMADAN GEÇEMEDİ: desen tekrarlanmadı, İŞARET
+TERSİNE DÖNDÜ. BEKLEYENLER #11 KAPANDI.** 7 Eyl 2026. Araç: `kod/istanbul_onkayit.py`
+(salt-okunur; kıyas birimi `pist_analiz.kamu_kiyas`'tan **içe aktarıldı**, kopyalanmadı).
+
+**Tetik doldu:** K122'den (26 Ağu) sonra **420 yeni İstanbul ayağı** (eşik 400). Ölçüt
+26 Ağustos'ta, sonuç görülmeden yazılmıştı ve burada **değiştirilmedi**.
+
+| | K122 (post-hoc, ESKİ veri) | K152 (ÖN-KAYITLI, YENİ veri) |
+|---|---|---|
+| δ = (İstanbul farkı) − (diğer farkı) | **−6,0** puan | **+1,90** puan |
+| %95 GA | [−10,2, −1,7] · sıfırı dışlıyordu | **[−2,90, +6,48]** · sıfırı içeriyor |
+
+**HÜKÜM: DÜŞTÜ, KOL KAPANDI.** Ölçüt "GA tamamen sıfırın altındaysa doğrulanır" diyordu;
+GA sıfırı içeriyor. Dahası **işaret ters döndü** — İstanbul yeni veride kamuyu **+0,95 puan
+yeniyor**, diğer pistler ise −0,95 puan geride. Yeni veride asıl negatif pist ANKARA
+(−4,76); IZMIR +3,81. Yani "hangi pist sapıyor" sorusunun cevabı pencereden pencereye
+değişiyor — bu, **gerçek bir pist etkisinin değil, gürültünün imzasıdır**.
+
+**Bu maddenin asıl değeri buydu.** K122 deseni gördüğünde GA sıfırı dışlıyordu ve
+inandırıcıydı; K122 buna rağmen **hüküm kurmadı**, ön-kayıt yazıp yeni veri bekledi.
+On iki gün sonra desen yok oldu. **Ön-kayıt disiplini bir yanlış bulguyu tam olarak
+tasarlandığı gibi engelledi** — projede bunun ilk temiz örneği.
+
+**Yeniden açılması için** yeni MEKANİZMA iddiası **ve** yeni veri gerekir (Kural 6 / K33).
+"Tekrar bakalım" gerekçe değildir.
+
+---
+
+**K153 — ZAMANLAMA CANLI KOLU (30 vs 15 dk): İKİ ÇİFTTE DE İŞARET YOK. Simülasyonun YÖNÜ
+tuttu, BÜYÜKLÜĞÜ tutmadı; geniş kupondaki fark GENİŞLİK ARTEFAKTI çıktı.** 7 Eyl 2026.
+Araç: `kod/zamanlama_onkayit.py` (salt-okunur).
+
+**Tetik doldu:** `orta_15` **68 kupon**, `acgozlu900_15` **67** (eşik ~60). K106'nın
+*"25 Eyl'de tetik dolmayacak"* tahmini **yanlış çıktı** — 18 gün önce doldu (K144 bunu
+2 Eylül'de zaten görmüştü).
+
+| çift | ayak | 30 dk | 15 dk | net | McNemar | olay-bootstrap %95 GA |
+|---|---|---|---|---|---|---|
+| `orta` ↔ `orta_15` (DAR) | 408 | %50,5 | %51,7 | **+5 ayak** | p=0,576 | **[−1,96, +4,41]** |
+| `acgozlu900` ↔ `_15` (GENİŞ) | 402 | %68,4 | %69,7 | **+5 ayak** | p=0,511 | **[−1,49, +3,73]** |
+
+**İÇ KONTROL GEÇTİ:** iki kolun aynı atları yazdığı ayaklarda (272 ve 217) sonuç
+uyumsuzluğu **tam sıfır** → eşleştirme sağlam.
+
+**(a) Simülasyonun yönü tuttu, büyüklüğü tutmadı.** K105-b `orta` için +5 ayak öngörmüştü —
+ama **108 ayakta**, yani **+4,63 puan**. Canlıda +5 ayak **408 ayakta**, yani **+1,23 puan**.
+Simülasyon etkiyi ~**4 kat abartmış**; gerçek büyüklük GA'nın üst ucunun (+4,41) dışında
+kalıyor. Ham "+5" sayısının iki yerde de aynı çıkması **tesadüf**, kıyaslanabilir büyüklük
+puandır.
+
+**(b) GENİŞ kupondaki fark ZAMANLAMADAN DEĞİL, GENİŞLİK KAYMASINDAN geliyor.** Açgözlü
+dağıtıcı bütçeyi olasılığa göre paylaştırır; olasılık değişince genişlik de kayar
+(402 ayağın **176'sında** genişlik farklı). Genişliği **birebir aynı** olan 226 ayakta test
+tekrarlandı: **net −2 ayak** — işaret **tersine döndü**. `orta`'da ise ayıklama sağlam:
+eşit genişlikteki 380 ayakta net **+6**, yön korunuyor. Bu ayrım betiğe **kalıcı olarak
+eklendi**, çünkü açgözlü aileyle yapılacak her eşleşmiş kıyasta aynı tuzak vardır.
+
+**(c) PARA — K111'in dersi tekrarlandı.** `acgozlu900_15` daha çok 5/6 üretti (27 vs 22)
+ama **daha az** 6/6 (3 vs 4) ve ROI **−%76,8** (30 dk: −%61,6). Geç kurmak yine
+**daha ucuz atları** tutturdu. `orta` çiftinde para pratikte aynı (−%73,2 / −%73,5).
+
+**HÜKÜM: canlı zamanlama 30 dk KALIR.** Ne isabette ne parada 15 dk lehine ölçülebilir bir
+şey yok; geniş kuponda görünen fark artefakt. **15 dk kollarını kapatma kararı KULLANICININ**
+(K111-f3 ilkesi): veri toplamaya başlamış bir kolu teoriyle kapatmam. Kâğıt maliyeti
+Altılı başına ~1.190 TL.
+
+**AÇIK KALAN:** 10 dk grubu hâlâ yok (takip 15 dk'da bir koşuyor). Ayrıca bu ölçüm
+**68 olayla** ±3 puanlık bir çözünürlüğe sahip; ±1 puanlık bir etkiyi göremez.

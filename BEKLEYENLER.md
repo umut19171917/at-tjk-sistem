@@ -116,7 +116,29 @@ da zayıf (4'lü %45,6 · 5'li %46,8 · 6'lı %48,6 → **yalnız 2-3 puan**).
 bahislerde de benzer. Ama ilk kez körlemesine değil, **ölçülmüş bir mekanizmayı takip ederek**
 bakıyor olacağız — o yüzden yapmaya değer.
 
-### 11. İSTANBUL AYKIRISI — post-hoc desen, ÖN-KAYITLI ölçütle sınanacak (K122)
+### 11. ✅ SINANDI ve KAPANDI (2026-09-07, K152) — İSTANBUL AYKIRISI **DÜŞTÜ**
+
+> ## 🔒 KAPANIŞ ÖZETİ (K152, 7 Eyl 2026)
+>
+> Tetik doldu (**420/400** yeni İstanbul ayağı) ve ön-kayıtlı ölçüt **aynen** uygulandı.
+> Araç: `kod/istanbul_onkayit.py` (kıyas birimi `pist_analiz`'ten içe aktarıldı).
+>
+> | | K122 (post-hoc, eski veri) | K152 (ön-kayıtlı, yeni veri) |
+> |---|---|---|
+> | δ = İstanbul farkı − diğer farkı | −6,0 puan | **+1,90 puan** |
+> | %95 GA | [−10,2, −1,7] | **[−2,90, +6,48]** — sıfırı içeriyor |
+>
+> **İşaret ters döndü.** Yeni veride en negatif pist ANKARA (−4,76), İzmir ise +3,81.
+> "Hangi pist sapıyor" cevabı pencereden pencereye değişiyor → **gürültü imzası**.
+>
+> **Ön-kayıt disiplini tam tasarlandığı gibi çalıştı:** inandırıcı ama sahte bir desen,
+> hüküm kurulmadan önce yeni veriyle elendi. Projede bunun ilk temiz örneği.
+>
+> **YENİDEN AÇILMASI İÇİN:** yeni mekanizma iddiası **ve** yeni veri (Kural 6 / K33).
+
+**Aşağıdaki metin KAPANMADAN ÖNCEKİ hâliyle durur — gerekçe zinciri görünsün diye silinmedi.**
+
+### 11-özgün. İSTANBUL AYKIRISI — post-hoc desen, ÖN-KAYITLI ölçütle sınanacak (K122)
 **Eklendi:** 2026-08-26 (K122) · **TETİK: SAYISAL** — ≥400 yeni İstanbul ayağı
 
 **Gözlenen (26 Ağu, 2.850 ayak):** aynı ayakta aynı genişlikte kamuyla kıyasta İstanbul
@@ -548,7 +570,33 @@ altili.html / paper.html K55 zengin formatına geçti (tahminler + sistem sıras
 kamu sırası + oran + bedel + ödül + toplam). defter.html hâlâ eski düzende. İstenirse aynı
 `rapor_ortak.py` yapıtaşlarıyla çevrilebilir; sistemin veri akışına dokunmaz.
 
-### 4. Kupon zamanı — 30 vs 15 dk · **CANLI KOL AÇIK (K105)** · **GERİYE DÖNÜK ÖLÇÜLDÜ (K111)**
+### 4. Kupon zamanı — 30 vs 15 dk · **CANLI KOL SINANDI (K153) — İŞARET YOK, 30 dk KALIR**
+
+> ## 🔒 TETİK ATEŞLENDİ ve SINAMA YAPILDI (K153, 7 Eyl 2026)
+>
+> `orta_15` **68** kupon · `acgozlu900_15` **67** (eşik ~60). Araç: `kod/zamanlama_onkayit.py`.
+>
+> | çift | ayak | 30 dk | 15 dk | net | McNemar | %95 GA |
+> |---|---|---|---|---|---|---|
+> | `orta` ↔ `orta_15` | 408 | %50,5 | %51,7 | +5 ayak | p=0,576 | [−1,96, +4,41] |
+> | `acgozlu900` ↔ `_15` | 402 | %68,4 | %69,7 | +5 ayak | p=0,511 | [−1,49, +3,73] |
+>
+> **İç kontrol geçti** (aynı seçim yazılan 272+217 ayakta sonuç uyumsuzluğu = 0).
+>
+> - **Simülasyonun yönü tuttu, büyüklüğü tutmadı:** K105-b +5 ayak/108 = **+4,63 puan**
+>   öngörmüştü; canlıda +5 ayak/408 = **+1,23 puan**. ~4 kat abartı.
+> - **Geniş kupondaki fark ARTEFAKT:** genişliği birebir aynı olan 226 ayakta net **−2**.
+>   `orta`'da ayıklama sağlam (eşit genişlikte net +6).
+> - **Para:** `acgozlu900_15` ROI −%76,8 vs −%61,6. Geç kurmak yine ucuz at tutturuyor (K111).
+>
+> **HÜKÜM: canlı zamanlama 30 dk KALIR.** 15 dk kollarını kapatma kararı **KULLANICININ**
+> (K111-f3): veri toplamaya başlamış kolu teoriyle kapatmıyoruz. Kâğıt maliyeti ~1.190 TL/Altılı.
+>
+> **AÇIK:** 10 dk grubu hâlâ yok (görev sıklığı). Çözünürlük 68 olayda ±3 puan.
+
+<sub>--- tetik dolmadan önceki hâli (arşiv) ---</sub>
+
+### 4-tetikten-once. Kupon zamanı — 30 vs 15 dk · **CANLI KOL AÇIK (K105)** · **GERİYE DÖNÜK ÖLÇÜLDÜ (K111)**
 
 > **K111 SONUCU (19 Ağu 2026) — beklentiyi DÜŞÜRÜYOR, kolu kapatmıyor.**
 > Ayak düzeyinde eşleşmiş ölçüm (1.548 ayak, 78 Altılı, ölçüt önceden bağlandı):

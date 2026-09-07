@@ -77,15 +77,15 @@ def tetikler():
     ist = olc_istanbul("2026-08-26")
     T.append(dict(no="#11", ad="İSTANBUL aykırısı (post-hoc desen)", tur="sayısal",
                   simdi=ist, hedef=400, birim="ayak", kaynak="K122",
-                  baslangic=date(2026, 8, 26),
-                  not_="pist_analiz.py + olay-bootstrap ile sınanır"))
+                  baslangic=date(2026, 8, 26), kapandi="K152 (7 Eyl) — DÜŞTÜ",
+                  not_="SINANDI: δ=+1,90 [−2,90, +6,48] sıfırı içeriyor → kol KAPANDI"))
 
     z = olc_zamanlama()
     for c in ("orta_15", "acgozlu900_15"):
         T.append(dict(no="#4", ad=f"zamanlama kolu — {c}", tur="sayısal",
                       simdi=z[c], hedef=60, birim="kupon", kaynak="K105/K111",
-                      baslangic=date(2026, 8, 15),
-                      not_="30 dk vs 15 dk eşli kıyas"))
+                      baslangic=date(2026, 8, 15), kapandi="K153 (7 Eyl) — İŞARET YOK",
+                      not_="SINANDI: +1,2 puan, GA sıfırı içeriyor → canlı 30 dk KALIR"))
 
     cf = olc_cifte("2026-08-27")
     T.append(dict(no="#18", ad="ÇİFTE'de bot1 deseni (post-hoc)", tur="sayısal",
@@ -107,6 +107,8 @@ def tetikler():
 
 
 def yuzde(t):
+    if t.get("kapandi"):
+        return 100.0
     if t["tur"] != "sayısal":
         return None
     return min(100.0, 100.0 * t["simdi"] / t["hedef"])
@@ -142,8 +144,9 @@ def main():
             y = yuzde(t)
             d = tahmin_gun(t, k)
             dur = f"{t['simdi']:,}/{t['hedef']:,} {t['birim'][:12]}"
-            tah = (f"~{d} gün (~{(pd.Timestamp(bugun)+pd.Timedelta(days=d)):%d %b})"
-                   if d else ("DOLDU" if t["simdi"] >= t["hedef"] else "—"))
+            tah = (t["kapandi"] if t.get("kapandi") else
+                   (f"~{d} gün (~{(pd.Timestamp(bugun)+pd.Timedelta(days=d)):%d %b})"
+                    if d else ("DOLDU" if t["simdi"] >= t["hedef"] else "—")))
             print(f"  {t['no']:>10} {'sayısal':>9} {dur:>16} {y:>8.0f}% {tah:>16}  {t['kaynak']}")
         else:
             kaldi = t["simdi"]
@@ -152,7 +155,8 @@ def main():
             print(f"  {t['no']:>10} {'tarih':>9} {dur:>16} {'—':>9} {tah:>16}  {t['kaynak']}")
 
     yakin = [t for t in T if t["tur"] == "tarih" and 0 <= t["simdi"] <= 30]
-    dolan = [t for t in T if t["tur"] == "sayısal" and (tahmin_gun(t, k) or 999) <= 23]
+    dolan = [t for t in T if t["tur"] == "sayısal" and not t.get("kapandi")
+             and (tahmin_gun(t, k) or 999) <= 23]
     print("\n" + "-" * 96)
     print(f"  25 EYLÜL'E {(date(2026,9,25)-bugun).days} GÜN — o tarihe kadar:")
     for t in dolan:
