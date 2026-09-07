@@ -853,9 +853,57 @@ düşük DEĞİLSE. Düşükse "ayrıştırma değer katmıyor" yazılır ve kap
 
 ---
 
+### 23. SESSİZ VERİ KAYBI — kök sebep bulundu, DÜZELTME KULLANICI KARARINA BAĞLI (K155)
+**Eklendi:** 2026-09-07 (K155) · **TETİK: KULLANICI** — kendiliğinden değiştirme.
+
+**Ölçülen:** 18 Tem–7 Eyl arası **74 koşu** `"posta geçti → işlenmedi"` ile atlandı
+(~%8; yılda ~500 koşu). Haftalık %4,7–16,5, **trend yok**.
+
+**Kök sebep aritmetik:** işleme penceresi `[posta−5dk, posta+3dk]` = **8 dk**, görev aralığı
+**15 dk** (`TJK Takip`, `rep=PT15M`). 74 kaçağın **57'sinde (%77) pencerede hiç geçiş yok.**
+Kalan 17 = geçici çekme hatası. Geçiş süresi medyan **0 sn** → geçiş pahalı değil.
+
+**Koruma kodu suçlu DEĞİL** (K36: yarış sonrası tahmin kaydetmek sızıntıdır — korunmalı).
+**Elenen hipotez:** "akşam penceresi kapanıyor" — YANLIŞ, son geçiş medyanı 22:37.
+
+**İki yol, ikisinin de bedeli var:**
+| yol | kazanç | bedel |
+|---|---|---|
+| aralık 15 dk → **5 dk** | pencere kesin yakalanır; K105'in *"10 dk grubu yok"* eksiği de kapanır | TJK isteği ve `oran_log` yoğunluğu **3 katına** → veri üretme süreci deney ortasında değişir (K76/K111 buna dayanıyor) |
+| `--dk` 5 → **20** | pencere 23 dk, aralıktan geniş | kayıt anı postaya 20 dk kalaya çeker → `defter`'in anlamı değişir (K111: zamanlama ölçülebilir bir etki) |
+
+**Yapılmadı:** ikisi de canlı davranışı değiştirir; kullanıcının duran talimatı *"risk varsa
+yapma"*. Ölçüm bitti, seçim kullanıcının.
+
 ## ZAMANLI — takvime bağlı
 
-### 4. Paper test karar noktası — 25 Eylül 2026 · **ÖLÇÜT YAZILDI (K142, 2 Eylül)**
+### 4. Paper test karar noktası — 25 Eylül 2026 · **ÖLÇÜT YAZILDI (K142)** · **KOD MÜHÜRLENDİ (7 Eyl)** · **S3 DALI KULLANICI MUAFİYETİYLE GEÇERSİZ (K154)**
+
+> ## 🔴 K154 (7 Eyl 2026) — KUPON SİMÜLASYONU HİÇBİR KOŞULDA DURMAZ
+>
+> Kullanıcı: *"hiçbir koşulda kupon yapımı durmayacak, devam edecek."*
+> **S1 ölçülmeden 18 gün önce** ilan edildi — sonucu görüp kaçmak değil, temiz zamanda
+> kullanılmış meşru muafiyet. **S3'ün "kupon simülasyonu DURUR" dalı geçersizdir.**
+> S1 ve #6 yine koşacak; artık *"kupon dursun mu"*yu değil, *"araştırma deneyi mi, hobi
+> akışı mı"*yı belirliyorlar.
+>
+> ## 🔒 ÖLÇÜM KODU 7 EYLÜL'DE MÜHÜRLENDİ — K142'nin son açığı kapandı
+>
+> K142 ölçütü yazdı ama **kodunu yazmadı**. 25 Eylül'de yazmak şu serbestlik derecelerini
+> bırakırdı: hangi config havuzlanır · bootstrap birimi · bağ kuralı · alt küme. Hepsi
+> **7 Eyl'de, veri görülmeden** sabitlendi:
+>
+> | dosya | ne yapar | kapı |
+> |---|---|---|
+> | `kod/s1_olcum.py` | S1-a (kupon ayağı, biz−kamu) + S1-b (koşu, top-pick) | 25 Eyl'den önce **çalışmayı reddeder** (çıkış kodu 2) |
+> | `kod/agirlik_refit.py` | #6: A/B/C kolları, Bonferroni %97,5 GA | aynı kapı |
+>
+> Geçme koşulu ikisinde de **GA'nın alt ucu > 0**. `s1_olcum.py --sinama` sentetik null
+> veride GA kalibrasyonunu doğruladı (%96,0; beklenen ~%95).
+>
+> **S1-c KAPALI:** #4 ve #11 7 Eyl'de düştü (K152/K153).
+> **S2 BOŞ:** tek açık sayısal tetik #18, ~30 Kasım → 30 günü aşıyor.
+> Yani 25 Eylül'ün cevabı **S1-a veya S1-b'ye** kalmış durumda.
 
 > ## ⚖️ 25 EYLÜL KARAR ÖLÇÜTÜ — bağlayıcı
 >

@@ -6018,3 +6018,88 @@ Altılı başına ~1.190 TL.
 
 **AÇIK KALAN:** 10 dk grubu hâlâ yok (takip 15 dk'da bir koşuyor). Ayrıca bu ölçüm
 **68 olayla** ±3 puanlık bir çözünürlüğe sahip; ±1 puanlık bir etkiyi göremez.
+
+---
+
+**K154 — KULLANICI MUAFİYETİ KULLANILDI: kupon simülasyonu hiçbir koşulda durmayacak.
+S1 ÖLÇÜLMEDEN 18 GÜN ÖNCE ilan edildi — bu, sonucu görüp kaçmak DEĞİL.** 7 Eyl 2026.
+
+Kullanıcının ifadesi: *"hiçbir koşulda kupon yapımı durmayacak, devam edecek."*
+
+**(a) ZAMANLAMA, KARARIN KENDİSİ KADAR ÖNEMLİ.** K142 muafiyeti açıkça yazmıştı ama
+kullanılabileceği iki an vardı: **ölçümden önce** ya da **olumsuz sonucu görünce**.
+İkincisi ön-kaydı çöpe atardı — "kural bana uymadı, kuralı iptal ediyorum". Karar 25 Eylül'e
+**18 gün kala**, S1 kodu daha yeni mühürlenmişken, sonuç **bilinmezken** verildi. Bu meşru
+bir tercih beyanıdır ve kayda öyle geçer.
+
+**(b) NEYİ DEĞİŞTİRİR.** ZAMANLI-4'ün **S3 dalı** — *"kupon simülasyonu (7 config) DURUR"* —
+geçersizdir. 25 Eylül kararı artık kupon akışını durduramaz. Kuralın "dişi" bu noktada
+kullanıcı tercihiyle sökülmüştür ve bu **açıkça** yazılmaktadır; sessizce yumuşatılmamıştır.
+
+**(c) NEYİ DEĞİŞTİRMEZ.** S1 ve #6 **yine koşacak** (kodları 7 Eyl'de mühürlendi:
+`kod/s1_olcum.py`, `kod/agirlik_refit.py`). Sonuçları hâlâ belirleyici — ama artık
+*"kupon dursun mu"* sorusunu değil, *"bu bir araştırma deneyi mi, yoksa hobi akışı mı"*
+sorusunu belirliyorlar. K142'nin kendi ayrımı: veri toplama, kupon simülasyonu ve araştırma
+kolu **üç ayrı iştir**. Kullanıcı ikincisini süresiz açtı; birincisi zaten açıktı; üçüncüsü
+25 Eylül'de karara bağlanacak.
+
+**(d) "YENİ K KARARI ÜRETMEZ" MADDESİNİN OKUNUŞU.** K142 hobi modunda *"yeni K kararları
+üretmez"* diyor. Okuyuşum: bu, **akışın rutin işleyişi** için geçerlidir — her gün kupon
+kurulması artık kendiliğinden karar üretmez. **Kasıtlı ölçümler** (S1, #6, #18 ve bundan
+sonra açılacak ön-kayıtlı kollar) karar üretmeye devam eder; yoksa muafiyet, projeyi
+ölçmekten de men etmiş olurdu ki metin bunu demiyor. Bu okuyuş burada **açıkça** kayda
+geçiyor ki kullanıcı katılmıyorsa düzeltebilsin.
+
+**(e) İKİNCİ DERECEDEN SONUÇ — VERİ KAYBI ARTIK KALICI.** 7 Eylül'de ~%8'lik bir sessiz
+kayıp ölçülmüştü (74 koşu "posta geçti → işlenmedi"). O gün **ertelenmişti**, gerekçesi:
+*"arşiv moduna geçilirse kupon kaydı durur, konu anlamsızlaşır."* Bu gerekçe **K154 ile
+geçersiz oldu** — akış süresiz devam edecekse kayıp da süresiz birikiyor. Madde yukarı
+taşındı ve aynı gün ölçüldü (K155).
+
+---
+
+**K155 — SESSİZ VERİ KAYBININ KÖKÜ BULUNDU: koruma kodu değil, GÖREV ARALIĞI. 15 dk'da bir
+koşan geçiş, 8 dakikalık işleme penceresini ıskalıyor. ÖLÇÜLDÜ, DEĞİŞTİRİLMEDİ — karar
+kullanıcının.** 7 Eyl 2026. K154(e)'nin doğurduğu madde.
+
+**(a) BÜYÜKLÜK.** 18 Tem–7 Eyl arası **74 koşu** `"posta geçti → işlenmedi (defter koruması)"`
+ile atlandı. Haftalık kayıp %4,7–16,5 arasında salınıyor, **trend yok** — kronik ve sabit.
+Saat bazında en yüksek 16:00 (%17,3) ve 17:00 (%11,4).
+
+**(b) KORUMA KODU SUÇLU DEĞİL.** `takip.py`'deki kapı K36'nın kuralı: `now > post + 3dk` ise
+koşu **işlenmez**, çünkü yarış sonrası "tahmin" kaydetmek sızıntıdır. Bu doğru ve korunmalı.
+
+**(c) KÖK SEBEP — ARİTMETİK.** Ölçüldü:
+
+| | |
+|---|---|
+| işleme penceresi | `[posta−5dk, posta+3dk]` = **8 dakika** (`--dk` varsayılanı **5**) |
+| görev aralığı | **15 dakika** (`TJK Takip`, `MSFT_TaskDailyTrigger rep=PT15M dur=PT12H`) |
+| geçiş süresi | medyan **0 sn**, %90 **1 sn**, maks 56 sn — geçiş pahalı DEĞİL |
+
+**74 kaçağın 57'sinde (%77) pencerede HİÇ geçiş yok.** Kalan 17'sinde geçiş koştu ama koşu
+işlenemedi (geçici çekme hatası). Yani baskın sebep tek: **aralık pencereden geniş.**
+
+Sistem yine de %92 yakalıyor, çünkü postaların %96'sı `:00` (379) ve `:30` (399) dakikasında
+ve görev de çeyrek saatlere hizalı. **Kayıp, hizanın bozulduğu anlarda oluşuyor** — kaçan
+bir geçiş, uykuya giren PC, ya da saniyelik kayma.
+
+**(d) ELENEN HİPOTEZ (kayda geçiyor).** İlk tahminim *"12 saatlik pencere akşam kapanıyor,
+geç yarışlar kaçıyor"*du. **YANLIŞ:** son geçişin medyanı **22:37**, 52 günün 51'inde
+20:00'den sonra da geçiş var. Akşam saatlerinin kaybı en düşük (19h %3,5 · 20h %4,8).
+
+**(e) NEDEN ŞİMDİ ÖNEMLİ.** 7 Eylül sabahı bu madde **ertelenmişti**, gerekçesi "arşiv moduna
+geçilirse konu kapanır". K154 o gerekçeyi geçersiz kıldı: akış süresiz sürecekse kayıp da
+süresiz birikiyor — yılda ~**500 koşu**.
+
+**(f) DEĞİŞİKLİK YAPILMADI. İki yol var ve ikisinin de bedeli var:**
+
+| yol | etki | bedel |
+|---|---|---|
+| **görev aralığı 15 dk → 5 dk** | pencere kesin yakalanır | TJK'ya giden istek **3 katına** çıkar; `oran_log` yoğunluğu da 3 katına çıkar → **veri üretme süreci deney ortasında değişir** (K76/K111 buna dayanıyor) |
+| **`--dk` 5 → 20** | pencere 23 dk olur, aralıktan geniş | kayıt anı postaya 20 dk kalaya çekilir → **defter'in anlamı değişir**; K111 zamanlamanın ölçülebilir olduğunu gösterdi, yani bu bedava değil |
+
+İkisi de **canlı sistemin davranışını değiştirir**; kullanıcının duran talimatı *"sisteme asla
+zarar gelmesin / risk varsa yapma"*. O yüzden **ölçüm yapıldı, müdahale yapılmadı**; seçim
+kullanıcınındır. Not: 5 dk'lık aralık K105'in *"10 dk grubu YOK"* eksiğini de kapatırdı —
+yani birinci yolun bir yan **kazancı** da var.
