@@ -1,0 +1,101 @@
+
+[14:00 tetik]  ISTANBUL  KOSU 1 (yaris 14:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  1  14:00  1200m  3 Yaşlı Araplar  (7 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    7 KING ULUDAĞ              13.3      28.4   29.6   20.5   2.35  F
+    4 HEYHAT                   15.2      21.0   21.1   24.3   3.30  
+    3 GÜMÜŞ KILIÇ              24.4      20.4   18.8   18.4   3.70  
+    2 ERENAĞAM                 12.5      12.3   12.5   16.4   5.55  
+    1 ERÇETİN                  23.0       9.4    8.5   11.6   8.15  >>CANLI
+    5 LİSBOA                    7.8       5.9    6.4    5.9  10.80  
+    6 YÜCEALP                   3.8       2.6    3.1    2.8  22.35  
+
+[14:30 tetik]  ISTANBUL  KOSU 2 (yaris 14:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  2  14:30  1400m  3 Yaşlı İngilizler  (8 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    5 TENACIOUS KHAN           24.8      33.8   31.1   22.2   2.25  F
+    1 BOAZ                     23.1      18.3   16.4   19.9   4.25  
+    4 LINARES                   6.0      11.2   13.7   12.5   5.10  
+    6 LIVE YOUR FREEDOM        14.7      10.7   10.4   11.6   6.70  
+    2 GIRALAMO                 13.5      10.6   10.5   16.2   6.65  
+    8 BUILD YOUR DREAMS         7.5       7.1    8.0    8.0   8.75  
+    7 CLEMENZA                  4.3       4.8    6.0    5.5  11.70  
+    3 HOLA Y CHAO               6.1       3.4    3.9    4.1  18.10  
+
+[15:00 tetik]  ISTANBUL  KOSU 3 (yaris 15:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  3  15:00  1600m  3 ve Yukarı İngilizler  (7 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    6 SENKRON                  18.6      28.9   28.4   26.3   2.45  F
+    4 MARISCAL                 14.2      22.8   23.6   23.1   2.95  
+    2 KING OF THE WIN          19.9      12.9   11.8   11.3   5.90  >>CANLI
+    1 HERKHAN STAR             11.5      10.6   11.0   13.9   6.30  
+    7 ALASER                   10.5      10.6   11.2   11.8   6.20  
+    5 TILO GIRL                15.0       8.8    8.4    7.1   8.25  >>CANLI
+    3 DIFFERENCE MAKER         10.2       5.5    5.6    6.5  12.35  >>CANLI
+
+[15:30 tetik]  ISTANBUL  KOSU 4 (yaris 15:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  4  15:30  1300m  2 Yaşlı İngilizler  (7 at)
+   [DUSUK GUVEN: ilk-kosu pay 100%, ort.gecmis 0.0 kosu -> Bot1 zayif, kamuya yaslan]
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    2 DANZIBOR                 19.6      41.0   40.6   48.7   1.70  F
+    4 WARRIORS                 13.8      17.3   17.7   13.1   3.90  
+    1 ALPHA CENTAURI            8.6      10.8   12.0   15.7   5.75  
+    5 YAVRU AYHAN              19.3       9.6    8.7    7.1   7.95  >>CANLI
+    3 NEVER EVER               11.8       8.9    9.0    5.8   7.65  
+    6 CARITA LINDA             14.1       8.2    7.9    7.0   8.75  >>CANLI
+    7 SHUEN                    12.9       4.2    4.0    2.6  17.30  >>CANLI
+
+[16:00 tetik]  ISTANBUL  KOSU 5 (yaris 16:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  5  16:00  1600m  3 ve Yukarı Araplar  (9 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    4 MOLFIT                    8.2      46.9   49.7   56.5   1.40  F
+    1 ALLIE SAINT LON           6.0      12.5   13.4   20.9   5.20  
+    9 ÖZTATMAR                 21.1       9.0    7.5    7.0   9.25  >>CANLI
+    5 ZİNCİR KOPARAN           13.9       8.2    7.4    3.3   9.45  >>CANLI
+    3 KAHRAMANOĞLU             16.9       8.1    7.1    6.1   9.85  >>CANLI
+    7 GÖZPINARI                 6.0       5.0    5.2    2.1  13.50  
+    2 AZİMLİ                    8.0       4.3    4.2    2.1  16.70  
+    8 KRAL SULTAN               7.8       3.2    3.1    1.2  22.65  
+    6 ASLAN HATİP              12.3       2.8    2.5    0.9  27.90  >>CANLI
+
+[16:30 tetik]  ISTANBUL  KOSU 6 (yaris 16:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  6  16:30  1600m  3 ve Yukarı İngilizler  (7 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    1 CHARABANC                32.8      44.5   40.8   45.9   1.70  F
+    6 UPAMECANO                33.2      23.6   20.7   17.0   3.35  >>CANLI
+    7 WHIZBANG                 10.7      10.7   11.9    7.3   5.85  
+    4 JOYFUL FOREVER            4.1       6.9    9.4   11.6   7.35  
+    3 SPECIAL MAN               9.0       6.8    7.6    9.3   9.15  
+    2 HEYBETLI                  3.2       4.1    5.8    5.3  12.00  
+    5 MUCHO BUENO               7.0       3.4    3.9    3.6  17.95  
+
+[17:00 tetik]  ISTANBUL  KOSU 7 (yaris 17:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  7  17:00  2400m  3 ve Yukarı İngilizler  (8 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    6 ZARRAF                   10.9      28.3   28.3    -     1.75  F
+    8 STUDEN KLADENETS          3.4      21.4   28.3    -     1.75  F
+    7 ETSUKO                   24.2      18.3   14.6    -     3.40  >>CANLI
+    4 HANDSOME KING            12.9      11.4   10.3    -     4.80  
+    1 BORREGO                   8.4       7.8    7.7    -     6.45  
+    3 GALİOĞLU                 14.8       4.8    3.9    -    12.65  >>CANLI
+    2 BROARTS                  18.1       4.3    3.3    -    14.95  >>CANLI
+    5 RIDE THE LIGHTNING        7.5       3.6    3.5    -    14.35  
+
+[18:00 tetik]  ISTANBUL  KOSU 9 (yaris 18:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  9  18:00  1300m  2 Yaşlı İngilizler  (6 at)
+   [DUSUK GUVEN: ilk-kosu pay 100%, ort.gecmis 0.0 kosu -> Bot1 zayif, kamuya yaslan]
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    7 NATIVE BLOSSOM           26.0      30.5   28.9    -     2.40  F
+    4 REBEL MILLIONAIRE        20.5      26.3   26.2    -     2.65  
+    1 DOUBLE RUNNER            16.0      20.2   21.0    -     3.30  
+    8 OLUNIA                   19.7      10.1    9.6    -     7.25  >>CANLI
+    6 MI VOILA                 11.7       9.6   10.4    -     6.70  
+    2 EGREGIOUS BOY             6.1       3.3    3.9    -    17.65  
