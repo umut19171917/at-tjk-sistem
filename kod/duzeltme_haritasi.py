@@ -70,6 +70,10 @@ D = [
     ("K143", "2 Eyl değerlendirmesi", "aşırı",
      "Değerlendirme 'çokluluk hesaplanmadı, birikmiş güven şişkin' demişti. Ölçüldü: düzeltmeden "
      "düşen bulgulara proje ZATEN dayanmamıştı. İddia GERİ ALINDI."),
+    ("K155-EK", "K155", "kapsam",
+     "K155 kaybı '74 koşu / ~%8' diye yazdı; 'veri kaybı' gibi okunuyordu. Ölçüldü: 72/74 "
+     "arşivde VAR, 51/74 kupon ayağı olarak VAR. Kaybolan yalnız tahmin defterinin ~%7'si. "
+     "Kazanç küçülünce iki tamir yolunun faturası büyük kaldı -> tavsiye 'dokunma'ya döndü."),
     ("K144", "K122", "ölçüm",
      "#11'in kendi notu tetiği 'Ekim ortası' diyordu; ölçüm ~7 Eylül gösterdi. Madde sırası "
      "geldiği hâlde kenarda bekliyordu."),

@@ -6103,3 +6103,34 @@ süresiz birikiyor — yılda ~**500 koşu**.
 zarar gelmesin / risk varsa yapma"*. O yüzden **ölçüm yapıldı, müdahale yapılmadı**; seçim
 kullanıcınındır. Not: 5 dk'lık aralık K105'in *"10 dk grubu YOK"* eksiğini de kapatırdı —
 yani birinci yolun bir yan **kazancı** da var.
+
+---
+
+**K155-EK — KAYBIN BÜYÜKLÜĞÜ ÖLÇÜLDÜ VE K155'İN ÇERÇEVESİ DAR OLANA DÜZELTİLDİ: arşiv ve
+kuponlar etkilenmiyor, kaybolan yalnız TAHMİN DEFTERİ satırı.** 7 Eyl 2026.
+
+K155 kaybı *"74 koşu · ~%8 · yılda ~500"* diye yazdı. Sayı doğru ama **çerçeve genişti** —
+"veri kaybı" gibi okunuyordu. Kullanıcı *"yolları anlamadım"* deyince kaybın **ne olduğu**
+ölçüldü ve çerçeve daraldı:
+
+| kaçan 74 koşunun | sayı |
+|---|---|
+| arşivde (`katilim.csv`) **var** | **72 / 74** |
+| Altılı kuponunda **ayak olarak var** (kupon kurulmuş) | **51 / 74** |
+| tahmin defterinde (`defter.csv`) kaydı var | 16 / 74 |
+
+**Kaybolan tek şey: ~58 koşuluk "yarıştan önce ne tahmin etmiştik" satırı.** `defter.csv`
+795 koşu içeriyor → defterin **~%7'si** eksik. Ham arşiv ve Altılı kupon akışı **sağlam**;
+ikisi de ayrı yollardan besleniyor.
+
+**NEDEN ÖNEMLİ:** K155 iki tamir yolu sunmuştu ve ikisinin de bedeli "geçmişle geleceği
+kıyaslanamaz kılmak"tı (Yol 1 `oran_log` yoğunluğunu, Yol 2 `defter`in anlamını değiştirir).
+Kazanç doğru ölçülünce oran değişti: **fatura, tamir ettiği şeyden büyük.**
+
+**TAVSİYE: Yol 3 — dokunma.** Gerekçe: telafisi olmayan veri (K150'nin dört dosyası) hiç
+etkilenmiyor; eksik olan, %93'ü zaten dolu ve arşivden kısmen yeniden kurulabilir bir defter.
+
+**AYRI TUTULAN FİKİR:** Yol 1'in yan kazancı (K105'in *"10 dk grubu YOK"* eksiği) gerçek.
+Ama o bir **tamir** değil **yeni bir kol**; 25 Eylül'den sonra, S1 ölçümü bittikten ve
+`oran_log` yoğunluğunu değiştirmenin bir ölçümü bozmayacağı netleştikten sonra konuşulur.
+BEKLEYENLER #23'e o şekilde yazıldı.

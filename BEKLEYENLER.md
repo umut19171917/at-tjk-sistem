@@ -853,27 +853,47 @@ düşük DEĞİLSE. Düşükse "ayrıştırma değer katmıyor" yazılır ve kap
 
 ---
 
-### 23. SESSİZ VERİ KAYBI — kök sebep bulundu, DÜZELTME KULLANICI KARARINA BAĞLI (K155)
+### 23. SESSİZ VERİ KAYBI — ÖLÇÜLDÜ, **TAVSİYE: DOKUNMA**. Karar kullanıcının (K155 + K155-EK)
 **Eklendi:** 2026-09-07 (K155) · **TETİK: KULLANICI** — kendiliğinden değiştirme.
 
-**Ölçülen:** 18 Tem–7 Eyl arası **74 koşu** `"posta geçti → işlenmedi"` ile atlandı
-(~%8; yılda ~500 koşu). Haftalık %4,7–16,5, **trend yok**.
+#### Kaybolan ne? (K155-EK'te ölçüldü — K155'in ilk çerçevesi GENİŞTİ, daraltıldı)
 
-**Kök sebep aritmetik:** işleme penceresi `[posta−5dk, posta+3dk]` = **8 dk**, görev aralığı
-**15 dk** (`TJK Takip`, `rep=PT15M`). 74 kaçağın **57'sinde (%77) pencerede hiç geçiş yok.**
-Kalan 17 = geçici çekme hatası. Geçiş süresi medyan **0 sn** → geçiş pahalı değil.
+| kaçan 74 koşunun | sayı | yorum |
+|---|---|---|
+| arşivde (`katilim.csv`) **var** | **72 / 74** | ham yarış verisi kaybolmuyor |
+| Altılı kuponunda **ayak olarak var** | **51 / 74** | kupon yine kurulmuş |
+| tahmin defterinde (`defter.csv`) kaydı var | 16 / 74 | **kaybolan bu** |
 
-**Koruma kodu suçlu DEĞİL** (K36: yarış sonrası tahmin kaydetmek sızıntıdır — korunmalı).
-**Elenen hipotez:** "akşam penceresi kapanıyor" — YANLIŞ, son geçiş medyanı 22:37.
+**Net kayıp: ~58 koşuluk "yarıştan önce ne tahmin etmiştik" satırı = defterin ~%7'si.**
+Telafisi olmayan dört dosya (K150) **hiç etkilenmiyor.**
 
-**İki yol, ikisinin de bedeli var:**
+#### Neden kaçıyor (aritmetik)
+
+Kapı **8 dakika** açık (`[posta−5dk, posta+3dk]`, `--dk` varsayılanı 5), nöbetçi
+**15 dakikada bir** geliyor (`TJK Takip`, `rep=PT15M`). 74 kaçağın **57'sinde (%77)**
+pencerede hiç geçiş yok; kalan 17 geçici çekme hatası. Geçiş süresi medyan **0 sn**.
+**Koruma kodu suçlu değil** (K36: yarış sonrası tahmin yazmak sızıntıdır — korunmalı).
+**Elenen hipotez:** "akşam penceresi kapanıyor" YANLIŞ — son geçiş medyanı 22:37.
+
+#### Üç yol
+
 | yol | kazanç | bedel |
 |---|---|---|
-| aralık 15 dk → **5 dk** | pencere kesin yakalanır; K105'in *"10 dk grubu yok"* eksiği de kapanır | TJK isteği ve `oran_log` yoğunluğu **3 katına** → veri üretme süreci deney ortasında değişir (K76/K111 buna dayanıyor) |
-| `--dk` 5 → **20** | pencere 23 dk, aralıktan geniş | kayıt anı postaya 20 dk kalaya çeker → `defter`'in anlamı değişir (K111: zamanlama ölçülebilir bir etki) |
+| **1.** aralık 15 dk → **5 dk** | hiçbir koşu kaçmaz + K105'in *"10 dk grubu yok"* eksiği kapanır | `oran_log` yoğunluğu **3 katına** → K76/K111'in dayandığı veri üretme süreci deney ortasında değişir; TJK'ya istek 3 katı |
+| **2.** `--dk` 5 → **20** | hiçbir koşu kaçmaz | tahmin artık postaya 20 dk kala yazılır → `defter`in **anlamı değişir**; K111 bu farkın gerçek olduğunu ölçtü |
+| **3.** **dokunma** | geçmiş–gelecek kıyaslanabilirliği korunur | defter %93 dolu kalır |
 
-**Yapılmadı:** ikisi de canlı davranışı değiştirir; kullanıcının duran talimatı *"risk varsa
-yapma"*. Ölçüm bitti, seçim kullanıcının.
+#### TAVSİYE: **Yol 3**
+İki tamir de aynı şeyi bozuyor: geçmişle geleceği kıyaslanamaz kılıyor (Yol 1 `oran_log`'u,
+Yol 2 `defter`i). Karşılığında alınan şey, zaten %93 dolu bir defterin kalan %7'si.
+**Faturası tamir ettiği şeyden büyük.**
+
+#### AYRI TUTULAN: "10 dk kolu" — tamir değil, YENİ KOL
+Yol 1'in yan kazancı gerçek: K105 *"10 dk grubu YOK, çözümü görev sıklığını artırmak,
+AYRI karar konusu"* demişti. Bu madde oraya bağlanır.
+**TETİK: 25 Eylül'den SONRA** — S1 ölçümü bitmeden `oran_log` yoğunluğu değiştirilmez
+(`kod/s1_olcum.py` o veriye bakıyor). O tarihten sonra, açılacaksa **ön-kayıtlı kol olarak**
+açılır: ne ölçüleceği ve neyin fikri öldüreceği önce yazılır (K33/K52).
 
 ## ZAMANLI — takvime bağlı
 
