@@ -70,6 +70,14 @@ D = [
     ("K143", "2 Eyl değerlendirmesi", "aşırı",
      "Değerlendirme 'çokluluk hesaplanmadı, birikmiş güven şişkin' demişti. Ölçüldü: düzeltmeden "
      "düşen bulgulara proje ZATEN dayanmamıştı. İddia GERİ ALINDI."),
+    ("K157", "K157", "aşırı",
+     "Aynı oturumda 'bot1_900 + acgozlu_v2' önerdim; dayanağım K98'in backtest'iydi. Kullanıcı "
+     "gerekçe sorunca canlı sicile ayak ayak bakıldı: v2 ilk ayakları daraltıyor, kuponlarının "
+     "%54'u 1. ayakta oluyor, para yedi config'in en kotusu. ONERI GERI ALINDI -> acgozlu900."),
+    ("K156", "ham config siralamasi", "kapsam",
+     "acgozlu900_15'in %69,5 vs acgozlu900'un %65,0'i TAKVIM YANILSAMASI: _15 16 Agu'da acildi, "
+     "900'un zor gecen Temmuz'unu gormedi. Ayni pencerede fark 4,5 puandan 1,5'e iniyor; "
+     "eslesmis kiyasta p=0,533 -> fark yok."),
     ("K155-EK", "K155", "kapsam",
      "K155 kaybı '74 koşu / ~%8' diye yazdı; 'veri kaybı' gibi okunuyordu. Ölçüldü: 72/74 "
      "arşivde VAR, 51/74 kupon ayağı olarak VAR. Kaybolan yalnız tahmin defterinin ~%7'si. "

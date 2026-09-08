@@ -6134,3 +6134,133 @@ etkilenmiyor; eksik olan, %93'ü zaten dolu ve arşivden kısmen yeniden kurulab
 Ama o bir **tamir** değil **yeni bir kol**; 25 Eylül'den sonra, S1 ölçümü bittikten ve
 `oran_log` yoğunluğunu değiştirmenin bir ölçümü bozmayacağı netleştikten sonra konuşulur.
 BEKLEYENLER #23'e o şekilde yazıldı.
+
+---
+
+**K156 — AKTİF YEDİ CONFIG'İN CANLI SİCİLİ: ayak sıralaması GENİŞLİKTEN ibaret, 6/6
+sıralaması OKUNAMIYOR. Tek gerçek ayrım bot1 ile bot2 arasında.** 8 Eyl 2026.
+Kullanıcı: *"aktif tüm kuponlarımızı, toplam kupon sayılarını da hesaba katarak, hem ayak
+hem altılı tutturma olarak hesapla."* 734 tamamlanmış kupon, 20 Tem – 8 Eyl.
+
+## (a) AYAK İSABETİ — sıralama var, ama bilgi yok
+
+| config | kupon | ayak | isabet | %95 GA | at/ayak |
+|---|---|---|---|---|---|
+| acgozlu900_15 | 71 | 419 | %69,5 | 65–74 | 4,09 |
+| acgozlu_v2 | 99 | 587 | %65,8 | 62–69 | 4,16 |
+| bot1_1800 | 89 | 527 | %65,5 | 61–69 | 4,16 |
+| acgozlu900 | 137 | 815 | %65,0 | 62–68 | 4,11 |
+| bot1_900 | 125 | 743 | %61,5 | 58–65 | 3,71 |
+| orta_15 | 72 | 425 | %52,0 | 47–57 | 2,17 |
+| orta | 155 | 923 | %48,0 | 45–51 | 2,17 |
+
+**Sıralama genişliğin kopyası.** ~4 at yazan beş config %61-70'te, ~2 at yazan ikisi %48-52'de.
+Ayak isabeti bir beceri ölçüsü DEĞİL, bir bütçe ölçüsüdür.
+
+## (b) 6/6 — sıralama OKUNAMIYOR
+
+En iyi `bot1_1800` %4,6 (4/87) · en kötü `orta` %1,3 (2/153) → **iki-oran z = 1,56, ayırt
+edilemiyor.** Yedi Wilson aralığının hepsi iç içe. 734 kuponda **toplam 22** tam isabet var;
+config başına 1-6 olay. **Bu sayılarla config sıralamak yazı-tura sıralamaktır.**
+
+## (c) PARA — tek yön var
+
+Toplam **670.566 ₺ bedel · 227.494 ₺ ödül · net −443.072 ₺ · ROI −%66,1.**
+`orta` +%14,3 ile tek artıda görünen, ama **2 kupondan**. Diğer altısı −%35,6 … −%87,4.
+Kupon bedelleri arasında **19 kat** fark var (114 ₺ ↔ 2.159 ₺) — farkı yaratan bu.
+
+## (d) ASIL BULGU — ÇOĞU İKİLİ AYNI BAHSİN İKİ KOPYASI
+
+Ayak düzeyinde "iki config aynı atları mı yazıyor" ölçüldü:
+
+| ikili | aynı ayak | biri diğerinin içinde |
+|---|---|---|
+| bot1_900 / bot1_1800 | **%68** | %97 |
+| orta / orta_15 | %67 | %70 |
+| acgozlu900 / acgozlu_v2 | **%63** | %83 |
+| acgozlu900 / acgozlu900_15 | %52 | %76 |
+| **bot1_900 / acgozlu_v2** | **%8** | %43 |
+| **bot1_900 / acgozlu900** | **%7** | %38 |
+
+**İki bot2 kuponu oynamak, aynı bahsi iki kez ödemektir.** Gerçek çeşitlendirme yalnız
+**bot1 × bot2** ekseninde var. Bu, K71'in "her kupon bir öncekinin KABUĞU" bulgusunun
+config ailesi düzeyindeki hâli.
+
+## (e) TEMETTÜ BÜYÜKLÜĞÜ — kim ucuz kuyruğa erişiyor
+
+Tüm Altılı temettülerinin medyanı **30.688 ₺**. Config'lerin tutturduklarının medyanı:
+`bot1_900` **25.333** · `orta` 10.006 · `acgozlu900` 8.931 · `acgozlu_v2` 6.609 ·
+`bot1_1800` 3.837 · `acgozlu900_15` 2.077 · `orta_15` 2.077.
+**Yalnız bot1_900 tipik temettüye yaklaşıyor**; gerisi ucuz kuyrukta (K65/K120 mekanizması).
+UYARI: bu, config başına 1-6 olaya dayanır ve K98'in 123 isabetlik ölçümünü (bot1_900 medyanı
+2.056 ₺) **çürütmez** — yalnız onunla çelişir ve örneklem küçüklüğü nedeniyle K98 ağır basar.
+
+## (f) acgozlu900 vs acgozlu900_15 — TAKVİM YANILSAMASI (kullanıcı ayrıca sordu)
+
+Ham fark %65,0 vs %69,5 (4,5 puan) **sahte**: `900_15` 16 Ağu'da açıldı, `900`'ün zor geçen
+Temmuz-Ağustos başını hiç görmedi. Aynı pencerede fark **1,5 puana** iner (%68,0 vs %69,5).
+
+**Eşleşmiş kıyas (419 ayak, aynı Altılı aynı ayak):** +1,19 puan, yalnız-900 18 / yalnız-900_15 23,
+**McNemar p=0,533.** 419 ayağın **219'unda (%52) birebir aynı atlar**. Ayrıldıkları 191 ayakta
+fark seçimden değil **genişlikten**: genişliği eşit olan ayaklarda uyumsuzluk **2-0, 900 lehine**.
+Para (eşleşmiş 69 kupon, neredeyse aynı bedel): `900` −%62,7 (4 tam) · `900_15` −%77,5 (3 tam,
+ama **daha çok 5/6**: 27 vs 22) → K111'in "geç kur, daha çok yaklaş, daha ucuz tuttur" kalıbı.
+
+**HÜKÜM: ikisi ayrı kupon türü değil, aynı kuponun iki saati.** K153'ün ön-kayıtlı sonucuna
+bağımsız yoldan varıldı.
+
+---
+
+**K157 — "CANLIDA HANGİ İKİSİ" SORUSU YENİ KISIT ALTINDA YENİDEN CEVAPLANDI; ve AYNI OTURUMDA
+VERDİĞİM `acgozlu_v2` ÖNERİSİ GERİ ALINDI.** 8 Eyl 2026. Kullanıcı: *"orta dışındakilerden
+hangi ikisiyle oynardın."*
+
+## (a) K98'DEN NEDEN AYRILDIM — gerekçe açıkça yazılıyor
+
+K98 *"bot1 canlı portföye KONMAMALI"* demişti (getirisinin %43'ü tek kupondan; piyango biçimi)
+ve tek savunulabilir kupon olarak `orta`yı bırakmıştı. **Soru değişti:** kullanıcı İKİ kupon
+istiyor ve `orta`yı dışarıda tuttu. K156(d) gösterdi ki bot1 olmadan ikinci kupon yeni bir
+bahis değil, **birincinin kopyası**. Bu kısıt altında bot1 zorunlu hâle geliyor.
+K98'in uyarısı geçersiz olmadı — birlikte taşınıyor.
+
+## (b) İLK CEVABIM: `bot1_900` + `acgozlu_v2`. **YANLIŞTI.**
+
+v2'yi K98(d)'nin ön-kayıtlı portföy testine dayanarak seçtim. Kullanıcı *"v2 nasıl daha tercih
+edilebilir, anlamadım"* diye sorunca canlı sicile **ayak ayak** bakıldı ve seçim çöktü:
+
+| ayak | acgozlu900 | acgozlu_v2 |
+|---|---|---|
+| 1 | 4,85 at | **3,44 at** |
+| 2 | 4,29 | 3,11 |
+| 3-6 | 3,31 / 3,69 / 3,64 / 4,86 | 4,08 / 4,17 / 4,38 / 5,80 |
+
+v2 ilk ayaklardan at kısıp son ayaklara ekliyor. **Bedeli:** kuponlarının **%54'ü daha 1. ayakta
+ölüyor** (acgozlu900'de %33); tam tutturma %2,1 vs %4,4; para **yedi config'in en kötüsü**
+(−%87,4 vs −%67,4). Son ayaklara verdiği genişliğe çoğu zaman **varamıyor**.
+Ayrıca K98(c) zaten yazmıştı: v2'nin üstünlüğü **yalnız @900 bütçesinde** var, @96 ve @288'de
+tersine dönüyor — bu, mekanizmadan çok veriye uydurmanın imzasıdır. O notu görüp seçimi hiç
+yapmamalıydım.
+
+## (c) DÜZELTİLMİŞ CEVAP: **`bot1_900` + `acgozlu900`**
+
+Canlı sicil: 135 Altılı, **10'unda en az bir 6/6 (%7,4)** — ölçülen bütün ikililerin en yükseği.
+ROI −%52,3; en büyük bilet çıkınca −%64,3.
+
+| ikili (canlı) | Altılı | ≥1 tam | ROI |
+|---|---|---|---|
+| orta_15 + bot1_900 | 123 | 5 (%4,1) | **−%37,9** |
+| acgozlu900_15 + bot1_900 | 123 | 7 (%5,7) | −%50,6 |
+| **acgozlu900 + bot1_900** | 135 | **10 (%7,4)** | −%52,3 |
+| bot1_900 + acgozlu_v2 | 123 | 6 (%4,9) | −%58,4 |
+| *iki bot2 içeren her ikili* | | | −%69 … −%88 |
+
+`bot1_1800` yerine `bot1_900`: ikisi zaten %68 aynı kupon, iki katı bedel (K91: ikinci 900'ün
+marjinal ROI'si −%40…−60). `acgozlu900_15` yerine `acgozlu900`: K156(f), aynı kuponun iki saati,
+`900`'ün iki katı verisi var.
+
+## (d) KAYIT İÇİN: BU BİR TAVSİYE DEĞİL
+
+Soru *"zorunda olsan hangisi"*ydi. Canlı para kararı K98'de verildi (hayır) ve K140-EK'te
+güçlendi (%96 örtüşme). En iyi ikili bile −%52; en büyük bilet çıkınca −%64. **Hiçbiri kâr
+beklentisi taşımıyor.** Ayrıca kullanıcının kendi çerçevesi (*"vurgun değil sürdürülebilirlik"*)
+ile bot1'in piyango biçimi çelişiyor; bu çelişki çözülmedi, kullanıcıya açıkça bırakıldı.
