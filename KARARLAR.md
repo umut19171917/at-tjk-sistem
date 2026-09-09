@@ -6499,3 +6499,92 @@ BEKLEYENLER #27'nin ön-kayıtlı ölçütü (≥50 kupon, eşlenik kıyası, 6/
 kol kapanır. Ayrıca: sabit-3'ün canlı sicildeki üstünlüğü büyük ölçüde **tek bir olaydan**
 geliyordu (19 Ağustos İstanbul, 90.395 ₺ — acgozlu900'ün eşit-3 kârının %61'i). Bu, K106/K157'nin
 "tek bilet" uyarısının aynısıdır ve ölçüt tam bu yüzden dayanıklılık kontrolü içeriyor.
+
+---
+
+**K161 — ÜÇ CONFIG EMEKLİ (`orta`, `orta_15`, `bot1_1800`); AKTİF TÜRLERİN TAMAMI —
+SABİT-3 DAHİL — TEK SAYFADA TOPLANDI; emekli sicili ayrı arşiv sayfasına taşındı.** 9 Eyl 2026.
+
+Kullanıcı: *"orta ve orta 15 ve bot1-1800 kuponlarını emekli edelim"* ve ardından
+*"sabit3 ve aktif kalacak tüm kuponlarımızı gene altılı takip başlığında tek sayfaya toplayalım
+… başlığı gene altılı takip olsun ve raporlar klasöründe değil eski yerinde olsun."*
+
+## (a) NEDEN BU ÜÇÜ — sayılar (sonuçlanmış canlı kâğıt sicili)
+
+| config | kupon | 6/6 | bedel | ödül | net | ROI |
+|---|---|---|---|---|---|---|
+| `orta` | 157 | 2 | 17.981 | 20.011 | **+2.030** | **+%11,3** |
+| `orta_15` | 73 | 1 | 8.430 | 2.077 | −6.353 | −%75,4 |
+| `bot1_1800` | 91 | 4 | 196.530 | 42.524 | −154.006 | −%78,4 |
+
+- **`bot1_1800` — itirazsız.** [[K118]] 24 Ağu'da emekliliği önermiş, kullanıcı "şimdilik devam
+  etsin" demişti. Bugün 91 eşleşmiş Altılı'da: `bot1_900` net −63.542 (2× 6/6), `bot1_1800`
+  net −154.006 (4× 6/6). Fazladan ödenen ~90.464 ₺'nin karşılığı, 900'ün yakalamadığı **2 Altılı**
+  (31.08 BURSA-2 → 5.598 ₺, 25.08 ANKARA-2 → 2.077 ₺; toplam **7.675 ₺**). K118'in "tek başına
+  hiçbirini yakalamadı" cümlesi o tarihte doğruydu, sonra iki kez oldu — **hüküm değişmiyor,
+  kayıt düzeltiliyor.**
+- **`orta_15` — [[K153]]'ün kullanıcıya bıraktığı karar veriliyor.** Ölçüm: 408 eşleşmiş ayakta
+  +5 ayak, McNemar **p=0,576**, %95 GA [−1,96 , +4,41] — sıfırı içeriyor. Eşli pencerede ROI
+  −%75,4 vs `orta` −%75,1. 15 dk sorusu **kapanmıyor**: `acgozlu900_15` ve yeni `bot2_sabit3_15`
+  ile geniş bantta açık kalıyor; kapanan yalnız DAR banttaki ikizi.
+- **`orta` — TEK ARTIDAKİ CONFIG'İ EMEKLİ EDİYORUZ, gerekçesi yazılmalı.** +%11,3'ün tamamı
+  **tek olaydan**: 23.07 ANKARA 2. Altılı, 90 ₺'lik kupona **17.934 ₺**. O olay çıkarılınca
+  net **−15.904 ₺ (≈ −%88)**. `orta_15` ile birlikte koştuğu 73 Altılı'lık pencerede (15 Ağu →)
+  `orta`'nın kendisi **−%75,1** — diğerlerinden farkı yok. [[K106]]/[[K157]]'nin "tek bilet"
+  uyarısının bu maddedeki karşılığı: **36-157 kuponluk sicilde net TL tek olayın gürültüsüdür.**
+
+**Kâğıt bütçesine etkisi:** emekli edilenler Altılı başına ~2.390 ₺ (114 + 115 + 2.160), yeni
+sabit-3 kolu ~2.733 ₺ (3 × 911). Net değişim **+343 ₺/Altılı** — sabit-3 kolu kendini neredeyse
+tam olarak ödedi.
+
+## (b) SAYFA DÜZENİ — [[K160]]'ın "ayrı sayfa" gerekçesi ÇÜRÜDÜ
+
+K160 sabit-3'ü ayrı sayfaya koymuştu, gerekçe: *"mevcut sayfa zaten 7 config'i yan yana
+gösteriyor, 3 daha eklemek okunamaz yapardı."* Üç config emekli olunca ve emekliler sayfadan
+çıkınca aritmetik değişti: **dün 11 sütun (7 aktif + 4 emekli) → bugün 7 sütun (4 + 3 sabit-3).**
+Ayırmanın sebebi kalmadı → `raporlar/altili_sabit3.html` ve `kod/altili_sabit3_rapor.py`
+**silindi**, sabit-3 ana sayfaya döndü. Sayfa eski yerinde, eski başlığıyla: `raporlar/altili.html`,
+"ALTILI GANYAN — kupon takibi", `altili_goster.bat` ile açılır.
+
+**Ayrı sayfanın tek üstünlüğü ana sayfaya taşındı:** kupon-anı sıralaması artık **her dk grubu
+için ayrı satır** basılıyor (30 dk ve 15 dk). Eskiden yalnız 30 dk'lık fotoğraf yazılıyordu;
+`acgozlu900_15` kendi 15 dk'lık vektörüyle seçim yaptığı hâlde sayfada o vektör **hiç
+görünmüyordu** — "bu kupon neden bunu aldı" sorusu yanlış cetvelle cevaplanıyordu. BOT1 CETVELİ
+satırı da artık o dk grubunda bot1 config'i varsa basılıyor ve adı doğru yazılıyor.
+
+**Emekli sicili silinmedi** ([[K100]] kuralı): `raporlar/altili_emekli.html` — 7 emekli tür,
+529 kupon, 8× 6/6, bedel 326.690 ₺, ödül 71.333 ₺, net −255.357 ₺; her türün yanında
+**durdurma tarihi ve tek cümlelik gerekçesi**. Ana sayfada tek satır özet + bağlantı duruyor.
+
+**KAYIT SÜREKLİLİĞİ KANITI:** GENEL TOPLAM değişiklikten önce ve sonra **birebir aynı** —
+bedel 799.813,75 ₺ · ödül 236.768,51 ₺ · net **−563.045,24 ₺**. Sütunlar kalktı, sicil kısalmadı.
+
+## (c) NE DEĞİŞTİ (dosya dosya)
+
+- `kod/altili_canli.py` — KONFIG'de **yalnız 3 `aktif` bayrağı** True→False; `html_yaz` emeklileri
+  sütun olarak basmaz + EMEKLİLER özet satırı + arşiv bağlantısı; `_siralama_html` dk grubu başına
+  satır (yeni `_kupon_ani_satiri`); yeni `_tarayicida_ac` (sayfa **Chrome**'da açılır, bulunamazsa
+  varsayılan tarayıcı — iki dal da try korumalı).
+- `kod/altili_emekli_rapor.py` (YENİ) — `raporlar/altili_emekli.html`. Emekli listesini
+  `KONFIG`ten türetir (elle liste yok), salt-okunur.
+- `kod/takip.py` — sabit-3 sayfa çağrısının yerini emekli arşiv çağrısı aldı (aynı iki nokta,
+  aynı ayrı try/except izolasyonu).
+- **Silindi:** `kod/altili_sabit3_rapor.py`, `raporlar/altili_sabit3.html`.
+
+## (d) ÇALIŞAN SİSTEME ZARAR GELMEDİĞİ — kanıt
+
+`kod/ast_diff.py`: değişen bloklar **yalnız** `takip.py::gecis()` (kanca değişimi), `altili_canli`
+modül düzeyi (3 bayrak) ve **dört GÖRÜNTÜ fonksiyonu** (`html_yaz`, `toplam_blok`, `_resmi_satir`,
+`_siralama_html`) + iki yeni fonksiyon. **Kupon kuran yolun tamamı — `kupon_hazirla`,
+`kupon_zamani_kur`, `sonucla_altili`, `altili_backtest`'in tüm dağıtıcıları — "hepsi AYNI".**
+Diğer 10 çekirdek dosyada tek blok değişmedi. `aktif_konfig()` doğrulandı: 7 aktif
+(30 dk: `acgozlu900`, `acgozlu900_15`, `bot1_900`, `acgozlu_v2`, `bot1_sabit3`, `bot2_sabit3` ·
+15 dk: `acgozlu900_15`, `bot2_sabit3_15`), 7 emekli.
+
+## (e) BU KARARIN BEDELİ — açıkça yazılıyor
+
+Bu emeklilikle canlıda **`kapsam` dağıtıcısı kalmadı** (K100 onu `orta` ile temsil ediyordu) ve
+**729 kombinasyonun altında hiçbir kupon türü kalmadı.** Yani "ucuz/dar bant" ekseni canlı
+sicilde artık ölçülmüyor; K57/K88'in bu bantla ilgili bulguları arşiv testlerinde donuyor.
+Geri açmak **tek bayrak** meselesidir (`"aktif": True`) ve sicil kesintisiz devam eder —
+config satırları silinmedi. Sabit-3 (729 kombo, ~911 ₺) bu bandın yerine geçmez; farklı bir soru.

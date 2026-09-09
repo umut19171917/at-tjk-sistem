@@ -111,14 +111,18 @@ KOL_ANI = ["kayit_ts", "tarih", "pist", "seq", "dk_grup", "ayak", "kosu_no", "ra
 AYRISMA_W = 1.0
 KONFIG = {
     "dar":        {"kapsam": 0.75, "kombo": 24,  "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False, "dk": 30},
-    "orta":       {"kapsam": 0.75, "kombo": 96,  "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": True,  "dk": 30},
-    "orta_15":    {"kapsam": 0.75, "kombo": 96,  "dagitim": "kapsam",  "puan": "bot2", "aile": "zaman",   "aktif": True,  "dk": 15},
+    # K161 (9 Eyl 2026): orta / orta_15 / bot1_1800 EMEKLI. Gerekceler KARARLAR K161'de;
+    # ozet: orta'nin kagit kari tek olaydan (23.07 ANKARA-2), orta_15 K153'te olculdu ve
+    # fark anlamsiz cikti (p=0,576), bot1_1800 K118'de zaten emeklilik onerilmisti.
+    # Satirlar SILINMEZ (K100 kurali) -- sicilleri raporlar/altili_emekli.html'de durur.
+    "orta":       {"kapsam": 0.75, "kombo": 96,  "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False, "dk": 30},
+    "orta_15":    {"kapsam": 0.75, "kombo": 96,  "dagitim": "kapsam",  "puan": "bot2", "aile": "zaman",   "aktif": False, "dk": 15},
     "genis":      {"kapsam": 0.75, "kombo": 288, "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False, "dk": 30},
     "genis900":   {"kapsam": 0.95, "kombo": 900, "dagitim": "kapsam",  "puan": "bot2", "aile": "kamu",    "aktif": False, "dk": 30},
     "acgozlu900": {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot2", "aile": "kamu",    "aktif": True,  "dk": 30},
     "acgozlu900_15": {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot2", "aile": "zaman", "aktif": True, "dk": 15},
     "bot1_900":   {"kapsam": 0.95, "kombo": 900, "dagitim": "acgozlu", "puan": "bot1", "aile": "temel",   "aktif": True,  "dk": 30},
-    "bot1_1800":  {"kapsam": 0.95, "kombo": 1800, "dagitim": "acgozlu", "puan": "bot1", "aile": "temel",  "aktif": True,  "dk": 30},
+    "bot1_1800":  {"kapsam": 0.95, "kombo": 1800, "dagitim": "acgozlu", "puan": "bot1", "aile": "temel",  "aktif": False, "dk": 30},
     "ayrisma900": {"kapsam": 0.95, "kombo": 900, "dagitim": "ayrisma", "puan": "bot2", "aile": "ayrisma", "aktif": False, "dk": 30},
     # K92: uzak ayagin olasiligi OLCULMUS lambda ile duzlestirilir (bkz. kupon_kur_kalibre).
     # acgozlu900 ile TEK farki budur -> aradaki her fark uzak-ayak duzeltmesine atfedilebilir.
@@ -128,7 +132,8 @@ KONFIG = {
     # gore ustundu; arsiv testi tersini soyledi ama K130 sizintisiyle kirliydi -- bu kol o
     # sizintiyi tasimayan TEMIZ bir olcum icin acildi. bot1@15dk YOK: bot1 oran-kor oldugu
     # icin 30dk'dan 15dk'ya top-3'u %97,1 ayni kaliyor (bot2'de %61,6) -> ayri kol acmanin
-    # anlami yoktu (olculdu, K159). Ayrı takip sayfasi: raporlar/altili_sabit3.html.
+    # anlami yoktu (olculdu, K159). K161: ayri sayfa (altili_sabit3.html) KALDIRILDI --
+    # uc tur emekli olunca ana sayfada 4+3=7 sutun kaldi, ayirmanin gerekcesi kalmadi.
     "bot1_sabit3":    {"kombo": 729, "dagitim": "esit", "k": 3, "puan": "bot1", "aile": "temel", "aktif": True, "dk": 30},
     "bot2_sabit3":    {"kombo": 729, "dagitim": "esit", "k": 3, "puan": "bot2", "aile": "kamu",   "aktif": True, "dk": 30},
     "bot2_sabit3_15": {"kombo": 729, "dagitim": "esit", "k": 3, "puan": "bot2", "aile": "zaman",  "aktif": True, "dk": 15},
@@ -755,7 +760,8 @@ def _resmi_satir(kupolar):
                     f"<span class=mini>({len(tutan)}/{len(kupolar)} tur)</span>")
         return (f"resmi temettu (1 birim): <b>{t}</b> "
                 f"<span class=mini>&mdash; bu Altili'yi bilenlerin aldigi; "
-                f"{len(kupolar)} kupon turumuzun hicbiri tutturamadi</span>")
+                f"{len(kupolar)} <b>aktif</b> kupon turumuzun hicbiri tutturamadi "
+                f"<a href='altili_emekli.html'>(emekli turler ayri sayfada)</a></span>")
     if r.get("devir"):
         return (f"<b>KIMSE BILEMEDI</b> &mdash; {ro.para(r['devir'])} "
                 f"<span class=mini>sonraki cekilise devretti (bu Altili'da odeme yapilmadi)</span>")
@@ -776,7 +782,40 @@ def _sira_etiketleri(sirali, secset, kzno):
     return " &nbsp; ".join(parcalar)
 
 
-def _siralama_html(tarih, pist, seq, ayak, kosu_no, rk, secimler, kzno):
+def _kupon_ani_satiri(tarih, pist, seq, ayak, kosu_no, secset, kzno, dk_grup, bot1_ad):
+    """K161: TEK dk grubunun kupon-ani cetveli. Eskiden yalniz 30 dk basiliyordu; 15 dk'lik
+    kollar (acgozlu900_15, bot2_sabit3_15) kendi fotografiyla secim yaptigi halde sayfada o
+    fotograf hic gorunmuyordu -- 'bu kupon neden bunu aldi' sorusu yanlis cetvelle cevaplaniyordu.
+    (Bu davranis altili_sabit3.html'de vardi; sayfalar birlesince buraya tasindi.)"""
+    a = ro.kupon_ani_atlari(tarih, pist, seq, ayak, dk_grup=dk_grup)
+    et = f"KUPON ANI {int(dk_grup)}dk"
+    if len(a) == 0:
+        return [f"<span class=mini><b>kosu {kosu_no}</b> &middot; <b>{et}</b> siralamasi: "
+                f"<b>kayit yok</b> &mdash; 10 Agu oncesi kuponlar icin "
+                f"<code>kupon_ani_geri_kur.py</code> ile geri kurulur; oran gunlugu (K76) "
+                f"veya o gunun katsayilari eksikse geri kurulaMAZ, UYDURULMAZ</span>"]
+    r0 = a.iloc[0]
+    dk = pd.to_numeric(r0.get("dk_kala"), errors="coerce")
+    ek = ("" if str(r0.get("kaynak")) == "canli"
+          else " <b title='oran gunlugu + bot1 + o gunun katsayilari ile geri kuruldu'>"
+               "[geri kurulan]</b>")
+    sirali = [(int(r["sis_sira"]), int(r["no"])) for _, r in a.iterrows()]
+    H = [f"<span class=mini><b>kosu {kosu_no}</b> &middot; <b>{et}</b> siralamasi "
+         f"({str(r0.get('kayit_ts'))[11:16]}, "
+         f"{('%.0f' % dk) if pd.notna(dk) else '?'} dk kala){ek}: </span>"
+         + _sira_etiketleri(sirali, secset, kzno)]
+    # K99: BOT1 CETVELI ayri satir. bot1 tabanli config'ler secimini BU vektorle yapar;
+    # ustteki harman satiriyla karsilastirilamaz. Ayrisma buradan okunur.
+    if bot1_ad and "bot1_sira" in a.columns and pd.notna(a["bot1_sira"]).any():
+        b = a.dropna(subset=["bot1_sira"]).sort_values("bot1_sira")
+        b_sirali = [(int(r["bot1_sira"]), int(r["no"])) for _, r in b.iterrows()]
+        H.append(f"<span class=mini><b>kosu {kosu_no}</b> &middot; <b>BOT1 CETVELI</b> "
+                 f"(orana bakmaz &mdash; <i>{bot1_ad}</i> secimini bununla yapar): </span>"
+                 + _sira_etiketleri(b_sirali, secset, kzno))
+    return H
+
+
+def _siralama_html(tarih, pist, seq, ayak, kosu_no, rk, secimler, kzno, dk_bot1=None):
     """K97: ayni ayagin IKI siralamasi, AYRI satirlarda ve acikca etiketli:
       1) KUPON ANI -- kupon kurulurken elimizdeki vektor (altili_kupon_ani.csv).
          KARARI yargilarken dogru cetvel budur; son ayak icin karar 2-3 saat onceden verilir.
@@ -785,38 +824,15 @@ def _siralama_html(tarih, pist, seq, ayak, kosu_no, rk, secimler, kzno):
     Ikisini karistirmak yaniltir: 09.08 Istanbul 2. Altili'da kosu 8'in kazanani yaris aninda
     sistemin 10. ati, kupon aninda 2. atiydi; kosu 6'nin kazanani yaris aninda 2., kupon
     aninda 6.'ydi. Her iki satirin basina KOSU NO yazilir -- satir kime ait, hic suphe kalmasin.
-    K81 mirasi: kayit yoksa hangi dalin yandigi acikca yazilir, sessiz bosluk birakilmaz."""
+    K81 mirasi: kayit yoksa hangi dalin yandigi acikca yazilir, sessiz bosluk birakilmaz.
+    K161: kupon-ani satiri artik dk grubu BASINA basilir (dk_bot1 = {dk: bot1_config_adi|None});
+    verilmezse eski davranis (yalniz 30 dk, bot1_900 etiketi) korunur."""
     secset = {int(x) for x in secimler}
     H = []
 
-    # --- 1) KUPON ANI ---------------------------------------------------------------
-    a = ro.kupon_ani_atlari(tarih, pist, seq, ayak)
-    if len(a) == 0:
-        H.append(f"<span class=mini><b>kosu {kosu_no}</b> &middot; KUPON ANI siralamasi: "
-                 f"<b>kayit yok</b> &mdash; 10 Agu oncesi kuponlar icin "
-                 f"<code>kupon_ani_geri_kur.py</code> ile geri kurulur; oran gunlugu (K76) "
-                 f"veya o gunun katsayilari eksikse geri kurulaMAZ, UYDURULMAZ</span>")
-    else:
-        r0 = a.iloc[0]
-        dk = pd.to_numeric(r0.get("dk_kala"), errors="coerce")
-        ek = ("" if str(r0.get("kaynak")) == "canli"
-              else " <b title='oran gunlugu + bot1 + o gunun katsayilari ile geri kuruldu'>"
-                   "[geri kurulan]</b>")
-        sirali = [(int(r["sis_sira"]), int(r["no"])) for _, r in a.iterrows()]
-        H.append(f"<span class=mini><b>kosu {kosu_no}</b> &middot; <b>KUPON ANI</b> siralamasi "
-                 f"({str(r0.get('kayit_ts'))[11:16]}, "
-                 f"{('%.0f' % dk) if pd.notna(dk) else '?'} dk kala){ek}: </span>"
-                 + _sira_etiketleri(sirali, secset, kzno))
-        # K99: BOT1 CETVELI ayri satir. bot1_900 secimini BU vektorle yapar; ustteki
-        # harman satiriyla karsilastirilamaz. Ayrisma buradan okunur -- "bot1 neden
-        # harmanin 5.'sini almadi" sorusunun cevabi bu satirdadir.
-        if "bot1_sira" in a.columns and pd.notna(a["bot1_sira"]).any():
-            b = a.dropna(subset=["bot1_sira"]).copy()
-            b_sirali = [(int(r["bot1_sira"]), int(r["no"]))
-                        for _, r in b.sort_values("bot1_sira").iterrows()]
-            H.append("<span class=mini><b>kosu %s</b> &middot; <b>BOT1 CETVELI</b> "
-                     "(orana bakmaz &mdash; <i>bot1_900</i> secimini bununla yapar): </span>"
-                     % kosu_no + _sira_etiketleri(b_sirali, secset, kzno))
+    # --- 1) KUPON ANI (her kupon-kurma ani icin ayri satir) --------------------------
+    for dkg, b1ad in sorted((dk_bot1 or {30: "bot1_900"}).items(), reverse=True):
+        H += _kupon_ani_satiri(tarih, pist, seq, ayak, kosu_no, secset, kzno, dkg, b1ad)
 
     # --- 2) YARIS ANI ---------------------------------------------------------------
     if not rk:
@@ -928,6 +944,29 @@ def _birlesik_blok(kupolar):
     return H
 
 
+def _tarayicida_ac(p):
+    """K161: sayfa CHROME'da acilsin (kullanici istegi). Chrome bulunamazsa varsayilan
+    tarayiciya duser; her iki dal da try ile korunur -- tarayici acilmamasi rapor uretimini
+    ASLA bozmaz (dosya zaten diske yazilmis olur)."""
+    import os
+    import webbrowser
+    for kok in (os.environ.get("PROGRAMFILES"), os.environ.get("PROGRAMFILES(X86)"),
+                os.environ.get("LOCALAPPDATA")):
+        if not kok:
+            continue
+        exe = Path(kok) / "Google" / "Chrome" / "Application" / "chrome.exe"
+        if exe.exists():
+            try:
+                webbrowser.get(f'"{exe}" %s').open(p.as_uri())
+                return
+            except Exception:                        # noqa: BLE001 -- varsayilana dus
+                break
+    try:
+        webbrowser.open(p.as_uri())
+    except Exception:                                # noqa: BLE001
+        pass
+
+
 def html_yaz(df=None, ac=False):
     """K55: secimlerimiz + SISTEM SIRASI, kazanan at + sistem/kamu sirasi + ganyan orani,
     kupon bedeli + odul, altta TOPLAM. Zenginlestirme defter.csv'den (salt-okunur);
@@ -943,8 +982,11 @@ def html_yaz(df=None, ac=False):
     # sayfada her gun tekrar okunmasi gereken bir sey degildi ve tabloyu asagi itiyordu.
     H = ["<meta charset='utf-8'><title>Altili Takip</title>", ro.ORTAK_CSS,
          "<h2>ALTILI GANYAN &mdash; kupon takibi</h2>",
+         # K161: AKTIF turlerin tamami (sabit-3 dahil) BU sayfada; emekli turler burada
+         # sutun tutmuyor (tablo okunamaz hale geliyordu), sicilleri altili_emekli.html'de.
          f"<div class=mini style='margin:-8px 0 14px'>guncelleme "
-         f"{datetime.now():%d.%m.%Y %H:%M}</div>"]
+         f"{datetime.now():%d.%m.%Y %H:%M} &nbsp;&middot;&nbsp; "
+         f"<a href='altili_emekli.html'>Emekli turler (arsiv)</a></div>"]
 
     if df.empty:
         H.append("<p>Henuz kupon yok.</p>")
@@ -960,7 +1002,12 @@ def html_yaz(df=None, ac=False):
     # K119: GOSTERIM SIRASI (kullanici istegi) -- aktifler once, ACGOZLU_V2 ACGOZLU900_15'in
     # hemen ardinda; EMEKLILER en sonda. KONFIG'in kendi sirasi DEGISMEZ (kupon kurma sirasi,
     # referans config secimi ve gecmis sicil ona bagli) -- bu yalnizca RAPOR sirasidir.
-    SIRA = _gosterim_sirasi()
+    # K161: EMEKLILER bu sayfada ARTIK SUTUN TUTMAZ (her emekli tur bir sutun daha demekti,
+    # tablo okunamaz hale geliyordu). Sicilleri SILINMEDI: raporlar/altili_emekli.html'de
+    # tam detayiyla duruyor ve asagidaki GENEL TOPLAM onlari da iceriyor (K100 kurali:
+    # config silinmez, emekli edilir -- kayit surekliligi bozulmaz).
+    SIRA = [c for c in _gosterim_sirasi() if KONFIG[c].get("aktif", True)]
+    EMEKLI_SIRA = [c for c in _gosterim_sirasi() if not KONFIG[c].get("aktif", True)]
 
     def toplam_blok(baslik):
         H2 = ["<div class=toplam>", f"<b>{baslik}</b><br>"]
@@ -984,6 +1031,24 @@ def html_yaz(df=None, ac=False):
                       f"<span class=k>({len(kk)} kupon, {tam} tam isabet)</span> &nbsp; "
                       f"bedel <b>{ro.para(bedel)}</b> &nbsp; odul <b>{ro.para(odul)}</b> &nbsp; "
                       f"net <span class='{cls}'><b>{ro.para(net, isaret=True)}</b></span></div>")
+        # K161: emekliler TEK SATIRDA ozetlenir, detay ayri sayfada. Genel toplama DAHIL --
+        # sicil kisalmaz, yalnizca sutunlari kalkar.
+        if EMEKLI_SIRA:
+            ek = [k for k in kupolar if k["cfg"] in EMEKLI_SIRA and k["bitti"]]
+            e_bedel = sum(k["bedel"] for k in ek)
+            e_odul = sum(k["odul"] for k in ek)
+            gen_bedel += e_bedel
+            gen_odul += e_odul
+            e_net = e_odul - e_bedel
+            e_tam = sum(1 for k in ek if k["kademe"] == 6)
+            cls = "poz" if e_net >= 0 else "neg"
+            H2.append(f"<div style='margin:6px 0'><b>EMEKLILER</b> "
+                      f"<span class=mini style='color:#92400e'>[{len(EMEKLI_SIRA)} tur: "
+                      f"{', '.join(c.upper() for c in EMEKLI_SIRA)}]</span> "
+                      f"<span class=k>({len(ek)} kupon, {e_tam} tam isabet)</span> &nbsp; "
+                      f"bedel <b>{ro.para(e_bedel)}</b> &nbsp; odul <b>{ro.para(e_odul)}</b> &nbsp; "
+                      f"net <span class='{cls}'><b>{ro.para(e_net, isaret=True)}</b></span> &nbsp; "
+                      f"<a href='altili_emekli.html'>ayri sayfada</a></div>")
         gnet = gen_odul - gen_bedel
         cls = "poz" if gnet >= 0 else "neg"
         H2.append("<hr style='border:none;border-top:1px solid #ddd;margin:8px 0'>"
@@ -1137,9 +1202,17 @@ def html_yaz(df=None, ac=False):
             # o kosunun TUM siralamasi (K58) -- tum turler icin ORTAK.
             # K97: artik IKI satir (kupon ani / yaris ani) ve her ikisi de KOSU NO ile baslar;
             # bu satirin ustteki ayaga mi alttakine mi ait oldugu belirsizligi boylece biter.
+            # K161: bu Altili'da hangi kupon-kurma anlari varsa (30 ve/veya 15 dk) her biri
+            # icin ayri satir; BOT1 CETVELI yalniz o anda bot1 config'i olan grupta basilir.
+            dk_bot1 = {}
+            for c in cfgler:
+                d = KONFIG[c].get("dk", 30)
+                dk_bot1.setdefault(d, None)
+                if KONFIG[c].get("puan") == "bot1" and not dk_bot1[d]:
+                    dk_bot1[d] = c
             H.append(f"<tr><td></td><td colspan={3+len(cfgler)} class=l "
                      "style='background:#f7f9fc;border-top:none'>"
-                     f"{_siralama_html(tarih, pist, seq, ai, int(r['kosu_no']), rk, tum_sec, kzno)}"
+                     f"{_siralama_html(tarih, pist, seq, ai, int(r['kosu_no']), rk, tum_sec, kzno, dk_bot1)}"
                      "</td></tr>")
 
         def ozet_satir(baslik, fn):
@@ -1164,11 +1237,7 @@ def html_yaz(df=None, ac=False):
     HTMLA.parent.mkdir(parents=True, exist_ok=True)
     HTMLA.write_text("\n".join(H), encoding="utf-8")
     if ac:
-        import webbrowser
-        try:
-            webbrowser.open(HTMLA.as_uri())
-        except Exception:
-            pass
+        _tarayicida_ac(HTMLA)
     return HTMLA
 
 

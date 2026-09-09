@@ -592,6 +592,12 @@ kamu sırası + oran + bedel + ödül + toplam). defter.html hâlâ eski düzend
 > **HÜKÜM: canlı zamanlama 30 dk KALIR.** 15 dk kollarını kapatma kararı **KULLANICININ**
 > (K111-f3): veri toplamaya başlamış kolu teoriyle kapatmıyoruz. Kâğıt maliyeti ~1.190 TL/Altılı.
 >
+> **9 EYL 2026, K161 — KULLANICI KARARINI VERDİ: `orta_15` EMEKLİ.** Son sicil 73 kupon,
+> 1× 6/6, net −6.353 ₺ (−%75,4); eşleşmiş pencerede `orta` −%75,1 → fark yok.
+> **Soru kapanmadı, dar bant kapandı:** 15 dk kolu `acgozlu900_15` (geniş) ve yeni
+> `bot2_sabit3_15` (sabit-3) ile canlıda AÇIK. Kontrolü `orta` da aynı gün emekli oldu
+> (kârı tek olaydan geliyordu, K161-a) — dar bantta artık ne kol ne kontrol var.
+>
 > **AÇIK:** 10 dk grubu hâlâ yok (görev sıklığı). Çözünürlük 68 olayda ±3 puan.
 
 <sub>--- tetik dolmadan önceki hâli (arşiv) ---</sub>
@@ -1031,7 +1037,10 @@ kesintisinin egzotik bantta olması muhtemel."* Yani en olası sonuç dördünü
 
 **KOL:** her ayakta **sabit 3 at** (729 kombo, ~911 ₺/kupon). Üç config, 10 Eylül'den itibaren:
 `bot1_sabit3` (bot1, 30 dk) · `bot2_sabit3` (bot2, 30 dk) · `bot2_sabit3_15` (bot2, 15 dk).
-Ayrı sayfa: `raporlar/altili_sabit3.html`.
+Sayfa: `raporlar/altili.html` — **K161'de ana sayfaya birleşti** (ayrı `altili_sabit3.html`
+kaldırıldı: üç config emekli olunca sütun sayısı 11'den 7'ye indi, ayırmanın gerekçesi kalmadı).
+**Ölçüt bundan etkilenmez** — kupon kurma, kayıt ve eşlenik kıyası aynen duruyor; değişen
+yalnızca sicilin hangi sayfada gösterildiği.
 
 **NEDEN AÇILDI:** canlı sicilde (432 kupon, K155-EK metodolojisi) sabit-3, değişken genişlikli
 gerçek kuponu üç config'te geçti (acgozlu_v2'de −%86,4 → +%62,0). Arşiv testi (1.526 olay,
@@ -1479,6 +1488,11 @@ ve v4 (saha genişliği) BEKLETİLDİ** — tek seferde tek değişken.
   hiçbir Altılı'yı yakalamadı; 14 fazladan ayak yakaladı (p=0,0010) ama hiçbiri 6/6'ya dönüşmedi.
   **Emeklilik önerildi → KULLANICI "şimdilik devam etsin" DEDİ → EMEKLİ EDİLMEDİ.**
   Karar ileride yeniden açılabilir; ölçüm K118'de duruyor.
+  > **9 EYL 2026, K161: EMEKLİ EDİLDİ.** Kullanıcı kararı. Son sicil: 91 kupon, 4× 6/6,
+  > net −154.006 ₺ (−%78,4); aynı 91 Altılı'da `bot1_900` net −63.542 ₺ (2× 6/6).
+  > K118'den sonra 1800 **iki** Altılı'yı tek başına tutturdu (31.08 BURSA-2 → 5.598 ₺,
+  > 25.08 ANKARA-2 → 2.077 ₺); fazladan ödenen ~90.464 ₺'nin karşılığı 7.675 ₺ — hüküm aynı.
+  > K118'in "hiçbirini tek başına yakalamadı" cümlesi o tarihte doğruydu, **burada düzeltildi.**
 - **K90'ın açgözlü emeklilik kriteri ÖLÜ:** eşi olan `ayrisma900` 10 Ağu'da durdu →
   "40 eşleşmiş kupon" eşiği **hiçbir zaman dolmayacak** (36'da dondu). Kriter yine de
   çalıştırıldı, üç şartın üçü de tutmuyor → cevap zaten "açgözlü kalır".

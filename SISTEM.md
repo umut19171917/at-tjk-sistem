@@ -110,21 +110,31 @@ Dört dağıtıcı (`kod/altili_backtest.py` — tek kaynak, canlı ve backtest 
 | `ayrisma` | K68. Açgözlünün ayrışma-ağırlıklı hali: `kazanç × (1 + w·D_i)`, D = bot1 ile kamunun toplam değişim uzaklığı. `AYRISMA_W = 1,0` **sabit ve taranmadı** (overfit yasağı). |
 | `kalibre` | K92. Uzak ayakların olasılık vektörünü ölçülmüş λ ile düzleştirir: `p^λ` normalize, sonra açgözlü. `LAM_UZAK=0,65`, `LAM_YAKIN=1,0`, `UZAK_ESIK_DK=75`. |
 
-### Aktif config'ler (K100 + K105)
+### Aktif config'ler (K100 + K105 + K160 + K161)
 
 | config | kapsam | kombo | dağıtım | puan | aile | **dk** | durum |
 |---|---|---|---|---|---|---|---|
-| `orta` | 0,75 | 96 | kapsam | bot2 | kamu | 30 | aktif |
-| `orta_15` | 0,75 | 96 | kapsam | bot2 | zaman | **15** | aktif |
 | `acgozlu900` | 0,95 | 900 | acgozlu | bot2 | kamu | 30 | aktif |
 | `acgozlu900_15` | 0,95 | 900 | acgozlu | bot2 | zaman | **15** | aktif |
 | `bot1_900` | 0,95 | 900 | acgozlu | **bot1** | temel | 30 | aktif |
-| `bot1_1800` | 0,95 | 1800 | acgozlu | **bot1** | temel | 30 | aktif |
 | `acgozlu_v2` | 0,95 | 900 | **kalibre** | bot2 | kalibre | 30 | aktif |
-| `dar` | 0,75 | 24 | kapsam | bot2 | kamu | 30 | **EMEKLİ** |
-| `genis` | 0,75 | 288 | kapsam | bot2 | kamu | 30 | **EMEKLİ** |
-| `genis900` | 0,95 | 900 | kapsam | bot2 | kamu | 30 | **EMEKLİ** |
-| `ayrisma900` | 0,95 | 900 | ayrisma | bot2 | ayrisma | 30 | **EMEKLİ** |
+| `bot1_sabit3` | — | 729 | **esit** (k=3) | **bot1** | temel | 30 | aktif (K160) |
+| `bot2_sabit3` | — | 729 | **esit** (k=3) | bot2 | kamu | 30 | aktif (K160) |
+| `bot2_sabit3_15` | — | 729 | **esit** (k=3) | bot2 | zaman | **15** | aktif (K160) |
+| `dar` | 0,75 | 24 | kapsam | bot2 | kamu | 30 | **EMEKLİ** (K100) |
+| `genis` | 0,75 | 288 | kapsam | bot2 | kamu | 30 | **EMEKLİ** (K100) |
+| `genis900` | 0,95 | 900 | kapsam | bot2 | kamu | 30 | **EMEKLİ** (K100) |
+| `ayrisma900` | 0,95 | 900 | ayrisma | bot2 | ayrisma | 30 | **EMEKLİ** (K100) |
+| `orta` | 0,75 | 96 | kapsam | bot2 | kamu | 30 | **EMEKLİ** (K161) |
+| `orta_15` | 0,75 | 96 | kapsam | bot2 | zaman | **15** | **EMEKLİ** (K161) |
+| `bot1_1800` | 0,95 | 1800 | acgozlu | **bot1** | temel | 30 | **EMEKLİ** (K161) |
+
+> **`esit` dağıtıcı (K160):** her ayakta puan-azalan ilk `k` at, kapsam/budama yok →
+> kombinasyon her zaman tam `k⁶` (k=3 → 729). `kapsam` alanı okunmaz.
+
+> **K161 — RAPOR SAYFALARI:** aktif türlerin tamamı (sabit-3 dahil) `raporlar/altili.html`'de;
+> emekli türler `raporlar/altili_emekli.html` arşiv sayfasında (ana sayfada tek satır özet +
+> bağlantı, GENEL TOPLAM'a dahil). Kupon-anı sıralaması her dk grubu için ayrı satır basılır.
 
 > **CONFIG SİLİNMEZ, `aktif: False` ile emekli edilir.** Silinirse geçmiş sicili raporun
 > TOPLAM DURUM bloğundan sessizce düşer ve işleyen bakiye ile ayrışır (kümülatif blok

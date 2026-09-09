@@ -31,18 +31,21 @@ Kupon **tek anda** kurulur: 30 dk grubu 1. ayağa 30 dk kala, 15 dk grubu 15 dk 
 (`altili_canli.kupon_zamani_kur`). Telegram'a kurulum + sonuç bildirimi gider;
 sayfa: `raporlar/altili.html` (`altili_goster.bat`).
 
-**7 aktif + 4 emekli config.** Emekliler kupon KURMAZ, geçmiş sicilleri raporda AYNEN durur.
+**7 aktif + 7 emekli config** (9 Eyl 2026, K161). Emekliler kupon KURMAZ, geçmiş sicilleri
+silinmez: ayrı arşiv sayfası `raporlar/altili_emekli.html` (ana sayfadan bağlantılı, genel
+toplama dahil).
 
 | config | bütçe | dağıtım | puan | dk | durum / rolü |
 |---|---|---|---|---|---|
-| `orta` | 96 | kapsam | bot2 | 30 | aktif — temel kupon, zamanlama kolunun kontrolü |
-| `orta_15` | 96 | kapsam | bot2 | **15** | aktif — zamanlama kolu (K105), tetik ~60 kupon |
 | `acgozlu900` | 900 | açgözlü | bot2 | 30 | aktif — `acgozlu_v2`'nin kontrolü |
 | `acgozlu900_15` | 900 | açgözlü | bot2 | **15** | aktif — zamanlama kolu, geniş bütçe |
-| `acgozlu_v2` | 900 | **kalibre** (λ=0,65 uzak ayak) | bot2 | 30 | aktif — en yeni deney (K92), 25 Eyl'e bağlı |
+| `acgozlu_v2` | 900 | **kalibre** (λ=0,65 uzak ayak) | bot2 | 30 | aktif — K92 deneyi |
 | **`bot1_900`** | 900 | açgözlü | **bot1** | 30 | aktif — portföyün tek gerçek çeşitlendiricisi |
-| `bot1_1800` | 1800 | açgözlü | **bot1** | 30 | aktif — bütçe kolu (K118'de emeklilik önerildi, kullanıcı "devam etsin" dedi) |
+| `bot1_sabit3` | 729 (3×6) | **eşit** | **bot1** | 30 | aktif — sabit-3 kolu (K160), 10.09.2026'dan |
+| `bot2_sabit3` | 729 (3×6) | **eşit** | bot2 | 30 | aktif — sabit-3 kolu (K160) |
+| `bot2_sabit3_15` | 729 (3×6) | **eşit** | bot2 | **15** | aktif — sabit-3 + zamanlama (K160) |
 | `dar` · `genis` · `genis900` · `ayrisma900` | 24/288/900/900 | — | bot2 | 30 | **EMEKLİ** (10.08.2026, K100) |
+| `orta` · `orta_15` · `bot1_1800` | 96/96/1800 | kapsam/açgözlü | bot2/bot1 | 30/15/30 | **EMEKLİ** (09.09.2026, K161) |
 
 **Hepsi −EV gözlem akışıdır, iyileştirme değil.** Gerekçeler: K62 · K65 · K67 · K68 · K69 ·
 K92 · K100 · K105.

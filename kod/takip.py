@@ -263,14 +263,15 @@ def gecis(args):
     except Exception as e:
         _log(f"altili kupon hatasi: {type(e).__name__}: {e}")
 
-    # K159-devam: SABIT-3 kolunun AYRI sayfasi (raporlar/altili_sabit3.html). Kupon kurma
-    # yukaridaki cagrida zaten yapildi (KONFIG'e eklenen 3 config); burasi yalniz SAYFA uretir.
+    # K161: EMEKLI turlerin arsiv sayfasi (raporlar/altili_emekli.html). Aktif turlerin
+    # tamami -- sabit-3 dahil -- altili.html'de; burasi yalniz emeklilerin sicilini tazeler.
+    # (Eskiden burada sabit-3'un ayri sayfasi uretiliyordu; K161'de ana sayfaya birlesti.)
     # Ayri try: bu sayfanin hatasi ne takibi ne de altili.html'i etkilemez.
     try:
-        import altili_sabit3_rapor
-        altili_sabit3_rapor.html_yaz()
+        import altili_emekli_rapor
+        altili_emekli_rapor.html_yaz()
     except Exception as e:
-        _log(f"altili sabit3 rapor hatasi: {type(e).__name__}: {e}")
+        _log(f"altili emekli rapor hatasi: {type(e).__name__}: {e}")
 
     # K59: ORAN gecmisi kaydi (ileri-yonlu; kupon KURMAZ, sisteme dokunmaz; try-korumali).
     try:
@@ -294,11 +295,11 @@ def gecis(args):
                 altili_canli.sonucla_altili()
             except Exception as e:
                 _log(f"altili sonucla hata: {type(e).__name__}: {e}")
-            try:                              # K159-devam: sabit-3 sayfasini sonuclarla tazele
-                import altili_sabit3_rapor
-                altili_sabit3_rapor.html_yaz()
+            try:                              # K161: emekli arsiv sayfasini sonuclarla tazele
+                import altili_emekli_rapor
+                altili_emekli_rapor.html_yaz()
             except Exception as e:
-                _log(f"altili sabit3 rapor hatasi (sonucla): {type(e).__name__}: {e}")
+                _log(f"altili emekli rapor hatasi (sonucla): {type(e).__name__}: {e}")
             _isaretle(tarih, "SONUCLA")
         except Exception as e:
             _log(f"sonucla hata: {type(e).__name__}: {e}")   # marker yok -> sonraki gecis dener

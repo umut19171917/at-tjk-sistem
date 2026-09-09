@@ -25,7 +25,8 @@ def main():
               "veri/altili_temettu.csv",          # K55: Altili odul (temettu) cache'i
               "veri/altili_oran_log.csv",         # K59: gun-ici oran gecmisi (kayma olcumu)
               "raporlar/gunluk", "raporlar/defter.html", "raporlar/paper.html",
-              "raporlar/altili.html"]
+              "raporlar/altili.html",
+              "raporlar/altili_emekli.html"]      # K161: emekli turlerin arsiv sayfasi
     if (KOK / "veri" / "bahisler.csv").exists():      # K37 yeniden aktiflesirse o da
         yollar.append("veri/bahisler.csv")
     r = calistir("add", "--", *yollar)
