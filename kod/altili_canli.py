@@ -35,7 +35,8 @@ sys.path.insert(0, str(KOK / "kod"))
 from gunluk import hesapla, getjson, BASE, EXCL  # noqa: E402
 from altili_backtest import (kupon_kur, kupon_kur_acgozlu,  # noqa: E402
                              kupon_kur_ayrisma, ayrisma_skoru,
-                             kupon_kur_kalibre, UZAK_ESIK_DK, LAM_UZAK)
+                             kupon_kur_kalibre, UZAK_ESIK_DK, LAM_UZAK,
+                             kupon_kur_esit)
 from duzlestir import vir_float  # noqa: E402
 import rapor_ortak as ro  # noqa: E402
 
@@ -122,6 +123,15 @@ KONFIG = {
     # K92: uzak ayagin olasiligi OLCULMUS lambda ile duzlestirilir (bkz. kupon_kur_kalibre).
     # acgozlu900 ile TEK farki budur -> aradaki her fark uzak-ayak duzeltmesine atfedilebilir.
     "acgozlu_v2": {"kapsam": 0.95, "kombo": 900, "dagitim": "kalibre", "puan": "bot2", "aile": "kalibre", "aktif": True,  "dk": 30},
+    # K159-devam: SABIT-3 kolu (9 Eyl 2026). Her ayakta AYNI sayida (k=3) at -> 729 kombo,
+    # sabit bedel (kapsam/acgozlu/kalibre YOK). Canli sicilde (432 kupon) degisken genislige
+    # gore ustundu; arsiv testi tersini soyledi ama K130 sizintisiyle kirliydi -- bu kol o
+    # sizintiyi tasimayan TEMIZ bir olcum icin acildi. bot1@15dk YOK: bot1 oran-kor oldugu
+    # icin 30dk'dan 15dk'ya top-3'u %97,1 ayni kaliyor (bot2'de %61,6) -> ayri kol acmanin
+    # anlami yoktu (olculdu, K159). Ayrı takip sayfasi: raporlar/altili_sabit3.html.
+    "bot1_sabit3":    {"kombo": 729, "dagitim": "esit", "k": 3, "puan": "bot1", "aile": "temel", "aktif": True, "dk": 30},
+    "bot2_sabit3":    {"kombo": 729, "dagitim": "esit", "k": 3, "puan": "bot2", "aile": "kamu",   "aktif": True, "dk": 30},
+    "bot2_sabit3_15": {"kombo": 729, "dagitim": "esit", "k": 3, "puan": "bot2", "aile": "zaman",  "aktif": True, "dk": 15},
 }
 
 
@@ -330,6 +340,8 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None, sadece_cfg=None, dk_grup=30
                 sec = kupon_kur_ayrisma(puanlar, ayak_ayr, maxk, AYRISMA_W)
             elif dagitim == "kalibre":             # K92: uzak ayak lambda ile duzlestirilir
                 sec = kupon_kur_kalibre(puanlar, ayak_dk, maxk)
+            elif dagitim == "esit":                # K159-devam: her ayakta sabit k at
+                sec = kupon_kur_esit(puanlar, ay.get("k", 3))
             else:
                 sec = kupon_kur(puanlar, ay["kapsam"], maxk, BANKER_ESIK)
             if any(len(s) == 0 for s in sec):      # dagitici bos donduyse yazma (bozuk satir olmasin)

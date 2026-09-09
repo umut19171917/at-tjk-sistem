@@ -6264,3 +6264,238 @@ Soru *"zorunda olsan hangisi"*ydi. Canlı para kararı K98'de verildi (hayır) v
 güçlendi (%96 örtüşme). En iyi ikili bile −%52; en büyük bilet çıkınca −%64. **Hiçbiri kâr
 beklentisi taşımıyor.** Ayrıca kullanıcının kendi çerçevesi (*"vurgun değil sürdürülebilirlik"*)
 ile bot1'in piyango biçimi çelişiyor; bu çelişki çözülmedi, kullanıcıya açıkça bırakıldı.
+
+---
+
+**K158 — SESSİZ VERİ KAYBI: KULLANICI "DOKUNMA" DEDİ. Yakalama penceresi ve görev aralığı
+DEĞİŞMEYECEK; BEKLEYENLER #23 kapandı.** 8 Eyl 2026.
+
+Kullanıcı: *"karar 23'e de dokunma."* K155-EK'in tavsiyesi (Yol 3) **onaylandı**.
+
+- **Yol 1** (görev aralığı 15 dk → 5 dk) **düştü** — `oran_log` yoğunluğunu 3 katına çıkarır,
+  K76/K111'in dayandığı veri üretme süreci deney ortasında değişirdi.
+- **Yol 2** (`--dk` 5 → 20) **düştü** — tahmin anını postaya 20 dk kalaya çeker, `defter`in
+  anlamını değiştirirdi (K111 bu farkın gerçek olduğunu ölçmüştü).
+- **Yol 3 — dokunma: SEÇİLDİ.** Kabul edilen bedel: kaçan ~%8 koşunun *"yarıştan önce ne
+  tahmin etmiştik"* satırı kalıcı olarak eksik kalır (defterin ~%7'si). Telafisi olmayan dört
+  dosya (K150) zaten etkilenmiyordu; ham arşiv ve Altılı kupon akışı sağlam.
+
+**KAZANILAN:** geçmiş ile gelecek aynı süreçle üretilmeye devam eder — 25 Eylül'ün S1 ölçümü
+(`kod/s1_olcum.py`) tek bir veri rejimi üzerinde koşar.
+
+**AYRI TUTULAN, KAPANMADI:** K105'in *"10 dk grubu YOK"* eksiği için açılabilecek kol bu
+kararın kapsamı dışındadır — o bir tamir değil yeni bir koldur, tetiği 25 Eylül'den sonrasıdır
+ve açılırsa ön-kayıtlı olarak açılır (K33/K52).
+
+**BU KARARI NE ÇÜRÜTÜR:** kaybın defterle sınırlı olmadığı, telafisi olmayan bir dosyaya da
+dokunduğu ölçülürse — o zaman fatura yeniden hesaplanır.
+
+---
+
+**K159 — ONLİNE TAHMİNCİLERLE KIYAS: DOĞRU KAYNAKLA ÖLÇÜLDÜĞÜNDE SİSTEMİMİZ AÇIK FARKLA ÖNDE,
+GENİŞLİK KONTROLÜNDEN DE GEÇİYOR.** 9 Eylül 2026. Kullanıcı: *"online at yarışı bültenleri ve
+tahminciler var, biz bunların Altılı tahminlerini hiç değerlendirmedik."*
+
+## (a) KAYNAK TARAMASI — çoğu kullanışsız çıktı
+
+Denenenler: ganyan.com.tr, sonduzluk.com, puanlibulten.com, ganyantime2.com, agftablosu.com,
+bankotahminler.com, altiliganyan.com, kirbacyarisgazetesi.com, sihirlikantarma.org,
+iddaatahmin11.com, horseturk.com.
+
+| kaynak | durum |
+|---|---|
+| ganyan.com.tr (Ferhat Pusa) | 402+ sayfa arşiv ama içerik **VIP üyelik** arkasında, açılmıyor |
+| sihirlikantarma.org | genel bilgi sitesi, Altılı'ya özel yapılı format yok |
+| kirbacyarisgazetesi.com, agftablosu.com, iddaatahmin11.com | yüzeysel bakıldı, ücretsiz görünüyor ama derinlemesine denenmedi |
+| horseturk.com | ücretsiz, tahmin edilebilir URL, 354 sayfa arşiv, temiz format — **iyi aday, bu turda kullanılmadı** |
+| **ganyantime2.com** | tek gerçek ücretsiz kaynak gibi göründü, **AMA** ciddi kapsama boşluğu var |
+| **bankotahminler.com** | ücretsiz, **açık WordPress REST API**, **17.702 yazı, 2011'e kadar arşiv**, birden çok imzalı tahminci — **kullanılan kaynak** |
+
+## (b) İLK DENEME (ganyantime2.com) — kaynağın kendisi güvenilmez çıktı
+
+"Fanatik Hipodrom Gazetesi" tahminlerini yayınlıyor, format tam bizim ayak/at yapımızla
+örtüşüyor (JSON-LD `articleBody`). Ama rastgele denenen 8 günün **5'inde başlık doğru,
+içerik tamamen boş** (yalnız reklam linki, tahmin hiç girilmemiş) — **%62,5 boş**. Yalnız 3
+günde gerçek veri bulunabildi (27 Ağu, 28 Ağu kısmi, 5 Eyl) → **n=5 olay, 30 ayak**:
+
+| | GAZETE | ACGOZLU900 | ORTA |
+|---|---|---|---|
+| Ayak isabeti | %56,7 (17/30) | %50,0 | %30,0 |
+| 6/6 | 0/5 | 0/5 | 0/5 |
+
+Olay-bootstrap ROI farkı %95 GA'sı **sıfırı içeriyordu** [−11,6, +177,1] (K159 öncesi ölçüm,
+sonuç görülmeden bağlanmış bir ölçüt yoktu — bu tur kasıtlı olarak keşif amaçlıydı). Kaynağın
+kendisinin güvenilmezliği yüzünden **bu ölçüm karara temel olamaz**, yalnız ikinci denemeyi
+tetikledi.
+
+## (c) İKİNCİ DENEME (bankotahminler.com) — n=36 olay, 5 imzalı tahminci
+
+`wp-json/wp/v2/posts?search=ALTILI` ile 20 Tem–8 Eyl penceresinde **57 yazı** bulundu
+(Stalingrad, Centaur, Rising, can911, Toroman37, Admin). **51/57 (%89,5) ayrıştırıldı**
+(Toroman37'nin 4 yazısı farklı format, atlandı). Kendi arşivimizle (`katilim.csv` kazanan+oran)
+ve o gün/seq için kurulmuş `acgozlu900` kuponuyla (`altili_kupon.csv`) eşleşen **36 olay**
+kaldı (19'unda o gün/config kuponu yoktu, 9'unda arşiv kaydı yoktu).
+
+**Yöntem doğrulaması:** Stalingrad'ın çift-ızgara formatı ("ŞEHİR 1" / "ŞEHİR 2") kosu-numarası
+düzeyinde bizim `seq1` (koşu 1-6) / `seq2` (koşu 4-9) yapısıyla **birebir örtüştüğü** elle
+teyit edildi (5 Eylül Ankara örneğinde tüm 12 hücre satır satır doğrulandı).
+
+### Genel sonuç
+
+| | TAHMİNCİLER (havuz) | BİZİM (acgozlu900) |
+|---|---|---|
+| Ayak-başı isabet | %34,7 (66/190)† | **%63,4** (137/216) |
+| 6/6 tam isabet | 0/36 | 2/36 |
+| Sürpriz ayak yakalama‡ | %22,2 (8/36) | **%33,3** (12/36) |
+
+† 26 ayakta tahminci "HEPSİ" (fikir yok) yazmış — değerlendirme dışı bırakıldı; dahil edilse
+tahminci lehine değil aleyhine olurdu. ‡ her olayın en yüksek kapanış oranlı kazananı.
+
+**Olay-bootstrap (ayak-bağımsız, 10.000 tekrar):** fark (tahminci−biz) **−28,6 puan, %95 GA
+[−37,3, −19,6]** — sıfırı içermiyor.
+
+### GENİŞLİK KONTROLÜ — asıl sağlam bulgu
+
+Biz ortalama **4,11 at/ayak**, tahminciler **2,83** yazıyor (K156'nın "genişlik = beceri değil
+bütçe" bulgusu burada da akla geldi). Aynı genişlikte kıyaslandı:
+
+| genişlik | TAHMİNCİ | BİZİM |
+|---|---|---|
+| **1 at (banko)** | **%11,8** (9/76) | **%43,1** (22/51) |
+| 3 at (medyan, ikisinde de) | %51,5 (17/33) | %58,3 (14/24) |
+
+**Banko iddiası genişlik farkından bağımsız olarak çöküyor** — ve tek bir tahminciye özgü
+değil, üçü ayrı ayrı test edildi: Centaur %15,4 (2/13), Stalingrad %12,5 (4/32), Rising %10,0
+(3/30). Ortalama saha büyüklüğü (~10 at) düşünülürse bu, rastgele seçmekten ayırt edilemiyor.
+K114'ün "hak edilmemiş" (en zayıf) banker kategorimiz bile %30,4 tutuyordu — bunların hepsinden
+daha iyi.
+
+## (d) SINIRLAMALAR (dürüstlük payı)
+
+- Bootstrap **olay-kümelemesi YAPILMADI** (ayak-bağımsız varsayıldı) — GA'yı olduğundan dar
+  gösterebilir; ama farkın büyüklüğü (28 puan) bunu fazlasıyla aşıyor.
+- Tek config (`acgozlu900`) kullanıldı; `orta`/`bot1_900` ile tekrarlanmadı.
+- n=36 hâlâ mütevazı; ±5 puanlık ince bir kenarı ayırt etmeye yetmez — ama burada ölçülen fark
+  ince değil.
+- horseturk.com ve iddaatahmin11.com gibi diğer adaylar bu turda kullanılmadı; sonuç yalnız
+  bankotahminler.com'un beş imzalı tahmincisi için geçerli, "tüm online tahminciler" için
+  genellenemez.
+
+## (e) HÜKÜM
+
+**İki farklı ücretsiz kaynak, iki farklı ölçüm yöntemiyle test edildi.** Zayıf kaynakla
+(ganyantime2, n=5) belirsiz bir sonuç çıktı; güçlü kaynakla (bankotahminler, n=36, genişlik
+kontrollü) net ve tutarlı bir sonuç çıktı: **kendi sistemimiz, aynı genişlikte bile, beş
+imzalı tahmincinin hepsinden daha iyi tutturuyor.** Bu, K140-EK'in "sistem piyasanın %96
+kopyası" bulgusuyla ÇELİŞMİYOR — piyasayı (kamu/AGF) yenip yenmediğimiz ayrı bir soru; burada
+ölçülen yalnız "ücretsiz online tahminciler" karşısındaki durumumuz.
+
+**KARAR (9 Eylül 2026): İZLEME KOLUNA DÖNÜŞTÜRÜLMEYECEK — KAPANDI.** Kullanıcı: *"izleme koluna
+dönüştürmeye değecek bir durum yok ölçümlerine göre değil mi"* — doğrulandı. Gerekçe: bir kol
+ancak öğrenilecek/yapılacak bir şey varsa açılır (K129/AGF örneğinde olduğu gibi); burada üç
+tahmincinin **üçü de** aynı zayıf noktada (banko iddiası rastgele seçmekten ayırt edilemiyor),
+**sürpriz yakalamada da** tahminciler bizden kötü çıktı (%22,2 vs %33,3) — "belki bir gün işe
+yarar" için hiçbir zemin yok. n=36 hâlâ mütevazı ve horseturk.com/iddaatahmin11.com denenmedi,
+ama bu bir kanıt açığı değil, doyurulmamış bir merak; üç bağımsız kaynak zaten aynı yöne işaret
+etti. **Yeniden açılması için K33/K52 gereği yeni bir mekanizma iddiası VEYA yeni veri gerekir**
+— "bir daha bakalım" tek başına gerekçe değildir.
+
+---
+
+**K160 — SABİT-3 KOLU CANLIYA ALINDI: her ayakta eşit sayıda at (3), üç config, ayrı sayfa.
+bot1@15dk ÖLÇÜLDÜ ve AÇILMADI. Çalışan 7 config'e dokunulmadı — kanıtlandı.** 9 Eyl 2026.
+
+Kullanıcı: *"sabit 3 atlı kupon kuralım yarınki koşulardan itibaren"* ve *"çalışan sisteme asla
+zarar gelmeyecek onu unutma."*
+
+## (a) NEREDEN GELDİ — genişlik zinciri
+
+K88 "genişlik modelin güveninden değil bütçenin 6. kökünden geliyor" demişti; K156 canlı sicilde
+ayak isabetinin **genişliğin kopyası** olduğunu ölçtü; K157 acgozlu_v2'nin kuponlarının %54'ünün
+1. ayakta öldüğünü gösterdi. Bu oturumda soru tersine çevrildi: **genişliği hiç dağıtmasak,
+her ayağa eşit sayıda at yazsak ne olurdu?**
+
+**Canlı sicilde ölçüldü (432 kupon, K155-EK'in mantıksal-sınır yöntemiyle):**
+
+| config | gerçek ROI | eşit-3 ROI |
+|---|---|---|
+| acgozlu900 | −%67,0 | **+%18,0 … +%35,1** |
+| acgozlu_v2 | −%86,4 | **+%62,0** |
+| bot1_900 | −%36,6 | −%32,9 … +%11,6 |
+| acgozlu900_15 | −%78,2 | −%69,1 |
+| **toplam (432 kupon)** | **−%64,5** | **−%1,0 … +%17,3** |
+
+**Genişlik taraması (aynı yöntem, tam tarih):** sabit-3 −%1,0…+%17,3 · sabit-4 **−%69,1** ·
+sabit-5 −%47,0. Bedel k⁶ ile patlarken (729 → 4.096 → 15.625) ayak isabeti çok daha yavaş
+büyüyor (%58,7 → %67,6 → %74,4) — **3 tatlı nokta, 4 en kötüsü.** İronik not: gerçek sistemin
+ortalama genişliği zaten ~4,0 (K156), yani taranan üç noktanın en kötüsünün bölgesinde duruyor.
+
+## (b) ÇELİŞKİ AÇIKÇA YAZILIYOR — arşiv testi TERS söyledi
+
+`kod/esit_ayak_test.py` (1.526 OOS olay, ön-kayıtlı ölçütle) sabit-3'ü açgözlüye karşı test etti
+ve **KRİTER GEÇİLEMEDİ**: 6/6 sayısı 174 vs 235 (61 DAHA AZ), eşli ROI farkı +7,8 puan ama
+%95 GA [−3,5 , +20,1] sıfırı içeriyor.
+
+**Bu testin kusuru ölçüldü:** arşivde tek-at (banker) ayakları **%50,0** tutuyor, canlıda
+**%36,4**. Sebep K130 — `ganyan_muhtemel` == kapanış oranı, yani arşiv backtestinin piyasa
+terimi koşu sonrası bilgiyle kirli ve **tam da tartışılan mekanizmayı** (açgözlünün banker
+kararlarını) şişiriyor. Arşiv bu soruda tarafsız hakem değil.
+
+**Hüküm:** iki ölçüm çelişiyor, ikisinin de kusuru var (canlının kusuru azlık, arşivin kusuru
+sızıntı). Bu yüzden kol **"kanıtlandı" diye değil, "sızıntısız ölçüm için" açıldı.** Ön-kayıtlı
+ölçüt BEKLEYENLER #27'de, sonuç görülmeden yazıldı.
+
+## (c) bot1@15dk ÖLÇÜLDÜ ve AÇILMADI
+
+Kullanıcı sordu: *"bot1 için 15 dk kala kupon kurmaya gerek var mı, kamuya bakmıyor sonuçta."*
+Ölçüldü (341 koşu, iki snapshot da olan):
+
+| | top-3 kümesi AYNI | tam sıralama AYNI |
+|---|---|---|
+| **bot1** | **%97,1** | %94,7 |
+| bot2 | %61,6 | %18,8 |
+
+bot1 oran-kör; 15 dakikada değişecek bir mekanizma yok (kalan %2,9 muhtemelen geç scratch/jokey
+değişikliği). 6 ayakta ~%84,5 ihtimalle **birebir aynı kombinasyon** çıkardı → K156-d'nin "aynı
+bahsin iki kopyası" tuzağı. **Kullanıcının sezgisi doğruydu, kol açılmadı.**
+
+## (d) NE KURULDU
+
+| config | puan | dk | aile | kombo | bedel |
+|---|---|---|---|---|---|
+| `bot1_sabit3` | bot1 | 30 | temel | 729 | ~911 ₺ |
+| `bot2_sabit3` | bot2 | 30 | kamu | 729 | ~911 ₺ |
+| `bot2_sabit3_15` | bot2 | 15 | zaman | 729 | ~911 ₺ |
+
+- `kod/altili_backtest.py` → yeni `kupon_kur_esit(ayak_atlari, k=3)`
+- `kod/altili_canli.py` → KONFIG'e 3 satır + dispatch'e `elif dagitim == "esit"` dalı
+- `kod/altili_sabit3_rapor.py` (YENİ) → `raporlar/altili_sabit3.html` — **ayrı sayfa**
+  (kullanıcı: *"altılı takip sayfasına yedirme"*; mevcut sayfa zaten 7 config'i yan yana
+  gösteriyor, 3 daha eklemek okunamaz yapardı)
+- `kod/takip.py` → iki noktaya (kupon kurma sonrası + sonuçlama sonrası) **ayrı try/except ile
+  izole** sayfa üretim çağrısı
+
+## (e) ÇALIŞAN SİSTEME ZARAR GELMEDİĞİ — KANITLANDI, iddia edilmedi
+
+1. **Satır düzeyinde saf ekleme:** `git diff` — 38 ekleme, silinen/değişen tek satır import
+   listesinin devamı (virgül + yeni isim). Hiçbir mevcut kod satırı değişmedi.
+2. **`kod/ast_diff.py`:** yalnız beklenen bloklar değişti — `kupon_kur_esit()` YENİ,
+   `KONFIG` ve `kupon_hazirla()` genişledi. Diğer 9 çekirdek dosyanın tamamı "hepsi AYNI".
+3. **GERÇEK KUPONLARA KARŞI ÜRETİM TESTİ (en güçlü kanıt):** 8-9 Eylül'ün kayıtlı kuponları
+   yeni kodun dağıtıcılarıyla yeniden üretildi → **34/34 BİREBİR AYNI, 0 fark.**
+4. **Hata izolasyonu:** yeni sayfa üretimi ayrı try/except içinde; patlarsa ne takip akışı ne
+   `raporlar/altili.html` etkilenir.
+5. `aktif_konfig()` doğrulandı: 7 mevcut config aynen duruyor, 3 yeni config doğru dk gruplarına
+   düştü (30 dk: 7 config · 15 dk: 3 config).
+
+**BİLİNEN YAN ETKİ (dokunulmadı, not ediliyor):** `kod/altili_zaman_test.py` (OFFLINE test,
+canlı akışa bağlı DEĞİL) `KONFIG.items()` üzerinde dönüp koşulsuz `ay["kapsam"]` okuyor; yeni
+"esit" config'lerde bu alan yok → o script çalıştırılırsa KeyError verir. Canlı sistemi
+etkilemez; düzeltmesi ayrı bir iştir.
+
+## (f) BU KARARI NE ÇÜRÜTÜR
+
+BEKLEYENLER #27'nin ön-kayıtlı ölçütü (≥50 kupon, eşlenik kıyası, 6/6 + eşli ROI GA'sı) düşerse
+kol kapanır. Ayrıca: sabit-3'ün canlı sicildeki üstünlüğü büyük ölçüde **tek bir olaydan**
+geliyordu (19 Ağustos İstanbul, 90.395 ₺ — acgozlu900'ün eşit-3 kârının %61'i). Bu, K106/K157'nin
+"tek bilet" uyarısının aynısıdır ve ölçüt tam bu yüzden dayanıklılık kontrolü içeriyor.

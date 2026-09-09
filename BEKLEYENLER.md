@@ -853,8 +853,17 @@ düşük DEĞİLSE. Düşükse "ayrıştırma değer katmıyor" yazılır ve kap
 
 ---
 
-### 23. SESSİZ VERİ KAYBI — ÖLÇÜLDÜ, **TAVSİYE: DOKUNMA**. Karar kullanıcının (K155 + K155-EK)
-**Eklendi:** 2026-09-07 (K155) · **TETİK: KULLANICI** — kendiliğinden değiştirme.
+### 23. ✅ KARARA BAĞLANDI (2026-09-08, K158) — KULLANICI **YOL 3'Ü SEÇTİ: DOKUNMA**
+**Eklendi:** 2026-09-07 (K155) · **KAPANDI:** 2026-09-08 (K158, kullanıcı kararı) · **İlgili:** K155, K155-EK, K158
+
+> **KARAR:** Kullanıcı *"karar 23'e de dokunma"* dedi. **Yol 1 ve Yol 2 düştü** — yakalama
+> penceresi (`--dk`) ve görev aralığı (15 dk) **değiştirilmeyecek**. Kaçan ~%8 koşunun defter
+> satırı kalıcı olarak eksik kalır; karşılığında geçmiş-gelecek kıyaslanabilirliği korunur.
+> Tavsiye ile karar aynı yönde. **Yeniden açılması için yeni bir gerekçe gerekir.**
+> **AYRI TUTULAN "10 dk kolu" bundan etkilenmez** — o bir tamir değil yeni bir koldur ve
+> tetiği hâlâ 25 Eylül'den sonrasıdır (aşağıda).
+
+**Aşağıdaki metin karar öncesi hâliyle durur — gerekçe zinciri görünsün diye silinmedi.**
 
 #### Kaybolan ne? (K155-EK'te ölçüldü — K155'in ilk çerçevesi GENİŞTİ, daraltıldı)
 
@@ -894,6 +903,178 @@ AYRI karar konusu"* demişti. Bu madde oraya bağlanır.
 **TETİK: 25 Eylül'den SONRA** — S1 ölçümü bitmeden `oran_log` yoğunluğu değiştirilmez
 (`kod/s1_olcum.py` o veriye bakıyor). O tarihten sonra, açılacaksa **ön-kayıtlı kol olarak**
 açılır: ne ölçüleceği ve neyin fikri öldüreceği önce yazılır (K33/K52).
+
+### 24. İKİLİ ve SIRALI İKİLİ — projede ölçülen EN UCUZ iki bahis, modelle HİÇ denenmedi
+**Eklendi:** 2026-09-08 · **TETİK: SIRASI GELİNCE** (kullanıcı: sabit-at-sayılı kupon işi bitsin,
+sonra bu) · **İlgili:** K21, K22, K25, K123, K125, K127, K140-EK
+
+**NEREDEN GELDİ:** kullanıcının getirdiği dış eleştiri belgesi (`yapilabilecekler.md`, 8 Eyl 2026).
+Belge denetlendi; ana iddiası (ÇİFTE'de bot1 +16,1 puan "anlamlılık tartışmasız") **okuma
+hatasıydı** — deponun kaydı %95 GA [−5,54 .. +39,43], sıfırı içeriyor; ayrıca belge "en büyük ÜÇ
+ödeme çıkınca −%13,6" yazmış, gerçekte ÜÇ çıkınca −%21,1 = kalabalığın seviyesi. Belgenin
+1 numaralı önerisi (ÇİFTE birim fiyatı) de yanlış kilit: ÇİFTE kesinti kapısını GEÇTİ (%27,2),
+**kenar** kapısından düştü (K127: +0,98 puan, %90 GA [−5,07..+7,05]). **Bu madde belgenin
+denetimden geçen TEK maddesidir.**
+
+**DAYANAK — K125'in kendi tablosu:**
+
+| bahis | olay | birim | kesinti | %95 GA | K125 hükmü |
+|---|---|---|---|---|---|
+| **İKİLİ** | 31.091 | 1,00 TL | **%24,5** | [23,6..26,0] | **AÇILIR** |
+| **SIRALI İKİLİ** | 36.097 | 1,00 TL | **%26,4** | [25,6..27,2] | (çapa) |
+| ÇİFTE | 30.745 | 1,00 TL | %27,2 | [26,4..28,0] | AÇILDI → K127'de KAPANDI |
+| Altılı | — | 1,25 TL | %48,6 | — | — |
+
+İkisi de projede ölçülen **en düşük** kesintiler. Birim fiyat belirsizliği YOK: K125 altı yıllık
+asgari temettü serisinden okudu (2021-26 boyunca sabit → 1,00 TL). K125 "AÇILIR" dedi ve
+**123 karar boyunca kimse dönüp bakmadı** — deponun kendi defterinde duran açık uç.
+
+**NEDEN DENEMEYE DEĞER (belgenin gerekçesi DEĞİL):** "belki kâr çıkar" diye değil. Bugüne kadarki
+12+ test hep aynı ekseni yokladı: *"modelimiz piyasanın sıralamasını yenebiliyor mu?"* Bu ise
+farklı bir eksen: *"vergi nerede en ucuz?"* Cevap yine hayır çıkabilir, ama **yeni bir yerde**
+hayır çıkar. Maliyet yarım gün, veri hazır.
+
+**ÖNCEDEN YAZILAN BEKLENTİ: DÜŞÜK.** Üç gerekçe: (a) ÇİFTE %27,2 ile açıldı ve kenar kapısında
+düştü — İKİLİ'nin 2,7 puanlık kesinti avantajı o kapıyı açmaya yetmez; (b) İKİLİ **tek koşuluk**
+bir bahis, yani piyasanın en verimli olduğu köşe; (c) K140-EK: 769 canlı koşuda sistem ile piyasa
+%96 aynı atı seçiyor. Bu beklenti **sonuç görülmeden** yazıldı.
+
+**ÖLÇÜM AÇILMADAN ÖNCE YAZILACAKLAR (K33/K52 — kol açılmadan):**
+1. Hangi kol test edilecek: bot1 (oran-kör) mü, bot2 (harman) mı, ikisi de mi. Tek seferde sabitlenir.
+2. Kıyas tarafı: kamunun favorisi (ganyan-türevli). ÇİFTE'nin `kod/cifte_h2.py` tezgâhı taşınır.
+3. **DOĞRULANDI sayılma koşulu:** (a) fark %95 GA ile tamamen sıfırın üstünde VE (b) en büyük üç
+   ödeme çıkarıldığında da pozitif. #18'in ölçütüyle aynı — çünkü aynı tuzak geçerli.
+4. **DÜŞER ve kol KAPANIR:** ikisinden biri tutmuyorsa. Alt-grup taraması YOK (saha/mesafe/pist
+   kovalarına bölmek yasak — sıfırı içeren bir sinyali kovalara bölüp birinde "fark bulmak"
+   K33/K52'nin tam olarak yasakladığı şey).
+5. **Karar sınırı:** doğrulansa BİLE "oynayalım" demek değildir; K37/K41 çerçevesi ayrı.
+
+**SIRALI İKİLİ'nin ek özelliği:** aynı iki atı farklı sırada oynamak ayrı bir bahis. bot1'in
+koşul-logit'i saha-göreli sıralama için tasarlandı; bu, modelin **sıralama** becerisini doğrudan
+sınayan tek yer olabilir. Ama bu bir ikinci hipotezdir — ilkiyle aynı anda test edilirse çokluluk
+düzeltmesi gerekir (K143).
+
+---
+
+### 25. KGS ve SON20 — 5,5 yıllık ham veride VAR, hiç işlenmiyor (dış eleştiri belgesinin doğru çıkan maddesi)
+**Eklendi:** 2026-09-09 · **TETİK: SIRASI GELİNCE** · **İlgili:** K33, #24
+
+**NEREDEN GELDİ:** `yapilabilecekler.md` (8 Eyl 2026) "resmi program hiç taranmadı" dedi.
+Denetlendi — belge yanlış yerde arıyordu (kendi tahmin ettiği `medya-cdn.tjk.org/resmiprogram/`
+yolu 403 döndü) ama TJK'nın gerçek AJAX uç noktası (`tjk.org/.../Info/Sehir/GunlukYarisProgrami`)
+izlenerek asıl kaynağa ulaşıldı: resmî günlük yarış programının CSV/PDF çıktısı.
+
+**BULGU:** CSV'deki alanların neredeyse tamamı zaten `katilim.csv`'de var (At No→no, Baba/Anne→
+baba_kod/anne_kod, Kilo→kilo+fazla_kilo, Jokey/Antrenör/Sahip→ilgili kod alanları, St→start,
+AGF→agf1, Son 6 Yarış→son6, EnİyiDerece→at_eniyi, H→handikap). **İKİ ALAN İSTİSNA: `KGS` ve
+`SON20`.** İkisi de `kod/duzlestir.py`'nin okuduğu **ham JSON'da zaten mevcut**
+(`veri/ham/program/*.json`, `AGF1`/`HANDIKAP` ile aynı at kaydında) — yeni bir kazıyıcı GEREKMİYOR,
+veri **6 yıldır diskte duruyor** (2021-01-01'den 2026-09-07'ye, 4.302 dosyada test edildi, ikisi
+de her örnekte dolu) ama `duzlestir.py` bu iki alanı okumadan atlıyor, dolayısıyla `katilim.csv`'ye
+hiç girmiyor, `ozellik.py`'nin 17 özelliğine hiç girmiyor.
+
+**NE OLDUKLARI DOĞRULANMADI — varsayımla eklenmeyecek.** İsimlerden çıkarım: KGS muhtemelen bir
+sıra/grup göstergesi, SON20 muhtemelen son 20 gün/koşudan türetilen bir puan — ama bu tahmin,
+ölçüm değil. TJK terminolojisinde tam karşılığı bulunmadan (bayi yazılımı, mevzuat eki, ya da
+`ANNEBABA`/`SATISBEDELI` gibi ham JSON'daki komşu alanlarla çapraz okuma) özellik listesine
+körlemesine eklenmez — K33'ün yasağı bu: *"bir özellik iyi görünüyor diye önce ekleyip sonra
+bakmak"* değil, önce anlamını doğrulamak.
+
+**YAPILACAK SIRA (K33 disiplini):**
+1. KGS ve SON20'nin tanımını doğrula (birkaç at-koşu örneğinde elle çapraz kontrol: KGS değeri
+   at'ın kariyerindeki neyle örtüşüyor — kazanç sırası mı, handikap grubu mu, iç TJK notu mu).
+2. Doğrulanırsa `duzlestir.py`'ye iki sütun eklenir, `katilim.csv` yeniden üretilir (mevcut
+   satırlar etkilenmez, yalnız iki yeni sütun dolar — geriye dönük 6 yıl için de var).
+3. K33'ün ön-taahhütlü protokolüyle test edilir: holdout log-loss farkı, katsayı, eşdoğrusallık
+   kontrolü (going_uygunluk/mesafe_uygunluk gibi mevcut sinyallerle çakışıyor olabilirler).
+4. Bot2'yi kıpırdatmazsa (beklenen — K33'ün 6 testinin 6'sı da kıpırdatmadı) eklenmez, kayda geçer.
+
+**BEKLENTİ (önceden yazılıyor): DÜŞÜK.** K33 zaten 6 farklı özellik ailesini (form, kariyer,
+zemin, kulvar, going/mesafe etkileşimi) tek tek denedi, hiçbiri Bot2'yi kıpırdatmadı — piyasa
+bu bilgiyi zaten fiyata yansıtmış görünüyor. KGS/SON20'nin farklı çıkması için özel bir sebep yok.
+Ama maliyeti düşük (veri hazır, iş yarım gün) ve K33'ün "tüketilmemiş kamuya açık alan yok" iddiasını
+tam olarak sınıyor — o iddia daha önce hiç bu iki alanla test edilmemişti.
+
+---
+
+### 26. Resmî tarife arayışı — TABELA / SIRALI 5'Lİ / ÜÇLÜ BAHİS'i açabilir (ÇİFTE'yi DEĞİL)
+**Eklendi:** 2026-09-09 · **TETİK: KULLANICI** (bayi ziyareti / TJK müşteri hizmetleri gerektirir)
+· **İlgili:** K86, K124, K125, K134
+
+**NEREDEN GELDİ:** aynı dış eleştiri belgesi "ÇİFTE birim fiyatı bulunursa kol açılır/kapanır"
+dedi — bu **yanlış kilit**: ÇİFTE kesinti kapısını zaten GEÇTİ (%27,2), K127'de **kenar**
+kapısından düştü (model kalabalığın favorisini yenmiyor, +0,98 puan, %90 GA [−5,07..+7,05]).
+Birim fiyatı öğrenmek o kapıyı açamaz.
+
+**AMA FİKRİN KENDİSİ — resmî tarifeyi TJK'dan doğrulamak — başka bir yerde gerçekten değerli:**
+K134, TABELA BAHİS · TABELA SIRASIZ · SIRALI 5'Lİ · ÜÇLÜ BAHİS'i **yapısal olarak ölçülemez**
+diye kapattı — sebep model zayıflığı değil, bu bahislerin küçük sahada hiç oynatılmaması, yani
+temettünün hiçbir zaman tabana inmemesi, yani birim fiyatın arşivden **hiçbir yöntemle
+okunamaması.** K134'ün kendi kapanış notu: *"Açılma şartı: TJK'nın resmî 2026 tarifesi
+bulunursa derhal ölçülebilir."*
+
+**YAPILACAK:** bir bayi ziyareti / TJK müşteri hizmetleri araması ile bu dört bahsin (TABELA,
+TABELA SIRASIZ, SIRALI 5'Lİ, ÜÇLÜ BAHİS) 2026 birim fiyatını sor. Tek bir telefon görüşmesi
+dördünü birden açabilir veya kalıcı olarak kapatabilir (K134'ün alt sınır tahminleri: TABELA
+≥%28,5, SIRALI 5'Lİ ≥%33,0 — ikisi de gerçek değer daha yüksek çıkarsa kapanır).
+
+**BEKLENTİ (önceden yazılıyor): DÜŞÜK ama net.** K134: *"birim 2,00 TL olsaydı ikisi de %64-67'ye
+çıkar ve kapanırdı; Harville yanlılığı kesintiyi olduğundan DÜŞÜK gösteriyor — ikisinin de gerçek
+kesintisinin egzotik bantta olması muhtemel."* Yani en olası sonuç dördünün de kapanması; ama
+şu an "belirsiz" damgalı duran iki maddeyi (TABELA, SIRALI 5'Lİ) kesin karara bağlar.
+
+---
+
+### 27. SABİT-3 KOLU — canlıya alındı (9 Eyl 2026, K160) · **ÖN-KAYITLI ÖLÇÜT, tetik SAYISAL**
+**Eklendi:** 2026-09-09 · **TETİK: SAYISAL** — config başına ≥50 tamamlanmış kupon (~6 hafta)
+· **İlgili:** K88, K156, K159, K160
+
+**KOL:** her ayakta **sabit 3 at** (729 kombo, ~911 ₺/kupon). Üç config, 10 Eylül'den itibaren:
+`bot1_sabit3` (bot1, 30 dk) · `bot2_sabit3` (bot2, 30 dk) · `bot2_sabit3_15` (bot2, 15 dk).
+Ayrı sayfa: `raporlar/altili_sabit3.html`.
+
+**NEDEN AÇILDI:** canlı sicilde (432 kupon, K155-EK metodolojisi) sabit-3, değişken genişlikli
+gerçek kuponu üç config'te geçti (acgozlu_v2'de −%86,4 → +%62,0). Arşiv testi (1.526 olay,
+`kod/esit_ayak_test.py`) TERS yön verdi ama o test **K130 sızıntısıyla kirli** — piyasa terimi
+kupon sonrası kapanış oranından okunuyor ve tam da tartışılan mekanizmayı (banker isabeti)
+şişiriyor (arşivde tek-at ayak %50,0, canlıda %36,4). Bu kol, o sızıntıyı taşımayan **temiz,
+ileri-yönlü** bir ölçüm için açıldı.
+
+**bot1@15dk AÇILMADI:** ölçüldü (341 koşu) — bot1'in top-3'ü 30 dk'dan 15 dk'ya **%97,1 aynı**
+kalıyor (bot2'de %61,6). bot1 oran-kör olduğu için 15 dakikada değişecek mekanizma yok;
+ayrı kol açmak K156-d'nin "aynı bahsin iki kopyası" tuzağı olurdu.
+
+> ## ⚖️ ÖN-KAYITLI ÖLÇÜT — sonuç görülmeden yazıldı (9 Eyl 2026, K33/K52)
+>
+> **EŞLENİK KIYASI (her sabit-3 config kendi eşleniğiyle, AYNI olaylarda):**
+> - `bot1_sabit3` ↔ `bot1_900` (ikisi de bot1, 30 dk)
+> - `bot2_sabit3` ↔ `acgozlu900` (ikisi de bot2, 30 dk)
+> - `bot2_sabit3_15` ↔ `acgozlu900_15` (ikisi de bot2, 15 dk)
+>
+> **ÖLÇÜM:** ≥50 tamamlanmış kupon biriktikten sonra, eşleşmiş olaylarda (aynı tarih/pist/seq)
+> 6/6 sayısı ve ROI. ROI farkı **olay-bootstrap** ile (K159'daki gibi, 10.000 tekrar).
+>
+> **DOĞRULANDI sayılır ancak İKİSİ BİRDEN:**
+> (a) 6/6 sayısı eşleniğinden **YÜKSEK**, VE
+> (b) eşli ROI farkının **%95 GA'sı tamamen sıfırın üstünde**.
+>
+> **DÜŞER ve kol KAPANIR:** ikisinden biri tutmuyorsa. "Bir süre daha bakalım" gerekçe değildir.
+>
+> **DAYANIKLILIK KONTROLÜ (kapı değil, tanı):** en büyük tek ödeme çıkarıldığında yön korunuyor
+> mu — K115/#18'in kalıbı. Korunmuyorsa "tek bilete dayanıyor" diye işaretlenir.
+>
+> **KARAR SINIRI:** doğrulansa BİLE bu "canlı para" demek değildir — o karar K98'de verildi
+> (hayır) ve K140-EK'te güçlendi. Doğrulanırsa yapılacak iş, mekanizmanın (genişliğin eşit
+> dağıtılmasının) neden işe yaradığını ölçmektir.
+>
+> **BU ÖLÇÜTÜ NE ÇÜRÜTÜR:** 50 kupondan önce bir config'in ROI'si +%50'yi aşarsa örneklem
+> yetersizken bakmaya başlama baskısı doğar — o durumda bile ölçüt beklenir, çünkü tam da
+> K106/K157'nin uyardığı "tek bilet" yanılsaması budur.
+
+**MALİYET (şeffaflık):** 3 config × ~1-2 kupon/gün × 911 ₺ ≈ günlük 2.700-5.500 ₺ ek kâğıt
+harcaması. Kâğıt para; ama K140-EK'in izlediği toplamları büyütür → **config bazında okunmalı**.
+
+---
 
 ## ZAMANLI — takvime bağlı
 

@@ -139,6 +139,31 @@ def kupon_kur_acgozlu(ayak_atlari, max_kombo):
     return [set(no for no, _ in sr[j][:k[j]]) for j in range(6)]
 
 
+def kupon_kur_esit(ayak_atlari, k=3):
+    """K159-devam: SABIT GENISLIK dagitici. Her ayakta AYNI sayida (k) at, puan-azalan ilk k.
+    max_kombo YOK -- kombo her zaman tam k**6'dir (k=3 -> 729). Kapsam/banker/acgozlu mantigi
+    yok, tek degisken genislik.
+
+    NEDEN (bu oturumdaki olcum zinciri): canli sicilde (432 kupon, K155-EK metodolojisiyle)
+    "her ayakta sabit 3 at" acgozlu900/acgozlu_v2/bot1_900'de GERCEK kuponu geciyordu (bazi
+    hucrelerde zarar -%86 -> +%62 kara donuyordu); sabit-4 ve sabit-5 daha kotu cikti (bedel
+    k**6 ile patlarken isabet artisi yetismiyor). Arsiv testi (1526 olay, esit_ayak_test.py)
+    TERS yon verdi -- ama o test K130 sizintisiyle kirli (piyasa terimi kupon-sonrasi kapanis
+    oranindan okunuyor, aciklikla banker isabetini sisiriyor); canli kupon-ani verisi bu
+    sizintiyi tasimaz. K159'da bot1@15dk iptal edildi (30dk'dan %97,1 ayni cikiyor, ayri kol
+    acmanin bir anlami yok) -- k canliya SADECE bot1@30dk ve bot2@30dk/15dk icin alinir.
+
+    ayak_atlari: 6 elemanli liste; her eleman [(no, puan), ...]. Doner: 6 elemanli set listesi
+    (her biri tam k eleman, o ayakta k'dan az at varsa sahadaki hepsi)."""
+    sec = []
+    for atlar in ayak_atlari:
+        sr = sorted([(no, p) for no, p in atlar if pd.notna(p) and p > 0], key=lambda x: -x[1])
+        sec.append({no for no, _ in sr[:k]})
+    if len(sec) != 6 or any(len(s) == 0 for s in sec):
+        return [set() for _ in range(6)]
+    return sec
+
+
 def kupon_kur_saha(ayak_atlari, max_kombo):
     """K116: SAHA-ORANTILI dagitici (BEKLEYENLER #9, dorduncu aday).
     Genislik SAHA BUYUKLUGUNE gore dagitilir: butce dolana dek, o an KAPSAMA ORANI (k_i/F_i)
