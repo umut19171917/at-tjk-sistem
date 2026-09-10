@@ -1,0 +1,396 @@
+<meta charset='utf-8'><title>Genislik Taramasi</title>
+<style>
+:root{--bg:#fff;--kart:#fff;--bd:#ddd;--tx:#1a1a1a;--k:#555;--mini:#777;
+ --th:#f2f2f2;--td:#e4e4e4;--poz:#0a7d0a;--neg:#c62828;}
+body{font-family:"Segoe UI",Arial,sans-serif;margin:18px;color:var(--tx);background:var(--bg);}
+h2{margin:0 0 4px;font-size:19px;} h3{margin:22px 0 6px;font-size:15px;}
+.alt{font-weight:normal;font-size:14px;color:var(--k);}
+.kart{background:var(--kart);border:1px solid var(--bd);border-radius:8px;padding:10px 14px;
+ margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;}
+td,th{border:1px solid var(--td);padding:4px 8px;font-size:12.5px;text-align:right;}
+th{background:var(--th);font-weight:600;text-align:right;}
+td.l,th.l{text-align:left;}
+.poz{color:var(--poz);} .neg{color:var(--neg);}
+.k{font-size:12px;color:var(--k);} .mini{font-size:11px;color:var(--mini);}
+.vurgu{background:#000;color:#fff;padding:1px 6px;border-radius:3px;font-weight:bold;}
+tr.top td{background:#f2f2f2;font-weight:bold;border-top:2px solid #000;}
+tr.gt td{background:#000;color:#fff;font-weight:bold;}
+tr.gt td.poz{color:#7ee787;} tr.gt td.neg{color:#ffa198;}
+.wrap{overflow-x:auto;} .uyari{border-left:4px solid #000;padding:6px 12px;margin:8px 0;
+ background:#f7f7f7;font-size:12.5px;}
+</style>
+<h2>SABIT GENISLIKLI ALTILI &mdash; tam dokum <span class=alt>(k = 3, 4, 5, 6)</span></h2>
+<div class=mini style='margin:-2px 0 12px'>kupon-ani verisi &middot; EKURI kurali dahil (K162) &middot; uretim 11.09.2026 01:06 &middot; <code>kod/genislik_taramasi.py</code></div>
+<h3>Ozet &mdash; 12 hucre</h3><div class=kart><div class=wrap><table>
+<tr><th class=l>zemin</th><th>genislik</th><th>kupon</th><th>6/6</th><th>ayak isabeti</th><th>kupon bedeli</th><th>toplam bedel</th><th>odul</th><th>NET</th><th>ROI</th></tr>
+<tr><td class=l>bot1 @30dk</td><td><b>sabit-3</b></td><td>122</td><td>6</td><td>%58.1</td><td>911 &#8378;</td><td>111.172 &#8378;</td><td>76.399 &#8378;</td><td class=neg><b>-34.773 &#8378;</b></td><td class=neg>%-31.3</td></tr>
+<tr><td class=l>bot1 @30dk</td><td><b>sabit-4</b></td><td>122</td><td>9</td><td>%67.6</td><td>5.120 &#8378;</td><td>624.640 &#8378;</td><td>102.420 &#8378;</td><td class=neg><b>-522.220 &#8378;</b></td><td class=neg>%-83.6</td></tr>
+<tr><td class=l>bot1 @30dk</td><td><b>sabit-5</b></td><td>122</td><td>24</td><td>%76.8</td><td>19.435 &#8378;</td><td>2.371.094 &#8378;</td><td>881.838 &#8378;</td><td class=neg><b>-1.489.256 &#8378;</b></td><td class=neg>%-62.8</td></tr>
+<tr><td class=l>bot1 @30dk</td><td><b>sabit-6</b></td><td>122</td><td>49</td><td>%85.1</td><td>55.067 &#8378;</td><td>6.718.140 &#8378;</td><td>2.214.584 &#8378;</td><td class=neg><b>-4.503.556 &#8378;</b></td><td class=neg>%-67.0</td></tr>
+<tr><td class=l>bot2 @30dk</td><td><b>sabit-3</b></td><td>122</td><td>6</td><td>%60.2</td><td>911 &#8378;</td><td>111.172 &#8378;</td><td>146.129 &#8378;</td><td class=poz><b>+34.957 &#8378;</b></td><td class=poz>%+31.4</td></tr>
+<tr><td class=l>bot2 @30dk</td><td><b>sabit-4</b></td><td>122</td><td>14</td><td>%70.4</td><td>5.120 &#8378;</td><td>624.640 &#8378;</td><td>269.453 &#8378;</td><td class=neg><b>-355.187 &#8378;</b></td><td class=neg>%-56.9</td></tr>
+<tr><td class=l>bot2 @30dk</td><td><b>sabit-5</b></td><td>122</td><td>31</td><td>%78.8</td><td>19.435 &#8378;</td><td>2.371.094 &#8378;</td><td>1.270.167 &#8378;</td><td class=neg><b>-1.100.927 &#8378;</b></td><td class=neg>%-46.4</td></tr>
+<tr><td class=l>bot2 @30dk</td><td><b>sabit-6</b></td><td>122</td><td>41</td><td>%84.0</td><td>55.067 &#8378;</td><td>6.718.140 &#8378;</td><td>3.087.243 &#8378;</td><td class=neg><b>-3.630.897 &#8378;</b></td><td class=neg>%-54.0</td></tr>
+<tr><td class=l>bot2 @15dk</td><td><b>sabit-3</b></td><td>73</td><td>3</td><td>%63.7</td><td>911 &#8378;</td><td>66.521 &#8378;</td><td>19.982 &#8378;</td><td class=neg><b>-46.539 &#8378;</b></td><td class=neg>%-70.0</td></tr>
+<tr><td class=l>bot2 @15dk</td><td><b>sabit-4</b></td><td>73</td><td>10</td><td>%72.1</td><td>5.120 &#8378;</td><td>373.760 &#8378;</td><td>102.278 &#8378;</td><td class=neg><b>-271.482 &#8378;</b></td><td class=neg>%-72.6</td></tr>
+<tr><td class=l>bot2 @15dk</td><td><b>sabit-5</b></td><td>73</td><td>22</td><td>%81.5</td><td>19.424 &#8378;</td><td>1.417.969 &#8378;</td><td>1.045.009 &#8378;</td><td class=neg><b>-372.960 &#8378;</b></td><td class=neg>%-26.3</td></tr>
+<tr><td class=l>bot2 @15dk</td><td><b>sabit-6</b></td><td>73</td><td>32</td><td>%87.0</td><td>54.703 &#8378;</td><td>3.993.300 &#8378;</td><td>10.262.657 &#8378;</td><td class=poz><b>+6.269.357 &#8378;</b></td><td class=poz>%+157.0</td></tr>
+</table></div>
+<div class=uyari><b>Olay kumesi zemine gore degisir.</b> 30 dk fotografi 25 Tem'de, 15 dk fotografi 15 Agu'da basladi &rarr; <b>bot1@30 ve bot2@30 ayni olaylari gorur</b> (dogrudan kiyaslanabilir), <b>bot2@15 daha kisa bir pencereyi gorur</b> ve onun TL'leri digerleriyle dogrudan kiyaslanamaz.</div></div>
+<h3>bot1 @30dk &middot; sabit-3 <span class=alt>&mdash; 6/122 Altili tutturuldu</span></h3>
+<div class=kart><div class=wrap><table>
+<tr><th>#</th><th class=l>tarih</th><th class=l>pist</th><th>sira</th><th>kombinasyon</th><th>bedel</th><th>temettu (odul)</th><th>kupon neti</th></tr>
+<tr><td>1</td><td class=l>08.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>729</td><td>911 &#8378;</td><td>1.960 &#8378;</td><td class=poz><b>+1.049 &#8378;</b></td></tr>
+<tr><td>2</td><td class=l>18.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>729</td><td>911 &#8378;</td><td>33.451 &#8378;</td><td class=poz><b>+32.540 &#8378;</b></td></tr>
+<tr><td>3</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>729</td><td>911 &#8378;</td><td>1.398 &#8378;</td><td class=poz><b>+486 &#8378;</b></td></tr>
+<tr><td>4</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>729</td><td>911 &#8378;</td><td>2.077 &#8378;</td><td class=poz><b>+1.166 &#8378;</b></td></tr>
+<tr><td>5</td><td class=l>29.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>729</td><td>911 &#8378;</td><td>5.287 &#8378;</td><td class=poz><b>+4.376 &#8378;</b></td></tr>
+<tr><td>6</td><td class=l>04.09.2026</td><td class=l>IZMIR</td><td>1.</td><td>729</td><td>911 &#8378;</td><td>32.226 &#8378;</td><td class=poz><b>+31.315 &#8378;</b></td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAN 6 KUPON</td><td></td><td>5.468 &#8378;</td><td>76.399 &#8378;</td><td class=poz>+70.932 &#8378;</td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAMAYAN 116 KUPON <span class=mini>(tamami zarar)</span></td><td></td><td>105.705 &#8378;</td><td>0 &#8378;</td><td class=neg>-105.705 &#8378;</td></tr>
+<tr class=gt><td colspan=4 class=l>GENEL TOPLAM &mdash; 122 kupon</td><td></td><td>111.172 &#8378;</td><td>76.399 &#8378;</td><td class=neg>-34.773 &#8378; (%-31.3)</td></tr>
+</table></div>
+<div class=uyari>Tutturulan 6 kupondan <b>bedelini cikaran: 6</b> <span class=mini>(kalan 0 tanesi 6/6 yapti ve yine zarar etti)</span>.<br>En buyuk olay <b>18.08.2026 ANKARA 1. &rarr; 33.451 &#8378;</b> = toplam odulun <b>%44</b>'i. <b>O olay cikarilirsa net -68.224 &#8378; (ROI %-61.4)</b>.</div>
+</div>
+<h3>bot1 @30dk &middot; sabit-4 <span class=alt>&mdash; 9/122 Altili tutturuldu</span></h3>
+<div class=kart><div class=wrap><table>
+<tr><th>#</th><th class=l>tarih</th><th class=l>pist</th><th>sira</th><th>kombinasyon</th><th>bedel</th><th>temettu (odul)</th><th>kupon neti</th></tr>
+<tr><td>1</td><td class=l>08.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>1.960 &#8378;</td><td class=neg><b>-3.160 &#8378;</b></td></tr>
+<tr><td>2</td><td class=l>16.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>4.096</td><td>5.120 &#8378;</td><td>8.552 &#8378;</td><td class=poz><b>+3.432 &#8378;</b></td></tr>
+<tr><td>3</td><td class=l>18.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>33.451 &#8378;</td><td class=poz><b>+28.331 &#8378;</b></td></tr>
+<tr><td>4</td><td class=l>18.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>4.096</td><td>5.120 &#8378;</td><td>9.702 &#8378;</td><td class=poz><b>+4.582 &#8378;</b></td></tr>
+<tr><td>5</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>1.398 &#8378;</td><td class=neg><b>-3.722 &#8378;</b></td></tr>
+<tr><td>6</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>4.096</td><td>5.120 &#8378;</td><td>2.077 &#8378;</td><td class=neg><b>-3.043 &#8378;</b></td></tr>
+<tr><td>7</td><td class=l>29.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>5.287 &#8378;</td><td class=poz><b>+167 &#8378;</b></td></tr>
+<tr><td>8</td><td class=l>30.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>7.767 &#8378;</td><td class=poz><b>+2.647 &#8378;</b></td></tr>
+<tr><td>9</td><td class=l>04.09.2026</td><td class=l>IZMIR</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>32.226 &#8378;</td><td class=poz><b>+27.106 &#8378;</b></td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAN 9 KUPON</td><td></td><td>46.080 &#8378;</td><td>102.420 &#8378;</td><td class=poz>+56.340 &#8378;</td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAMAYAN 113 KUPON <span class=mini>(tamami zarar)</span></td><td></td><td>578.560 &#8378;</td><td>0 &#8378;</td><td class=neg>-578.560 &#8378;</td></tr>
+<tr class=gt><td colspan=4 class=l>GENEL TOPLAM &mdash; 122 kupon</td><td></td><td>624.640 &#8378;</td><td>102.420 &#8378;</td><td class=neg>-522.220 &#8378; (%-83.6)</td></tr>
+</table></div>
+<div class=uyari>Tutturulan 9 kupondan <b>bedelini cikaran: 6</b> <span class=mini>(kalan 3 tanesi 6/6 yapti ve yine zarar etti)</span>.<br>En buyuk olay <b>18.08.2026 ANKARA 1. &rarr; 33.451 &#8378;</b> = toplam odulun <b>%33</b>'i. <b>O olay cikarilirsa net -555.671 &#8378; (ROI %-89.0)</b>.</div>
+</div>
+<h3>bot1 @30dk &middot; sabit-5 <span class=alt>&mdash; 24/122 Altili tutturuldu</span></h3>
+<div class=kart><div class=wrap><table>
+<tr><th>#</th><th class=l>tarih</th><th class=l>pist</th><th>sira</th><th>kombinasyon</th><th>bedel</th><th>temettu (odul)</th><th>kupon neti</th></tr>
+<tr><td>1</td><td class=l>01.08.2026</td><td class=l>IZMIR</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>46.045 &#8378;</td><td class=poz><b>+26.514 &#8378;</b></td></tr>
+<tr><td>2</td><td class=l>04.08.2026</td><td class=l>KOCAELI</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>21.055 &#8378;</td><td class=poz><b>+1.523 &#8378;</b></td></tr>
+<tr><td>3</td><td class=l>08.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>1.960 &#8378;</td><td class=neg><b>-17.571 &#8378;</b></td></tr>
+<tr><td>4</td><td class=l>10.08.2026</td><td class=l>BURSA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>85.494 &#8378;</td><td class=poz><b>+65.963 &#8378;</b></td></tr>
+<tr><td>5</td><td class=l>16.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>8.552 &#8378;</td><td class=neg><b>-10.980 &#8378;</b></td></tr>
+<tr><td>6</td><td class=l>16.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>3.240 &#8378;</td><td class=neg><b>-16.292 &#8378;</b></td></tr>
+<tr><td>7</td><td class=l>16.08.2026</td><td class=l>IZMIR</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>9.999 &#8378;</td><td class=neg><b>-9.532 &#8378;</b></td></tr>
+<tr><td>8</td><td class=l>18.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>33.451 &#8378;</td><td class=poz><b>+13.920 &#8378;</b></td></tr>
+<tr><td>9</td><td class=l>18.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>9.702 &#8378;</td><td class=neg><b>-9.830 &#8378;</b></td></tr>
+<tr><td>10</td><td class=l>22.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>2.390 &#8378;</td><td class=neg><b>-17.141 &#8378;</b></td></tr>
+<tr><td>11</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>1.398 &#8378;</td><td class=neg><b>-18.134 &#8378;</b></td></tr>
+<tr><td>12</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>12.500</td><td>15.625 &#8378;</td><td>2.077 &#8378;</td><td class=neg><b>-13.548 &#8378;</b></td></tr>
+<tr><td>13</td><td class=l>28.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>18.546 &#8378;</td><td class=neg><b>-986 &#8378;</b></td></tr>
+<tr><td>14</td><td class=l>28.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>5.202 &#8378;</td><td class=neg><b>-14.329 &#8378;</b></td></tr>
+<tr><td>15</td><td class=l>29.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>5.287 &#8378;</td><td class=neg><b>-14.244 &#8378;</b></td></tr>
+<tr><td>16</td><td class=l>30.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>7.767 &#8378;</td><td class=neg><b>-11.764 &#8378;</b></td></tr>
+<tr><td>17</td><td class=l>01.09.2026</td><td class=l>ANKARA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>66.039 &#8378;</td><td class=poz><b>+46.508 &#8378;</b></td></tr>
+<tr><td>18</td><td class=l>02.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>100.008 &#8378;</td><td class=poz><b>+80.477 &#8378;</b></td></tr>
+<tr><td>19</td><td class=l>02.09.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>259.141 &#8378;</td><td class=poz><b>+239.610 &#8378;</b></td></tr>
+<tr><td>20</td><td class=l>04.09.2026</td><td class=l>IZMIR</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>32.226 &#8378;</td><td class=poz><b>+12.695 &#8378;</b></td></tr>
+<tr><td>21</td><td class=l>06.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>32.262 &#8378;</td><td class=poz><b>+12.731 &#8378;</b></td></tr>
+<tr><td>22</td><td class=l>06.09.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>21.858 &#8378;</td><td class=poz><b>+2.327 &#8378;</b></td></tr>
+<tr><td>23</td><td class=l>07.09.2026</td><td class=l>BURSA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>101.448 &#8378;</td><td class=poz><b>+81.916 &#8378;</b></td></tr>
+<tr><td>24</td><td class=l>08.09.2026</td><td class=l>ANKARA</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>6.691 &#8378;</td><td class=neg><b>-12.840 &#8378;</b></td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAN 24 KUPON</td><td></td><td>464.844 &#8378;</td><td>881.838 &#8378;</td><td class=poz>+416.994 &#8378;</td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAMAYAN 98 KUPON <span class=mini>(tamami zarar)</span></td><td></td><td>1.906.250 &#8378;</td><td>0 &#8378;</td><td class=neg>-1.906.250 &#8378;</td></tr>
+<tr class=gt><td colspan=4 class=l>GENEL TOPLAM &mdash; 122 kupon</td><td></td><td>2.371.094 &#8378;</td><td>881.838 &#8378;</td><td class=neg>-1.489.256 &#8378; (%-62.8)</td></tr>
+</table></div>
+<div class=uyari>Tutturulan 24 kupondan <b>bedelini cikaran: 11</b> <span class=mini>(kalan 13 tanesi 6/6 yapti ve yine zarar etti)</span>.<br>En buyuk olay <b>02.09.2026 ISTANBUL 2. &rarr; 259.141 &#8378;</b> = toplam odulun <b>%29</b>'i. <b>O olay cikarilirsa net -1.748.397 &#8378; (ROI %-73.7)</b>.</div>
+</div>
+<h3>bot1 @30dk &middot; sabit-6 <span class=alt>&mdash; 49/122 Altili tutturuldu</span></h3>
+<div class=kart><div class=wrap><table>
+<tr><th>#</th><th class=l>tarih</th><th class=l>pist</th><th>sira</th><th>kombinasyon</th><th>bedel</th><th>temettu (odul)</th><th>kupon neti</th></tr>
+<tr><td>1</td><td class=l>29.07.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>16.590 &#8378;</td><td class=neg><b>-41.730 &#8378;</b></td></tr>
+<tr><td>2</td><td class=l>01.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>17.023 &#8378;</td><td class=neg><b>-41.297 &#8378;</b></td></tr>
+<tr><td>3</td><td class=l>01.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>2.753 &#8378;</td><td class=neg><b>-55.567 &#8378;</b></td></tr>
+<tr><td>4</td><td class=l>01.08.2026</td><td class=l>IZMIR</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>46.045 &#8378;</td><td class=neg><b>-12.275 &#8378;</b></td></tr>
+<tr><td>5</td><td class=l>04.08.2026</td><td class=l>KOCAELI</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>51.677 &#8378;</td><td class=neg><b>-6.643 &#8378;</b></td></tr>
+<tr><td>6</td><td class=l>04.08.2026</td><td class=l>KOCAELI</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>21.055 &#8378;</td><td class=neg><b>-37.265 &#8378;</b></td></tr>
+<tr><td>7</td><td class=l>06.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>3.883 &#8378;</td><td class=neg><b>-54.437 &#8378;</b></td></tr>
+<tr><td>8</td><td class=l>06.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>7.862 &#8378;</td><td class=neg><b>-50.458 &#8378;</b></td></tr>
+<tr><td>9</td><td class=l>08.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>1.960 &#8378;</td><td class=neg><b>-56.360 &#8378;</b></td></tr>
+<tr><td>10</td><td class=l>08.08.2026</td><td class=l>IZMIR</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>304.452 &#8378;</td><td class=poz><b>+246.132 &#8378;</b></td></tr>
+<tr><td>11</td><td class=l>09.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>38.880</td><td>48.600 &#8378;</td><td>10.680 &#8378;</td><td class=neg><b>-37.920 &#8378;</b></td></tr>
+<tr><td>12</td><td class=l>10.08.2026</td><td class=l>BURSA</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>85.494 &#8378;</td><td class=poz><b>+27.174 &#8378;</b></td></tr>
+<tr><td>13</td><td class=l>12.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>26.788 &#8378;</td><td class=neg><b>-31.532 &#8378;</b></td></tr>
+<tr><td>14</td><td class=l>16.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>8.552 &#8378;</td><td class=neg><b>-49.768 &#8378;</b></td></tr>
+<tr><td>15</td><td class=l>16.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>3.240 &#8378;</td><td class=neg><b>-55.080 &#8378;</b></td></tr>
+<tr><td>16</td><td class=l>16.08.2026</td><td class=l>IZMIR</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>9.999 &#8378;</td><td class=neg><b>-48.321 &#8378;</b></td></tr>
+<tr><td>17</td><td class=l>17.08.2026</td><td class=l>BURSA</td><td>1.</td><td>31.104</td><td>38.880 &#8378;</td><td>14.108 &#8378;</td><td class=neg><b>-24.772 &#8378;</b></td></tr>
+<tr><td>18</td><td class=l>18.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>38.880</td><td>48.600 &#8378;</td><td>33.451 &#8378;</td><td class=neg><b>-15.149 &#8378;</b></td></tr>
+<tr><td>19</td><td class=l>18.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>9.702 &#8378;</td><td class=neg><b>-48.618 &#8378;</b></td></tr>
+<tr><td>20</td><td class=l>20.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>9.635 &#8378;</td><td class=neg><b>-48.685 &#8378;</b></td></tr>
+<tr><td>21</td><td class=l>20.08.2026</td><td class=l>KOCAELI</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>1.956 &#8378;</td><td class=neg><b>-56.364 &#8378;</b></td></tr>
+<tr><td>22</td><td class=l>21.08.2026</td><td class=l>BURSA</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>33.758 &#8378;</td><td class=neg><b>-24.562 &#8378;</b></td></tr>
+<tr><td>23</td><td class=l>21.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>38.880</td><td>48.600 &#8378;</td><td>7.893 &#8378;</td><td class=neg><b>-40.707 &#8378;</b></td></tr>
+<tr><td>24</td><td class=l>21.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>31.378 &#8378;</td><td class=neg><b>-26.942 &#8378;</b></td></tr>
+<tr><td>25</td><td class=l>22.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>32.400</td><td>40.500 &#8378;</td><td>2.390 &#8378;</td><td class=neg><b>-38.110 &#8378;</b></td></tr>
+<tr><td>26</td><td class=l>22.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>8.977 &#8378;</td><td class=neg><b>-49.343 &#8378;</b></td></tr>
+<tr><td>27</td><td class=l>24.08.2026</td><td class=l>BURSA</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>8.203 &#8378;</td><td class=neg><b>-50.117 &#8378;</b></td></tr>
+<tr><td>28</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>32.400</td><td>40.500 &#8378;</td><td>1.398 &#8378;</td><td class=neg><b>-39.102 &#8378;</b></td></tr>
+<tr><td>29</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>25.920</td><td>32.400 &#8378;</td><td>2.077 &#8378;</td><td class=neg><b>-30.323 &#8378;</b></td></tr>
+<tr><td>30</td><td class=l>28.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>18.546 &#8378;</td><td class=neg><b>-39.774 &#8378;</b></td></tr>
+<tr><td>31</td><td class=l>28.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>38.880</td><td>48.600 &#8378;</td><td>5.202 &#8378;</td><td class=neg><b>-43.398 &#8378;</b></td></tr>
+<tr><td>32</td><td class=l>29.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>5.287 &#8378;</td><td class=neg><b>-53.033 &#8378;</b></td></tr>
+<tr><td>33</td><td class=l>30.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>7.767 &#8378;</td><td class=neg><b>-50.553 &#8378;</b></td></tr>
+<tr><td>34</td><td class=l>31.08.2026</td><td class=l>BURSA</td><td>2.</td><td>38.880</td><td>48.600 &#8378;</td><td>5.598 &#8378;</td><td class=neg><b>-43.002 &#8378;</b></td></tr>
+<tr><td>35</td><td class=l>01.09.2026</td><td class=l>ANKARA</td><td>1.</td><td>38.880</td><td>48.600 &#8378;</td><td>66.039 &#8378;</td><td class=poz><b>+17.439 &#8378;</b></td></tr>
+<tr><td>36</td><td class=l>02.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>100.008 &#8378;</td><td class=poz><b>+41.688 &#8378;</b></td></tr>
+<tr><td>37</td><td class=l>02.09.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>259.141 &#8378;</td><td class=poz><b>+200.821 &#8378;</b></td></tr>
+<tr><td>38</td><td class=l>03.09.2026</td><td class=l>IZMIR</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>1.648 &#8378;</td><td class=neg><b>-56.672 &#8378;</b></td></tr>
+<tr><td>39</td><td class=l>03.09.2026</td><td class=l>IZMIR</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>34.992 &#8378;</td><td class=neg><b>-23.328 &#8378;</b></td></tr>
+<tr><td>40</td><td class=l>04.09.2026</td><td class=l>IZMIR</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>32.226 &#8378;</td><td class=neg><b>-26.094 &#8378;</b></td></tr>
+<tr><td>41</td><td class=l>04.09.2026</td><td class=l>IZMIR</td><td>2.</td><td>38.880</td><td>48.600 &#8378;</td><td>20.659 &#8378;</td><td class=neg><b>-27.941 &#8378;</b></td></tr>
+<tr><td>42</td><td class=l>05.09.2026</td><td class=l>ANKARA</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>689.667 &#8378;</td><td class=poz><b>+631.347 &#8378;</b></td></tr>
+<tr><td>43</td><td class=l>06.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>32.262 &#8378;</td><td class=neg><b>-26.058 &#8378;</b></td></tr>
+<tr><td>44</td><td class=l>06.09.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>21.858 &#8378;</td><td class=neg><b>-36.462 &#8378;</b></td></tr>
+<tr><td>45</td><td class=l>07.09.2026</td><td class=l>BURSA</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>101.448 &#8378;</td><td class=poz><b>+43.128 &#8378;</b></td></tr>
+<tr><td>46</td><td class=l>08.09.2026</td><td class=l>ANKARA</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>6.691 &#8378;</td><td class=neg><b>-51.629 &#8378;</b></td></tr>
+<tr><td>47</td><td class=l>08.09.2026</td><td class=l>KOCAELI</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>1.276 &#8378;</td><td class=neg><b>-57.044 &#8378;</b></td></tr>
+<tr><td>48</td><td class=l>09.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>31.104</td><td>38.880 &#8378;</td><td>746 &#8378;</td><td class=neg><b>-38.134 &#8378;</b></td></tr>
+<tr><td>49</td><td class=l>09.09.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>38.880</td><td>48.600 &#8378;</td><td>20.543 &#8378;</td><td class=neg><b>-28.057 &#8378;</b></td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAN 49 KUPON</td><td></td><td>2.679.480 &#8378;</td><td>2.214.584 &#8378;</td><td class=neg>-464.896 &#8378;</td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAMAYAN 73 KUPON <span class=mini>(tamami zarar)</span></td><td></td><td>4.038.660 &#8378;</td><td>0 &#8378;</td><td class=neg>-4.038.660 &#8378;</td></tr>
+<tr class=gt><td colspan=4 class=l>GENEL TOPLAM &mdash; 122 kupon</td><td></td><td>6.718.140 &#8378;</td><td>2.214.584 &#8378;</td><td class=neg>-4.503.556 &#8378; (%-67.0)</td></tr>
+</table></div>
+<div class=uyari>Tutturulan 49 kupondan <b>bedelini cikaran: 7</b> <span class=mini>(kalan 42 tanesi 6/6 yapti ve yine zarar etti)</span>.<br>En buyuk olay <b>05.09.2026 ANKARA 1. &rarr; 689.667 &#8378;</b> = toplam odulun <b>%31</b>'i. <b>O olay cikarilirsa net -5.193.224 &#8378; (ROI %-77.3)</b>.</div>
+</div>
+<h3>bot2 @30dk &middot; sabit-3 <span class=alt>&mdash; 6/122 Altili tutturuldu</span></h3>
+<div class=kart><div class=wrap><table>
+<tr><th>#</th><th class=l>tarih</th><th class=l>pist</th><th>sira</th><th>kombinasyon</th><th>bedel</th><th>temettu (odul)</th><th>kupon neti</th></tr>
+<tr><td>1</td><td class=l>19.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>729</td><td>911 &#8378;</td><td>90.395 &#8378;</td><td class=poz><b>+89.484 &#8378;</b></td></tr>
+<tr><td>2</td><td class=l>22.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>729</td><td>911 &#8378;</td><td>8.977 &#8378;</td><td class=poz><b>+8.066 &#8378;</b></td></tr>
+<tr><td>3</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>729</td><td>911 &#8378;</td><td>2.077 &#8378;</td><td class=poz><b>+1.166 &#8378;</b></td></tr>
+<tr><td>4</td><td class=l>26.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>729</td><td>911 &#8378;</td><td>11.141 &#8378;</td><td class=poz><b>+10.230 &#8378;</b></td></tr>
+<tr><td>5</td><td class=l>06.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>729</td><td>911 &#8378;</td><td>32.262 &#8378;</td><td class=poz><b>+31.351 &#8378;</b></td></tr>
+<tr><td>6</td><td class=l>08.09.2026</td><td class=l>KOCAELI</td><td>1.</td><td>729</td><td>911 &#8378;</td><td>1.276 &#8378;</td><td class=poz><b>+365 &#8378;</b></td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAN 6 KUPON</td><td></td><td>5.468 &#8378;</td><td>146.129 &#8378;</td><td class=poz>+140.662 &#8378;</td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAMAYAN 116 KUPON <span class=mini>(tamami zarar)</span></td><td></td><td>105.705 &#8378;</td><td>0 &#8378;</td><td class=neg>-105.705 &#8378;</td></tr>
+<tr class=gt><td colspan=4 class=l>GENEL TOPLAM &mdash; 122 kupon</td><td></td><td>111.172 &#8378;</td><td>146.129 &#8378;</td><td class=poz>+34.957 &#8378; (%+31.4)</td></tr>
+</table></div>
+<div class=uyari>Tutturulan 6 kupondan <b>bedelini cikaran: 6</b> <span class=mini>(kalan 0 tanesi 6/6 yapti ve yine zarar etti)</span>.<br>En buyuk olay <b>19.08.2026 ISTANBUL 1. &rarr; 90.395 &#8378;</b> = toplam odulun <b>%62</b>'i. <b>O olay cikarilirsa net -55.438 &#8378; (ROI %-49.9)</b>.</div>
+</div>
+<h3>bot2 @30dk &middot; sabit-4 <span class=alt>&mdash; 14/122 Altili tutturuldu</span></h3>
+<div class=kart><div class=wrap><table>
+<tr><th>#</th><th class=l>tarih</th><th class=l>pist</th><th>sira</th><th>kombinasyon</th><th>bedel</th><th>temettu (odul)</th><th>kupon neti</th></tr>
+<tr><td>1</td><td class=l>08.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>1.960 &#8378;</td><td class=neg><b>-3.160 &#8378;</b></td></tr>
+<tr><td>2</td><td class=l>17.08.2026</td><td class=l>BURSA</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>14.108 &#8378;</td><td class=poz><b>+8.988 &#8378;</b></td></tr>
+<tr><td>3</td><td class=l>19.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>90.395 &#8378;</td><td class=poz><b>+85.275 &#8378;</b></td></tr>
+<tr><td>4</td><td class=l>21.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>7.893 &#8378;</td><td class=poz><b>+2.773 &#8378;</b></td></tr>
+<tr><td>5</td><td class=l>22.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>8.977 &#8378;</td><td class=poz><b>+3.857 &#8378;</b></td></tr>
+<tr><td>6</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>4.096</td><td>5.120 &#8378;</td><td>2.077 &#8378;</td><td class=neg><b>-3.043 &#8378;</b></td></tr>
+<tr><td>7</td><td class=l>26.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>4.096</td><td>5.120 &#8378;</td><td>11.141 &#8378;</td><td class=poz><b>+6.021 &#8378;</b></td></tr>
+<tr><td>8</td><td class=l>01.09.2026</td><td class=l>ANKARA</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>66.039 &#8378;</td><td class=poz><b>+60.919 &#8378;</b></td></tr>
+<tr><td>9</td><td class=l>01.09.2026</td><td class=l>KOCAELI</td><td>2.</td><td>4.096</td><td>5.120 &#8378;</td><td>10.259 &#8378;</td><td class=poz><b>+5.139 &#8378;</b></td></tr>
+<tr><td>10</td><td class=l>03.09.2026</td><td class=l>ANKARA</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>2.055 &#8378;</td><td class=neg><b>-3.065 &#8378;</b></td></tr>
+<tr><td>11</td><td class=l>03.09.2026</td><td class=l>ANKARA</td><td>2.</td><td>4.096</td><td>5.120 &#8378;</td><td>467 &#8378;</td><td class=neg><b>-4.653 &#8378;</b></td></tr>
+<tr><td>12</td><td class=l>06.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>32.262 &#8378;</td><td class=poz><b>+27.142 &#8378;</b></td></tr>
+<tr><td>13</td><td class=l>08.09.2026</td><td class=l>KOCAELI</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>1.276 &#8378;</td><td class=neg><b>-3.844 &#8378;</b></td></tr>
+<tr><td>14</td><td class=l>09.09.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>4.096</td><td>5.120 &#8378;</td><td>20.543 &#8378;</td><td class=poz><b>+15.423 &#8378;</b></td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAN 14 KUPON</td><td></td><td>71.680 &#8378;</td><td>269.453 &#8378;</td><td class=poz>+197.773 &#8378;</td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAMAYAN 108 KUPON <span class=mini>(tamami zarar)</span></td><td></td><td>552.960 &#8378;</td><td>0 &#8378;</td><td class=neg>-552.960 &#8378;</td></tr>
+<tr class=gt><td colspan=4 class=l>GENEL TOPLAM &mdash; 122 kupon</td><td></td><td>624.640 &#8378;</td><td>269.453 &#8378;</td><td class=neg>-355.187 &#8378; (%-56.9)</td></tr>
+</table></div>
+<div class=uyari>Tutturulan 14 kupondan <b>bedelini cikaran: 9</b> <span class=mini>(kalan 5 tanesi 6/6 yapti ve yine zarar etti)</span>.<br>En buyuk olay <b>19.08.2026 ISTANBUL 1. &rarr; 90.395 &#8378;</b> = toplam odulun <b>%34</b>'i. <b>O olay cikarilirsa net -445.582 &#8378; (ROI %-71.3)</b>.</div>
+</div>
+<h3>bot2 @30dk &middot; sabit-5 <span class=alt>&mdash; 31/122 Altili tutturuldu</span></h3>
+<div class=kart><div class=wrap><table>
+<tr><th>#</th><th class=l>tarih</th><th class=l>pist</th><th>sira</th><th>kombinasyon</th><th>bedel</th><th>temettu (odul)</th><th>kupon neti</th></tr>
+<tr><td>1</td><td class=l>25.07.2026</td><td class=l>IZMIR</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>2.645 &#8378;</td><td class=neg><b>-16.886 &#8378;</b></td></tr>
+<tr><td>2</td><td class=l>30.07.2026</td><td class=l>KOCAELI</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>25.788 &#8378;</td><td class=poz><b>+6.257 &#8378;</b></td></tr>
+<tr><td>3</td><td class=l>01.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>17.023 &#8378;</td><td class=neg><b>-2.509 &#8378;</b></td></tr>
+<tr><td>4</td><td class=l>02.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>237.270 &#8378;</td><td class=poz><b>+217.739 &#8378;</b></td></tr>
+<tr><td>5</td><td class=l>06.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>3.883 &#8378;</td><td class=neg><b>-15.648 &#8378;</b></td></tr>
+<tr><td>6</td><td class=l>07.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>1.453 &#8378;</td><td class=neg><b>-18.078 &#8378;</b></td></tr>
+<tr><td>7</td><td class=l>08.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>1.960 &#8378;</td><td class=neg><b>-17.571 &#8378;</b></td></tr>
+<tr><td>8</td><td class=l>08.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>38.486 &#8378;</td><td class=poz><b>+18.954 &#8378;</b></td></tr>
+<tr><td>9</td><td class=l>15.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>9.530 &#8378;</td><td class=neg><b>-10.002 &#8378;</b></td></tr>
+<tr><td>10</td><td class=l>17.08.2026</td><td class=l>BURSA</td><td>1.</td><td>12.500</td><td>15.625 &#8378;</td><td>14.108 &#8378;</td><td class=neg><b>-1.517 &#8378;</b></td></tr>
+<tr><td>11</td><td class=l>18.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>9.702 &#8378;</td><td class=neg><b>-9.830 &#8378;</b></td></tr>
+<tr><td>12</td><td class=l>19.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>90.395 &#8378;</td><td class=poz><b>+70.864 &#8378;</b></td></tr>
+<tr><td>13</td><td class=l>21.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>7.893 &#8378;</td><td class=neg><b>-11.639 &#8378;</b></td></tr>
+<tr><td>14</td><td class=l>22.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>8.977 &#8378;</td><td class=neg><b>-10.554 &#8378;</b></td></tr>
+<tr><td>15</td><td class=l>23.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>281.576 &#8378;</td><td class=poz><b>+262.044 &#8378;</b></td></tr>
+<tr><td>16</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>1.398 &#8378;</td><td class=neg><b>-18.134 &#8378;</b></td></tr>
+<tr><td>17</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>12.500</td><td>15.625 &#8378;</td><td>2.077 &#8378;</td><td class=neg><b>-13.548 &#8378;</b></td></tr>
+<tr><td>18</td><td class=l>26.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>11.141 &#8378;</td><td class=neg><b>-8.390 &#8378;</b></td></tr>
+<tr><td>19</td><td class=l>28.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>5.202 &#8378;</td><td class=neg><b>-14.329 &#8378;</b></td></tr>
+<tr><td>20</td><td class=l>29.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>5.287 &#8378;</td><td class=neg><b>-14.244 &#8378;</b></td></tr>
+<tr><td>21</td><td class=l>30.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>7.767 &#8378;</td><td class=neg><b>-11.764 &#8378;</b></td></tr>
+<tr><td>22</td><td class=l>01.09.2026</td><td class=l>ANKARA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>66.039 &#8378;</td><td class=poz><b>+46.508 &#8378;</b></td></tr>
+<tr><td>23</td><td class=l>01.09.2026</td><td class=l>ANKARA</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>327.523 &#8378;</td><td class=poz><b>+307.992 &#8378;</b></td></tr>
+<tr><td>24</td><td class=l>01.09.2026</td><td class=l>KOCAELI</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>10.259 &#8378;</td><td class=neg><b>-9.272 &#8378;</b></td></tr>
+<tr><td>25</td><td class=l>03.09.2026</td><td class=l>ANKARA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>2.055 &#8378;</td><td class=neg><b>-17.476 &#8378;</b></td></tr>
+<tr><td>26</td><td class=l>03.09.2026</td><td class=l>ANKARA</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>467 &#8378;</td><td class=neg><b>-19.064 &#8378;</b></td></tr>
+<tr><td>27</td><td class=l>05.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>12.685 &#8378;</td><td class=neg><b>-6.847 &#8378;</b></td></tr>
+<tr><td>28</td><td class=l>05.09.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>13.497 &#8378;</td><td class=neg><b>-6.034 &#8378;</b></td></tr>
+<tr><td>29</td><td class=l>06.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>32.262 &#8378;</td><td class=poz><b>+12.731 &#8378;</b></td></tr>
+<tr><td>30</td><td class=l>08.09.2026</td><td class=l>KOCAELI</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>1.276 &#8378;</td><td class=neg><b>-18.255 &#8378;</b></td></tr>
+<tr><td>31</td><td class=l>09.09.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>20.543 &#8378;</td><td class=poz><b>+1.012 &#8378;</b></td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAN 31 KUPON</td><td></td><td>597.656 &#8378;</td><td>1.270.167 &#8378;</td><td class=poz>+672.511 &#8378;</td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAMAYAN 91 KUPON <span class=mini>(tamami zarar)</span></td><td></td><td>1.773.438 &#8378;</td><td>0 &#8378;</td><td class=neg>-1.773.438 &#8378;</td></tr>
+<tr class=gt><td colspan=4 class=l>GENEL TOPLAM &mdash; 122 kupon</td><td></td><td>2.371.094 &#8378;</td><td>1.270.167 &#8378;</td><td class=neg>-1.100.927 &#8378; (%-46.4)</td></tr>
+</table></div>
+<div class=uyari>Tutturulan 31 kupondan <b>bedelini cikaran: 9</b> <span class=mini>(kalan 22 tanesi 6/6 yapti ve yine zarar etti)</span>.<br>En buyuk olay <b>01.09.2026 ANKARA 2. &rarr; 327.523 &#8378;</b> = toplam odulun <b>%26</b>'i. <b>O olay cikarilirsa net -1.428.450 &#8378; (ROI %-60.2)</b>.</div>
+</div>
+<h3>bot2 @30dk &middot; sabit-6 <span class=alt>&mdash; 41/122 Altili tutturuldu</span></h3>
+<div class=kart><div class=wrap><table>
+<tr><th>#</th><th class=l>tarih</th><th class=l>pist</th><th>sira</th><th>kombinasyon</th><th>bedel</th><th>temettu (odul)</th><th>kupon neti</th></tr>
+<tr><td>1</td><td class=l>25.07.2026</td><td class=l>IZMIR</td><td>1.</td><td>38.880</td><td>48.600 &#8378;</td><td>2.645 &#8378;</td><td class=neg><b>-45.955 &#8378;</b></td></tr>
+<tr><td>2</td><td class=l>30.07.2026</td><td class=l>KOCAELI</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>25.788 &#8378;</td><td class=neg><b>-32.532 &#8378;</b></td></tr>
+<tr><td>3</td><td class=l>01.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>17.023 &#8378;</td><td class=neg><b>-41.297 &#8378;</b></td></tr>
+<tr><td>4</td><td class=l>02.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>237.270 &#8378;</td><td class=poz><b>+178.950 &#8378;</b></td></tr>
+<tr><td>5</td><td class=l>04.08.2026</td><td class=l>KOCAELI</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>51.677 &#8378;</td><td class=neg><b>-6.643 &#8378;</b></td></tr>
+<tr><td>6</td><td class=l>06.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>3.883 &#8378;</td><td class=neg><b>-54.437 &#8378;</b></td></tr>
+<tr><td>7</td><td class=l>07.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>1.453 &#8378;</td><td class=neg><b>-56.867 &#8378;</b></td></tr>
+<tr><td>8</td><td class=l>08.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>1.960 &#8378;</td><td class=neg><b>-56.360 &#8378;</b></td></tr>
+<tr><td>9</td><td class=l>08.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>38.486 &#8378;</td><td class=neg><b>-19.834 &#8378;</b></td></tr>
+<tr><td>10</td><td class=l>12.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>26.788 &#8378;</td><td class=neg><b>-31.532 &#8378;</b></td></tr>
+<tr><td>11</td><td class=l>13.08.2026</td><td class=l>KOCAELI</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>1.219.517 &#8378;</td><td class=poz><b>+1.161.197 &#8378;</b></td></tr>
+<tr><td>12</td><td class=l>14.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>390.206 &#8378;</td><td class=poz><b>+331.886 &#8378;</b></td></tr>
+<tr><td>13</td><td class=l>15.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>32.400</td><td>40.500 &#8378;</td><td>9.530 &#8378;</td><td class=neg><b>-30.970 &#8378;</b></td></tr>
+<tr><td>14</td><td class=l>17.08.2026</td><td class=l>BURSA</td><td>1.</td><td>31.104</td><td>38.880 &#8378;</td><td>14.108 &#8378;</td><td class=neg><b>-24.772 &#8378;</b></td></tr>
+<tr><td>15</td><td class=l>18.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>38.880</td><td>48.600 &#8378;</td><td>33.451 &#8378;</td><td class=neg><b>-15.149 &#8378;</b></td></tr>
+<tr><td>16</td><td class=l>18.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>9.702 &#8378;</td><td class=neg><b>-48.618 &#8378;</b></td></tr>
+<tr><td>17</td><td class=l>19.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>90.395 &#8378;</td><td class=poz><b>+32.075 &#8378;</b></td></tr>
+<tr><td>18</td><td class=l>20.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>9.635 &#8378;</td><td class=neg><b>-48.685 &#8378;</b></td></tr>
+<tr><td>19</td><td class=l>21.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>38.880</td><td>48.600 &#8378;</td><td>7.893 &#8378;</td><td class=neg><b>-40.707 &#8378;</b></td></tr>
+<tr><td>20</td><td class=l>21.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>31.378 &#8378;</td><td class=neg><b>-26.942 &#8378;</b></td></tr>
+<tr><td>21</td><td class=l>22.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>8.977 &#8378;</td><td class=neg><b>-49.343 &#8378;</b></td></tr>
+<tr><td>22</td><td class=l>23.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>281.576 &#8378;</td><td class=poz><b>+223.256 &#8378;</b></td></tr>
+<tr><td>23</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>32.400</td><td>40.500 &#8378;</td><td>1.398 &#8378;</td><td class=neg><b>-39.102 &#8378;</b></td></tr>
+<tr><td>24</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>25.920</td><td>32.400 &#8378;</td><td>2.077 &#8378;</td><td class=neg><b>-30.323 &#8378;</b></td></tr>
+<tr><td>25</td><td class=l>26.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>11.141 &#8378;</td><td class=neg><b>-47.179 &#8378;</b></td></tr>
+<tr><td>26</td><td class=l>27.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>52.029 &#8378;</td><td class=neg><b>-6.291 &#8378;</b></td></tr>
+<tr><td>27</td><td class=l>28.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>38.880</td><td>48.600 &#8378;</td><td>5.202 &#8378;</td><td class=neg><b>-43.398 &#8378;</b></td></tr>
+<tr><td>28</td><td class=l>29.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>5.287 &#8378;</td><td class=neg><b>-53.033 &#8378;</b></td></tr>
+<tr><td>29</td><td class=l>30.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>7.767 &#8378;</td><td class=neg><b>-50.553 &#8378;</b></td></tr>
+<tr><td>30</td><td class=l>01.09.2026</td><td class=l>ANKARA</td><td>1.</td><td>38.880</td><td>48.600 &#8378;</td><td>66.039 &#8378;</td><td class=poz><b>+17.439 &#8378;</b></td></tr>
+<tr><td>31</td><td class=l>01.09.2026</td><td class=l>ANKARA</td><td>2.</td><td>38.880</td><td>48.600 &#8378;</td><td>327.523 &#8378;</td><td class=poz><b>+278.923 &#8378;</b></td></tr>
+<tr><td>32</td><td class=l>01.09.2026</td><td class=l>KOCAELI</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>10.259 &#8378;</td><td class=neg><b>-48.061 &#8378;</b></td></tr>
+<tr><td>33</td><td class=l>03.09.2026</td><td class=l>ANKARA</td><td>1.</td><td>38.880</td><td>48.600 &#8378;</td><td>2.055 &#8378;</td><td class=neg><b>-46.545 &#8378;</b></td></tr>
+<tr><td>34</td><td class=l>03.09.2026</td><td class=l>ANKARA</td><td>2.</td><td>38.880</td><td>48.600 &#8378;</td><td>467 &#8378;</td><td class=neg><b>-48.133 &#8378;</b></td></tr>
+<tr><td>35</td><td class=l>03.09.2026</td><td class=l>IZMIR</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>1.648 &#8378;</td><td class=neg><b>-56.672 &#8378;</b></td></tr>
+<tr><td>36</td><td class=l>05.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>12.685 &#8378;</td><td class=neg><b>-45.635 &#8378;</b></td></tr>
+<tr><td>37</td><td class=l>05.09.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>38.880</td><td>48.600 &#8378;</td><td>13.497 &#8378;</td><td class=neg><b>-35.103 &#8378;</b></td></tr>
+<tr><td>38</td><td class=l>06.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>32.262 &#8378;</td><td class=neg><b>-26.058 &#8378;</b></td></tr>
+<tr><td>39</td><td class=l>08.09.2026</td><td class=l>KOCAELI</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>1.276 &#8378;</td><td class=neg><b>-57.044 &#8378;</b></td></tr>
+<tr><td>40</td><td class=l>09.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>31.104</td><td>38.880 &#8378;</td><td>746 &#8378;</td><td class=neg><b>-38.134 &#8378;</b></td></tr>
+<tr><td>41</td><td class=l>09.09.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>38.880</td><td>48.600 &#8378;</td><td>20.543 &#8378;</td><td class=neg><b>-28.057 &#8378;</b></td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAN 41 KUPON</td><td></td><td>2.193.480 &#8378;</td><td>3.087.243 &#8378;</td><td class=poz>+893.763 &#8378;</td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAMAYAN 81 KUPON <span class=mini>(tamami zarar)</span></td><td></td><td>4.524.660 &#8378;</td><td>0 &#8378;</td><td class=neg>-4.524.660 &#8378;</td></tr>
+<tr class=gt><td colspan=4 class=l>GENEL TOPLAM &mdash; 122 kupon</td><td></td><td>6.718.140 &#8378;</td><td>3.087.243 &#8378;</td><td class=neg>-3.630.897 &#8378; (%-54.0)</td></tr>
+</table></div>
+<div class=uyari>Tutturulan 41 kupondan <b>bedelini cikaran: 7</b> <span class=mini>(kalan 34 tanesi 6/6 yapti ve yine zarar etti)</span>.<br>En buyuk olay <b>13.08.2026 KOCAELI 2. &rarr; 1.219.517 &#8378;</b> = toplam odulun <b>%40</b>'i. <b>O olay cikarilirsa net -4.850.415 &#8378; (ROI %-72.2)</b>.</div>
+</div>
+<h3>bot2 @15dk &middot; sabit-3 <span class=alt>&mdash; 3/73 Altili tutturuldu</span></h3>
+<div class=kart><div class=wrap><table>
+<tr><th>#</th><th class=l>tarih</th><th class=l>pist</th><th>sira</th><th>kombinasyon</th><th>bedel</th><th>temettu (odul)</th><th>kupon neti</th></tr>
+<tr><td>1</td><td class=l>18.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>729</td><td>911 &#8378;</td><td>9.702 &#8378;</td><td class=poz><b>+8.790 &#8378;</b></td></tr>
+<tr><td>2</td><td class=l>24.08.2026</td><td class=l>BURSA</td><td>1.</td><td>729</td><td>911 &#8378;</td><td>8.203 &#8378;</td><td class=poz><b>+7.292 &#8378;</b></td></tr>
+<tr><td>3</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>729</td><td>911 &#8378;</td><td>2.077 &#8378;</td><td class=poz><b>+1.166 &#8378;</b></td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAN 3 KUPON</td><td></td><td>2.734 &#8378;</td><td>19.982 &#8378;</td><td class=poz>+17.248 &#8378;</td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAMAYAN 70 KUPON <span class=mini>(tamami zarar)</span></td><td></td><td>63.788 &#8378;</td><td>0 &#8378;</td><td class=neg>-63.788 &#8378;</td></tr>
+<tr class=gt><td colspan=4 class=l>GENEL TOPLAM &mdash; 73 kupon</td><td></td><td>66.521 &#8378;</td><td>19.982 &#8378;</td><td class=neg>-46.539 &#8378; (%-70.0)</td></tr>
+</table></div>
+<div class=uyari>Tutturulan 3 kupondan <b>bedelini cikaran: 3</b> <span class=mini>(kalan 0 tanesi 6/6 yapti ve yine zarar etti)</span>.<br>En buyuk olay <b>18.08.2026 ANKARA 2. &rarr; 9.702 &#8378;</b> = toplam odulun <b>%49</b>'i. <b>O olay cikarilirsa net -56.241 &#8378; (ROI %-84.5)</b>.</div>
+</div>
+<h3>bot2 @15dk &middot; sabit-4 <span class=alt>&mdash; 10/73 Altili tutturuldu</span></h3>
+<div class=kart><div class=wrap><table>
+<tr><th>#</th><th class=l>tarih</th><th class=l>pist</th><th>sira</th><th>kombinasyon</th><th>bedel</th><th>temettu (odul)</th><th>kupon neti</th></tr>
+<tr><td>1</td><td class=l>16.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>3.240 &#8378;</td><td class=neg><b>-1.880 &#8378;</b></td></tr>
+<tr><td>2</td><td class=l>17.08.2026</td><td class=l>BURSA</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>14.108 &#8378;</td><td class=poz><b>+8.988 &#8378;</b></td></tr>
+<tr><td>3</td><td class=l>18.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>4.096</td><td>5.120 &#8378;</td><td>9.702 &#8378;</td><td class=poz><b>+4.582 &#8378;</b></td></tr>
+<tr><td>4</td><td class=l>24.08.2026</td><td class=l>BURSA</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>8.203 &#8378;</td><td class=poz><b>+3.083 &#8378;</b></td></tr>
+<tr><td>5</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>4.096</td><td>5.120 &#8378;</td><td>2.077 &#8378;</td><td class=neg><b>-3.043 &#8378;</b></td></tr>
+<tr><td>6</td><td class=l>30.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>7.767 &#8378;</td><td class=poz><b>+2.647 &#8378;</b></td></tr>
+<tr><td>7</td><td class=l>03.09.2026</td><td class=l>ANKARA</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>2.055 &#8378;</td><td class=neg><b>-3.065 &#8378;</b></td></tr>
+<tr><td>8</td><td class=l>08.09.2026</td><td class=l>KOCAELI</td><td>1.</td><td>4.096</td><td>5.120 &#8378;</td><td>1.276 &#8378;</td><td class=neg><b>-3.844 &#8378;</b></td></tr>
+<tr><td>9</td><td class=l>08.09.2026</td><td class=l>KOCAELI</td><td>2.</td><td>4.096</td><td>5.120 &#8378;</td><td>33.308 &#8378;</td><td class=poz><b>+28.188 &#8378;</b></td></tr>
+<tr><td>10</td><td class=l>09.09.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>4.096</td><td>5.120 &#8378;</td><td>20.543 &#8378;</td><td class=poz><b>+15.423 &#8378;</b></td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAN 10 KUPON</td><td></td><td>51.200 &#8378;</td><td>102.278 &#8378;</td><td class=poz>+51.078 &#8378;</td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAMAYAN 63 KUPON <span class=mini>(tamami zarar)</span></td><td></td><td>322.560 &#8378;</td><td>0 &#8378;</td><td class=neg>-322.560 &#8378;</td></tr>
+<tr class=gt><td colspan=4 class=l>GENEL TOPLAM &mdash; 73 kupon</td><td></td><td>373.760 &#8378;</td><td>102.278 &#8378;</td><td class=neg>-271.482 &#8378; (%-72.6)</td></tr>
+</table></div>
+<div class=uyari>Tutturulan 10 kupondan <b>bedelini cikaran: 6</b> <span class=mini>(kalan 4 tanesi 6/6 yapti ve yine zarar etti)</span>.<br>En buyuk olay <b>08.09.2026 KOCAELI 2. &rarr; 33.308 &#8378;</b> = toplam odulun <b>%33</b>'i. <b>O olay cikarilirsa net -304.789 &#8378; (ROI %-81.5)</b>.</div>
+</div>
+<h3>bot2 @15dk &middot; sabit-5 <span class=alt>&mdash; 22/73 Altili tutturuldu</span></h3>
+<div class=kart><div class=wrap><table>
+<tr><th>#</th><th class=l>tarih</th><th class=l>pist</th><th>sira</th><th>kombinasyon</th><th>bedel</th><th>temettu (odul)</th><th>kupon neti</th></tr>
+<tr><td>1</td><td class=l>16.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>3.240 &#8378;</td><td class=neg><b>-16.292 &#8378;</b></td></tr>
+<tr><td>2</td><td class=l>17.08.2026</td><td class=l>BURSA</td><td>1.</td><td>12.500</td><td>15.625 &#8378;</td><td>14.108 &#8378;</td><td class=neg><b>-1.517 &#8378;</b></td></tr>
+<tr><td>3</td><td class=l>18.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>9.702 &#8378;</td><td class=neg><b>-9.830 &#8378;</b></td></tr>
+<tr><td>4</td><td class=l>19.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>90.395 &#8378;</td><td class=poz><b>+70.864 &#8378;</b></td></tr>
+<tr><td>5</td><td class=l>21.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>7.893 &#8378;</td><td class=neg><b>-11.639 &#8378;</b></td></tr>
+<tr><td>6</td><td class=l>22.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>8.977 &#8378;</td><td class=neg><b>-10.554 &#8378;</b></td></tr>
+<tr><td>7</td><td class=l>24.08.2026</td><td class=l>BURSA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>8.203 &#8378;</td><td class=neg><b>-11.328 &#8378;</b></td></tr>
+<tr><td>8</td><td class=l>24.08.2026</td><td class=l>BURSA</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>365.633 &#8378;</td><td class=poz><b>+346.102 &#8378;</b></td></tr>
+<tr><td>9</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>1.398 &#8378;</td><td class=neg><b>-18.134 &#8378;</b></td></tr>
+<tr><td>10</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>12.500</td><td>15.625 &#8378;</td><td>2.077 &#8378;</td><td class=neg><b>-13.548 &#8378;</b></td></tr>
+<tr><td>11</td><td class=l>26.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>11.141 &#8378;</td><td class=neg><b>-8.390 &#8378;</b></td></tr>
+<tr><td>12</td><td class=l>29.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>5.287 &#8378;</td><td class=neg><b>-14.244 &#8378;</b></td></tr>
+<tr><td>13</td><td class=l>30.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>7.767 &#8378;</td><td class=neg><b>-11.764 &#8378;</b></td></tr>
+<tr><td>14</td><td class=l>01.09.2026</td><td class=l>ANKARA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>66.039 &#8378;</td><td class=poz><b>+46.508 &#8378;</b></td></tr>
+<tr><td>15</td><td class=l>01.09.2026</td><td class=l>ANKARA</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>327.523 &#8378;</td><td class=poz><b>+307.992 &#8378;</b></td></tr>
+<tr><td>16</td><td class=l>03.09.2026</td><td class=l>ANKARA</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>2.055 &#8378;</td><td class=neg><b>-17.476 &#8378;</b></td></tr>
+<tr><td>17</td><td class=l>05.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>12.685 &#8378;</td><td class=neg><b>-6.847 &#8378;</b></td></tr>
+<tr><td>18</td><td class=l>05.09.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>13.497 &#8378;</td><td class=neg><b>-6.034 &#8378;</b></td></tr>
+<tr><td>19</td><td class=l>06.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>32.262 &#8378;</td><td class=poz><b>+12.731 &#8378;</b></td></tr>
+<tr><td>20</td><td class=l>08.09.2026</td><td class=l>KOCAELI</td><td>1.</td><td>15.625</td><td>19.531 &#8378;</td><td>1.276 &#8378;</td><td class=neg><b>-18.255 &#8378;</b></td></tr>
+<tr><td>21</td><td class=l>08.09.2026</td><td class=l>KOCAELI</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>33.308 &#8378;</td><td class=poz><b>+13.776 &#8378;</b></td></tr>
+<tr><td>22</td><td class=l>09.09.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>15.625</td><td>19.531 &#8378;</td><td>20.543 &#8378;</td><td class=poz><b>+1.012 &#8378;</b></td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAN 22 KUPON</td><td></td><td>421.875 &#8378;</td><td>1.045.009 &#8378;</td><td class=poz>+623.134 &#8378;</td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAMAYAN 51 KUPON <span class=mini>(tamami zarar)</span></td><td></td><td>996.094 &#8378;</td><td>0 &#8378;</td><td class=neg>-996.094 &#8378;</td></tr>
+<tr class=gt><td colspan=4 class=l>GENEL TOPLAM &mdash; 73 kupon</td><td></td><td>1.417.969 &#8378;</td><td>1.045.009 &#8378;</td><td class=neg>-372.960 &#8378; (%-26.3)</td></tr>
+</table></div>
+<div class=uyari>Tutturulan 22 kupondan <b>bedelini cikaran: 7</b> <span class=mini>(kalan 15 tanesi 6/6 yapti ve yine zarar etti)</span>.<br>En buyuk olay <b>24.08.2026 BURSA 2. &rarr; 365.633 &#8378;</b> = toplam odulun <b>%35</b>'i. <b>O olay cikarilirsa net -738.593 &#8378; (ROI %-52.1)</b>.</div>
+</div>
+<h3>bot2 @15dk &middot; sabit-6 <span class=alt>&mdash; 32/73 Altili tutturuldu</span></h3>
+<div class=kart><div class=wrap><table>
+<tr><th>#</th><th class=l>tarih</th><th class=l>pist</th><th>sira</th><th>kombinasyon</th><th>bedel</th><th>temettu (odul)</th><th>kupon neti</th></tr>
+<tr><td>1</td><td class=l>16.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>3.240 &#8378;</td><td class=neg><b>-55.080 &#8378;</b></td></tr>
+<tr><td>2</td><td class=l>17.08.2026</td><td class=l>BURSA</td><td>1.</td><td>31.104</td><td>38.880 &#8378;</td><td>14.108 &#8378;</td><td class=neg><b>-24.772 &#8378;</b></td></tr>
+<tr><td>3</td><td class=l>18.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>38.880</td><td>48.600 &#8378;</td><td>33.451 &#8378;</td><td class=neg><b>-15.149 &#8378;</b></td></tr>
+<tr><td>4</td><td class=l>18.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>9.702 &#8378;</td><td class=neg><b>-48.618 &#8378;</b></td></tr>
+<tr><td>5</td><td class=l>19.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>90.395 &#8378;</td><td class=poz><b>+32.075 &#8378;</b></td></tr>
+<tr><td>6</td><td class=l>20.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>9.635 &#8378;</td><td class=neg><b>-48.685 &#8378;</b></td></tr>
+<tr><td>7</td><td class=l>21.08.2026</td><td class=l>BURSA</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>33.758 &#8378;</td><td class=neg><b>-24.562 &#8378;</b></td></tr>
+<tr><td>8</td><td class=l>21.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>38.880</td><td>48.600 &#8378;</td><td>7.893 &#8378;</td><td class=neg><b>-40.707 &#8378;</b></td></tr>
+<tr><td>9</td><td class=l>21.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>31.378 &#8378;</td><td class=neg><b>-26.942 &#8378;</b></td></tr>
+<tr><td>10</td><td class=l>22.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>8.977 &#8378;</td><td class=neg><b>-49.343 &#8378;</b></td></tr>
+<tr><td>11</td><td class=l>23.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>281.576 &#8378;</td><td class=poz><b>+223.256 &#8378;</b></td></tr>
+<tr><td>12</td><td class=l>24.08.2026</td><td class=l>BURSA</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>8.203 &#8378;</td><td class=neg><b>-50.117 &#8378;</b></td></tr>
+<tr><td>13</td><td class=l>24.08.2026</td><td class=l>BURSA</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>365.633 &#8378;</td><td class=poz><b>+307.313 &#8378;</b></td></tr>
+<tr><td>14</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>1.</td><td>32.400</td><td>40.500 &#8378;</td><td>1.398 &#8378;</td><td class=neg><b>-39.102 &#8378;</b></td></tr>
+<tr><td>15</td><td class=l>25.08.2026</td><td class=l>ANKARA</td><td>2.</td><td>25.920</td><td>32.400 &#8378;</td><td>2.077 &#8378;</td><td class=neg><b>-30.323 &#8378;</b></td></tr>
+<tr><td>16</td><td class=l>25.08.2026</td><td class=l>KOCAELI</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>8.810.273 &#8378;</td><td class=poz><b>+8.751.953 &#8378;</b></td></tr>
+<tr><td>17</td><td class=l>26.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>11.141 &#8378;</td><td class=neg><b>-47.179 &#8378;</b></td></tr>
+<tr><td>18</td><td class=l>28.08.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>38.880</td><td>48.600 &#8378;</td><td>5.202 &#8378;</td><td class=neg><b>-43.398 &#8378;</b></td></tr>
+<tr><td>19</td><td class=l>29.08.2026</td><td class=l>IZMIR</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>5.287 &#8378;</td><td class=neg><b>-53.033 &#8378;</b></td></tr>
+<tr><td>20</td><td class=l>30.08.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>7.767 &#8378;</td><td class=neg><b>-50.553 &#8378;</b></td></tr>
+<tr><td>21</td><td class=l>01.09.2026</td><td class=l>ANKARA</td><td>1.</td><td>38.880</td><td>48.600 &#8378;</td><td>66.039 &#8378;</td><td class=poz><b>+17.439 &#8378;</b></td></tr>
+<tr><td>22</td><td class=l>01.09.2026</td><td class=l>ANKARA</td><td>2.</td><td>38.880</td><td>48.600 &#8378;</td><td>327.523 &#8378;</td><td class=poz><b>+278.923 &#8378;</b></td></tr>
+<tr><td>23</td><td class=l>01.09.2026</td><td class=l>KOCAELI</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>10.259 &#8378;</td><td class=neg><b>-48.061 &#8378;</b></td></tr>
+<tr><td>24</td><td class=l>03.09.2026</td><td class=l>ANKARA</td><td>1.</td><td>38.880</td><td>48.600 &#8378;</td><td>2.055 &#8378;</td><td class=neg><b>-46.545 &#8378;</b></td></tr>
+<tr><td>25</td><td class=l>03.09.2026</td><td class=l>ANKARA</td><td>2.</td><td>38.880</td><td>48.600 &#8378;</td><td>467 &#8378;</td><td class=neg><b>-48.133 &#8378;</b></td></tr>
+<tr><td>26</td><td class=l>03.09.2026</td><td class=l>IZMIR</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>1.648 &#8378;</td><td class=neg><b>-56.672 &#8378;</b></td></tr>
+<tr><td>27</td><td class=l>05.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>12.685 &#8378;</td><td class=neg><b>-45.635 &#8378;</b></td></tr>
+<tr><td>28</td><td class=l>05.09.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>38.880</td><td>48.600 &#8378;</td><td>13.497 &#8378;</td><td class=neg><b>-35.103 &#8378;</b></td></tr>
+<tr><td>29</td><td class=l>06.09.2026</td><td class=l>ISTANBUL</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>32.262 &#8378;</td><td class=neg><b>-26.058 &#8378;</b></td></tr>
+<tr><td>30</td><td class=l>08.09.2026</td><td class=l>KOCAELI</td><td>1.</td><td>46.656</td><td>58.320 &#8378;</td><td>1.276 &#8378;</td><td class=neg><b>-57.044 &#8378;</b></td></tr>
+<tr><td>31</td><td class=l>08.09.2026</td><td class=l>KOCAELI</td><td>2.</td><td>46.656</td><td>58.320 &#8378;</td><td>33.308 &#8378;</td><td class=neg><b>-25.012 &#8378;</b></td></tr>
+<tr><td>32</td><td class=l>09.09.2026</td><td class=l>ISTANBUL</td><td>2.</td><td>38.880</td><td>48.600 &#8378;</td><td>20.543 &#8378;</td><td class=neg><b>-28.057 &#8378;</b></td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAN 32 KUPON</td><td></td><td>1.715.580 &#8378;</td><td>10.262.657 &#8378;</td><td class=poz>+8.547.077 &#8378;</td></tr>
+<tr class=top><td colspan=4 class=l>TUTTURULAMAYAN 41 KUPON <span class=mini>(tamami zarar)</span></td><td></td><td>2.277.720 &#8378;</td><td>0 &#8378;</td><td class=neg>-2.277.720 &#8378;</td></tr>
+<tr class=gt><td colspan=4 class=l>GENEL TOPLAM &mdash; 73 kupon</td><td></td><td>3.993.300 &#8378;</td><td>10.262.657 &#8378;</td><td class=poz>+6.269.357 &#8378; (%+157.0)</td></tr>
+</table></div>
+<div class=uyari>Tutturulan 32 kupondan <b>bedelini cikaran: 6</b> <span class=mini>(kalan 26 tanesi 6/6 yapti ve yine zarar etti)</span>.<br>En buyuk olay <b>25.08.2026 KOCAELI 1. &rarr; 8.810.273 &#8378;</b> = toplam odulun <b>%86</b>'i. <b>O olay cikarilirsa net -2.540.916 &#8378; (ROI %-63.6)</b>.</div>
+</div>
+<div class=mini style='margin-top:16px'>Kagit hesabidir &mdash; bu kuponlar GERCEKTE KURULMADI, kupon-ani fotografindan geriye dogru simule edildi. Yalniz 6 ayaginin da fotografi ve bilinen kazanani olan Altililar sayildi; eksik olay iyimser/kotumser bantla doldurulmadi, atildi. Odul yalniz 6/6'da ve o Altili'nin resmi temettusudur (5/6 odemez, K52).</div>
