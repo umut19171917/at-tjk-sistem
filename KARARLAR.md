@@ -6849,3 +6849,56 @@ Ağ maliyeti: açık ayağı olan (tarih,pist) başına 1 ek sonuç isteği.
 `html_yaz` süresi sayfa büyüdükçe artıyor (2,7 MB / 28 sn). 15 dakikalık görev penceresini
 zorlamaya başlarsa iki çıkış var: sayfayı sayfalamak, ya da `html_yaz`'ı erken sonuçlamadan
 ayırıp yalnız gün sonunda üretmek. Bugün sorun yok, **ölçü budur: 28 sn / 900 sn.**
+
+---
+
+**K164 — GENİŞLİK TARAMASI k=3…6 KALICI ARAÇ OLDU. Sabit-6 de test edildi: DÜZELTMİYOR.
+Tek pozitif hücre TEK BİLETTİR.** 11 Eyl 2026. Kullanıcı önce eski sabit-4/5 hesabını TL olarak
+istedi, sonra *"sabit 6'lıyı da test et"* dedi.
+
+## (a) NEDEN YENİDEN HESAPLANDI
+
+[[K160]] genişlik taramasının yalnız **ROI başlıklarını** kaydetmişti (sabit-4 −%69,1 ·
+sabit-5 −%47,0); **TL rakamları kalıcı kayda girmemiş**, hesabın betiği de saklanmamıştı.
+İkinci kez sıfırdan kurmak zorunda kaldık → bu sefer araç kalıcı: `kod/genislik_taramasi.py`
+(salt-okunur, `--k 3,4,5,6`).
+
+## (b) İKİ METODOLOJİK DÜZELTME (K160'ın sayılarından farkın sebebi)
+
+1. **Bedel k⁶ DEĞİL, gerçek kombinasyondur.** Ayakta k'dan az at koşuyorsa sahadaki hepsi
+   yazılır; o ayak hem **ucuzlar** hem **kesin tutar**. Ölçüldü: ayakların **%0,8'inde 5'ten,
+   %5,6'sında 6'dan az** at var. k⁶ varsaymak k=6'da bedeli şişirip isabeti bedavaya verirdi.
+   Artık ikisi de `min(k, sahadaki)` ile, **tutarlı** hesaplanıyor.
+2. **"Bilinmez" olay atılır, bantla doldurulmaz.** Bir Altılı ancak 6 ayağının da kupon-anı
+   fotoğrafı VE bilinen kazananı varsa sayılır → K155-EK'in iyimser/kötümser bandı yerine
+   **tek sayı**. Ayrıca kazanan kümesi artık **EKÜRİ genişletmeli** ([[K162]]).
+
+## (c) SONUÇ — 122 Altılı (bot1@30 + bot2@30, aynı olaylar)
+
+| genişlik | kupon bedeli | toplam bedel | ödül | net | ROI |
+|---|---|---|---|---|---|
+| sabit-3 | 911 ₺ | 222.345 | 222.529 | **+184** | **%+0,1** |
+| sabit-4 | 5.120 ₺ | 1.249.280 | 371.873 | −877.407 | %−70,2 |
+| sabit-5 | 19.435 ₺ | 4.742.188 | 2.152.005 | −2.590.183 | %−54,6 |
+| sabit-6 | 55.067 ₺ | 13.436.280 | 5.301.826 | **−8.134.454** | %−60,5 |
+
+**Ayak isabeti k ile sürünüyor, bedel patlıyor:** %59,2 → %69,0 → %77,8 → %84,6 iken
+kupon bedeli **60 katına** çıkıyor. 6/6 sayısı 12 → 90 (7,5 kat), bedel 60 kat. **Sabit-3 hâlâ
+tek savunulabilir nokta** ve k arttıkça durum düzelmiyor — K88/K160'ın aynı sonucu, k=6'ya kadar.
+
+## (d) ⚠️ TEK POZİTİF HÜCRE BİR PİYANGODUR — tuzağa düşmeyin
+
+Tarama `bot2 @15dk sabit-6` için **+%157,0** (net +6.269.357 ₺) basıyor. **Bu bir bulgu DEĞİL:**
+tüm ödülün **%86'sı tek olaydan** — 25 Ağustos KOCAELİ 1. Altılı, **8.810.273 ₺**.
+**O olay çıkarılınca ROI −%63,6** (net −2.540.916 ₺), yani tablonun geri kalanıyla aynı yerde.
+Kıyas: `bot2@30dk sabit-6`'da en büyük olay toplamın %40'ı ve çıkarılınca −%72,2.
+
+Bu, [[K106]]/[[K157]]'nin "tek bilet" uyarısının k=6'daki hâlidir. **Araç bu yüzden en büyük
+olayı ayrıca raporlayabilmeli**; bir sonraki koşturmada +%157 görüp heyecanlanmamak için burada
+yazılı. 73 kuponluk sicilde net TL, tek olayın gürültüsüdür.
+
+## (e) BU KARARI NE ÇÜRÜTÜR
+
+Örneklem büyüyünce (özellikle 15 dk zemini 73 → 200+ kupon) tek-olay bağımlılığı düşer.
+O zaman tarama yeniden koşulur; **ölçüt "ROI pozitif" değil, "en büyük olay çıkarılınca da
+pozitif"** olmalıdır — d şıkkı bunu bağlar.
