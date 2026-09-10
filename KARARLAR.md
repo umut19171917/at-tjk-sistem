@@ -6711,3 +6711,62 @@ Doğrulama: oran ayrışık ve boş-oran senaryolarının ikisinde de genişletm
 
 **NÖBETÇİ ÖLÇÜ:** "aynı oranlı eküri grubu / tüm eküri grupları" oranı bugün 1.014/1.015.
 Bu oran belirgin düşerse TJK bağlılık kuralını değiştirmiş demektir → K162 yeniden açılır.
+
+**K162-EK2 — GANYAN KÂĞIT KUPONU da eküriyi tanıyor; ama PLASE'ye DOKUNULMADI çünkü
+plase eküriyi BAĞLAMIYOR (ölçüldü).** 10 Eyl 2026. Kullanıcı: *"paper py yi de ileriye dönük kapat"*.
+
+## (a) Boşluk
+
+`kod/paper.py::sonucla_paper` ganyan kâğıt kuponunu `kaz = son == 1` ile kapatıyordu — yani
+eküri eşleniğini oynayıp **bağlı ortağı** kazandığında kupon "kaybetti" sayılıyordu.
+Ölçüldü: **7 ganyan kâğıt kuponu** bu yüzden yanlış kaybetmiş (17.07 · 20.07 · 24.07 · 22.08 ·
+30.08 ×2 · 05.09; her biri 15 ₺).
+
+**Ödeme tutarı zaten doğruydu:** bağlı atların GANYAN'ı aynı olduğu için `mik * gan` hesabı
+değişmiyor — yanlış olan yalnız kazandı/kaybetti testiydi.
+
+## (b) YENİ BULGU — PLASE eküriyi BAĞLAMIYOR
+
+Plase dalını da "mantıken aynıdır" diye düzeltmek cazipti; **önce sınandı ve iddia ÇÜRÜDÜ.**
+Aynı koşuda (222444) üç bahis türü üç ayrı davranış gösteriyor:
+
+| bahis | 222444'teki gösterim | bağlı mı |
+|---|---|---|
+| GANYAN | #1, #3, #9 → hepsi **3,05** | **EVET** |
+| ÇİFTE | `5. ÇİFTE(2/1,3,9)` — üçlü tek ayak | **EVET** |
+| PLASE | `PLASE(1): 2,80` · `PLASE(3): 17,30` | **HAYIR** |
+
+Bağlı olsalardı plase de tek fiyat olurdu. Bağımsız doğrulama: arşivde **`PLASE(x,y)` ikili
+gösterimi HİÇ yok** (ÇİFTE ve 3'LÜ GANYAN'da var), ve aynı eküri grubunda farklı plase ödemesi
+olan koşular mevcut (222285: #1 → 6,40 · #3 → 11,90). **Plase'de her at kendi derecesiyle öder.**
+
+→ Plase dalı **kasten değiştirilmedi** ve koda "buraya eküri ekleme, sicili şişirir" uyarısı
+gerekçesiyle yazıldı. Bu, K162 zincirinde **genellemenin veriyle durdurulduğu** noktadır.
+
+## (c) Ne yazıldı
+
+- `_ekuri_gruplari_sonuc(k)` (YENİ) — `altili_canli.kazananlar_kumesi` ile **aynı iki kapılı
+  kural**: ≥2 koşan at VE ganyanları birebir aynı/boş değil.
+- `sonucla_paper` ganyan dalı — bağlı ortak kazandıysa kupon da kazanır.
+- **Kasıtlı kopya:** kural `altili_canli.py`'de de duruyor, import EDİLMEDİ. Gerekçe: ganyan
+  kâğıt akışı Altılı akışına bağımlı olmasın, biri kırılırsa diğeri ayakta kalsın. Kural
+  değişirse **iki yerde birden** değişmeli; tek kaynak K162'dir. (Bu bir tekrar borcudur,
+  bilerek alındı ve koda yazıldı.)
+
+## (d) İLERİYE DÖNÜK (kullanıcı kararı) + güvenlik
+
+`sonucla_paper` yalnız `durum == "acik"` satırlara dokunur → kapanmış **1.893** kupon kendiliğinden
+korunur, o 7 kupon "kaybetti" olarak kalır. `kod/ast_diff.py`: değişen tek dosya `paper.py`
+(1 yeni fonksiyon + `sonucla_paper`); **`defter.py` dahil diğer 11 çekirdek dosya "hepsi AYNI"**
+— 25 Eylül'ün mühürlü ölçüm zinciri (`s1_olcum` → `defter.csv`) etkilenmedi.
+Doğrulama: 10 kontrolün tamamı geçti (bilinen üç koşuda grup doğru; oran-ayrışık/boş-oran/
+çekilmiş-ortak senaryolarında grup dönmüyor; plase kanıtı hâlâ geçerli).
+
+## (e) DURUM ÖZETİ — eküri nerede kapandı, nerede açık
+
+| yer | durum |
+|---|---|
+| Altılı: sonuçlama + kupon kurma | **KAPALI** (K162, K162-EK) |
+| Ganyan kâğıt kuponu (`paper.py`) | **KAPALI** (bu karar, ileriye dönük) |
+| Plase | **KAPATILMAYACAK** — plase eküriyi bağlamıyor (b şıkkı) |
+| `defter.py` `kazandi` (kalibrasyon) | **AÇIK** — BEKLEYENLER #28, tetik 25 Eylül sonrası |

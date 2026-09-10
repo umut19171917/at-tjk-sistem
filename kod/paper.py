@@ -119,6 +119,35 @@ def kupon_uret(kosu_tg, tarih, pist):
 
 
 # ----------------------------- sonuclama -----------------------------
+def _ekuri_gruplari_sonuc(k):
+    """K162: sonuc feed'indeki bir kosunun EKURI (bagli at) gruplari -> [{no, no}, ...].
+
+    KURAL iki kapili (altili_canli.kazananlar_kumesi ile AYNI kural):
+      1) grupta >=2 KOSAN at olmali (KOSMAZ False) -- biri cekildiyse ortada baglilik kalmaz;
+      2) o atlarin GANYAN'i birebir ayni ve bos olmamali -- bagli atlar tek birim fiyatlanir
+         (2026 verisinde 1.014/1.015 grup boyle). Oran ayrisiyorsa baglilik kopmus sayilir ve
+         genisletme YAPILMAZ. Kapi bilerek muhafazakar: sasarsa sicili sismektense eksik gosterir.
+
+    KAPSAM: yalniz GANYAN. Plase ekuriyi baglamaz (bkz. sonucla_paper'daki plase dalindaki not).
+
+    NOT (kasitli kopya): ayni kural altili_canli.py'de de duruyor. Import EDILMEDI -- ganyan
+    kagit akisi Altili akisina bagimli olmasin, biri kirilirsa digeri ayakta kalsin. Kural
+    degisirse IKI YERDE birden degismeli; tek kaynak K162'dir."""
+    grp, oran = {}, {}
+    for a in k.get("atlar", []):
+        e = a.get("EKURI")
+        if e in (False, "False", None) or str(a.get("KOSMAZ", "")).lower() in ("true", "1"):
+            continue
+        try:
+            no = int(a.get("NO"))
+        except (TypeError, ValueError):
+            continue
+        grp.setdefault(str(e), set()).add(no)
+        oran.setdefault(str(e), set()).add(str(a.get("GANYAN") or "").strip())
+    return [v for e, v in grp.items()
+            if len(v) >= 2 and len(oran.get(e, set())) == 1 and "" not in oran.get(e, set())]
+
+
 def sonucla_paper():
     """Acik kuponlari sonuclar feed'iyle kapatir. Doner: kapatilan kupon sayisi."""
     b = _oku()
@@ -153,6 +182,8 @@ def sonucla_paper():
                              str(a.get("KOSMAZ", "")).lower() in ("true", "1"))
             if not atlar or all(pd.isna(v[0]) and not v[2] for v in atlar.values()):
                 continue                                    # kosu henuz sonuclanmamis
+            ekuri_gruplari = _ekuri_gruplari_sonuc(k)        # K162: GANYAN icin (plase icin DEGIL)
+            kazananlar = {n for n, v in atlar.items() if pd.notna(v[0]) and v[0] == 1}
             for i in idx:
                 no = int(b.at[i, "at_no"])
                 mik = float(b.at[i, "miktar"])
@@ -160,10 +191,21 @@ def sonucla_paper():
                 if kosmaz or no not in atlar:
                     b.at[i, "getiri"], b.at[i, "durum"] = mik, "iptal"      # iade
                 elif b.at[i, "tur"] == "ganyan":
-                    kaz = pd.notna(son) and son == 1
+                    # K162: EKURI ganyanda TEK BAHIS BIRIMIDIR -- bagli ortak kazandiysa bizim
+                    # biletimiz de oder. Odeme tutari degismez: bagli atlarin GANYAN'i AYNIDIR
+                    # (zaten _ekuri_gruplari_sonuc'un kapisi bunu sart kosuyor), yani asagidaki
+                    # `gan` hem bizim atin hem ortagin fiyatidir.
+                    kaz = (pd.notna(son) and son == 1) or any(
+                        no in gr and (kazananlar & gr) for gr in ekuri_gruplari)
                     b.at[i, "getiri"] = round(mik * gan, 2) if (kaz and gan) else 0.0
                     b.at[i, "durum"] = "kazandi" if kaz else "kaybetti"
                 else:                                       # plase
+                    # K162 -- DIKKAT, BURAYA EKURI EKLEME. Plase ekuriyi BAGLAMIYOR; olculdu:
+                    # kosu 222444'te ayni ekuri grubundaki #1 ve #3'un plase odemeleri 2,80 ve
+                    # 17,30 (bagli olsa tek fiyat olurdu); ayni kosuda GANYAN ucunde de 3,05 ve
+                    # CIFTE "5. CIFTE(2/1,3,9)" diye ucluyu tek ayak yaziyor. Yani baglilik
+                    # ganyan/coklu-bahiste var, plasede YOK -- her at kendi derecesiyle oder.
+                    # Buraya ekuri eklemek kagit sicilini SISIRIR.
                     if not plase:
                         b.at[i, "getiri"], b.at[i, "durum"] = mik, "iptal"  # havuz yok -> iade
                     elif no in plase:

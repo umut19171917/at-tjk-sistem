@@ -1099,6 +1099,12 @@ eşleniğini tahmin edip **bağlı ortağı** kazandığında ganyan kuponu "kay
 gerçek ganyan bileti öderdi (K162-b'de üç yoldan kanıtlandı: 1.014/1.015 grupta aynı oran,
 `ÇİFTE(x/a,b)` ikili gösterim, üç doğrulanmış koşu).
 
+> **10 EYL GÜNCELLEME (K162-EK2):** `paper.py`'nin ganyan dalı aynı gün kapatıldı (ileriye
+> dönük) — o dosya mühürlü zincire girmiyor. **Bu madde artık YALNIZ `defter.py`'dir** ve
+> eküri boşluğunun sistemde kalan TEK yeridir. Hazır kod var: `paper._ekuri_gruplari_sonuc`
+> aynı iki kapılı kuralı uyguluyor, buraya da o desen taşınacak.
+> **PLASE'YE DOKUNULMAYACAK** — ölçüldü, plase eküriyi bağlamıyor (K162-EK2-b).
+
 **NEDEN ŞİMDİ YAPILMADI:** `kazandi` sütunu **model kalibrasyonunun omurgası** — `plase_model`,
 `agirlik_refit`, `s1_olcum` ve K140-EK'in tüm ROI zinciri onu okuyor. Altılı kupon akışı gibi
 izole değil. 25 Eylül ölçümü mühürlü kodla yapılacak; o kodun girdisini ölçümden **önce**
