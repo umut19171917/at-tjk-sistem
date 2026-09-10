@@ -673,14 +673,22 @@ def kazananlar_kumesi(o):
     for k in o.get("kosular", []):
         rk = _as_int(k.get("KOD"))
         atlar = k.get("atlar", [])
-        grp = {}
+        grp, oran = {}, {}
         for a in atlar:
             e = a.get("EKURI")
             if e not in (False, "False", None) and not a.get("KOSMAZ"):
                 no = _as_int(a.get("NO"))
                 if no is not None:
                     grp.setdefault(str(e), set()).add(no)
-        grp = {e: v for e, v in grp.items() if len(v) >= 2}     # tek kosan kaldiysa baglilik yok
+                    oran.setdefault(str(e), set()).add(str(a.get("GANYAN") or "").strip())
+        # K162-EK: iki kapi birden. (1) grupta >=2 KOSAN at kalmali (biri cekildiyse baglilik
+        # yok). (2) PIYASA da onlari tek birim fiyatlamis olmali: bagli atlarin ganyani AYNI
+        # olur (2026'da 1.014/1.015 grup boyle). Oran ayrisiyorsa veya bossa "ekuri bozuldu"
+        # sayilir ve genisletme YAPILMAZ. Bu kapi bilerek MUHAFAZAKAR: sasarsa kendi sicilimizi
+        # sisirmek yerine eksik gosterir. Arsivde etkisi 187 genisletmenin 1'i (o da bos oran
+        # alani, gercek kopma degil) -- yani bedavaya alinan bir emniyet.
+        grp = {e: v for e, v in grp.items()
+               if len(v) >= 2 and len(oran.get(e, set())) == 1 and "" not in oran.get(e, set())}
         for a in atlar:
             s = pd.to_numeric(a.get("SONUC"), errors="coerce")
             if pd.notna(s) and int(s) == 1:

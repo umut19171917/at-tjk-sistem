@@ -6691,3 +6691,23 @@ görünürken alttaki cetvelde tik diğer numarada olacak — **bilinen, kabul e
 TJK eküri bağlılığını kaldırırsa (ya da bir koşuda "eküri bozuldu" ilan edilirse) genişletme
 yanlış olur. Nöbetçi ölçü elde: sonuç feed'inde bağlı atların **ganyanı ayrışırsa** bağlılık
 kopmuş demektir (bugün 1.014/1.015 aynı). Bu oran düşerse kural yeniden gözden geçirilir.
+
+**K162-EK — GENİŞLETMEYE İKİNCİ KAPI: piyasa da tek birim fiyatlamamışsa eküri sayılmaz.**
+10 Eyl 2026, kullanıcı *"bundan sonra eküriler sorunu çözüldü mü kesin olarak"* diye sorunca
+kalan sessiz başarısızlık modu arandı ve kapatıldı.
+
+**RİSK:** K162'nin ilk hâli `EKURI` grup kimliğine **koşulsuz** güveniyordu. TJK bir koşuda
+bağlılığı bozar ama alan kimliğini feed'de bırakırsa, tutmayan bir ayağı **tutmuş sayardık** —
+yani kendi sicilimizi şişirirdik. Bu projede yanılma yönü her zaman aleyhimize olmalı.
+
+**KAPI:** genişletme artık iki şartı birden ister — (1) grupta ≥2 **koşan** at, (2) o atların
+sonuç feed'indeki **ganyanı birebir aynı ve boş değil**. Bağlı atlar tek birim fiyatlanır
+(2026'da 1.014/1.015 grup böyle); oran ayrışıyorsa bağlılık kopmuş demektir.
+
+**BEDELİ ÖLÇÜLDÜ, BEDAVA:** arşivde genişletmenin fiilen çalıştığı **187** grubun yalnız
+**1'inde** kapı devreye girerdi (07.06 İSTANBUL 225456, #12'nin oran alanı BOŞ — gerçek kopma
+değil, veri boşluğu). Yani emniyet, ölçüme hiçbir şey kaybettirmeden alındı.
+Doğrulama: oran ayrışık ve boş-oran senaryolarının ikisinde de genişletme yapılmıyor (birim test).
+
+**NÖBETÇİ ÖLÇÜ:** "aynı oranlı eküri grubu / tüm eküri grupları" oranı bugün 1.014/1.015.
+Bu oran belirgin düşerse TJK bağlılık kuralını değiştirmiş demektir → K162 yeniden açılır.
