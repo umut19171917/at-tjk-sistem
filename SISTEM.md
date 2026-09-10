@@ -179,9 +179,22 @@ yalnız bilgi amaçlı gösterilir.
 | **TJK Veri Commit** | haftalık (Pzt 22:45) | `kod/veri_commit.py` |
 
 `takip.py` her geçişte: günün ilk geçişinde arşivi günceller → vadesi gelen koşuları işler
-(posta−5 dk) → Altılı kuponlarını kurar (dk grubuna göre) → oran_log'a yazar → tüm koşular
-bitip son postadan 40 dk geçince `defter.sonucla()` + `altili_canli.sonucla_altili()`
-(günde bir kez, marker ile). **Durumsuzdur** (K49): çökerse sonraki geçiş kaldığı yerden sürer.
+(posta−5 dk) → Altılı kuponlarını kurar (dk grubuna göre) → **Altılı ayaklarını gün içinde
+sonuçlar (K163)** → oran_log'a yazar → tüm koşular bitip son postadan 40 dk geçince
+`defter.sonucla()` + `altili_canli.sonucla_altili()` (günde bir kez, marker ile).
+**Durumsuzdur** (K49): çökerse sonraki geçiş kaldığı yerden sürer.
+
+> **K163 — ALTILI AYAKLARI GÜN İÇİNDE SONUÇLANIR.** Eskiden sonuçlama yalnız gün sonu
+> kapısına bağlıydı; ölçüldü, ayaklar **gün içinde medyan 2,7 saat** (1. ayak ort. 3,8 sa)
+> bekliyordu. Artık kupon kurma bloğunun ardında **ayrı ve try/except ile izole** bir erken
+> çağrı var: `altili_canli.sonuclanabilir_var()` → True ise `sonucla_altili()`.
+> Ön-kontrol **yan etkisizdir** (yalnız CSV okur) ve postası 15 dk önce geçmiş **ama 12 saatten
+> yeni** açık ayak arar — üst sınır, feed'den hiç gelmeyen takılı ayakların (K54/K155) her
+> geçişte 28 sn'lik `html_yaz`'ı boşa çalıştırmasını engeller; onlar gün sonunda denenir.
+> **Gün sonu kapısı ve `defter.sonucla()` DEĞİŞMEDİ** — erken yol yalnızca bir fırsat ekler,
+> son emniyet olarak gün sonu yerinde durur. `_yaz` bu yüzden **atomik** yapıldı
+> (`.tmp` → `os.replace`): yazma sıklığı arttı ve `altili_kupon.csv` telafisi olmayan veridir (K150).
+> Hiçbir satır değişmediyse (`dolan == 0`) dosya yeniden yazılmaz.
 
 **Çift tıklama araçları:**
 

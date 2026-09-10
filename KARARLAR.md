@@ -6770,3 +6770,82 @@ Doğrulama: 10 kontrolün tamamı geçti (bilinen üç koşuda grup doğru; oran
 | Ganyan kâğıt kuponu (`paper.py`) | **KAPALI** (bu karar, ileriye dönük) |
 | Plase | **KAPATILMAYACAK** — plase eküriyi bağlamıyor (b şıkkı) |
 | `defter.py` `kazandi` (kalibrasyon) | **AÇIK** — BEKLEYENLER #28, tetik 25 Eylül sonrası |
+
+---
+
+**K163 — AYAK SONUÇLARI ARTIK GÜN SONUNU BEKLEMİYOR. Gün sonu kapısına DOKUNULMADI;
+öncesine bir fırsat eklendi.** 10 Eyl 2026. Kullanıcı: *"altılı takibe ayak ve kupon sonuçları
+neden geç işleniyor"* → ölçüldü → *"sisteme hiç zarar vermeden yap"*.
+
+## (a) NEDEN GEÇTİ — tek satırlık sebep
+
+`kod/takip.py`'de sonuçlama **günde bir kez**, üç şart birden dolunca çalışıyordu:
+`not bekleyen` (günün TÜM koşuları işlendi) **ve** `"SONUCLA" not in done` **ve**
+`now > son_post + 40 dk`. Yani ayak ayak değil, **kart bitince toptan**. Bir koşunun sonucu
+feed'de dakikalar içinde hazır olduğu hâlde akşama kadar okunmuyordu.
+
+Sebebi tarihsel: `sonucla_altili` kendi başına değil, **`defter.sonucla()`'nın üstüne
+bindirilmişti** ([[K53]]). Defter gün sonu mutabakatı yapan bir iş; Altılı o trene binince
+onun takvimini de miras almıştı.
+
+## (b) NE KADAR GEÇ — ölçüldü (5.850 sonuçlanmış ayak)
+
+| | |
+|---|---|
+| Aynı gün sonuçlanan | **%99,8** (12 satır ertesi güne kaldı) |
+| **Gün içi bekleme** (ayak bitti → pencere açıldı) | medyan **2,7 saat** · en çok **5,7 saat** |
+| 1. ayak (kuponun ilk ayağı) | ortalama **3,8 saat** |
+| 6. ayak | ortalama **1,3 saat** |
+
+Yani şikâyet doğruydu ve **gecikme yapısaldı**: erken ayaklar en çok bekliyordu — kupon
+1. ayağı 14:00'te tutmuş olsa bile sayfada akşama kadar "bekleniyor" görünüyordu.
+Günü aşan tek vaka **21 Temmuz ANKARA** (12 satır) — K54'te kayıtlı feed arızası günü,
+`bekleyen` hiç boşalmadığı için kapı açılmamış, ertesi akşam yakalanmıştı.
+
+## (c) NE YAPILDI — gün sonu kapısı KORUNARAK
+
+1. **`sonuclanabilir_var(gecikme_dk=15, pencere_saat=12)` (YENİ, altili_canli)** — ucuz,
+   **yan etkisiz** ön-kontrol: yalnız CSV okur, ağ isteği ve yazma yok. Postası 15 dk önce
+   geçmiş **ama 12 saatten yeni** açık ayak varsa True.
+   **Üst sınır neden var:** feed'den hiç gelmeyen takılı ayaklar (K54/K155 tipi) aksi hâlde
+   sonsuza dek "sonuçlanabilir" görünür ve her geçişte **28 saniyelik** `html_yaz`'ı boşa
+   çalıştırırdı. Onlar gün sonu çağrısında zaten deneniyor.
+2. **`takip.py`'ye AYRI ve İZOLE erken çağrı** — kupon kurma bloğunun ardına, kendi
+   try/except'i içinde. **Gün sonu bloğu tek karakter değişmedi**; `defter.sonucla()` aynen
+   gün sonunda, günde bir kez, marker'lı çalışmaya devam ediyor.
+3. **`_yaz` ATOMİK yapıldı** (`.tmp` → `os.replace`). Gerekçe: yazma sıklığı günde 1'den
+   ~koşu başına 1'e çıktı ve `altili_kupon.csv` **telafisi olmayan** veridir ([[K150]]).
+   Yarım yazım riski sıfırlandı — bu, K136/K137/K139'un standardının bu dosyaya uygulanmasıdır.
+   **Üç çağrı yerini birden korur** (kupon upsert dahil), yani mevcut yol da güvenlendi.
+4. **`dolan == 0` ise CSV'ye YAZILMAZ.** Feed'i henüz yayınlanmamış koşu yüzünden boş geçen
+   turlarda 1 MB'lik dosya boşuna yeniden yazılmıyor.
+
+## (d) ÇALIŞAN SİSTEME ZARAR GELMEDİĞİ — kanıtlandı
+
+1. **`kod/ast_diff.py`:** değişen bloklar tam olarak `takip.py::gecis()`, `_yaz()`,
+   `sonucla_altili()` ve YENİ `sonuclanabilir_var()`. **`defter.py` "hepsi AYNI"** →
+   25 Eylül'ün mühürlü ölçüm zinciri (`s1_olcum` → `defter.csv`) etkilenmedi.
+   `paper.py`, `altili_backtest.py` ve kupon kuran yol (`kupon_hazirla`, `kupon_zamani_kur`)
+   da **"hepsi AYNI"**.
+2. **`_yaz` çıktısı BİREBİR aynı:** yeni atomik yazım canlı dosyayla **609.754 = 609.754 bayt**,
+   bayt bayt özdeş. Artık `.tmp` da geride bırakılmıyor.
+3. **Gün sonu kapısı metin olarak sınandı** — koşul, `defter.sonucla()` ve gün sonu
+   `sonucla_altili()` çağrısı aynen duruyor.
+4. **15 kontrolün tamamı geçti**, pencere sınırları dahil (5 dk → False, 20 dk → True,
+   6 saat → True, 20 saat → False, saat çözülemedi → True/muhafazakâr).
+5. **CANLI KANIT (10 Eyl 21:20):** İZMİR 2. Altılı 5. ayak 21:00'de koştu; ön-kontrol True
+   döndü, sonuçlama çalıştı ve **7 ayak (7 config) anında işlendi**. Eski davranışta bu ayak
+   6. ayağın (21:30) bitişi + 40 dk'yı, yani ~22:10'u bekleyecekti.
+
+## (e) BEDELİ, AÇIKÇA
+
+Sonuçlamanın çalıştığı her turda `html_yaz` **~28 saniye** sürüyor (sayfanın kendisi 2,7 MB,
+her Altılı için at-bazlı arama yapıyor). Ön-kontrol sayesinde bu kabaca **koşu başına bir kez**
+oluyor — günde ~6-9 tur, toplam ~4 dakika CPU. Görev aralığı 15 dk olduğu için sıkışma yok.
+Ağ maliyeti: açık ayağı olan (tarih,pist) başına 1 ek sonuç isteği.
+
+## (f) BU KARARI NE ÇÜRÜTÜR
+
+`html_yaz` süresi sayfa büyüdükçe artıyor (2,7 MB / 28 sn). 15 dakikalık görev penceresini
+zorlamaya başlarsa iki çıkış var: sayfayı sayfalamak, ya da `html_yaz`'ı erken sonuçlamadan
+ayırıp yalnız gün sonunda üretmek. Bugün sorun yok, **ölçü budur: 28 sn / 900 sn.**

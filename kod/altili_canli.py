@@ -22,6 +22,7 @@ Kullanim:
     python altili_canli.py --html                                 # sadece HTML'i tazele + ac
 """
 import argparse
+import os
 import re
 import sys
 from datetime import date, datetime, timedelta
@@ -174,7 +175,17 @@ def _oku():
 
 
 def _yaz(df):
-    df.to_csv(KUPON, index=False, encoding="utf-8", columns=KOL)
+    """K163: ATOMIK yazim (once .tmp, sonra os.replace).
+
+    NEDEN: sonuclama artik gun sonunu beklemeden her geciste calisabiliyor -> bu dosyaya
+    yazma sikligi gunde 1'den gun icinde ~kosu basina 1'e cikti. `altili_kupon.csv`
+    TELAFISI OLMAYAN veridir (K150: kupon ANINDAKI secim; arsivden yeniden uretilemez).
+    Dogrudan to_csv sirasinda surec olurse dosya YARIM kalirdi. os.replace ayni disk
+    biriminde atomiktir -> okuyan taraf ya eski ya yeni tam dosyayi gorur, yarimini asla.
+    K136/K137/K139'da kullanilan standardin bu dosyaya uygulanmasidir."""
+    tmp = KUPON.with_name(KUPON.name + ".tmp")
+    df.to_csv(tmp, index=False, encoding="utf-8", columns=KOL)
+    os.replace(tmp, KUPON)
 
 
 def _kupon_ani_yaz(satirlar):
@@ -736,6 +747,37 @@ def yeniden_sonucla():
     return degisen
 
 
+def sonuclanabilir_var(gecikme_dk=15, pencere_saat=12):
+    """K163: GUN SONUNU beklemeden sonuclama yapmaya deger mi? (ucuz on-kontrol, YAN ETKISIZ)
+
+    True doner ancak: postasi `gecikme_dk` dakika once gecmis AMA `pencere_saat` saatten
+    daha yeni, henuz sonuclanmamis bir ayak varsa. Yalnizca CSV okur; ag istegi yok, yazma yok.
+
+    NEDEN UST SINIR (pencere_saat) VAR: feed'den hicbir zaman gelmeyen takili ayaklar
+    (K54'un 21 Tem feed arizasi, K155'in kacan kosulari) aksi halde SONSUZA DEK
+    "sonuclanabilir" gorunur ve her geciste 28 saniyelik html_yaz'i bosa calistirirdi.
+    Onlar GUN SONU cagrisinda zaten deneniyor; bu on-kontrol yalnizca "az once bitmis kosu"
+    icindir. Ayni yaris gunu icinde her sey bu pencerenin icindedir.
+
+    Saat cozulemezse True doner (muhafazakar: sonuclama denesin, karar feed'e kalsin)."""
+    df = _oku()
+    if df.empty:
+        return False
+    acik = df[df["sonuclandi"].isna()]
+    if acik.empty:
+        return False
+    simdi = datetime.now()
+    for _, r in acik.iterrows():
+        try:
+            post = datetime.strptime(f"{r['tarih']} {r['saat']}", "%Y-%m-%d %H:%M")
+        except (ValueError, TypeError):
+            return True
+        gecen = (simdi - post).total_seconds() / 60.0
+        if gecikme_dk <= gecen <= pencere_saat * 60:
+            return True
+    return False
+
+
 def sonucla_altili():
     df = _oku()
     if df.empty:
@@ -770,7 +812,12 @@ def sonucla_altili():
                 df.at[i, "tuttu"] = int(bool(tut))
                 df.at[i, "sonuclandi"] = bugun
                 dolan += 1
-    _yaz(df)
+    # K163: hicbir satir degismediyse YAZMA. dolan==0 <-> tek bir hucre bile degismedi
+    # (yukaridaki dongu ancak kaz.get(rk) doluyken yaziyor ve ayni anda dolan'i artiriyor).
+    # Sonuclama artik gun icinde de calistigi icin, feed'i henuz yayinlanmamis kosu yuzunden
+    # bos gecen turlarda 1 MB'lik telafisi olmayan dosyayi bosuna yeniden yazmak istemiyoruz.
+    if dolan:
+        _yaz(df)
     # RESMI odemeleri (temettu / devir) cache'le: tutmayan kuponlarda da gosterilecek.
     # Yalniz TAMAMLANMIS pencereler icin cek (ag istegi bosa gitmesin).
     try:

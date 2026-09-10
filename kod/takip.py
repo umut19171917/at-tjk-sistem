@@ -273,6 +273,23 @@ def gecis(args):
     except Exception as e:
         _log(f"altili emekli rapor hatasi: {type(e).__name__}: {e}")
 
+    # K163: AYAK SONUCLARINI GUN SONUNU BEKLEMEDEN isle. Olculdu: ayaklarin %99,8'i ayni gun
+    # sonuclaniyordu ama GUN ICINDE medyan 2,7 saat (1. ayak ort. 3,8 sa, en cok 5,7 sa)
+    # bekliyordu -- cunku sonuclama asagidaki gun-sonu kapisina bagliydi (tum kosular bitecek
+    # + son post+40dk). Bu cagri o kapiyi DEGISTIRMEZ, oncesine bir firsat ekler.
+    #   - `sonuclanabilir_var()` ucuz on-kontrol: yalniz CSV okur, ag istegi/yazma yok.
+    #     Postasi 15 dk once gecmis ve 12 saatten yeni acik ayak yoksa hic cagrilmaz.
+    #   - Ayri try/except: buradaki bir hata ne takibi, ne kupon kurmayi, ne de asagidaki
+    #     GUN SONU sonuclamasini etkiler -- gun sonu her sey icin son emniyet olarak DURUYOR.
+    try:
+        import altili_canli
+        if altili_canli.sonuclanabilir_var():
+            n_erken = altili_canli.sonucla_altili()
+            if n_erken:
+                _log(f"altili: {n_erken} ayak GUN ICINDE sonuclandi (K163)")
+    except Exception as e:
+        _log(f"altili erken sonucla hatasi: {type(e).__name__}: {e}")
+
     # K59: ORAN gecmisi kaydi (ileri-yonlu; kupon KURMAZ, sisteme dokunmaz; try-korumali).
     try:
         import oran_log
