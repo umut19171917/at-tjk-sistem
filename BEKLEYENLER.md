@@ -1067,6 +1067,12 @@ ayrı kol açmak K156-d'nin "aynı bahsin iki kopyası" tuzağı olurdu.
 > (a) 6/6 sayısı eşleniğinden **YÜKSEK**, VE
 > (b) eşli ROI farkının **%95 GA'sı tamamen sıfırın üstünde**.
 >
+> **K162 NOTU (10 Eyl 2026) — ölçüt BOZULMADI.** Eküri toplama kuralı bu tarihte devreye girdi
+> (bir ayakta aynı bağlı gruptan ≥2 at seçilmez). Kural **tüm config'lere ve eşleniklerine
+> simetrik** uygulanıyor — `bot2_sabit3` da `acgozlu900` da aynı işlemden geçiyor — dolayısıyla
+> eşli kıyas adil kalır. Kolun 12 kuponunda o tarihe kadar eküri çakışması **hiç olmamıştı**,
+> yani geçmiş örneklem de etkilenmedi. Bu bir ayar düğmesi değil, hata düzeltmesidir.
+>
 > **DÜŞER ve kol KAPANIR:** ikisinden biri tutmuyorsa. "Bir süre daha bakalım" gerekçe değildir.
 >
 > **DAYANIKLILIK KONTROLÜ (kapı değil, tanı):** en büyük tek ödeme çıkarıldığında yön korunuyor
@@ -1082,6 +1088,26 @@ ayrı kol açmak K156-d'nin "aynı bahsin iki kopyası" tuzağı olurdu.
 
 **MALİYET (şeffaflık):** 3 config × ~1-2 kupon/gün × 911 ₺ ≈ günlük 2.700-5.500 ₺ ek kâğıt
 harcaması. Kâğıt para; ama K140-EK'in izlediği toplamları büyütür → **config bazında okunmalı**.
+
+### 28. EKÜRİ boşluğu `defter.py`'de DURUYOR — kalibrasyon zincirini etkiliyor
+**Eklendi:** 2026-09-10 (K162'nin kapsam dışı bıraktığı parça) · **TETİK: 25 Eylül sonrası**
+(daha erken değil — `s1_olcum.py`/`agirlik_refit.py` o tarihe kadar **mühürlü**) ·
+**İlgili:** K162, K130, K154
+
+**BOŞLUK:** `kod/defter.py::sonucla` (~satır 288) `kazandi = int(s == 1)` yazıyor — yani eküri
+eşleniğini tahmin edip **bağlı ortağı** kazandığında ganyan kuponu "kaybetti" sayılıyor. Oysa
+gerçek ganyan bileti öderdi (K162-b'de üç yoldan kanıtlandı: 1.014/1.015 grupta aynı oran,
+`ÇİFTE(x/a,b)` ikili gösterim, üç doğrulanmış koşu).
+
+**NEDEN ŞİMDİ YAPILMADI:** `kazandi` sütunu **model kalibrasyonunun omurgası** — `plase_model`,
+`agirlik_refit`, `s1_olcum` ve K140-EK'in tüm ROI zinciri onu okuyor. Altılı kupon akışı gibi
+izole değil. 25 Eylül ölçümü mühürlü kodla yapılacak; o kodun girdisini ölçümden **önce**
+değiştirmek ön-kayıt disiplinini bozar (K33/K52).
+
+**YAPILDIĞINDA ÖLÇÜLECEK:** kaç ganyan tahmini eküri yüzünden "kaybetti" yazılmış, düzeltilince
+ganyan ROI'si ve kalibrasyon (log-loss, α/γ) ne kadar oynuyor. Altılı tarafındaki karşılığı
+küçüktü (10 ayak, 0 kaçan ödül) — burada da küçük çıkması beklenir, ama **ölçülmeden
+varsayılmaz**.
 
 ---
 

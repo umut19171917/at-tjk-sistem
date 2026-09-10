@@ -110,6 +110,15 @@ Dört dağıtıcı (`kod/altili_backtest.py` — tek kaynak, canlı ve backtest 
 | `ayrisma` | K68. Açgözlünün ayrışma-ağırlıklı hali: `kazanç × (1 + w·D_i)`, D = bot1 ile kamunun toplam değişim uzaklığı. `AYRISMA_W = 1,0` **sabit ve taranmadı** (overfit yasağı). |
 | `kalibre` | K92. Uzak ayakların olasılık vektörünü ölçülmüş λ ile düzleştirir: `p^λ` normalize, sonra açgözlü. `LAM_UZAK=0,65`, `LAM_YAKIN=1,0`, `UZAK_ESIK_DK=75`. |
 
+> **EKÜRİ TOPLAMA (K162, 10 Eyl 2026) — dağıtıcıdan SONRA, hepsine ortak.** TJK'da aynı sahibin
+> bağlı atları **tek bahis birimidir**: biri kazanınca grubun her numarası ayağı tutturur, ve
+> ikisini birden yazmak ikinci slotu boşa harcar. `_ekuri_topla` her ayakta aynı gruptan ≥2 at
+> varsa config'in **kendi puan vektörüne** göre en yükseğini tutar, boşalan slota sıradaki uygun
+> atı alır → **genişlik, kombinasyon ve bedel değişmez** (sabit-3 yine 729). Gruplar ayağın at
+> tablosundaki `ekuri` sütunundan okunur (program feed'inin `EKURI` alanı; yalnız koşan atlar).
+> Sonuçlama tarafında `kazananlar_kumesi` de kazanan kümesini eküri grubuyla genişletir.
+> Tek noktada uygulanır → tüm config'ler ve eşlenikleri **simetrik** kalır.
+
 ### Aktif config'ler (K100 + K105 + K160 + K161)
 
 | config | kapsam | kombo | dağıtım | puan | aile | **dk** | durum |

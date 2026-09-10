@@ -236,6 +236,63 @@ def _as_int(x):
         return None
 
 
+# ----------------------------- EKURI (K162) -----------------------------
+def _ekuri_gruplari(g):
+    """K162: bir ayagin at tablosundan EKURI (bagli at) gruplari -> [{no, no}, ...].
+
+    g, kupon_hazirla'nin ayak tablosudur: YALNIZ kosan ve puanlanmis atlari icerir. Kaynak
+    bilerek budur -- cekilen at zaten g'de yoktur, yani "ikilinin biri cekildi, baglilik kalmadi"
+    durumu kendiliginden dogru cozulur. Tek kosani kalan grup DONMEZ (baglilik iki ata gerek duyar.)
+    `ekuri` sutunu program feed'inden gelir (gunluk.py: a.get("EKURI")); yeni veri cekilmez."""
+    if "ekuri" not in g.columns:
+        return []
+    grp = {}
+    for _, r in g.iterrows():
+        e = str(r.get("ekuri"))
+        if e in ("1", "2", "3", "4", "5", "6"):
+            no = _as_int(r.get("no"))
+            if no is not None:
+                grp.setdefault(e, set()).add(no)
+    return [v for v in grp.values() if len(v) >= 2]
+
+
+def _ekuri_topla(sec, puanlar, gruplar):
+    """K162: bir ayakta ayni EKURI grubundan >=2 at secildiyse fazlaligi at, yerine sonraki ati al.
+
+    NEDEN: ekuri TEK bahis birimidir -- ikisini birden yazmak ikinci slotu BOSA harcar. Canli
+    sicilde bu 382 ayakta / 323 kuponda olmus. Genis config'lerde ~4 atlik ayakta 1 slot israfi;
+    SABIT-3'te o ayak fiilen 2 ata duser (%33 genislik kaybi).
+
+    KURAL: gruptan config'in KENDI puan vektorune gore en yuksek olan kalir (bot1 config'leri
+    bot1 puaniyla, bot2 config'leri bot2 ile -- `puanlar` zaten dagiticiya verilen vektordur).
+    Bosalan slota, o ayagin bir sonraki en yuksek puanli, henuz secilmemis ve zaten temsil edilen
+    bir ekuri grubuna AIT OLMAYAN ati gelir. Ayak genisligi (dolayisiyla kombinasyon ve bedel)
+    boylece korunur; sabit-3 yine tam 729 kalir.
+    Yerine konacak uygun at kalmadiysa ayak bir at daralir -- bu dogrudur, ortada gercekten o
+    kadar AYRI sonuc vardir. Ekuri grubu olmayan ayaklarda fonksiyon secimi AYNEN dondurur."""
+    if not gruplar or not any(gruplar):
+        return sec
+    yeni = []
+    for ai, secili in enumerate(sec):
+        s = set(secili)
+        gr_ai = gruplar[ai] if ai < len(gruplar) else []
+        if gr_ai:
+            puan = {no: p for no, p in puanlar[ai]}
+            sirali = [no for no, _ in sorted(puanlar[ai], key=lambda x: -x[1])]
+            for grup in gr_ai:
+                while len(s & grup) >= 2:
+                    s.discard(min(s & grup, key=lambda n: puan.get(n, 0.0)))
+                    for aday in sirali:                     # bosalan slotu doldur
+                        if aday in s:
+                            continue
+                        if any(aday in gr and (s & gr) for gr in gr_ai):
+                            continue                        # temsil edilen gruba ikinci at olmaz
+                        s.add(aday)
+                        break
+        yeni.append(s)
+    return yeni
+
+
 # ----------------------------- kupon hazirla -----------------------------
 def kupon_hazirla(pist, ymd, tarih, sadece_seq=None, sadece_cfg=None, dk_grup=30):
     """Pistin canli kartini puanla (Ingiliz+Arap), Altili pencereleri icin dar+orta kupon kur,
@@ -265,6 +322,7 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None, sadece_cfg=None, dk_grup=30
         # her ayagin (no, bot2) VE (no, bot1) listesi + ayrisma skoru
         # -- Bot2'si olmayan ayak varsa pencere ATLANIR (eskisi gibi)
         ayak_atlari, ayak_bot1, ayak_ayr, ayak_meta, eksik = [], [], [], [], False
+        ayak_ekuri = []                       # K162: her ayagin EKURI gruplari (bosa yazmayi onler)
         ayak_tablo = []                       # K97: ayagin kupon anindaki TAM tablosu
         for k in pencere:
             kno = _as_int(k.get("RACENO") or k.get("NO"))
@@ -276,6 +334,7 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None, sadece_cfg=None, dk_grup=30
             atlar = [(int(r["no"]), float(r["bot2"])) for _, r in g.iterrows()]
             ayak_atlari.append(atlar)
             ayak_tablo.append(g)
+            ayak_ekuri.append(_ekuri_gruplari(g))   # K162: g yalniz kosan+puanli atlari icerir
             # K67/K68: bot1 ve kamu ayni satirlarda; biri eksikse o config sessizce atlanir
             b1 = pd.to_numeric(g["bot1"], errors="coerce")
             km = pd.to_numeric(g["kamu"], errors="coerce")
@@ -349,6 +408,10 @@ def kupon_hazirla(pist, ymd, tarih, sadece_seq=None, sadece_cfg=None, dk_grup=30
                 sec = kupon_kur_esit(puanlar, ay.get("k", 3))
             else:
                 sec = kupon_kur(puanlar, ay["kapsam"], maxk, BANKER_ESIK)
+            # K162: EKURI toplama -- ayni bagli gruptan iki at yazmak ikinci slotu bosa harcar.
+            # TUM dagiticilardan SONRA, tek noktada uygulanir (her config ayni kurala tabi;
+            # sabit-3 ile eslenigi acgozlu900 arasindaki kiyas simetrik kalir, BEKLEYENLER #27).
+            sec = _ekuri_topla(sec, puanlar, ayak_ekuri)
             if any(len(s) == 0 for s in sec):      # dagitici bos donduyse yazma (bozuk satir olmasin)
                 print(f"  {seq}. Altili / {cfg}: secim uretilemedi -> atlandi")
                 continue
@@ -594,16 +657,39 @@ def kupon_zamani_kur(pistler, ymd, tarih, dk_kala=None):
 # ----------------------------- sonucla -----------------------------
 def kazananlar_kumesi(o):
     """K64: Sonuc JSON'dan race_kod -> {kazanan NO'lari}. BASABAS (dead heat) -> birden cok NO
-    (ayni kosuda >1 at SONUC=1). Bir ayak, bu kumeden HERHANGI biri secimimizde varsa tutar."""
+    (ayni kosuda >1 at SONUC=1). Bir ayak, bu kumeden HERHANGI biri secimimizde varsa tutar.
+
+    K162: EKURI (bagli at) kazanan kumesine KATILIR. TJK'da ayni sahibin bagli atlari TEK bahis
+    birimidir: biri kazandiysa grubun her numarasi o ayagi tutturur. Uc bagimsiz kanit (2026
+    verisi): (a) sonuc feed'indeki 1.015 ekuri grubunun 1.014'unde kosan atlarin ganyani BIREBIR
+    ayni; (b) coklu bahisler ikili yaziliyor -- "2. CIFTE(3/1,12)", "6. CIFTE(7/2,5)",
+    "1. 3'LU GANYAN(2/3/3,5)"; (c) dogrulanan ornekler 226469 (#6-#9, 2,30), 226681 (#5-#3,
+    3,15), 227034 (#5-#2, 2,45).
+    Grup YALNIZ KOSAN atlardan kurulur (KOSMAZ False): ikilinin biri cekildiyse ortada baglilik
+    kalmaz, genisletme yapilmaz. Kosup dereceye giremeyen at (SONUC bos) gruba DAHILDIR --
+    bahis birimi kosuya cikmasiyla olusur (226681'de #6 boyleydi, ganyani #14 ile ayniydi).
+    Geriye donuk etkisi yoktur: sonucla_altili() yalniz sonuclandi'si bos satirlara dokunur."""
     kaz = {}
     for k in o.get("kosular", []):
         rk = _as_int(k.get("KOD"))
-        for a in k.get("atlar", []):
+        atlar = k.get("atlar", [])
+        grp = {}
+        for a in atlar:
+            e = a.get("EKURI")
+            if e not in (False, "False", None) and not a.get("KOSMAZ"):
+                no = _as_int(a.get("NO"))
+                if no is not None:
+                    grp.setdefault(str(e), set()).add(no)
+        grp = {e: v for e, v in grp.items() if len(v) >= 2}     # tek kosan kaldiysa baglilik yok
+        for a in atlar:
             s = pd.to_numeric(a.get("SONUC"), errors="coerce")
             if pd.notna(s) and int(s) == 1:
                 no = _as_int(a.get("NO"))
                 if no is not None:
                     kaz.setdefault(rk, set()).add(no)
+                    for v in grp.values():
+                        if no in v:
+                            kaz[rk] |= v
     return kaz
 
 

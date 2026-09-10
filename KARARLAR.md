@@ -6588,3 +6588,106 @@ Bu emeklilikle canlıda **`kapsam` dağıtıcısı kalmadı** (K100 onu `orta` i
 sicilde artık ölçülmüyor; K57/K88'in bu bantla ilgili bulguları arşiv testlerinde donuyor.
 Geri açmak **tek bayrak** meselesidir (`"aktif": True`) ve sicil kesintisiz devam eder —
 config satırları silinmedi. Sabit-3 (729 kombo, ~911 ₺) bu bandın yerine geçmez; farklı bir soru.
+
+---
+
+**K162 — EKÜRİ (bağlı at) TESPİTİ SİSTEME GİRDİ: sonuçlamada kazanan kümesine katılıyor,
+kupon kurarken ikinci slotu boşa harcaması engelleniyor.** 10 Eyl 2026.
+
+Kullanıcı bir ayakta eküri fark etti ve sordu: *"sistem parametrelerimizde eküri tespiti yok mu.
+… eküri tespiti eksik olduğu için tutmamış olarak kaydedilen koşular ve kuponlar var mı. ve eküri
+tespiti yapılmadığı için ekürileri birlikte yazan ayaklar var mı"*. Önce ölçüldü, sonra yazıldı.
+
+## (a) BULGU: veri elimizdeydi, kimse okumuyordu
+
+`veri/katilim.csv`'de **`ekuri` sütunu var** (39. sütun; 354.461 at-satırının **%5,8'i** bir eküri
+grubunda) ve `kod/gunluk.py:149` + `kod/duzlestir.py:177` bunu program feed'inin `EKURI` alanından
+dolduruyor. **Ama hiçbir kod tüketmiyordu:** ne `kazananlar_kumesi` (yalnız `SONUC == 1`), ne
+dağıtıcılar. Yani eksik olan **veri değil, o veriyi okuyan satırdı.** Yeni kazıma gerekmedi.
+
+## (b) TJK'da eküri GERÇEKTEN bağlı — üç bağımsız kanıt
+
+Kullanıcının öncülü doğrulanmadan kabul edilmedi; 2026 verisinden üç ayrı yoldan sınandı:
+
+1. **Aynı ganyan oranı:** sonuç feed'indeki **1.015** eküri grubunun **1.014'ünde** koşan atların
+   ganyanı birebir aynı. Tek istisna boş oran alanı (veri boşluğu, bağlılık kopması değil).
+2. **Çoklu bahisler ikili yazılıyor:** `2. ÇİFTE(3/1,12)` · `6. ÇİFTE(7/2,5)` ·
+   `1. 3'LÜ GANYAN(2/3/3,5)` — kazanan ayak, eküri çifti olarak kaydediliyor.
+3. **Doğrulanan örnekler:** 226469 (#6-#9, ikisi de 2,30) · 226681 (#5-#3, ikisi de 3,15) ·
+   227034 (#5-#2, ikisi de 2,45).
+
+## (c) GEÇMİŞTE NE OLDU — ölçüldü, iki ayrı zarar
+
+**(A) "Tutmadı" yazılan ama gerçekte tutan ayak: 10 satır / 3 koşu.**
+
+| tarih | koşu | gerçek kazanan | bizim yazdığımız | etkilenen config |
+|---|---|---|---|---|
+| 29.07 İSTANBUL 2.Altılı ayak5 | 226469 | #6 | #9 | dar, orta |
+| 09.08 İZMİR 1. ve 2.Altılı | 226681 | #5 | #3 | dar, orta, geniş |
+| 28.08 İSTANBUL 2.Altılı ayak4 | 227034 | #5 | #2 | orta, orta_15, bot1_900, bot1_1800 |
+
+**KAÇAN ÖDÜL YOK — bu ölçüldü, varsayılmadı.** Tüm sicil eküri-genişletilmiş kazanan kümesiyle
+yeniden hesaplandı: **hiçbir kupon 6/6'ya dönmüyor.** En iyi sonuç 28.08 İSTANBUL'da
+`bot1_900`/`bot1_1800`/`orta_15` için **0/6 → 5/6**, `orta` için 0/6 → 4/6 — ve 5/6 ödeme yapmaz
+([[K52]]). Etkilenen tek büyüklük **ayak isabeti** (hafif düşük kayıtlanmış).
+
+**(B) Eküri ikilisini aynı ayağa boşa yazma: 378 ayak / 323 kupon** (382 grup-örneği; bir ayakta
+iki grup birden çakışabiliyor). Config kırılımı (ayak): acgozlu900 93 · acgozlu_v2 62 ·
+acgozlu900_15 48 · orta 39 · ayrisma900 27 · bot1_900 26 · genis900 23 · genis 18 · orta_15 18 ·
+bot1_1800 16 · dar 12. Geniş config'lerde ~4 atlık ayakta 1 slot israfı; **sabit-3'te o ayak
+fiilen 2 ata düşer — %33 genişlik kaybı.** Mevcut 12 sabit-3 kuponunda henüz denk gelmemişti.
+
+## (d) KULLANICI KARARLARI (uygulamadan önce soruldu)
+
+1. **Kapsam: sonuçlama + kupon kurma.** Rapor rötuşu YOK.
+2. **Geçmiş: yalnız ileriye dönük.** 10 tarihsel ayak kaydına dokunulmadı.
+
+## (e) NE YAZILDI
+
+- `kazananlar_kumesi` — kazanan kümesi eküri grubuyla genişletilir. Grup **yalnız KOŞAN**
+  atlardan kurulur (`KOSMAZ` False): ikilinin biri çekildiyse bağlılık kalmaz, genişletme olmaz.
+  **Koşup dereceye giremeyen at gruba DAHİL** — bahis birimi koşuya çıkmakla oluşur (226681'de
+  #6 böyleydi, ganyanı #14 ile aynıydı). Mevcut başabaş deseniyle birebir aynı: `secilenler & kaz`.
+- `_ekuri_gruplari(g)` (YENİ) — ayağın at tablosundan grupları çıkarır. Kaynak bilerek `g`:
+  yalnız koşan+puanlanmış atları içerdiği için çekilmeler kendiliğinden elenir.
+- `_ekuri_topla(sec, puanlar, gruplar)` (YENİ) — bir ayakta aynı gruptan ≥2 at seçilmişse,
+  **config'in KENDİ puan vektörüne göre** (bot1 config'i bot1 ile) en yükseği kalır; boşalan
+  slota sonraki en yüksek puanlı, seçilmemiş ve temsil edilen bir gruba ait olmayan at gelir.
+  **Ayak genişliği, kombinasyon ve bedel korunur** — sabit-3 yine tam 729.
+- `kupon_hazirla` — dağıtıcı dalının **tamamından sonra tek noktada** çağrılır: her config aynı
+  kurala tabi, dolayısıyla sabit-3 ↔ eşleniği kıyası **simetrik** kalır (BEKLEYENLER #27 bozulmaz).
+
+**Geriye dönük etki yok:** `sonucla_altili()` yalnız `sonuclandi`'sı boş satırlara dokunur.
+`yeniden_sonucla()` (`--duzelt`, elle) aynı yardımcıyı paylaşır — ileride başka bir sebeple
+çalıştırılırsa o 10 ayağı da düzeltir; bu kararda **çalıştırılmadı**.
+
+## (f) ÇALIŞAN SİSTEME ZARAR GELMEDİĞİ — kanıtlandı
+
+1. **`kod/ast_diff.py`:** değişen bloklar tam olarak `_ekuri_gruplari` (YENİ), `_ekuri_topla`
+   (YENİ), `kazananlar_kumesi`, `kupon_hazirla`. **Diğer 11 çekirdek dosyanın tamamı "hepsi AYNI"**
+   — `altili_backtest.py` (dağıtıcılar) ve `defter.py` dahil.
+2. **Tarama (en güçlü kanıt):** `_ekuri_topla` geçmiş **5.976 ayağın tamamı** üzerinde çalıştırıldı
+   → değiştirdiği ayak sayısı **378**, eküri çakışması olan ayak sayısı **378**. Çakışma
+   olmayan **tek bir ayak bile** değişmedi.
+3. **Birim testleri:** üç bilinen koşuda genişletilmiş küme doğru ({6,9}/{5,3}/{5,2}); çekilen
+   ortak katılmıyor; koşup derece alamayan ortak katılıyor; sabit-3 kombinasyonu 729 kalıyor;
+   grup yokken fonksiyon kimlik.
+4. **Dar kapı:** her iki değişiklik de "bu koşuda ≥2 koşan atlı eküri grubu var" koşuluna bağlı.
+   Eküri olmayan koşularda kod yolu birebir eskisi gibi.
+
+## (g) KAPSAM DIŞI — bilerek bırakıldı
+
+`kod/defter.py::sonucla` **aynı boşluğa sahip**: `kazandi = int(s == 1)`, yani eküri eşleniğini
+tahmin edip diğeri kazandığında ganyan kuponu "kaybetti" sayılıyor. Bu, model **kalibrasyonunu**
+ve `plase_model` / `s1_olcum` zincirini besliyor; `s1_olcum` 25 Eylül'e kadar **mühürlü**.
+Dokunulmadı → BEKLEYENLER #28.
+
+**Rapor rötuşu da yapılmadı** (kullanıcı kararı): sıralama satırındaki yeşil kazanan vurgusu
+yalnız fiziksel kazananı işaretlemeye devam ediyor. Eküri ile tutan bir ayakta hücre "tuttu"
+görünürken alttaki cetvelde tik diğer numarada olacak — **bilinen, kabul edilmiş kozmetik.**
+
+## (h) BU KARARI NE ÇÜRÜTÜR
+
+TJK eküri bağlılığını kaldırırsa (ya da bir koşuda "eküri bozuldu" ilan edilirse) genişletme
+yanlış olur. Nöbetçi ölçü elde: sonuç feed'inde bağlı atların **ganyanı ayrışırsa** bağlılık
+kopmuş demektir (bugün 1.014/1.015 aynı). Bu oran düşerse kural yeniden gözden geçirilir.
