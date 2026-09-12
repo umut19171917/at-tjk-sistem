@@ -22,7 +22,12 @@ from pathlib import Path
 
 KOK = Path(__file__).resolve().parent.parent
 KAYNAK = KOK / "KARARLAR.md"
-BASLIK = re.compile(r"^\*\*(K\d+[A-Za-z\-]*)\s*[—-]\s*(.*)$", re.MULTILINE)
+# K165-sonrasi duzeltme (12 Eyl 2026): sonekte RAKAM da olabilir. Eski desen
+# [A-Za-z\-]* idi; "K162-EK2" basliginda `2`'yi yiyemeyip ayirici tireyi bulamiyor ve
+# eslesme dusuyordu -> o karar bu araca GORUNMEZDI (sessizce; hata vermiyordu).
+# "K109'UN ..." gibi cumle baslari hala elenir: kesme isareti sinifta yok, ardindan
+# ayirici tire de gelmiyor.
+BASLIK = re.compile(r"^\*\*(K\d+[A-Za-z0-9\-]*)\s*[—-]\s*(.*)$", re.MULTILINE)
 
 
 def nrm(s: str) -> str:

@@ -1089,6 +1089,44 @@ ayrı kol açmak K156-d'nin "aynı bahsin iki kopyası" tuzağı olurdu.
 **MALİYET (şeffaflık):** 3 config × ~1-2 kupon/gün × 911 ₺ ≈ günlük 2.700-5.500 ₺ ek kâğıt
 harcaması. Kâğıt para; ama K140-EK'in izlediği toplamları büyütür → **config bazında okunmalı**.
 
+### 29. OBSIDIAN — `[[Kxxx]]` bağlantılarının 27'si KIRIK, biçim `karar_ara.py`'ye bağlı
+**Eklendi:** 2026-09-12 (kullanıcı "Obsidian'ı bu projede nasıl doğru kullanırım" diye sordu) ·
+**TETİK: YOK — kullanıcı kararı** · **İlgili:** K49
+
+**ÖLÇÜLEN DURUM:** `KARARLAR.md` içinde **27 adet** `[[K118]]` tarzı wikilink var ve
+**hiçbiri Obsidian'da çözülmüyor** — `K118.md` diye bir not yok, karar girdileri de
+**başlık değil kalın metin** (`**K163 — ...**`), yani başlık-çıpası da tutmuyor. Tıklanırsa
+depo köküne boş not dosyaları üretir. (Hafıza klasöründeki tek kırık link 12 Eyl'de düzeltildi.)
+
+**KRİTİK KISIT — biçim bir MAKİNE SÖZLEŞMESİ:** `kod/karar_ara.py:25`
+`re.compile(r"^\*\*(K\d+[A-Za-z\-]*)\s*[—-]\s*(.*)$", re.MULTILINE)` kullanıyor. Yani
+markdown'ı yeniden biçimlendiren her araç (Obsidian **Linter** eklentisi, format-on-save)
+`karar_ara.py`'yi **sessizce** bozar — hata vermez, kararları bulamaz olur.
+Aynı sebeple `KARARLAR.md` Obsidian'dan **yeniden adlandırılmamalı** (`karar_ara.py`,
+`bekci.py`, `README.md`, `SISTEM.md`, hafıza dosyası hep bu adla anıyor).
+
+**ÜÇ YOL (kullanıcıya sunuldu, seçim yapılmadı):**
+- **A** — dokunma; `python kod/karar_ara.py K118` zaten daha iyisini yapıyor. Kırık linkler
+  yalın metne çevrilir ki yanlışlıkla tıklanıp çöp not üretmesin. **En düşük risk.**
+- **B (önerilen)** — her kalın karar satırının ÜSTÜNE `## K163` başlığı eklenir. Outline'da
+  168 kararın tamamı çıkar, `[[KARARLAR#K163]]` çalışır ve **kalın satıra dokunulmadığı için
+  `karar_ara.py` bozulmaz**. Bedeli: +168 satır, 27 linkin biçim değişimi. Mekanik, geri alınabilir.
+  Doğrulaması hazır: değişiklik öncesi/sonrası `karar_ara.py` aynı 168 kararı buluyor mu.
+
+> **12 EYL — BU MADDE BİR KUSUR ORTAYA ÇIKARDI, DÜZELTİLDİ.** Sayım yapılırken görüldü ki
+> `karar_ara.py` 167 karar çözüyor ama dosyada daha fazla kalın K-satırı var. Sebep: eski desen
+> `K\d+[A-Za-z\-]*` **sonekte rakama izin vermiyordu** → **`K162-EK2` başlığı araca GÖRÜNMÜYORDU**
+> (sessizce; hata vermeden). Desen `[A-Za-z0-9\-]*` yapıldı. Doğrulandı: 167 → **168**, kaybolan
+> kayıt **yok**, yeni eklenen tek kayıt `K162-EK2`, yanlış pozitif yok (`K109'UN ...` gibi cümle
+> başları hâlâ eleniyor). **Ders: numaralandırma şemasını değiştirirken onu okuyan aracı da sına.**
+- **C** — karar başına ayrı not (`K163.md` × 176). Gerçek Obsidian ama `karar_ara.py` ve
+  "KARARLAR.md'yi oku" iş akışı kırılır. **Önerilmiyor.**
+
+**KURULUM NOTU:** `.obsidian/` zaten `.gitignore`'da. Vault = proje kökü; Excluded files'a
+`.venv`, `veri`, `raporlar/gunluk`, `kod/__pycache__` girilmeli. Uyarı: bu ayar aramadan gizler,
+**dosya izlemeyi durdurmaz** — `veri/ham` 1,1 GB olduğu için açılış yavaşlar. `BEKLEYENLER.md`
+zaten `### N.` başlıklı olduğu için Outline'ı bugün de sorunsuz çalışıyor.
+
 ### 28. EKÜRİ boşluğu `defter.py`'de DURUYOR — kalibrasyon zincirini etkiliyor
 **Eklendi:** 2026-09-10 (K162'nin kapsam dışı bıraktığı parça) · **TETİK: 25 Eylül sonrası**
 (daha erken değil — `s1_olcum.py`/`agirlik_refit.py` o tarihe kadar **mühürlü**) ·
