@@ -778,6 +778,73 @@ def sonuclanabilir_var(gecikme_dk=15, pencere_saat=12):
     return False
 
 
+def bildirim_gecisi(df=None, gun=3):
+    """K165: RESMI odemeyi onbellege al ve temettusu ILK KEZ ogrenilen Altili'yi Telegram'dan
+    bildir. Doner: gonderilen bildirim sayisi.
+
+    NEDEN AYRI FONKSIYON: temettu, son ayak sonuclandiktan SONRA yayinlanir. O ana gelindiginde
+    artik "acik ayak" kalmamis olabilir -> `sonucla_altili` bastaki `acik.empty` kapisindan
+    erken doner ve bildirim HIC tetiklenmezdi. Bu yuzden bildirim, sonuclamadan bagimsiz olarak
+    her geciste ayrica cagrilir (takip.py). UCUZDUR: html_yaz CALISTIRMAZ, onbellegi bir kez
+    okur, yalnizca onbellekte OLMAYAN gruplar icin ag istegi yapar.
+
+    NEDEN BOYLE BIR TETIK: eskiden tetik "bu geciste 6 ayagi da tamamlandi" idi. K163
+    sonuclamayi gun sonundan gun ICINE cekince bildirim, TJK Altili temettusunu yayinlamadan
+    once gider oldu -> 12 Eyl IZMIR 1. Altili'da `bot1_sabit3` "6/6 TUTTU" yazdi ama
+    "odul 0,00 TL" dedi; gercek temettu 1.617,56 TL idi ve ~yarim saat sonra dustu.
+    Kupon defteri kendini duzeltir (sayfa temettuyu canli okur) ama GONDERILMIS mesaj duzelmez.
+
+    YENI TETIK "temettu/devir ILK KEZ ogrenildi" ve onbellegin KENDISI bildirim isaretidir --
+    ayri durum dosyasi gerekmez, K49 durumsuzluk ilkesi korunur:
+      zaten onbellekte -> daha once ogrenilmisti, bildirimi yapilmistir -> GEC
+      onbellekte yok   -> cek; geldiyse ILK KEZ ogrendik                -> BILDIR
+                          gelmediyse TJK henuz yayinlamadi              -> sonraki gecis dener
+    Dogrulandi: 168 tam sonuclanmis grubun 168'inin temettusu zaten onbellekteydi -> degisiklik
+    hicbir ESKI Altili'yi yeniden bildirmedi.
+
+    `gun`: yalniz son `gun` gunun Altili'larina bakilir. Temettusu HIC yayinlanmayan bir grup
+    aksi halde sonsuza dek her geciste ag istegi uretirdi."""
+    if df is None:
+        df = _oku()
+    if df.empty:
+        return 0
+    sinir = (date.today() - timedelta(days=gun)).isoformat()
+    # onbellegi BIR KEZ oku (altili_odeme her cagrida dosyayi yeniden okuyor; 168 grup x
+    # dosya okumasi bosuna olurdu)
+    bilinen = set()
+    try:
+        c = ro._temettu_oku()
+        for _, r in c.iterrows():
+            t = pd.to_numeric(pd.Series([r.get("temettu")]), errors="coerce").iloc[0]
+            d = pd.to_numeric(pd.Series([r.get("devir")]), errors="coerce").iloc[0]
+            s = pd.to_numeric(pd.Series([r.get("seq")]), errors="coerce").iloc[0]
+            if (pd.notna(t) or pd.notna(d)) and pd.notna(s):
+                bilinen.add((str(r.get("tarih")), str(r.get("pist")), int(s)))
+    except Exception as e:                                       # noqa: BLE001
+        print(f"  (temettu onbellegi okunamadi: {type(e).__name__}: {e})")
+        return 0
+
+    gonderilen = 0
+    for (t_, p_, s_), g in df.groupby(["tarih", "pist", "seq"]):
+        if str(t_) < sinir or not g["sonuclandi"].notna().all():
+            continue
+        if (str(t_), str(p_), int(s_)) in bilinen:
+            continue                                             # biliniyordu -> bildirilmistir
+        try:
+            yeni = ro.altili_odeme(t_, p_, int(s_), cek=True)
+            if yeni["temettu"] is None and yeni["devir"] is None:
+                continue                                         # TJK henuz yayinlamadi
+        except Exception as e:                                   # noqa: BLE001
+            print(f"  (temettu atlandi {t_} {p_} {s_}: {type(e).__name__})")
+            continue
+        try:
+            bildir_sonuc(t_, p_, int(s_))
+            gonderilen += 1
+        except Exception as e:                                   # noqa: BLE001
+            _tg_log(f"altili SONUC telegram hatasi: {type(e).__name__}: {e}")
+    return gonderilen
+
+
 def sonucla_altili():
     df = _oku()
     if df.empty:
@@ -787,11 +854,6 @@ def sonucla_altili():
     if acik.empty:
         print("sonuclanmamis ayak yok.")
         return 0
-    aday_gruplar = set()                          # K61: bu geciste acik ayagi olan Altili'lar
-    for _, r in acik[["tarih", "pist", "seq"]].drop_duplicates().iterrows():
-        s = pd.to_numeric(r["seq"], errors="coerce")
-        if pd.notna(s):
-            aday_gruplar.add((r["tarih"], r["pist"], int(s)))
     df["sonuclandi"] = df["sonuclandi"].astype("object")
     bugun = date.today().isoformat()
     dolan = 0
@@ -818,23 +880,7 @@ def sonucla_altili():
     # bos gecen turlarda 1 MB'lik telafisi olmayan dosyayi bosuna yeniden yazmak istemiyoruz.
     if dolan:
         _yaz(df)
-    # RESMI odemeleri (temettu / devir) cache'le: tutmayan kuponlarda da gosterilecek.
-    # Yalniz TAMAMLANMIS pencereler icin cek (ag istegi bosa gitmesin).
-    try:
-        for (tarih, pist, seq), g in df.groupby(["tarih", "pist", "seq"]):
-            if g["sonuclandi"].notna().all():
-                ro.altili_odeme(tarih, pist, int(seq), cek=True)
-    except Exception as e:
-        print(f"  (temettu cache atlandi: {type(e).__name__})")
-    # K61: bu geciste 6 ayagi da TAM tamamlanan Altili'lari Telegram'dan bildir (bir kez; try-korumali)
-    for (t_, p_, s_) in aday_gruplar:
-        g = df[(df["tarih"] == t_) & (df["pist"] == p_)
-               & (pd.to_numeric(df["seq"], errors="coerce") == s_)]
-        if len(g) and g["sonuclandi"].notna().all():
-            try:
-                bildir_sonuc(t_, p_, s_)
-            except Exception as e:
-                _tg_log(f"altili SONUC telegram hatasi: {type(e).__name__}: {e}")
+    bildirim_gecisi(df)                    # K165: temettu + Telegram (ayri fonksiyon, bkz. asagi)
     html_yaz(df)
     print(f"altili: {dolan} ayak sonuclandi (acik {int(df['sonuclandi'].isna().sum())}).")
     return dolan

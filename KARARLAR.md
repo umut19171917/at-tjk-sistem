@@ -6902,3 +6902,73 @@ yazılı. 73 kuponluk sicilde net TL, tek olayın gürültüsüdür.
 Örneklem büyüyünce (özellikle 15 dk zemini 73 → 200+ kupon) tek-olay bağımlılığı düşer.
 O zaman tarama yeniden koşulur; **ölçüt "ROI pozitif" değil, "en büyük olay çıkarılınca da
 pozitif"** olmalıdır — d şıkkı bunu bağlar.
+
+---
+
+**K165 — TELEGRAM SONUÇ BİLDİRİMİ ARTIK TEMETTÜ BİLİNMEDEN GÖNDERİLMİYOR. K163'ün yan etkisi
+yakalandı ve kapatıldı.** 12 Eyl 2026. Kullanıcı: *"telegram mesajında sorun var… tutan kuponu
+söylemiş ama kazanç sıfır"*.
+
+## (a) VAKA
+
+12 Eyl İZMİR 1. Altılı'da **`bot1_sabit3` 6/6 tutturdu** — sabit-3 kolunun ilk tam isabeti
+([[K160]]). Telegram mesajı bunu doğru yazdı ama yanında **"ödül 0,00 TL, net −911,25 TL"**
+dedi. Gerçek temettü **1.617,56 TL**, doğru satır: **ödül 1.617,56 TL, net +706,31 TL**.
+
+## (b) KÖK — bu bir [[K163]] yan etkisi
+
+Zincir: 6. ayak postası 18:30 → K163'ün gün-içi sonuçlaması 18:47'de ayakları kapattı →
+`bildir_sonuc` aynı anda tetiklendi → ama **TJK Altılı temettüsünü henüz yayınlamamıştı**.
+`_kupon_ozet` ödülü `ro.altili_odeme(..., cek=False)` ile **yalnız önbellekten** okur; önbellek
+boş olduğu için ödül 0 yazıldı. Temettü ~yarım saat sonra düştü.
+
+**K163 öncesi bu olamazdı:** sonuçlama son postadan 40 dk sonra çalışıyordu, temettü çoktan
+yayınlanmış oluyordu. Gün sonu kapısını kaldırınca bildirim, temettünün önüne geçti.
+
+**Defter kendini düzeltti, mesaj düzelmedi.** `altili_kupon.csv` ödül tutmaz; sayfa temettüyü
+her üretimde canlı okur → `raporlar/altili.html` şu an doğru (+706,31). Ama **gönderilmiş
+Telegram mesajı değişmez.** Kalıcı yanlış bilgi yalnız oradaydı.
+
+## (c) YENİ TETİK — "temettü İLK KEZ öğrenildi"
+
+Eski tetik: *"bu geçişte 6 ayağı da tamamlandı"*. Yeni tetik: *"temettü/devir ilk kez öğrenildi"*.
+**Önbelleğin kendisi bildirim işaretidir** — ayrı durum dosyası gerekmez, [[K49]] durumsuzluk
+ilkesi korunur:
+
+| önbellek | anlamı | eylem |
+|---|---|---|
+| doluysa | daha önce öğrenilmişti → bildirilmiştir | GEÇ |
+| boşsa, çekince geldi | **ilk kez öğrendik** | **BİLDİR** |
+| boşsa, çekince gelmedi | TJK henüz yayınlamadı | sonraki geçiş dener |
+
+## (d) İKİNCİ AÇIK — uygulama sırasında bulundu
+
+İlk denemede tetiği `sonucla_altili` içine koydum. **Yanlıştı:** o fonksiyon başta
+`if acik.empty: return 0` ile erken dönüyor. Temettü son ayaktan SONRA yayınlandığı için o ana
+gelindiğinde açık ayak kalmamış olabilir → günün **son** Altılı'sı hiç bildirilmezdi.
+Üstelik K163'ün `sonuclanabilir_var()` kapısı da o durumda False döner, yani `sonucla_altili`
+hiç çağrılmazdı bile.
+
+→ Bildirim **ayrı bir fonksiyona** alındı: `bildirim_gecisi(df=None, gun=3)`. `takip.py` bunu
+**her geçişte, sonuçlamadan bağımsız** çağırır. Ucuzdur: `html_yaz` çalıştırmaz, önbelleği
+**bir kez** okur, yalnız önbellekte olmayan gruplar için ağ isteği yapar. `gun=3` sınırı,
+temettüsü hiç yayınlanmayan bir grubun sonsuza dek her geçişte istek üretmesini engeller.
+
+## (e) ÇALIŞAN SİSTEME ZARAR GELMEDİĞİ
+
+1. **Spam riski ölçüldü, sıfır:** tam sonuçlanmış **168 grubun 168'inin** temettüsü zaten
+   önbellekte → değişiklik hiçbir eski Altılı'yı yeniden bildirmez. Kod yazılmadan ÖNCE ölçüldü.
+2. **`kod/ast_diff.py`:** değişen bloklar yalnız `takip.py::gecis()`, `sonucla_altili()` ve
+   YENİ `bildirim_gecisi()`. **`bildir_sonuc` ve `_kupon_ozet`'e dokunulmadı**; `defter.py`,
+   `paper.py`, `altili_backtest.py` ve kupon kuran yol **"hepsi AYNI"**.
+3. **K163'ün kapıları yerinde:** gün sonu koşulu ve `sonuclanabilir_var()` çağrısı metin olarak
+   sınandı, değişmedi.
+4. **20 kontrolün tamamı geçti** (Telegram `gonder` sahtelenerek — hiçbir mesaj ağa çıkmadı):
+   mesaj metni artık 1.617,56 ₺ yazıyor; `bildirim_gecisi` idempotent (iki kez çağrılınca da
+   sessiz), `altili_kupon.csv`'ye dokunmuyor, boş defterle patlamıyor.
+
+## (f) BU KARARI NE ÇÜRÜTÜR
+
+Eğer TJK temettüyü bazı Altılılar için **hiç** yayınlamazsa, o Altılı 3 gün boyunca her geçişte
+bir istek üretir ve sonra sessizce düşer — bildirimi hiç gitmez. Bugüne kadar 168/168 yayınlandı;
+bu oran bozulursa `gun` sınırı ve "temettüsüz bildir" seçeneği yeniden değerlendirilir.

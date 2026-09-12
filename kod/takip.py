@@ -290,6 +290,19 @@ def gecis(args):
     except Exception as e:
         _log(f"altili erken sonucla hatasi: {type(e).__name__}: {e}")
 
+    # K165: Telegram SONUC bildirimi, sonuclamadan BAGIMSIZ olarak her geciste denenir.
+    # Neden ayri: temettu son ayaktan SONRA yayinlanir; o ana gelindiginde acik ayak kalmamis
+    # olabilir ve sonucla_altili erken doner -> bildirim hic tetiklenmezdi. Bu cagri ucuzdur
+    # (html uretmez; onbellekte olmayan grup yoksa ag istegi de yapmaz) ve idempotenttir:
+    # onbellegin kendisi "bildirildi" isaretidir, ayni Altili iki kez bildirilmez.
+    try:
+        import altili_canli
+        n_bil = altili_canli.bildirim_gecisi()
+        if n_bil:
+            _log(f"altili: {n_bil} Altili SONUC bildirimi gonderildi (K165)")
+    except Exception as e:
+        _log(f"altili bildirim hatasi: {type(e).__name__}: {e}")
+
     # K59: ORAN gecmisi kaydi (ileri-yonlu; kupon KURMAZ, sisteme dokunmaz; try-korumali).
     try:
         import oran_log
