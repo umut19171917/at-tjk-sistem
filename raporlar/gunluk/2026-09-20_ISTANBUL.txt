@@ -1,0 +1,128 @@
+
+[14:00 tetik]  ISTANBUL  KOSU 1 (yaris 14:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  1  14:00  1200m  2 Yaşlı İngilizler  (7 at)
+   [DUSUK GUVEN: ilk-kosu pay 14%, ort.gecmis 2.9 kosu -> Bot1 zayif, kamuya yaslan]
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    3 ANY GIVEN SUNDAY         24.4      37.3   34.8   37.3   2.00  F
+    1 MEYDAN OKU               10.0      26.0   29.6   22.9   2.35  
+    2 LO SIENTO BB             39.0      17.2   13.5   15.4   5.15  >>CANLI
+    4 BÜYÜK ATTİLA              7.6       7.7    8.7    9.8   8.00  
+    7 NATIVE RUNNER             8.1       6.0    6.6    7.8  10.60  
+    5 GRAND COMMANDER           5.9       4.4    5.1    5.6  13.55  
+    6 HEART OF ÖNER             4.9       1.4    1.6    1.1  43.65  
+
+[14:30 tetik]  ISTANBUL  KOSU 2 (yaris 14:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  2  14:30  2000m  4 Yaşlı Araplar  (11 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+   11 ZİNAMIN                  13.9      24.4   23.9   23.9   2.80  F
+    1 KUZGUNİ YEŞİL            12.8      24.1   23.9   26.6   2.80  F
+    5 PİYANGO                  12.9      13.0   12.6   13.6   5.30  
+    2 BOLGA                     7.8      12.4   13.1   13.7   5.10  
+    4 MİSS KÜBRA               31.7      11.0    9.0   10.8   7.45  >>CANLI
+    3 GÜZEL HUYLUM              4.1       3.4    3.9    4.2  17.10  
+   10 SIRTAŞI                   1.9       3.0    3.9    0.4  17.10  
+    8 JULNAR                    4.0       2.9    3.3    2.9  20.30  
+    6 AÇAKIZ                    5.5       2.8    3.0    2.4  22.45  
+    7 FIGHT FOR ME              4.3       2.1    2.3    1.0  28.50  
+    9 PAMUK ELLA                1.1       0.8    1.1    0.5  58.15  
+
+[15:00 tetik]  ISTANBUL  KOSU 3 (yaris 15:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  3  15:00  1600m  2 Yaşlı İngilizler  (7 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    2 ALPHA CENTAURI           14.9      34.3   36.3   37.7   1.90  F
+    1 WIND OF ROMANCE          22.0      27.0   25.6   31.2   2.70  
+    5 SKY OF KHAN              20.9      13.8   12.7   13.7   5.45  >>CANLI
+    6 LET IT BURN              21.8      12.2   11.0   11.5   6.30  >>CANLI
+    3 RAŞAMO                   13.4       6.0    5.8    3.2  11.95  >>CANLI
+    4 MISTER EZEL               4.4       4.4    5.6    2.1  12.30  
+    7 SILENT TUNGUSKA           2.6       2.2    3.1    0.7  22.30  
+
+[15:30 tetik]  ISTANBUL  KOSU 4 (yaris 15:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  4  15:30  2100m  3 ve Yukarı İngilizler  (8 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    1 SOCIAL BEE               41.7      18.9   13.7   13.4   5.10  >>CANLI
+    2 RACING RAPTURE           15.2      18.3   17.0   11.6   4.10  F
+    3 MAZATLAN                 11.7      13.4   13.0   10.4   5.35  
+    7 THE CHOSEN                5.1      11.4   13.5   19.9   5.15  
+    4 SHEVCHENKO                6.2      11.0   12.4   10.4   5.60  
+    8 ARNO RABEL                4.2      10.1   12.6   17.6   5.55  
+    6 ASRA İNAT                10.0       8.8    8.7    7.8   8.05  
+    5 RİYAD                     5.9       8.2    9.2    9.0   7.60  
+
+[16:00 tetik]  ISTANBUL  KOSU 5 (yaris 16:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  5  16:00  1200m  3 Yaşlı İngilizler  (11 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    5 WOLF BROTHERS            25.5      28.4   24.9   36.6   2.10  F
+    9 LİSENDORA                10.9      23.2   24.9    3.4   2.10  F
+    7 DIVINE SON               16.0      17.2   16.4   21.5   3.20  
+    1 CHOSEN ONE                9.2      11.4   12.2   14.2   4.30  
+    4 PATRONA HOLİ             15.6       7.6    6.9    7.6   7.60  >>CANLI
+    3 SHINING LIFE              6.8       4.1    4.4    8.0  12.00  
+    2 MY CHAKRA                 6.9       2.3    2.4    2.9  22.15  
+   10 KEEP SAFE                 3.0       2.1    2.6    1.5  20.25  
+   11 SHADOW MASTER             1.8       1.4    2.0    1.1  26.20  
+    8 STORMER                   3.5       1.4    1.6    2.4  31.80  
+   12 BRILLIANCE                0.7       1.0    1.8    0.7  29.00  
+
+[16:30 tetik]  ISTANBUL  KOSU 6 (yaris 16:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  6  16:30  2800m  4 ve Yukarı Araplar  (9 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    9 ÖZMEN BEY                41.5      44.7   39.7   52.1   1.75  F
+    8 GÖKIRMAK                 20.1      23.0   22.8   25.0   3.05  
+    7 DENİZ SAVAŞI              7.5      12.4   14.3    3.3   4.85  
+    3 KAHRAMANOĞLU             13.3       8.7    8.9   12.0   7.80  
+    6 ATİLLABEY                 7.2       2.9    3.2    2.4  21.55  
+    2 FIŞ FIŞ                   3.7       2.4    3.0    1.2  23.40  
+    5 İLLEDE DORU               1.4       2.3    3.4    1.3  20.45  
+    1 ATABEYLİ                  3.7       1.8    2.2    1.0  31.40  
+    4 BOĞAZ ÇOCUĞU              1.6       1.8    2.6    1.7  27.10  
+
+[17:00 tetik]  ISTANBUL  KOSU 7 (yaris 17:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  7  17:00  1900m  3 ve Yukarı İngilizler  (8 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    6 NYMPHADORA TONKS         40.6      39.4   32.6    -     1.95  F
+    4 SPLENDID                 10.2      15.4   17.0    -     3.75  
+    1 GOLD FLOWER              10.2      10.3   11.1    -     5.75  
+    7 DEJAVU                    9.7      10.1   11.0    -     5.80  
+    5 FLY FOREVER              10.1       8.7    9.3    -     6.85  
+    3 SHIROKE                   9.3       7.5    8.1    -     7.85  
+    8 OHRID INCISI              3.8       6.1    8.1    -     7.85  
+    2 PEHLİVAN YILDIZI          6.1       2.6    2.9    -    22.20  
+
+[17:30 tetik]  ISTANBUL  KOSU 8 (yaris 17:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  8  17:30  2000m  3 Yaşlı İngilizler  (4 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    1 CALVADOS                 43.9      38.2   33.6    -     2.05  
+    4 MR TT                    15.5      32.8   37.3    -     1.85  F
+    3 MR ÇIRAK                 30.6      19.9   18.4    -     3.75  >>CANLI
+    2 METAL HEART              10.0       9.2   10.7    -     6.45  
+
+[18:00 tetik]  ISTANBUL  KOSU 9 (yaris 18:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  9  18:00  1500m  4 ve Yukarı Araplar  (17 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    8 UMUDUNU KAYBETME         15.0      17.6   15.7    -     4.45  F
+   12 GÜMBÜRHAN                 9.3      12.7   12.1    -     5.75  
+    9 MAVİŞİN KIZI              8.1      11.7   11.5    -     6.05  
+    4 GÜLALP KIZI              10.2       8.1    7.5    -     9.30  
+   16 HARESE                    6.2       7.2    7.3    -     9.55  
+    6 ÖZGÜNBERK                 5.6       6.6    6.8    -    10.30  
+    3 LEONİDAS                  7.1       6.1    6.0    -    11.60  
+   14 DİLBERAN                  2.9       5.3    6.0    -    11.55  
+   18 ESEN BATU                 2.5       5.0    5.9    -    11.85  
+   11 SERİNTEPE                 6.8       3.3    3.2    -    21.60  
+   15 MİRZA BEY                 2.3       3.2    3.8    -    18.60  
+   10 KIR PAPATYASI             6.4       2.7    2.6    -    26.55  
+    1 KOŞAN NUR                 3.4       2.7    2.9    -    23.95  
+    2 EFE METE BEY              5.2       2.3    2.3    -    30.70  
+   17 TRAKTÖR                   1.3       2.1    2.6    -    26.50  
+    5 MEHMETOĞLU                5.5       2.0    2.0    -    35.65  
+   13 KAHRAMAN EVLAT            2.1       1.4    1.7    -    41.75  
