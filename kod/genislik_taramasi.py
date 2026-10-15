@@ -23,8 +23,15 @@ OLAY KUMESI ZEMINE GORE DEGISIR — kiyas yaparken dikkat:
   30 dk fotografi 25 Tem'de, 15 dk fotografi 15 Agu'da basladi. bot1@30 ve bot2@30 AYNI
   olaylari gorur (dogrudan kiyaslanabilir); bot2@15 daha KISA bir pencereyi gorur.
 
+VERI GECIKMESI (18 Eyl 2026'da olculdu): sonuc dosyalari (veri/ham/sonuclar) yaris gununden
+SONRAKI sabahlarda iner. 11 Eyl 01:06 raporu bu yuzden 10 Eyl'i goremedi ve 9 Eyl'de bitti --
+kesim 9 Eyl alininca 12 hucrenin 12'si o raporla kurusu kurusuna ayni cikti. Rapor basligindaki
+"veri araligi" satiri hangi gunlerin sayildigini gosterir; bugunku yarislar orada olmaz.
+
 SALT-OKUNUR: hicbir dosyaya yazmaz (--detay disinda; o da yalniz raporlar/ altina HTML uretir).
-Elle: python kod/genislik_taramasi.py [--k 3,4,5,6] [--detay]
+Elle: python kod/genislik_taramasi.py [--k 3,4,5,6] [--detay] [--yeni YYYY-MM-DD]
+  --yeni: o tarihten (dahil) sonraki 6/6 satirlarini YENI diye isaretler ve ozet tabloya
+          "onceki rapor" NET sutunu ekler -> guncellemede neyin degistigi gorunur.
 """
 import argparse
 import json
@@ -159,6 +166,8 @@ tr.gt td{background:#000;color:#fff;font-weight:bold;}
 tr.gt td.poz{color:#7ee787;} tr.gt td.neg{color:#ffa198;}
 .wrap{overflow-x:auto;} .uyari{border-left:4px solid #000;padding:6px 12px;margin:8px 0;
  background:#f7f7f7;font-size:12.5px;}
+.yeni{background:#0a7d0a;color:#fff;font-size:10px;font-weight:bold;padding:0 5px;
+ border-radius:3px;margin-left:5px;letter-spacing:.3px;}
 </style>"""
 
 
@@ -167,19 +176,27 @@ def _p(x, isaret=False):
     return ("+" if (isaret and x >= 0) else "") + s
 
 
-def detay_html(cikti, ks):
+def detay_html(cikti, ks, yeni=None):
+    """yeni='YYYY-MM-DD' verilirse o tarihten (dahil) sonraki satirlar YENI isaretlenir ve
+    ozete onceki raporun (yeni'den ONCEKI olaylar) NET'i eklenir. None -> eski cikti."""
+    _tr = lambda t: pd.Timestamp(t).strftime("%d.%m.%Y")
+    tum = [e for kay in cikti.values() for e in kay]
+    aralik = (f"veri araligi <b>{_tr(min(e['tarih'] for e in tum))} &ndash; "
+              f"{_tr(max(e['tarih'] for e in tum))}</b> &middot; " if tum else "")
     H = ["<meta charset='utf-8'><title>Genislik Taramasi</title>", CSS,
          "<h2>SABIT GENISLIKLI ALTILI &mdash; tam dokum <span class=alt>(k = "
          + ", ".join(str(k) for k in ks) + ")</span></h2>",
-         f"<div class=mini style='margin:-2px 0 12px'>kupon-ani verisi &middot; EKURI kurali "
-         f"dahil (K162) &middot; uretim {datetime.now():%d.%m.%Y %H:%M} &middot; "
+         f"<div class=mini style='margin:-2px 0 12px'>{aralik}kupon-ani verisi &middot; EKURI "
+         f"kurali dahil (K162) &middot; uretim {datetime.now():%d.%m.%Y %H:%M} &middot; "
          f"<code>kod/genislik_taramasi.py</code></div>"]
 
     # --- ozet matris ---
     H.append("<h3>Ozet &mdash; 12 hucre</h3><div class=kart><div class=wrap><table>")
     H.append("<tr><th class=l>zemin</th><th>genislik</th><th>kupon</th><th>6/6</th>"
              "<th>ayak isabeti</th><th>kupon bedeli</th><th>toplam bedel</th><th>odul</th>"
-             "<th>NET</th><th>ROI</th></tr>")
+             "<th>NET</th><th>ROI</th>"
+             + (f"<th>onceki rapor NET<br><span class=mini>({_tr(yeni)} oncesi)</span></th>"
+                if yeni else "") + "</tr>")
     for etiket, _, _ in ZEMIN:
         for k in ks:
             r = cikti.get((etiket, k))
@@ -187,13 +204,19 @@ def detay_html(cikti, ks):
                 continue
             o = ozet(r)
             cls = "poz" if o["net"] >= 0 else "neg"
+            ek = ""
+            if yeni:
+                ob = ozet([e for e in r if e["tarih"] < yeni])
+                ek = (f"<td class={'poz' if ob['net'] >= 0 else 'neg'}>"
+                      f"{_p(ob['net'], True)} &#8378;<br><span class=mini>{ob['kupon']} kupon, "
+                      f"{ob['tam']} tam</span></td>")
             H.append(f"<tr><td class=l>{etiket}</td><td><b>sabit-{k}</b></td>"
                      f"<td>{o['kupon']}</td><td>{o['tam']}</td>"
                      f"<td>%{100*o['ayak']/(6*o['kupon']):.1f}</td>"
                      f"<td>{_p(o['bedel']/o['kupon'])} &#8378;</td>"
                      f"<td>{_p(o['bedel'])} &#8378;</td><td>{_p(o['odul'])} &#8378;</td>"
                      f"<td class={cls}><b>{_p(o['net'], True)} &#8378;</b></td>"
-                     f"<td class={cls}>%{o['roi']:+.1f}</td></tr>")
+                     f"<td class={cls}>%{o['roi']:+.1f}</td>{ek}</tr>")
     H.append("</table></div>")
     H.append("<div class=uyari><b>Olay kumesi zemine gore degisir.</b> 30 dk fotografi "
              "25 Tem'de, 15 dk fotografi 15 Agu'da basladi &rarr; <b>bot1@30 ve bot2@30 ayni "
@@ -207,8 +230,11 @@ def detay_html(cikti, ks):
             if not r:
                 continue
             o = ozet(r)
+            n_yeni = sum(1 for x in o["tamlar"] if yeni and x["tarih"] >= yeni)
             H.append(f"<h3>{etiket} &middot; sabit-{k} "
-                     f"<span class=alt>&mdash; {o['tam']}/{o['kupon']} Altili tutturuldu</span></h3>")
+                     f"<span class=alt>&mdash; {o['tam']}/{o['kupon']} Altili tutturuldu"
+                     + (f" &middot; <span class=yeni>YENI {n_yeni}</span>" if n_yeni else "")
+                     + "</span></h3>")
             H.append("<div class=kart><div class=wrap><table>")
             H.append("<tr><th>#</th><th class=l>tarih</th><th class=l>pist</th><th>sira</th>"
                      "<th>kombinasyon</th><th>bedel</th><th>temettu (odul)</th>"
@@ -218,6 +244,8 @@ def detay_html(cikti, ks):
                 net = e["odul"] - e["bedel"]
                 cls = "poz" if net >= 0 else "neg"
                 tr = pd.Timestamp(e["tarih"]).strftime("%d.%m.%Y")
+                if yeni and e["tarih"] >= yeni:
+                    tr += " <span class=yeni>YENI</span>"
                 H.append(f"<tr><td>{i}</td><td class=l>{tr}</td><td class=l>{e['pist']}</td>"
                          f"<td>{e['seq']}.</td><td>{_p(e['kombo'])}</td>"
                          f"<td>{_p(e['bedel'])} &#8378;</td><td>{_p(e['odul'])} &#8378;</td>"
@@ -271,13 +299,15 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--k", default="3,4,5,6")
     ap.add_argument("--detay", action="store_true", help="raporlar/genislik_detay.html uret")
+    ap.add_argument("--yeni", default=None,
+                    help="YYYY-MM-DD: bu tarihten (dahil) sonraki satirlari YENI isaretle")
     args = ap.parse_args()
     ks = [int(x) for x in args.k.split(",")]
 
     cikti = olaylar(ks)
     konsol(cikti, ks)
     if args.detay:
-        p = detay_html(cikti, ks)
+        p = detay_html(cikti, ks, yeni=args.yeni)
         print(f"HTML: {p}")
 
 
