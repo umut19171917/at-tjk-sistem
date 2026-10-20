@@ -1,0 +1,74 @@
+
+[14:57 tetik]  BURSA  KOSU 1 (yaris 15:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  1  15:00  2200m  3 Yaşlı İngilizler  (9 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    1 ECHOGUETTE               16.9      25.9   23.2    -     3.00  
+    4 BAHRİYELİ ÇİKOK           4.9      22.9   27.8    -     2.50  F
+    6 MAEGELLE                 14.7      14.0   12.4    -     5.60  
+    3 RUZYM                    27.2      12.2    9.2    -     7.55  >>CANLI
+    5 LUPIN                    12.5       6.6    5.8    -    11.90  >>CANLI
+    9 RISING PEARL              1.8       6.2    8.8    -     7.90  
+    2 MY LADY BUG              15.6       5.1    4.2    -    16.60  >>CANLI
+    7 BOREAL                    4.7       3.6    3.9    -    18.05  
+    8 KAFKAS CEYLANI            1.8       3.4    4.7    -    14.70  
+
+[16:28 tetik]  BURSA  KOSU 4 (yaris 16:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  4  16:30  1500m  3 ve Yukarı İngilizler  (8 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    4 DRAGON HERO              22.1      79.9   77.8   31.7   1.05  F
+    1 ERDUMAN                   7.3      11.4   12.9    8.0   6.35  
+    5 MAMBA FOREVER             7.0       7.3    8.2    4.6  10.00  
+    7 MİKEA                     7.3       0.5    0.4   12.4 182.50  
+    6 LETS WIN TOGETHER        39.1       0.4    0.3   24.9 316.05  >>CANLI
+    2 LA BOMBONERA             11.1       0.3    0.3   10.1 316.05  >>CANLI
+    3 BIG HONEY                 4.7       0.1    0.1    7.9 999.99  
+    8 ÇAĞIRANHAN                1.4       0.1    0.1    0.3 999.99  
+
+[16:58 tetik]  BURSA  KOSU 5 (yaris 17:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  5  17:00  1500m  2 Yaşlı İngilizler  (4 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    4 YOU ARE GREAT             4.4      58.4   70.5    2.6   1.05  F
+    1 WOLF WOMEN               24.8      32.4   24.3   26.7   3.05  
+    2 BAMBİ BAMBO              58.8       8.1    4.4   60.7  16.65  >>CANLI
+    3 ROYAL MAJESTY            11.9       1.1    0.8   10.0  97.60  >>CANLI
+
+[17:28 tetik]  BURSA  KOSU 6 (yaris 17:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  6  17:30  1400m  3 Yaşlı Araplar  (13 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    6 AYZIT                     1.9      59.6   68.8    0.9   1.05  F
+    1 UÇAN DULO                40.4      26.4   16.8   28.4   4.30  >>CANLI
+    4 ARSELYA                   1.8      10.4   11.3    1.1   6.40  
+    3 ALTINGÖZ                  4.7       2.6    2.2    8.0  32.20  
+   11 ROSA Dİ HÜMA             10.2       0.2    0.1    9.7 609.75  >>CANLI
+    7 HÜMAPETRA                 4.1       0.1    0.1    3.9 609.75  
+   13 YOLDERE GÜZELİ            6.6       0.1    0.1   14.0 778.70  
+    8 İNEGÖL                    1.2       0.1    0.1    2.0 609.75  
+    2 BANGU                    10.1       0.1    0.1   19.2 999.99  >>CANLI
+    5 AŞAN SİMAY                8.7       0.1    0.1    9.2 999.99  
+   12 TURNA ŞAH                 6.8       0.1    0.1    2.1 999.99  
+   10 PRENSES ÖMÜR              1.9       0.1    0.1    0.7 999.99  
+    9 OĞUZKANI                  1.6       0.1    0.1    0.8 999.99  
+
+[17:57 tetik]  BURSA  KOSU 7 (yaris 18:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  7  18:00  1800m  4 ve Yukarı Araplar  (15 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    6 SÜTLİMAN                 12.0      35.5   32.1   20.0   1.45  F
+    7 BEDİZ DE FAUST            2.8      27.5   32.1    1.6   1.45  F
+    2 SOĞUKDAĞ                 12.8      12.2   10.5    2.5   4.45  
+    4 BİRGEDAĞ                 12.6      12.2   10.5    8.9   4.45  
+    5 HAS TARKAN                2.0      11.7   14.1    1.1   3.30  
+    1 CEVATHAN                 13.1       0.2    0.2    6.7 301.90  >>CANLI
+   14 HÜMALI KIZ                3.7       0.2    0.2    4.4 251.30  
+   10 SEMENDİN GÜCÜ             6.1       0.1    0.1    8.4 401.60  
+    9 GÜLEYCANOĞLU             15.9       0.1    0.0   16.2 999.99  >>CANLI
+    8 DİLHUN                    5.5       0.1    0.0   12.9 999.99  
+   11 MAHÇİÇEK                  4.3       0.1    0.0   11.4 999.99  
+    3 MİKSER                    3.2       0.1    0.0    1.3 957.10  
+   12 ŞAMPİYON GÜMBÜR           3.9       0.1    0.0    1.2 999.99  
+   13 DİYATOME                  1.3       0.0    0.0    1.2 999.99  
+   15 TATLIÇAĞ                  0.8       0.0    0.0    2.2 999.99  
