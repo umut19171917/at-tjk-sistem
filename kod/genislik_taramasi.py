@@ -194,8 +194,9 @@ def detay_html(cikti, ks, yeni=None):
     H.append("<h3>Ozet &mdash; 12 hucre</h3><div class=kart><div class=wrap><table>")
     H.append("<tr><th class=l>zemin</th><th>genislik</th><th>kupon</th><th>6/6</th>"
              "<th>ayak isabeti</th><th>kupon bedeli</th><th>toplam bedel</th><th>odul</th>"
-             "<th>NET</th><th>ROI</th>"
-             + (f"<th>onceki rapor NET<br><span class=mini>({_tr(yeni)} oncesi)</span></th>"
+             "<th>NET (toplam)</th><th>ROI</th>"
+             + (f"<th>ESKI test NET<br><span class=mini>({_tr(yeni)} oncesi)</span></th>"
+                f"<th>YENI donem NET<br><span class=mini>({_tr(yeni)}+)</span></th>"
                 if yeni else "") + "</tr>")
     for etiket, _, _ in ZEMIN:
         for k in ks:
@@ -207,9 +208,13 @@ def detay_html(cikti, ks, yeni=None):
             ek = ""
             if yeni:
                 ob = ozet([e for e in r if e["tarih"] < yeni])
+                oy = ozet([e for e in r if e["tarih"] >= yeni])
                 ek = (f"<td class={'poz' if ob['net'] >= 0 else 'neg'}>"
                       f"{_p(ob['net'], True)} &#8378;<br><span class=mini>{ob['kupon']} kupon, "
-                      f"{ob['tam']} tam</span></td>")
+                      f"{ob['tam']} tam</span></td>"
+                      f"<td class={'poz' if oy['net'] >= 0 else 'neg'}>"
+                      f"{_p(oy['net'], True)} &#8378;<br><span class=mini>{oy['kupon']} kupon, "
+                      f"{oy['tam']} tam</span></td>")
             H.append(f"<tr><td class=l>{etiket}</td><td><b>sabit-{k}</b></td>"
                      f"<td>{o['kupon']}</td><td>{o['tam']}</td>"
                      f"<td>%{100*o['ayak']/(6*o['kupon']):.1f}</td>"

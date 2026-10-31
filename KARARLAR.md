@@ -6972,3 +6972,56 @@ temettüsü hiç yayınlanmayan bir grubun sonsuza dek her geçişte istek üret
 Eğer TJK temettüyü bazı Altılılar için **hiç** yayınlamazsa, o Altılı 3 gün boyunca her geçişte
 bir istek üretir ve sonra sessizce düşer — bildirimi hiç gitmez. Bugüne kadar 168/168 yayınlandı;
 bu oran bozulursa `gun` sınırı ve "temettüsüz bildir" seçeneği yeniden değerlendirilir.
+
+---
+
+**K164-EK3 — K164'ÜN "SABİT-3 TEK SAVUNULABİLİR NOKTA" SONUCU GÜNCEL VERİYLE SARSILDI.**
+20 Eki 2026. Kullanıcı: *"sabit sayılı her ayakta... bir test yapmıştık, bir ay kadar oldu...
+o test tarihinden bugüne kadar alınan koşullarla kıyaslasana"*.
+
+## (a) YÖNTEM
+
+K164'ün orijinal kesimi (11 Eyl 2026 üretim) gerçekte **9 Eylül'e kadarki** sonuçlanmış
+yarışları görmüştü (sonuç dosyaları yarış gününün ERTESİ sabahı iner — K164-EK2'de belgelendi).
+`kod/genislik_taramasi.py --yeni 2026-09-10 --detay` ile aynı 12 hücre üç dönemde ayrıştırıldı:
+**ESKİ** (<10 Eyl, orijinal K164 testi) · **YENİ** (10 Eyl – 19 Eki, aradan geçen ~40 gün) ·
+**TOPLAM**. Araca bu üçlü ayrımı HTML'de de gösteren iki sütun eklendi (davranış değişikliği
+yok — `--yeni` verilmezse çıktı aynen eski).
+
+## (b) BULGU 1 — sabit-4 ve sabit-5: hüküm değişmedi
+
+Üç zeminin altısında da ESKİ ve YENİ dönem **aynı yönde** kaybediyor (bot1@30 sabit-4:
+−522.220 ₺ → −295.939 ₺; sabit-5: −1.489.256 ₺ → −790.674 ₺, vb.) — iyileşme/kötüleşme yok,
+K164'ün "genişlik arttıkça bedel isabeti geçiyor" hükmü aynen geçerli.
+
+## (c) BULGU 2 — sabit-3'ün TEK pozitif hücresi (bot2@30dk) negatife DÜŞTÜ
+
+K164'te `bot2 @30dk sabit-3` **+34.957 ₺** ile raporun tek pozitif hücresiydi — "sabit-3 hâlâ
+tek savunulabilir nokta" sonucunun dayanağı buydu. YENİ dönemde (10 Eyl – 19 Eki, 87 Altılı)
+bu hücre **0/87 isabet** yaptı, **−79.279 ₺**. **TOPLAM artık −44.322 ₺ — pozitiften negatife
+geçti.** `bot1@30dk sabit-3` zaten negatifti (−34.773 ₺), YENİ dönemde kısmen toparladı
+(−23.589 ₺) ama toplam hâlâ eksi (−58.362 ₺). **Üç sabit-3 hücresinin üçü de şu an negatif.**
+
+## (d) BULGU 3 — sabit-6'nın tek pozitif hücresi (bot2@15dk) K164-EK2'nin uyarısını doğruladı
+
+K164-EK zaten uyarmıştı: `bot2@15dk sabit-6`'nın +%157 (sonradan +%94,8) sonucu **tek bir
+bilete** (25 Ağu KOCAELİ, 8,8M ₺) dayanıyordu; o olay çıkarılınca −%63,6 idi — "piyangoya
+güvenme" notuyla kayda geçmişti. YENİ dönem (85 Altılı, hiçbiri o büyüklükte bir olay
+içermiyor) kendi başına **−4.019.147 ₺** yaptı. TOPLAM hâlâ +2.250.210 ₺ görünüyor ama bu
+tamamen ESKİ dönemin tek olayının kalıntısı — **uyarı artık gerçek, taze veriyle doğrulandı.**
+
+## (e) SONUÇ
+
+**Sabit-4, sabit-5, sabit-6 — hiçbiri, hiçbir dönemde, kendi başına para kazandırmıyor.**
+K164'ün "sabit-3 tek savunulabilir nokta" hükmü ise artık **geçersiz**: simülasyonun üç
+sabit-3 hücresi de şu an toplamda negatif. **BU, BEKLEYENLER #27'deki CANLI sabit-3 kolunun
+ön-kayıtlı ölçütünü DEĞİŞTİRMEZ** (o ölçüt gerçek kuponların eşlenik kıyasıdır, ayrı bir
+örneklem) — ama aynı varsayımı (sabit genişliğin işe yaradığı) farklı bir yöntemle test eden
+bu simülasyonun artık o varsayımı DOĞRULAMADIĞI not edilmelidir. Çapraz not BEKLEYENLER
+#27'ye eklendi.
+
+## (f) BU KARARI NE ÇÜRÜTÜR
+
+Örneklem küçük (87 Altılı YENİ dönemde) — bir güzel seri sabit-3'ü tekrar pozitife taşıyabilir.
+Asıl ölçüt BEKLEYENLER #27'nin canlı kolu ve onun ≥50 kupon eşiğidir; bu simülasyon yalnızca
+ek bir gözlemdir, kol kararını kendi başına değiştirmez.

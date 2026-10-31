@@ -1089,6 +1089,16 @@ ayrı kol açmak K156-d'nin "aynı bahsin iki kopyası" tuzağı olurdu.
 **MALİYET (şeffaflık):** 3 config × ~1-2 kupon/gün × 911 ₺ ≈ günlük 2.700-5.500 ₺ ek kâğıt
 harcaması. Kâğıt para; ama K140-EK'in izlediği toplamları büyütür → **config bazında okunmalı**.
 
+> **K164-EK3 NOTU (20 Eki 2026) — AYRI bir ölçüm, ama aynı varsayımı sarsıyor.**
+> Bu madde (#27) canlı sabit-3 kolunun **gerçek kuponlarının** eşlenik kıyasını ölçer — o ölçüt
+> ve ≥50 kupon eşiği **değişmedi**. Ayrı bir araçla (`genislik_taramasi.py`, kupon-anı
+> fotoğrafından simülasyon) yapılan K164 testinin "sabit-3 tek savunulabilir nokta" sonucu ise
+> artık geçerliliğini kaybetti: K164'teki tek pozitif hücre (`bot2@30dk sabit-3`, +34.957 ₺) son
+> 40 günde (10 Eyl–19 Eki, 87 Altılı) **0/87 isabet** yaptı ve toplamı **−44.322 ₺**'ye döndü —
+> simülasyonun üç sabit-3 hücresinin üçü de şu an negatif. Bu, #27'nin kendi ölçütünü geçersiz
+> kılmaz (farklı örneklem, farklı yöntem) ama "sabit genişlik işe yarıyor" varsayımını destekleyen
+> ikinci bir kaynak kalmadığını gösterir. Detay: KARARLAR.md K164-EK3.
+
 ### 29. OBSIDIAN — `[[Kxxx]]` bağlantılarının 27'si KIRIK, biçim `karar_ara.py`'ye bağlı
 **Eklendi:** 2026-09-12 (kullanıcı "Obsidian'ı bu projede nasıl doğru kullanırım" diye sordu) ·
 **TETİK: YOK — kullanıcı kararı** · **İlgili:** K49
