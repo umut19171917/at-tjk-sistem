@@ -7025,3 +7025,47 @@ bu simülasyonun artık o varsayımı DOĞRULAMADIĞI not edilmelidir. Çapraz n
 Örneklem küçük (87 Altılı YENİ dönemde) — bir güzel seri sabit-3'ü tekrar pozitife taşıyabilir.
 Asıl ölçüt BEKLEYENLER #27'nin canlı kolu ve onun ≥50 kupon eşiğidir; bu simülasyon yalnızca
 ek bir gözlemdir, kol kararını kendi başına değiştirmez.
+
+---
+
+**K166 — SİSTEM DURDURULDU (kullanıcı talebi, "şimdilik").** 2 Kas 2026. Kullanıcı: *"projenin
+otomatik kupon kurulumunu vb durduralım şimdilik. arka planda çalışan her şey dursun"*.
+
+## (a) NE YAPILDI
+
+Üç Windows Görev Zamanlayıcı görevi **devre dışı bırakıldı** (silinmedi — `Disable-ScheduledTask`,
+geri dönüşü `Enable-ScheduledTask`):
+
+| görev | işi | durum |
+|---|---|---|
+| `TJK Takip` | 15 dk'da bir: kupon kurma, ayak/Altılı sonuçlama, Telegram bildirimi, oran log | **Disabled** |
+| `TJK Bekçi` | yardımcı izleme döngüsü | **Disabled** |
+| `TJK Veri Commit` | haftalık otomatik git commit (K50) | **Disabled** |
+
+Durdurma anında `TJK Takip`'in bir geçişi çalışıyordu (16:45); zorla kesilmedi — kendi doğal
+akışıyla bitmesi (16:48:03, "gecis bitti") beklendi, sonra devre dışı bırakma teyit edildi.
+Kesme riski yoktu ama atomik yazma (`os.replace`) zaten bunu güvenli kılıyordu.
+
+## (b) GÜVENLİK
+
+**Hiçbir kod değişmedi.** `kod/takip.py`, `kod/altili_canli.py` ve diğer tüm çekirdek dosyalar
+AYNI. Durdurma tamamen görev zamanlayıcı seviyesinde — sistemin kendisi, istendiğinde tek
+komutla (üç `Enable-ScheduledTask` çağrısı) **tam olarak durduğu noktadan** devam eder; hiçbir
+mantık, config veya veri formatı bu kararla değişmedi.
+
+## (c) BU NOKTADA SİCİLİN DURUMU (anlık görüntü, git'e işlendi)
+
+Durdurma anındaki `veri/` ve `raporlar/` dosyaları — normalde `TJK Veri Commit`'in haftalık
+işi olan ama artık o görev de durduğu için elle yapılan — tek commit'te kaydedildi. Bundan
+sonraki hiçbir otomatik veri akışı olmayacağı için, bu commit'ten itibaren sicil **donmuş**
+sayılmalı; bir sonraki değişiklik, görevler yeniden açılana kadar gelmeyecek.
+
+## (d) YENİDEN BAŞLATMA
+
+```powershell
+Enable-ScheduledTask -TaskName "TJK Takip"
+Enable-ScheduledTask -TaskName "TJK Bekci"
+Enable-ScheduledTask -TaskName "TJK Veri Commit"
+```
+Üçü de bağımsız; istenirse biri açılıp diğerleri kapalı bırakılabilir (örn. sadece `TJK Veri
+Commit`'i açıp kupon kurmadan veri yedeklemeyi sürdürmek).
