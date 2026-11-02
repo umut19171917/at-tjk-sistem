@@ -1,0 +1,45 @@
+
+[14:00 tetik]  ISTANBUL  KOSU 1 (yaris 14:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  1  14:00  2000m  3 ve Yukarı İngilizler  (5 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    5 IRON SKY                 12.5      34.5   38.6   44.1   1.80  F
+    4 THINDER OF SHINE         40.6      23.5   19.0   17.0   3.65  >>CANLI
+    3 FLY FOREVER              21.5      18.8   17.6   18.6   3.95  
+    6 MEANING OF TIME           8.2      12.6   14.6    7.9   4.75  
+    1 TURKISH PUNCH            17.2      10.7   10.2   12.1   6.80  >>CANLI
+
+[14:30 tetik]  ISTANBUL  KOSU 2 (yaris 14:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  2  14:30  1400m  2 Yaşlı İngilizler  (5 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    5 OKAMİ                    38.9      47.1   43.2   43.1   1.60  F
+    2 ÜMİTBEY                  19.7      23.7   24.7   22.4   2.80  
+    1 FATHERSD                 34.3      18.1   16.1   24.8   4.30  >>CANLI
+    3 ANY GIVEN SUNDAY          4.6       6.4    8.8    6.9   7.85  
+    4 LOK UP LADY               2.5       4.6    7.3    2.8   9.45  
+
+[15:00 tetik]  ISTANBUL  KOSU 3 (yaris 15:00)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  3  15:00  1300m  3 Yaşlı Araplar  (6 at)
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    5 ÖZGÜR                    45.0      32.6   27.8   32.5   2.50  F
+    2 SEHER ZAMANI              9.7      24.4   27.3   21.9   2.55  
+    3 GÜRDALHAN                14.8      22.8   23.6   23.5   2.95  
+    1 GÜMÜŞ KILIÇ              14.2       9.6    9.7   10.4   7.20  
+    4 KOCA KAPTAN               8.4       6.0    6.6    5.7  10.60  
+    6 UZBOYLU                   7.9       4.7    5.1    6.1  13.60  
+
+[15:30 tetik]  ISTANBUL  KOSU 4 (yaris 15:30)  [Ingiliz: a=+0.24 g=+0.94 | Arap: a=+0.18 g=+0.96]
+
+KOSU  4  15:30  1400m  2 Yaşlı İngilizler  (8 at)
+   [DUSUK GUVEN: ilk-kosu pay 100%, ort.gecmis 0.0 kosu -> Bot1 zayif, kamuya yaslan]
+   no at                      Bot1% AGF%(sis)  kamu%   AGF%   oran  iz
+    4 JOYFUL KING              14.0      32.3   33.8   40.5   2.05  F
+    7 THE LAST FORZA           17.1      20.8   20.1   26.6   3.45  
+    2 DARK OF THE SIDE         20.7      17.7   16.1   11.8   4.30  
+    6 MARMARALI                12.0       7.8    7.7    7.1   8.95  >>CANLI
+    1 APARAJİTO                 7.9       6.9    7.5    5.6   9.20  
+    3 GO PROFF                 10.4       5.9    5.9    4.4  11.70  >>CANLI
+    8 GOOD LUCK LADY           12.0       5.1    4.9    2.2  14.20  >>CANLI
+    5 MAGNUS KAAN               5.9       3.5    4.0    1.9  17.50  
