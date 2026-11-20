@@ -7069,3 +7069,15 @@ Enable-ScheduledTask -TaskName "TJK Veri Commit"
 ```
 Üçü de bağımsız; istenirse biri açılıp diğerleri kapalı bırakılabilir (örn. sadece `TJK Veri
 Commit`'i açıp kupon kurmadan veri yedeklemeyi sürdürmek).
+
+## (e) GÜNCELLEME (21 Kas 2026) — kısmen yeniden açıldı
+
+Kullanıcı: *"kupon kurmayı aç tekrar"*. **Sadece `TJK Takip` açıldı** (Enable-ScheduledTask) —
+kupon kurma, ayak/Altılı sonuçlama, Telegram bildirimi ve oran log hepsi bu görevin içinde,
+tek parça. `TJK Bekçi` (yalnız "Takip bugün çalıştı mı" uyarısı, K47 — kupon kurma mantığına
+bağımlılığı yok) ve `TJK Veri Commit` (haftalık otomatik commit) **kapalı bırakıldı** — istek
+yalnızca kuponu kapsıyordu, diğer ikisi ayrıca istenmedi.
+
+Ara dönemde (2-21 Kasım) `python kod/guncelle.py` elle çalıştırılarak arşiv boşluğu dolduruldu
+(ANTALYA'nın ilk iki yarış günü dahil, `katilim.csv` 2026-11-20'ye kadar güncel) — kupon
+kurma tekrar başladığında model güncel veriyle çalışıyor, boşluk yok.
