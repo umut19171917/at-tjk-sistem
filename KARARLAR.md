@@ -7081,3 +7081,9 @@ yalnızca kuponu kapsıyordu, diğer ikisi ayrıca istenmedi.
 Ara dönemde (2-21 Kasım) `python kod/guncelle.py` elle çalıştırılarak arşiv boşluğu dolduruldu
 (ANTALYA'nın ilk iki yarış günü dahil, `katilim.csv` 2026-11-20'ye kadar güncel) — kupon
 kurma tekrar başladığında model güncel veriyle çalışıyor, boşluk yok.
+
+## (f) GÜNCELLEME (21 Kas 2026, aynı gün) — tam yeniden açıldı
+
+Kullanıcı: *"ikisini de aç"* (Bekçi + Veri Commit ne yaptığı sorulup anlaşıldıktan sonra).
+Üç görev de artık **Ready** — K166 öncesi haline tam döndü. Durdurma kararı (K166) kapandı
+sayılır; sistem normal otomatik akışında.
